@@ -244,27 +244,27 @@ class Asset : LocalResources
         return currFont.getMaxHeight;
     }
 
-    import api.math.geom2.vec2 : Vec2d;
+    import api.math.geom2.vec2 : Vec2f;
 
-    Vec2d rem(uint size = FontSize.medium, string name = defaultFontName)
+    Vec2f rem(uint size = FontSize.medium, string name = defaultFontName)
     {
         return rem(defaultFontColor, size, name);
     }
 
-    Vec2d rem(RGBA color, uint size = FontSize.medium, string name = defaultFontName)
+    Vec2f rem(RGBA color, uint size = FontSize.medium, string name = defaultFontName)
     {
         enum defaultSize = 1;
         auto bitmapPtr = hasColorBitmapUnsafe(color, size, name);
         if (!bitmapPtr)
         {
-            return Vec2d(defaultSize, defaultSize);
+            return Vec2f(defaultSize, defaultSize);
         }
         float glyphW = (*bitmapPtr).e0.geometry.width;
         float glyphH = (*bitmapPtr).e0.geometry.height;
         float eW = glyphW != 0 ? glyphW : defaultSize;
         float eH = glyphH != 0 ? glyphH : defaultSize;
 
-        return Vec2d(eW, eH);
+        return Vec2f(eW, eH);
     }
 
     override void dispose()

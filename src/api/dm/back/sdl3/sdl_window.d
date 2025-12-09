@@ -12,7 +12,7 @@ import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import std.string : toStringz, fromStringz;
 import std.typecons : Nullable;
@@ -591,7 +591,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult getSafeBounds(out Rect2d bounds) nothrow
+    ComResult getSafeBounds(out Rect2f bounds) nothrow
     {
         assert(ptr);
         SDL_Rect rect;
@@ -599,7 +599,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         {
             return getErrorRes("Error getting windows safe bounds");
         }
-        bounds = Rect2d(rect.x, rect.y, rect.w, rect.h);
+        bounds = Rect2f(rect.x, rect.y, rect.w, rect.h);
         return ComResult.success;
     }
 
@@ -639,7 +639,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult setTextInputArea(Rect2d area, int cursor = 0) nothrow
+    ComResult setTextInputArea(Rect2f area, int cursor = 0) nothrow
     {
         assert(ptr);
 

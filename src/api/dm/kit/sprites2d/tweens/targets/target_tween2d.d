@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.tweens.curves.interpolator : Interpolator;
 import api.dm.kit.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import std.traits : isIntegral, isFloatingPoint;
 

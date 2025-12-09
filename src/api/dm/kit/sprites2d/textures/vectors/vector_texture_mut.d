@@ -7,8 +7,8 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
 
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.vec2 : Vec2f;
 
 //TODO remove native api
 import api.dm.lib.cairo.cairo_surface : CairoSurface;
@@ -24,8 +24,8 @@ class VectorTextureMut : Texture2d
 {
     GraphicStyle style;
     //TODO moveTo + lineTo + stroke, extract class?
-    Vec2d center;
-    Vec2d prevPoint;
+    Vec2f center;
+    Vec2f prevPoint;
 
     this(float width, float height)
     {
@@ -50,7 +50,7 @@ class VectorTextureMut : Texture2d
         }
     }
 
-    void updateTexture(Vec2d[] points)
+    void updateTexture(Vec2f[] points)
     {
         if (points.length < 2)
         {
@@ -66,7 +66,7 @@ class VectorTextureMut : Texture2d
         });
     }
 
-    void updateTexture(Vec2d next)
+    void updateTexture(Vec2f next)
     {
         updateTextureDraw((context) {
             drawTo(context, next);
@@ -74,7 +74,7 @@ class VectorTextureMut : Texture2d
         });
     }
 
-    protected void drawTo(GraphicCanvas context, Vec2d next)
+    protected void drawTo(GraphicCanvas context, Vec2f next)
     {
         context.moveTo(center.x + prevPoint.x, center.y + prevPoint.y);
         context.lineTo(center.x + next.x, center.y + next.y);
@@ -140,7 +140,7 @@ class VectorTextureMut : Texture2d
         auto graphicContext = new VectorCanvas(cairoContext);
         onContext(graphicContext);
 
-        // if (const err = texture.update(Rect2d(0, 0, width, height), pixels, pitch))
+        // if (const err = texture.update(Rect2f(0, 0, width, height), pixels, pitch))
         // {
         //     throw new Exception(err.toString);
         // }

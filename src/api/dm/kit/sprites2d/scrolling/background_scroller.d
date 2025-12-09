@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.scrolling.background_scroller;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 enum Direction
 {
@@ -25,9 +25,9 @@ class BackgroundScroller : Sprite2d
 
     float seamОffset = 0;
 
-    Rect2d delegate() worldBoundsProvider;
+    Rect2f delegate() worldBoundsProvider;
 
-    this(Direction direction, Rect2d delegate() worldBoundsProvider = null)
+    this(Direction direction, Rect2f delegate() worldBoundsProvider = null)
     {
         super();
         this.direction = direction;

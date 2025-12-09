@@ -9,7 +9,7 @@ import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.gui.controls.texts.text : Text;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import Math = api.dm.math;
 
 /**

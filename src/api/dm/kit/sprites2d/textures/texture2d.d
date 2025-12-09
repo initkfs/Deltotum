@@ -6,7 +6,7 @@ import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.graphics.com_texture : ComTextureScaleMode;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import api.math.pos2.flip : Flip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -196,30 +196,30 @@ class Texture2d : Sprite2d
 
     void drawTexture()
     {
-        Rect2d textureBounds = {0, 0, width, height};
+        Rect2f textureBounds = {0, 0, width, height};
         //TODO flip, toInt?
-        Rect2d destBounds = {x, y, width, height};
+        Rect2f destBounds = {x, y, width, height};
         drawTexture(texture, textureBounds, destBounds, angle, flip);
     }
 
-    void drawTexture(Rect2d src)
+    void drawTexture(Rect2f src)
     {
-        Rect2d dest = {x, y, src.width, src.height};
+        Rect2f dest = {x, y, src.width, src.height};
         drawTexture(src, dest, this.angle, this.flip);
     }
 
-    void drawTexture(Rect2d textureBounds, Rect2d destBounds)
+    void drawTexture(Rect2f textureBounds, Rect2f destBounds)
     {
         drawTexture(textureBounds, destBounds, this.angle, this.flip);
     }
 
-    void drawTexture(Rect2d textureBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
+    void drawTexture(Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         drawTexture(texture, textureBounds, destBounds, angle, flip);
     }
 
-    void drawTexture(ComTexture texture, Rect2d textureBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
+    void drawTexture(ComTexture texture, Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         if (!texture.draw(textureBounds, destBounds, angle, flip))
@@ -379,14 +379,14 @@ class Texture2d : Sprite2d
     void copyFrom(Texture2d other, bool isToCenter = false)
     {
         //TODO check bounds;
-        Rect2d srcRect = {0, 0, other.width, other.height};
-        Rect2d destRect = !isToCenter ? Rect2d(0, 0, width, height) : Rect2d(width / 2 - other.width / 2, height / 2 - other
+        Rect2f srcRect = {0, 0, other.width, other.height};
+        Rect2f destRect = !isToCenter ? Rect2f(0, 0, width, height) : Rect2f(width / 2 - other.width / 2, height / 2 - other
                 .height / 2, other.width, other.height);
 
         copyFrom(other, srcRect, destRect);
     }
 
-    void copyFrom(Texture2d other, Rect2d srcRect, Rect2d dstRect)
+    void copyFrom(Texture2d other, Rect2f srcRect, Rect2f dstRect)
     {
         assert(texture);
         if (const err = texture.copyFrom(other.nativeTexture, srcRect, dstRect, other.angle, other

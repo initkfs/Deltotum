@@ -5,7 +5,7 @@ import api.dm.gui.interacts.dialogs.dialog_manager : DialogManager;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.windows.window : Window;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.gui.interacts.interact : Interact;

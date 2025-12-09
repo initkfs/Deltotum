@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.shapes.convex_polygon;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.line2 : Line2d;
+import api.math.geom2.line2 : Line2f;
 
 /**
  * Authors: initkfs
@@ -12,7 +12,7 @@ class ConvexPolygon : Shape2d
     float cornerPadding;
 
     //TODO other sides  
-    Line2d topClip;
+    Line2f topClip;
 
     this(float width, float height, GraphicStyle style, float cornerPadding)
     {
@@ -90,7 +90,7 @@ class ConvexPolygon : Shape2d
 
     private void fill()
     {
-        import api.math.geom2.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2f;
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -104,22 +104,22 @@ class ConvexPolygon : Shape2d
         graphic.fillRect(x + width - cornerPadding - style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, fillColor);
 
         //left top corner
-        graphic.fillTriangle(Vec2d(x + style.lineWidth, y + cornerPadding), Vec2d(x + cornerPadding, y + style
-                .lineWidth), Vec2d(
+        graphic.fillTriangle(Vec2f(x + style.lineWidth, y + cornerPadding), Vec2f(x + cornerPadding, y + style
+                .lineWidth), Vec2f(
                 x + cornerPadding, y + cornerPadding), fillColor);
 
         //left bottom corner
-        graphic.fillTriangle(Vec2d(x + style.lineWidth, y + height - cornerPadding - style.lineWidth * 2),Vec2d(x + cornerPadding, y + height - cornerPadding - style
-                .lineWidth * 2), Vec2d(
+        graphic.fillTriangle(Vec2f(x + style.lineWidth, y + height - cornerPadding - style.lineWidth * 2),Vec2f(x + cornerPadding, y + height - cornerPadding - style
+                .lineWidth * 2), Vec2f(
                 x + cornerPadding, y + height - style.lineWidth * 2), fillColor);
 
         //right top corner
-        graphic.fillTriangle(Vec2d(x + width - cornerPadding - style.lineWidth, y + style
-                .lineWidth), Vec2d(x + width - style.lineWidth * 2, y + cornerPadding), Vec2d(
+        graphic.fillTriangle(Vec2f(x + width - cornerPadding - style.lineWidth, y + style
+                .lineWidth), Vec2f(x + width - style.lineWidth * 2, y + cornerPadding), Vec2f(
                 x + width - cornerPadding - style.lineWidth, y + cornerPadding), fillColor);
 
         //right bottom corner
-        graphic.fillTriangle(Vec2d(x + width - cornerPadding - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vec2d(x + width - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vec2d(
+        graphic.fillTriangle(Vec2f(x + width - cornerPadding - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vec2f(x + width - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vec2f(
                 x + width - cornerPadding - style.lineWidth, y + height - style.lineWidth * 2), fillColor);
     }
 }

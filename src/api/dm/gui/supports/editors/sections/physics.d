@@ -6,9 +6,9 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.pos2.flip : Flip;
 
 import Math = api.dm.math;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import std.stdio;
 

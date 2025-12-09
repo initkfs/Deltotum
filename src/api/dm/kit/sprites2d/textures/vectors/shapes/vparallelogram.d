@@ -3,8 +3,8 @@ module api.dm.kit.sprites2d.textures.vectors.shapes.vparallelogram;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.math.geom2.parallelogram2 : Parallelogram2d;
-import api.math.geom2.vec2: Vec2d;
+import api.math.geom2.parallelogram2 : Parallelogram2f;
+import api.math.geom2.vec2: Vec2f;
 
 /**
  * Authors: initkfs
@@ -16,7 +16,7 @@ class VParallelogram : VShape
 
     protected
     {
-        Parallelogram2d shape;
+        Parallelogram2f shape;
     }
 
     this(float width, float height, float angleDeg, bool isInverted, GraphicStyle style)
@@ -32,8 +32,8 @@ class VParallelogram : VShape
 
         auto ctx = canvas;
 
-        Vec2d prev;
-        Vec2d first;
+        Vec2f prev;
+        Vec2f first;
 
         import api.dm.kit.graphics.canvases.graphic_canvas: GraphicCanvas;
 

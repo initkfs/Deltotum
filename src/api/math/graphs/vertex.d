@@ -1,6 +1,6 @@
 module api.math.graphs.vertex;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
@@ -8,8 +8,8 @@ import api.math.geom2.vec2 : Vec2d;
 class Vertex
 {
     long id;
-    Vec2d pos;
-    Vec2d force;
+    Vec2f pos;
+    Vec2f force;
     bool isVisited;
 
     this(long id = 0) pure @safe

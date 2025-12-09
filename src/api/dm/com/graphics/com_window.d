@@ -6,7 +6,7 @@ import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.com_destroyable : ComDestroyable;
 import api.dm.com.graphics.com_screen : ComScreenId;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 alias ComWindowId = int;
 
@@ -81,7 +81,7 @@ nothrow:
     ComResult getHeight(out int height);
     ComResult setSize(int width, int height);
 
-    ComResult getSafeBounds(out Rect2d bounds);
+    ComResult getSafeBounds(out Rect2f bounds);
 
     ComResult setMaxSize(int w, int h);
     ComResult setMinSize(int w, int h);
@@ -94,7 +94,7 @@ nothrow:
     //https://wiki.libsdl.org/SDL3/BestKeyboardPractices
     ComResult setTextInputStart();
     ComResult setTextInputStop();
-    ComResult setTextInputArea(Rect2d area, int cursor);
+    ComResult setTextInputArea(Rect2f area, int cursor);
     ComResult getIsTextInputActive(out bool isActive);
 
     ComResult getSystemTheme(out ComWindowTheme theme);

@@ -8,8 +8,8 @@ import api.dm.com.com_destroyable : ComDestroyable;
 import api.dm.com.com_error_manageable: ComErrorManageable;
 
 import api.math.pos2.flip: Flip;
-import api.math.geom2.vec2 : Vec2d, Vec2f;
-import api.math.geom2.rect2 : Rect2d, Rect2f;
+import api.math.geom2.vec2 : Vec2f, Vec2f;
+import api.math.geom2.rect2 : Rect2f, Rect2f;
 
 enum ComRendererLogicalScaling {
     none,
@@ -43,8 +43,8 @@ nothrow:
     ComResult getDrawColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a);
     bool tryGetDrawColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a);
 
-    ComResult setClipRect(Rect2d clip);
-    ComResult getClipRect(out Rect2d clip);
+    ComResult setClipRect(Rect2f clip);
+    ComResult getClipRect(out Rect2f clip);
     ComResult getIsClip(out bool isClip);
     ComResult removeClipRect();
 
@@ -55,30 +55,25 @@ nothrow:
     ComResult setBlendModeNone();
 
     bool drawPoint(float x, float y);
-    bool drawPoints(Vec2d[] points);
     bool drawPoints(Vec2f[] points);
 
     bool drawLine(float startX, float startY, float endX, float endY);
-    bool drawLines(Vec2d[] linePoints);
-    //ComResult drawLines(Vec2d[] linePoints, size_t count);
     bool drawLines(Vec2f[] linePoints);
 
     bool drawRect(float x, float y, float width, float height);
-    bool drawRects(Rect2d[] rects);
     bool drawRects(Rect2f[] rects);
 
     bool drawFillRect(float x, float y, float width, float height);
-    bool drawFillRects(Rect2d[] rects);
     bool drawFillRects(Rect2f[] rects);
 
     ComResult getOutputSize(out int width, out int height);
-    ComResult getSafeBounds(out Rect2d bounds);
+    ComResult getSafeBounds(out Rect2f bounds);
 
     ComResult setScale(float scaleX, float scaleY);
     ComResult getScale(out float scaleX, out float scaleY);
 
-    ComResult setViewport(Rect2d viewport);
-    ComResult getViewport(out Rect2d viewport);
+    ComResult setViewport(Rect2f viewport);
+    ComResult getViewport(out Rect2f viewport);
 
     ComResult getTextureWrapMode(out ComTextureWrapMode xMode, out ComTextureWrapMode yMode);
     ComResult setTextureWrapMode(ComTextureWrapMode xMode, ComTextureWrapMode yMode);
@@ -86,9 +81,9 @@ nothrow:
     ComResult getLogicalSize(out int w, out int h, out ComRendererLogicalScaling mode);
     ComResult setLogicalSize(int w, int h, ComRendererLogicalScaling mode);
 
-    ComResult readPixels(Rect2d rect, ComSurface buffer);
+    ComResult readPixels(Rect2f rect, ComSurface buffer);
 
     // ComResult drawTexture(ComTexture texture);
-    // ComResult drawTexture(ComTexture texture, Rect2d srcRect, Rect2d dstRect);
-    // ComResult drawTextureEx(ComTexture texture, Rect2d srcRect, Rect2d dstRect, float angle, Vec2d center, Flip flip);
+    // ComResult drawTexture(ComTexture texture, Rect2f srcRect, Rect2f dstRect);
+    // ComResult drawTextureEx(ComTexture texture, Rect2f srcRect, Rect2f dstRect, float angle, Vec2f center, Flip flip);
 }

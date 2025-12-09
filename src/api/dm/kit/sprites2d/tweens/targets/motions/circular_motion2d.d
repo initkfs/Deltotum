@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.tweens.targets.motions.circular_motion2d;
 
 import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
 import api.dm.kit.tweens.curves.interpolator : Interpolator;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import math = api.dm.math;
 
 /**
@@ -10,12 +10,12 @@ import math = api.dm.math;
  */
 class CircularMotion2d : ValueTween2d
 {
-    Vec2d center;
+    Vec2f center;
     float radius = 0;
 
-    void delegate(Vec2d) onPoint;
+    void delegate(Vec2f) onPoint;
 
-    this(Vec2d center = Vec2d(0, 0), float radius = 100, int timeMs = 200, Interpolator interpolator = null)
+    this(Vec2f center = Vec2f(0, 0), float radius = 100, int timeMs = 200, Interpolator interpolator = null)
     {
         super(0, 360, timeMs, interpolator);
 
@@ -30,7 +30,7 @@ class CircularMotion2d : ValueTween2d
 
             if (onPoint)
             {
-                onPoint(Vec2d(x, y));
+                onPoint(Vec2f(x, y));
             }
         };
     }

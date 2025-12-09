@@ -3,7 +3,7 @@ module api.dm.kit.sprites2d.images.anim_image;
 import api.dm.kit.sprites2d.images.image : Image;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import std.math.rounding : floor;
 import std.conv : to;
 import api.math.pos2.flip : Flip;
@@ -248,7 +248,7 @@ class AnimImage : Image
     void drawFrame(int frameIndex, int rowIndex, Flip flip = Flip
             .none)
     {
-        Rect2d srcRect;
+        Rect2f srcRect;
         srcRect.x = frameWidth * frameIndex;
         srcRect.y = frameHeight * rowIndex;
         srcRect.width = frameWidth;
@@ -258,7 +258,7 @@ class AnimImage : Image
             : flip;
 
         assert(texture);
-        Rect2d destRect = {x, y, width, height};
+        Rect2f destRect = {x, y, width, height};
         drawTexture(texture, srcRect, destRect, angle, animFlip);
     }
 

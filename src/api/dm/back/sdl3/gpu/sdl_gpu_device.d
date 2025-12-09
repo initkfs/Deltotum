@@ -9,7 +9,7 @@ import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 
 import std.string : toStringz, fromStringz;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -1092,7 +1092,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return samplerPtr;
     }
 
-    void setScissorRect(Rect2d scissor)
+    void setScissorRect(Rect2f scissor)
     {
         SDL_Rect rect;
         rect.w = cast(int) scissor.width;

@@ -6,7 +6,7 @@ import api.dm.com.objects.com_object : ComObject;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import std.string : toStringz, fromStringz;
 
@@ -100,15 +100,15 @@ class SdlObject : ComObject
         return newMode;
     }
 
-    SDL_Rect toSdlRect(Rect2d rect) pure nothrow
+    SDL_Rect toSdlRect(Rect2f rect) pure nothrow
     {
         return SDL_Rect(cast(int) rect.x, cast(int) rect.y, cast(int) rect.width, cast(int) rect
                 .height);
     }
 
-    Rect2d fromSdlRect(SDL_Rect rect) pure nothrow
+    Rect2f fromSdlRect(SDL_Rect rect) pure nothrow
     {
-        return Rect2d(rect.x, rect.y, rect.w, rect.h);
+        return Rect2f(rect.x, rect.y, rect.w, rect.h);
     }
 
     ComBlendMode fromNativeBlendMode(SDL_BlendMode mode) const nothrow @safe

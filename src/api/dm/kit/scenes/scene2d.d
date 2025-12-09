@@ -503,9 +503,9 @@ class Scene2d : EventKitTarget
     ComSurface snapshot()
     {
         assert(window.width > 0 && window.height > 0);
-        import api.math.geom2.rect2 : Rect2d;
+        import api.math.geom2.rect2 : Rect2f;
 
-        auto bounds = Rect2d(
+        auto bounds = Rect2f(
             0, 0, window.width, window.height
         );
         auto surf = graphic.comSurfaceProvider.getNew();

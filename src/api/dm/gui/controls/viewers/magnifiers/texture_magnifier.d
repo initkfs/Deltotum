@@ -6,7 +6,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.viewers.magnifiers.base_magnifier : BaseMagnifier;
 import api.dm.gui.controls.containers.container : Container;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import Math = api.dm.math;
 
@@ -27,7 +27,7 @@ class TextureMagnifier : BaseMagnifier
         auto originalXRel = (_original.width * pRelX) / thumbnail.width;
         auto originalYRel = (_original.height * pRelY) / thumbnail.height;
 
-        Rect2d textureBounds = Rect2d(originalXRel, originalYRel, magnifier.width, magnifier
+        Rect2f textureBounds = Rect2f(originalXRel, originalYRel, magnifier.width, magnifier
                 .height);
 
         magnifier.setRendererTarget;
@@ -36,7 +36,7 @@ class TextureMagnifier : BaseMagnifier
             magnifier.restoreRendererTarget;
         }
 
-        auto destBounds = Rect2d(0, 0, magnifier.width, magnifier.height);
+        auto destBounds = Rect2f(0, 0, magnifier.width, magnifier.height);
         _original.drawTexture(textureBounds, destBounds);
     }
 

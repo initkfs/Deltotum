@@ -3,7 +3,7 @@ module api.dm.gui.controls.selects.tables.circulars.base_circular_table;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
@@ -240,12 +240,12 @@ abstract class BaseCircularTable(T, TCol:
         }
     }
 
-    Rect2d rowRelativeViewport()
+    Rect2f rowRelativeViewport()
     {
         auto needRows = needViewportRows;
         auto itemRows = (needRows >= rowItems) ? needRows - rowItems : rowItems - needRows;
         auto fullHeight = itemRows * maxRowHeight;
-        return Rect2d(0, 0, width, fullHeight);
+        return Rect2f(0, 0, width, fullHeight);
     }
 
     size_t needViewportRows()

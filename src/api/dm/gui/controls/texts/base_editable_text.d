@@ -8,8 +8,8 @@ import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 
 import std.stdio : writeln, writefln;
 import Math = api.math;
@@ -23,7 +23,7 @@ enum CursorState
 struct CursorPos
 {
     CursorState state;
-    Vec2d pos;
+    Vec2f pos;
     size_t glyphIndexAbs;
     size_t rowIndexAbs;
     size_t rowIndexInViewport;
@@ -361,7 +361,7 @@ class BaseEditableText : BaseMonoText
                             {
                                 auto glyph = allGlyphs[cursorPos.glyphIndexAbs];
 
-                                auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2d(
+                                auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2f(
                                     glyph.pos.x + glyph.geometry.width, glyph.pos.y) : glyph.pos;
                                 cursorPos.pos = startGlyphPos.add(newPos);
                                 updateCursor;
@@ -608,7 +608,7 @@ class BaseEditableText : BaseMonoText
             shapeWidth = (endGlyph.pos.x + endGlyph.geometry.width) - allGlyphs[startCursorPos
                     .glyphIndexAbs].pos.x;
 
-            graphic.fillRect(Rect2d(startX, startY, shapeWidth, rowHeight));
+            graphic.fillRect(Rect2f(startX, startY, shapeWidth, rowHeight));
             return;
         }
 
@@ -632,7 +632,7 @@ class BaseEditableText : BaseMonoText
                         shapeWidth = lastGlyph.pos.x + lastGlyph.geometry.width - firstGlyph.pos.x;
                     }
 
-                    graphic.fillRect(Rect2d(startGlyphX + firstGlyph.pos.x, startGlyphY + firstGlyph.pos.y, shapeWidth, rowHeight));
+                    graphic.fillRect(Rect2f(startGlyphX + firstGlyph.pos.x, startGlyphY + firstGlyph.pos.y, shapeWidth, rowHeight));
                 }
 
                 currRow++;
@@ -643,13 +643,13 @@ class BaseEditableText : BaseMonoText
         auto fullStartFirst = allGlyphs[startCursorPos.glyphIndexAbs];
         auto fullStartEnd = fullStartRow[$ - 1];
         shapeWidth = fullStartEnd.pos.x + fullStartEnd.geometry.width - fullStartFirst.pos.x;
-        graphic.fillRect(Rect2d(startGlyphX + fullStartFirst.pos.x, startGlyphY + fullStartFirst.pos.y, shapeWidth, rowHeight));
+        graphic.fillRect(Rect2f(startGlyphX + fullStartFirst.pos.x, startGlyphY + fullStartFirst.pos.y, shapeWidth, rowHeight));
 
         auto fullEndRow = row(endRow);
         auto fullEndFirst = fullEndRow[0];
         auto fullEndEnd = allGlyphs[endCursorPos.glyphIndexAbs];
         shapeWidth = fullEndEnd.pos.x + fullStartEnd.geometry.width - fullEndFirst.pos.x;
-        graphic.fillRect(Rect2d(startGlyphX + fullEndFirst.pos.x, startGlyphY + fullEndFirst.pos.y, shapeWidth, rowHeight));
+        graphic.fillRect(Rect2f(startGlyphX + fullEndFirst.pos.x, startGlyphY + fullEndFirst.pos.y, shapeWidth, rowHeight));
 
     }
 
@@ -710,7 +710,7 @@ class BaseEditableText : BaseMonoText
             return result;
         }
 
-        Vec2d breakIdx = viewportRowIndex;
+        Vec2f breakIdx = viewportRowIndex;
         size_t rowStartIndex = cast(size_t) breakIdx.x;
         size_t rowEndIndex = cast(size_t) breakIdx.y;
 
@@ -781,7 +781,7 @@ class BaseEditableText : BaseMonoText
                 const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
                 if (x < glyphMiddleX)
                 {
-                    result = CursorPos(CursorState.forNextGlyph, Vec2d(startX, rowY), prevBreakLine, rowIndexAbs, ri, true);
+                    result = CursorPos(CursorState.forNextGlyph, Vec2f(startX, rowY), prevBreakLine, rowIndexAbs, ri, true);
                     return true;
                 }
             }
@@ -791,7 +791,7 @@ class BaseEditableText : BaseMonoText
                 const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
                 if (x > glyphMiddleX)
                 {
-                    result = CursorPos(CursorState.forPrevGlyph, Vec2d(startX + glyph.pos.x + glyph.geometry.width, rowY), prevBreakLine + gi, rowIndexAbs, ri, true);
+                    result = CursorPos(CursorState.forPrevGlyph, Vec2f(startX + glyph.pos.x + glyph.geometry.width, rowY), prevBreakLine + gi, rowIndexAbs, ri, true);
                     return true;
                 }
             }
@@ -802,17 +802,17 @@ class BaseEditableText : BaseMonoText
                 size_t glyphIndex = gi;
 
                 const glyphMiddleX = glyphEndX - glyph.geometry.width / 2;
-                Vec2d pos;
+                Vec2f pos;
                 if (x <= glyphMiddleX)
                 {
                     glyphIndex = (glyphIndex > 0) ? (glyphIndex - 1) : 0;
                     auto prevGlyph = needRow[glyphIndex];
-                    pos = Vec2d(startX + prevGlyph.pos.x + prevGlyph.geometry.width, rowY);
+                    pos = Vec2f(startX + prevGlyph.pos.x + prevGlyph.geometry.width, rowY);
                 }
                 else
                 {
                     auto currGlyph = needRow[glyphIndex];
-                    pos = Vec2d(glyphEndX, rowY);
+                    pos = Vec2f(glyphEndX, rowY);
                 }
 
                 auto absGlyphIndex = prevBreakLine + glyphIndex;
@@ -916,7 +916,7 @@ class BaseEditableText : BaseMonoText
         }
 
         auto glyph = allGlyphs[cursorPos.glyphIndexAbs];
-        auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2d(
+        auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2f(
             glyph.pos.x + glyph.geometry.width, glyph.pos.y) : glyph.pos;
         cursorPos.pos = startGlyphPos.add(newPos);
         updateCursor;

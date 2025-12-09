@@ -1,14 +1,14 @@
 module api.dm.addon.math.curves.superellipse;
 
 import api.dm.addon.math.curves.plane_curves : onPointStep;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.dm.math;
 
 /**
  * Authors: initkfs
  */
-void superformula(scope bool delegate(Vec2d) onPointIsContinue, float a, float b, float m, float n1, float n2, float n3, float scale = 1.0, float step = 0.01)
+void superformula(scope bool delegate(Vec2f) onPointIsContinue, float a, float b, float m, float n1, float n2, float n3, float scale = 1.0, float step = 0.01)
 {
     assert(onPointIsContinue);
 
@@ -17,11 +17,11 @@ void superformula(scope bool delegate(Vec2d) onPointIsContinue, float a, float b
         auto y = Math.pow(Math.abs(Math.sin(m * angle / 4) / b), n3);
         auto r = Math.pow(x + y, -1 / n1);
 
-        return onPointIsContinue(Vec2d.fromPolarRad(angle, r * scale));
+        return onPointIsContinue(Vec2f.fromPolarRad(angle, r * scale));
     });
 }
 
-void superellipse(scope bool delegate(Vec2d) onPointIsContinue, float a, float b, float n, float scale = 1.0, float step = 0.1)
+void superellipse(scope bool delegate(Vec2f) onPointIsContinue, float a, float b, float n, float scale = 1.0, float step = 0.1)
 {
     assert(onPointIsContinue);
 
@@ -31,11 +31,11 @@ void superellipse(scope bool delegate(Vec2d) onPointIsContinue, float a, float b
         auto x = a * (Math.abs(cosAngle) ^^ (2 / n)) * scale * Math.sign(cosAngle);
         auto y = b * (Math.abs(sinAngle) ^^ (2 / n)) * scale * Math.sign(sinAngle);
 
-        return onPointIsContinue(Vec2d(x, y));
+        return onPointIsContinue(Vec2f(x, y));
     });
 }
 
-void squircle(scope bool delegate(Vec2d) onPointIsContinue, float scale = 1.0, float step = 0.1)
+void squircle(scope bool delegate(Vec2f) onPointIsContinue, float scale = 1.0, float step = 0.1)
 {
     superellipse(onPointIsContinue, 1, 1, 4, scale, step);
 }

@@ -1,18 +1,18 @@
 module api.math.geom2.line2;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-struct Line2d
+struct Line2f
 {
-    Vec2d start;
-    Vec2d end;
+    Vec2f start;
+    Vec2f end;
 
-    this(Vec2d newStart, Vec2d newEnd) pure  @safe
+    this(Vec2f newStart, Vec2f newEnd) pure  @safe
     {
         this.start = newStart;
         this.end = newEnd;
@@ -20,15 +20,15 @@ struct Line2d
 
     this(float x0, float y0, float x1, float y1) pure  @safe
     {
-        start = Vec2d(x0, y0);
-        end = Vec2d(x1, y1);
+        start = Vec2f(x0, y0);
+        end = Vec2f(x1, y1);
     }
 
-    Vec2d midpoint()
+    Vec2f midpoint()
     {
         const midx = (start.x + end.x) / 2;
         const midy = (start.y + end.y) / 2;
-        return Vec2d(midx, midy);
+        return Vec2f(midx, midy);
     }
 
     float angle()
@@ -40,7 +40,7 @@ struct Line2d
     }
 
     //https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-    float distanceToSquared(Vec2d point)
+    float distanceToSquared(Vec2f point)
     {
         if (point == start || point == end)
         {
@@ -94,14 +94,14 @@ struct Line2d
 
     float length() => Math.sqrt(lengthSquared);
 
-    float distanceTo(Vec2d point) => Math.sqrt(distanceToSquared(point));
+    float distanceTo(Vec2f point) => Math.sqrt(distanceToSquared(point));
 
     unittest
     {
         import std.math.operations : isClose;
 
-        Line2d line1 = Line2d(10, 15, 45, 60);
-        Vec2d p1 = Vec2d(17, 23);
+        Line2f line1 = Line2f(10, 15, 45, 60);
+        Vec2f p1 = Vec2f(17, 23);
         assert(isClose(line1.distanceTo(p1), 0.61394061351));
     }
 
@@ -160,7 +160,7 @@ struct Line2d
         return (start.y + ((x1 - start.x) * dy / dx));
     }
 
-    bool onOneLine(Vec2d a, Vec2d b, Vec2d c)
+    bool onOneLine(Vec2f a, Vec2f b, Vec2f c)
     {
         import Math = api.math;
 
@@ -175,7 +175,7 @@ struct Line2d
         return false;
     }
 
-    bool intersect(Line2d other)
+    bool intersect(Line2f other)
     {
         import Points = api.math.geom2.points2;
 
@@ -200,7 +200,7 @@ struct Line2d
     }
 
     //http://thirdpartyninjas.com/blog/2008/10/07/line-segment-intersection/
-    bool intersect2(Line2d other)
+    bool intersect2(Line2f other)
     {
         const denom = (other.end.y - other.start.y) * (end.x - start.x) - (
             other.end.x - other.start.x) * (end.y - start.y);
@@ -238,7 +238,7 @@ struct Line2d
      * Port from https://www.habrador.com/tutorials/math/9-useful-algorithms/
      * under MIT license https://github.com/Habrador/Computational-geometry/blob/master/LICENSE
      */
-    Vec2d intersectWith(Line2d other)
+    Vec2f intersectWith(Line2f other)
     {
         const denom = (other.end.y - other.start.y) * (end.x - start.x) - (
             other.end.x - other.start.x) * (end.y - start.y);
@@ -246,7 +246,7 @@ struct Line2d
         const ua = ((other.end.x - other.start.x) * (start.y - other.start.y) - (
                 other.end.y - other.start.y) * (start.x - other.start.x)) / denom;
 
-        Vec2d intersect = start.add(end.sub(start).scale(ua));
+        Vec2f intersect = start.add(end.sub(start).scale(ua));
 
         return intersect;
     }

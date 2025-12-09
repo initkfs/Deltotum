@@ -8,7 +8,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 class TreeRowLevelGraphics : Control
 {
@@ -61,8 +61,8 @@ class TreeRowLevelGraphics : Control
         {
             if (!isLastLevelRow)
             {
-                graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
-                graphic.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
+                graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.bottom));
+                graphic.line(Vec2f(nextX, b.middleY), Vec2f(nextX + graphicsGap, b.middleY));
             }
         }
         else
@@ -75,8 +75,8 @@ class TreeRowLevelGraphics : Control
                 {
                     if (!isLastLevelRow)
                     {
-                        graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
-                        graphic.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
+                        graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.bottom));
+                        graphic.line(Vec2f(nextX, b.middleY), Vec2f(nextX + graphicsGap, b.middleY));
                     }
                     else
                     {
@@ -87,19 +87,19 @@ class TreeRowLevelGraphics : Control
                 {
                     if (!isLastLevelRow)
                     {
-                        graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                        graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.bottom));
                     }
                     else
                     {
                         // if (level > 0 && !isLastRow)
                         // {
-                        //     graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                        //     graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.bottom));
                         // }
                         // else
                         // {
-                            graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
+                            graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.middleY));
                         //}
-                        graphic.line(Vec2d(nextX, b.middleY), Vec2d(b.right, b
+                        graphic.line(Vec2f(nextX, b.middleY), Vec2f(b.right, b
                                 .middleY));
                     }
                 }
@@ -112,13 +112,13 @@ class TreeRowLevelGraphics : Control
         {
             // if (level > 0 && !isLastRow)
             // {
-            //     graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+            //     graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.bottom));
             // }
             // else
             // {
-                graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
+                graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.middleY));
             //}
-            graphic.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b
+            graphic.line(Vec2f(nextX, b.middleY), Vec2f(nextX + graphicsGap, b
                     .middleY));
             return;
         }

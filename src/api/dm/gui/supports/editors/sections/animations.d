@@ -5,7 +5,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.dm.math;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
@@ -68,8 +68,8 @@ class Animations : Control
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         auto rect = new Rectangle(50, 50, GraphicStyle(1.0, RGBA.lightcoral, true, RGBA.lightcoral));
-        const startPos = Vec2d(200, 200);
-        const endPos = Vec2d(450, 200);
+        const startPos = Vec2f(200, 200);
+        const endPos = Vec2f(450, 200);
         rect.x = startPos.x;
         rect.y = startPos.y;
         //TODO fix autoresize

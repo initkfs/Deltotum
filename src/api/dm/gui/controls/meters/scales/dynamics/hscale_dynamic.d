@@ -1,8 +1,8 @@
 module api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic;
 
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.line2 : Line2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.line2 : Line2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.texts.text : Text;
 
@@ -49,7 +49,7 @@ class HScaleDynamic : BaseScaleDynamic
 
     override float tickOffset() => width / (tickCount - 1);
 
-    override Vec2d tickStep(size_t i, Vec2d pos, float tickOffset)
+    override Vec2f tickStep(size_t i, Vec2f pos, float tickOffset)
     {
         if (isInvertX)
         {
@@ -62,7 +62,7 @@ class HScaleDynamic : BaseScaleDynamic
         return pos;
     }
 
-    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick)
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick)
     {
         if (!isMajorTick || labelIndex >= labels.length)
         {
@@ -105,27 +105,27 @@ class HScaleDynamic : BaseScaleDynamic
         return true;
     }
 
-    override Vec2d tickXY(Vec2d pos, float tickWidth, float tickHeight, bool isMajorTick)
+    override Vec2f tickXY(Vec2f pos, float tickWidth, float tickHeight, bool isMajorTick)
     {
         auto tickX = pos.x - tickWidth / 2;
         auto tickY = isMajorTick ? pos.y : pos.y + tickHeight / 2;
-        return Vec2d(tickX, tickY);
+        return Vec2f(tickX, tickY);
     }
 
-    override Line2d axisPos()
+    override Line2f axisPos()
     {
         const halfTickMaxH = tickMaxHeight / 2;
         const startPosY = !isInvertY ? y + halfTickMaxH : boundsRect.bottom - halfTickMaxH;
-        auto start = Vec2d(x, startPosY);
-        const end = Vec2d(boundsRect.right, startPosY);
-        return Line2d(start, end);
+        auto start = Vec2f(x, startPosY);
+        const end = Vec2f(boundsRect.right, startPosY);
+        return Line2f(start, end);
     }
 
-    override Vec2d tickStartPos()
+    override Vec2f tickStartPos()
     {
         float startX = !isInvertX ? x : boundsRect.right;
         float startY = !isInvertY ? y : boundsRect.bottom - tickMajorHeight;
 
-        return Vec2d(startX, startY);
+        return Vec2f(startX, startY);
     }
 }

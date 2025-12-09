@@ -39,12 +39,12 @@ class TextView : BaseEditableText
 
 unittest
 {
-    import api.math.geom2.rect2 : Rect2d;
-    import api.math.geom2.vec2 : Vec2d;
+    import api.math.geom2.rect2 : Rect2f;
+    import api.math.geom2.vec2 : Vec2f;
 
     auto textView = new TextView("Hello world\nThis is a very short text for the experiment");
     textView.buffer.itemProvider = (ch) {
-        return Glyph(ch, Rect2d(0, 0, 10, 10), Vec2d(0, 0), null, false, ch == '\n');
+        return Glyph(ch, Rect2f(0, 0, 10, 10), Vec2f(0, 0), null, false, ch == '\n');
     };
     textView.width = 123;
     textView.maxWidth = textView.width;
@@ -59,8 +59,8 @@ unittest
     assert(textView.textLayout.lineBreaks == [11u, 21, 32, 45, 55]);
 
     assert(textView.rowsInViewport == 4);
-    assert(textView.viewportRowIndex == Vec2d(0, 3));
-    assert(textView.viewportRowIndex(1) == Vec2d(4, 4));
+    assert(textView.viewportRowIndex == Vec2f(0, 3));
+    assert(textView.viewportRowIndex(1) == Vec2f(4, 4));
 
     size_t firstRowIndex;
     Glyph[] rows = textView.viewportRows(firstRowIndex);

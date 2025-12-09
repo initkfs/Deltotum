@@ -298,13 +298,13 @@ class BaseTable(T, TCol:
 
             //rowContainer.isBorder = true;
 
-            import api.math.geom2.rect2 : Rect2d;
+            import api.math.geom2.rect2 : Rect2f;
 
             if (isClipping)
             {
-                import api.math.geom2.rect2 : Rect2d;
+                import api.math.geom2.rect2 : Rect2f;
 
-                auto clip = Rect2d(0, 0, width, height);
+                auto clip = Rect2f(0, 0, width, height);
                 rowContainer.clip = clip;
                 rowContainer.isMoveClip = true;
                 rowContainer.isResizeClip = true;

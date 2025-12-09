@@ -3,7 +3,7 @@ module api.dm.kit.graphics.colors.processings.blends;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.numericals.interp : blerp;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import Math = api.math;
 

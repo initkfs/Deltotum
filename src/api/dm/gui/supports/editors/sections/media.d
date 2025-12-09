@@ -39,7 +39,7 @@ import api.dm.addon.media.audio.gui.piano : Piano;
 import api.dm.addon.media.audio.synthesizers.fm_synthesizer : FMSynthesizer;
 
 import Math = api.math;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 /**
  * Authors: initkfs

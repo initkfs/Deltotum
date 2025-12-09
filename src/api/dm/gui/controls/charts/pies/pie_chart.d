@@ -4,7 +4,7 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
 //TODO mutable texture
@@ -22,7 +22,7 @@ class PieTexture : VectorTexture
     float totalValue = 0;
     PieData[] values;
 
-    void delegate(size_t, RGBA color, float, Vec2d) onColorRadiusAnglesDeg;
+    void delegate(size_t, RGBA color, float, Vec2f) onColorRadiusAnglesDeg;
 
     this(float width, float height)
     {
@@ -43,9 +43,9 @@ class PieTexture : VectorTexture
         float startAngleDeg = 0;
         float fullAngleDeg = 360;
 
-        import api.math.geom2.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2f;
 
-        auto centerPos = Vec2d(width / 2, height / 2);
+        auto centerPos = Vec2f(width / 2, height / 2);
         auto radius = width / 2;
 
         canvas.translate(centerPos.x, centerPos.y);
@@ -70,7 +70,7 @@ class PieTexture : VectorTexture
 
             if (onColorRadiusAnglesDeg)
             {
-                onColorRadiusAnglesDeg(i, color, radius, Vec2d(startAngleDeg, endAngleDeg));
+                onColorRadiusAnglesDeg(i, color, radius, Vec2f(startAngleDeg, endAngleDeg));
             }
 
             import Math = api.math;
@@ -234,7 +234,7 @@ class PieChart : Container
             auto middleAngleDeg = label.startAngleDeg + (
                 (label.endAngleDeg - label.startAngleDeg) / 2);
 
-            auto outerPos = Vec2d.fromPolarDeg(middleAngleDeg, radius);
+            auto outerPos = Vec2f.fromPolarDeg(middleAngleDeg, radius);
             auto outerCenterPos = boundsRect.center.add(outerPos);
 
             float labelX = outerCenterPos.x;
@@ -261,7 +261,7 @@ class PieChart : Container
 
             label.isVisible = true;
 
-            auto pointerStartPos = Vec2d.fromPolarDeg(middleAngleDeg, label.radius).add(
+            auto pointerStartPos = Vec2f.fromPolarDeg(middleAngleDeg, label.radius).add(
                 boundsRect.center);
             auto pointerEndPos = label.colorLabel.boundsRect.center;
 

@@ -6,7 +6,7 @@ import api.sims.ele.components.elements.base_two_pin_element: BaseTwoPinElement;
 import api.math.pos2.orientation : Orientation;
 import api.math.graphs.edge : Edge;
 
-import api.math.geom2.vec2: Vec2d;
+import api.math.geom2.vec2: Vec2f;
 
 import api.sims.ele.components.elements.passives.voltage_source: VoltageSource;
 import api.sims.ele.components.elements.passives.resistor: Resistor;
@@ -28,7 +28,7 @@ abstract class ConnectorTwoPin : BaseComponent
     Connection fromPin;
     Connection toPin;
 
-    Vec2d[1] points;
+    Vec2f[1] points;
 
     double spacing = 5;
 
@@ -37,8 +37,8 @@ abstract class ConnectorTwoPin : BaseComponent
     double horizontalThreshold = 2.0; // dx/dy > 2 == horizontal
     double verticalThreshold = 0.5; // dx/dy < 0.5 == vertical
 
-    Vec2d startLine;
-    Vec2d endLine;
+    Vec2f startLine;
+    Vec2f endLine;
 
     this(Connection fromPin, Connection toPin, BaseTwoPinElement src, BaseTwoPinElement dst)
     {
@@ -54,13 +54,13 @@ abstract class ConnectorTwoPin : BaseComponent
         edge = new Edge(src.vertex, dst.vertex);
     }
 
-    Vec2d direction() => toPin.pos - fromPin.pos;
-    Vec2d directionAbs()
+    Vec2f direction() => toPin.pos - fromPin.pos;
+    Vec2f directionAbs()
     {
         const dir = direction;
         double dx = Math.abs(dir.x);
         double dy = Math.abs(dir.y);
-        return Vec2d(dx, dy);
+        return Vec2f(dx, dy);
     }
 
     double directionRatio()
@@ -247,7 +247,7 @@ abstract class ConnectorTwoPin : BaseComponent
 
         //RGBA color = (I > 0) ? RGBA.red : RGBA.blue;
 
-        Vec2d direction;
+        Vec2f direction;
         double currentFlow = 0;
 
         //fromPin > toPin
@@ -276,7 +276,7 @@ abstract class ConnectorTwoPin : BaseComponent
         }
         else
         {
-            direction = Vec2d.zero;
+            direction = Vec2f.zero;
             current = 0;
         }
 
@@ -286,14 +286,14 @@ abstract class ConnectorTwoPin : BaseComponent
 
         double moveDist = speed * dt;
 
-        Vec2d start = fromPin.pos;
+        Vec2f start = fromPin.pos;
 
         foreach (ref point; points)
         {
             if ((start.add(point) - fromPin.pos)
                 .dot(direction) > (toPin.pos - fromPin.pos).length)
             {
-                point = Vec2d(0, 0);
+                point = Vec2f(0, 0);
                 continue;
             }
             //auto dp = (I * dt * scale) / (length * 1e-9); // q = 1e-9

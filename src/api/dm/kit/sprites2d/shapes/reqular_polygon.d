@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.shapes.reqular_polygon;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.regular_polygon2 : RegularPolygon2d;
+import api.math.geom2.regular_polygon2 : RegularPolygon2f;
 
 import Math = api.dm.math;
 
@@ -16,7 +16,7 @@ class RegularPolygon : Shape2d
     protected
     {
         size_t sideCount;
-        RegularPolygon2d polyDrawer;
+        RegularPolygon2f polyDrawer;
     }
 
     this(float size, GraphicStyle style, size_t sideCount = 6)
@@ -30,7 +30,7 @@ class RegularPolygon : Shape2d
         super.create;
 
         float radius = width / 2;
-        polyDrawer = RegularPolygon2d(sideCount, radius);
+        polyDrawer = RegularPolygon2f(sideCount, radius);
     }
 
     override void drawContent()

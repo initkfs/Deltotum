@@ -1,32 +1,32 @@
 module api.math.geom2.triangle2;
 
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.line2 : Line2d;
-import api.math.geom2.circle2 : Circle2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.line2 : Line2f;
+import api.math.geom2.circle2 : Circle2f;
 
 import Math = api.dm.math;
 
 /**
  * Authors: initkfs
  */
-struct Triangle2d
+struct Triangle2f
 {
-    Vec2d a;
-    Vec2d b;
-    Vec2d c;
+    Vec2f a;
+    Vec2f b;
+    Vec2f c;
 
-    bool contains(Vec2d p) const pure @safe
+    bool contains(Vec2f p) const pure @safe
     {
-        immutable Vec2d barCoords = toBarycentric(p);
+        immutable Vec2f barCoords = toBarycentric(p);
         bool isInside = (barCoords.x >= 0) && (barCoords.y >= 0) && ((barCoords.x + barCoords.y) <= 1);
         return isInside;
     }
 
-    Vec2d toBarycentric(Vec2d p) const pure @safe
+    Vec2f toBarycentric(Vec2f p) const pure @safe
     {
-        immutable Vec2d v0 = b - a;
-        immutable Vec2d v1 = c - a;
-        immutable Vec2d v2 = p - a;
+        immutable Vec2f v0 = b - a;
+        immutable Vec2f v1 = c - a;
+        immutable Vec2f v2 = p - a;
 
         immutable float d00 = v0.dot(v0);
         immutable float d01 = v0.dot(v1);
@@ -37,11 +37,11 @@ struct Triangle2d
         immutable float denom = d00 * d11 - d01 * d01;
         immutable x = (d11 * d20 - d01 * d21) / denom;
         immutable y = (d00 * d21 - d01 * d20) / denom;
-        return Vec2d(x, y);
+        return Vec2f(x, y);
     }
 
     //https://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
-    bool contains2(Vec2d p) const pure @safe
+    bool contains2(Vec2f p) const pure @safe
     {
         float denom = ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y));
 
@@ -57,7 +57,7 @@ struct Triangle2d
         return false;
     }
 
-    bool hasVertex(Vec2d vertex) const pure @safe
+    bool hasVertex(Vec2f vertex) const pure @safe
     {
         if (a == vertex || b == vertex || c == vertex)
         {
@@ -67,9 +67,9 @@ struct Triangle2d
         return false;
     }
 
-    size_t commonVertices(Triangle2d other)
+    size_t commonVertices(Triangle2f other)
     {
-        const Vec2d[3] verts = [other.a, other.b, other.c];
+        const Vec2f[3] verts = [other.a, other.b, other.c];
         size_t commonVerts;
         foreach (otherV; verts)
         {
@@ -81,10 +81,10 @@ struct Triangle2d
         return commonVerts;
     }
 
-    bool isNeighbor(Triangle2d other) => commonVertices(other) == 2;
-    bool isAdjacent(Triangle2d other) => commonVertices(other) != 0;
+    bool isNeighbor(Triangle2f other) => commonVertices(other) == 2;
+    bool isAdjacent(Triangle2f other) => commonVertices(other) != 0;
 
-    Vec2d circumcircleCenter()
+    Vec2f circumcircleCenter()
     {
         //https://en.wikipedia.org/wiki/Circumcircle#Circumcenter_coordinates
         const ax = a.x;
@@ -104,14 +104,14 @@ struct Triangle2d
                 bx * bx + by * by) * (
                 ax - cx) + (cx * cx + cy * cy) * (bx - ax));
 
-        return Vec2d(centerX, centerY);
+        return Vec2f(centerX, centerY);
     }
 
-    Circle2d circumcircle()
+    Circle2f circumcircle()
     {
         const center = circumcircleCenter;
         const radius = a.sub(center).length;
-        return Circle2d(center, radius);
+        return Circle2f(center, radius);
     }
 
     string toString() const
@@ -124,17 +124,17 @@ struct Triangle2d
 
 unittest
 {
-    auto trig1 = Triangle2d(Vec2d(10, 10), Vec2d(20, 10), Vec2d(15, 20));
-    assert(trig1.contains(Vec2d(10, 10)));
-    assert(trig1.contains(Vec2d(20, 10)));
-    assert(trig1.contains(Vec2d(15, 20)));
+    auto trig1 = Triangle2f(Vec2f(10, 10), Vec2f(20, 10), Vec2f(15, 20));
+    assert(trig1.contains(Vec2f(10, 10)));
+    assert(trig1.contains(Vec2f(20, 10)));
+    assert(trig1.contains(Vec2f(15, 20)));
 
-    assert(!trig1.contains(Vec2d(9, 10)));
-    assert(!trig1.contains(Vec2d(21, 10)));
-    assert(!trig1.contains(Vec2d(16, 20)));
+    assert(!trig1.contains(Vec2f(9, 10)));
+    assert(!trig1.contains(Vec2f(21, 10)));
+    assert(!trig1.contains(Vec2f(16, 20)));
 
-    assert(!trig1.contains(Vec2d(10, 9)));
-    assert(!trig1.contains(Vec2d(20, 9)));
-    assert(!trig1.contains(Vec2d(15, 21)));
+    assert(!trig1.contains(Vec2f(10, 9)));
+    assert(!trig1.contains(Vec2f(20, 9)));
+    assert(!trig1.contains(Vec2f(15, 21)));
 
 }

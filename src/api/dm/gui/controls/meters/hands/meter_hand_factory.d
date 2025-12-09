@@ -11,7 +11,7 @@ import Math = api.math;
 private
 {
     import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
-    import api.math.geom2.vec2 : Vec2d;
+    import api.math.geom2.vec2 : Vec2f;
 
     class VHand : VShape
     {
@@ -20,7 +20,7 @@ private
         float coneHeight = 0;
         float coneWidth = 0;
 
-        Vec2d startPoint;
+        Vec2f startPoint;
 
         this(float textureWidth, float textureHeight, float handWidth, float handHeight, float coneWidth = 0, float coneHeight = 0, GraphicStyle style)
         {
@@ -32,7 +32,7 @@ private
             this.handWidth = handWidth;
             this.handHeight = handHeight;
 
-            startPoint = Vec2d(width / 2, height / 2);
+            startPoint = Vec2f(width / 2, height / 2);
             this.coneWidth = coneWidth;
             this.coneHeight = coneHeight;
         }
@@ -113,9 +113,9 @@ class MeterHandFactory : Control
         //draw from center
         height *= 2;
 
-        import api.math.geom2.rect2 : Rect2d;
+        import api.math.geom2.rect2 : Rect2f;
 
-        auto handBox = Rect2d(0, 0, width, height).boundingBoxMax;
+        auto handBox = Rect2f(0, 0, width, height).boundingBoxMax;
 
         auto newWidth = Math.roundEven(handBox.width);
         auto newHeight = Math.roundEven(handBox.height);

@@ -12,8 +12,8 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.vec2 : Vec2f;
 
 import std.string : toStringz;
 import std.uni : byGrapheme;
@@ -63,7 +63,7 @@ class BitmapFontFactory : GraphicComponent
             throw new Exception(err.toString);
         }
 
-        Rect2d glyphPosition;
+        Rect2f glyphPosition;
         Glyph[] glyphs;
 
         if (const err = font.setHinting(ComFontHinting.normal))
@@ -121,7 +121,7 @@ class BitmapFontFactory : GraphicComponent
                         isNewline = letter.among('\n', '\r',) != 0;
                     }
 
-                    auto glyph = Glyph(letter, glyphPosition, Vec2d.init, alphabet, isEmpty, isNewline);
+                    auto glyph = Glyph(letter, glyphPosition, Vec2f.init, alphabet, isEmpty, isNewline);
 
                     //TODO config?
                     if (glyph.grapheme == '𑑛')

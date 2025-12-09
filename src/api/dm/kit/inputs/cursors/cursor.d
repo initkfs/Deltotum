@@ -2,7 +2,7 @@ module api.dm.kit.inputs.cursors.cursor;
 
 import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 //TODO move cursor and mouse
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -103,7 +103,7 @@ abstract class Cursor
         return _locked;
     }
 
-    bool getPos(out Vec2d pos)
+    bool getPos(out Vec2f pos)
     {
         auto cursor = lastCursor;
         if (!cursor)
@@ -116,7 +116,7 @@ abstract class Cursor
         {
             return false;
         }
-        pos = Vec2d(x, y);
+        pos = Vec2f(x, y);
         return true;
     }
 

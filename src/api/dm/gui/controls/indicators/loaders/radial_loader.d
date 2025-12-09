@@ -5,7 +5,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.math;
 
@@ -111,8 +111,8 @@ class RadialLoader : BaseLoader
 
         foreach (Sprite2d s; segments)
         {
-            auto pos = Vec2d.fromPolarDeg(currAngle, newSegmentCenter)
-                .add(center).sub(Vec2d(s.halfWidth, s.halfHeight));
+            auto pos = Vec2f.fromPolarDeg(currAngle, newSegmentCenter)
+                .add(center).sub(Vec2f(s.halfWidth, s.halfHeight));
             s.pos = pos;
             currAngle = (currAngle + angleDiff) % fullAngleDeg;
 

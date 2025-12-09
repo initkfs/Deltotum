@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.radial_min_max_value_meter;
 
 import api.dm.gui.controls.meters.min_max_meter : MinMaxMeter;
 import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
-import api.math.geom2.rect2: Rect2d;
+import api.math.geom2.rect2: Rect2f;
 
 /**
  * Authors: initkfs
@@ -39,8 +39,8 @@ abstract class RadialMinMaxMeter(ValueType) : MinMaxMeter!ValueType
         return handStyle;
     }
 
-    Rect2d handBoundingBox(float handSize){
-        return (Rect2d(0, 0, handSize, handSize)).boundingBoxMax;
+    Rect2f handBoundingBox(float handSize){
+        return (Rect2f(0, 0, handSize, handSize)).boundingBoxMax;
     }
 
     ValueType angleRange()

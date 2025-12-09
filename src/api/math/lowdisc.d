@@ -1,7 +1,7 @@
 module api.math.lowdisc;
 
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom3.vec3: Vec3d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom3.vec3: Vec3f;
 
 
 import Math = api.math;
@@ -30,18 +30,18 @@ protected
 
 protected float seqValue(float v, size_t nn, float seed = 0.5) => (seed + v * nn) % 1;
 
-Vec2d lds2d(size_t n, float seed = 0.5)
+Vec2f lds2f(size_t n, float seed = 0.5)
 {
     const x = seqValue(a1, n, seed);
     const y = seqValue(a2, n, seed);
-    return Vec2d(x, y);
+    return Vec2f(x, y);
 }
 
-Vec3d lds3d(size_t n, float seed = 0.5)
+Vec3f lds3f(size_t n, float seed = 0.5)
 {
     enum ratio = 1.22074408460575947536;
-    const x = seqValue(1.0 / ratio, n, seed);
-    const y = seqValue(1.0 / (ratio * ratio), n, seed);
-    const z = seqValue(1.0 / (ratio * ratio * ratio), n, seed);
-    return Vec3d(x, y, z);
+    float x = seqValue(1.0 / ratio, n, seed);
+    float y = seqValue(1.0 / (ratio * ratio), n, seed);
+    float z = seqValue(1.0 / (ratio * ratio * ratio), n, seed);
+    return Vec3f(x, y, z);
 }

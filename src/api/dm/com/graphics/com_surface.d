@@ -6,7 +6,7 @@ import api.dm.com.com_error_manageable: ComErrorManageable;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import std.typecons : Tuple;
 
@@ -45,8 +45,8 @@ nothrow:
     ComResult rotateTo(float angleDeg, ComSurface target);
 
     ComResult copyTo(ComSurface dst);
-    ComResult copyTo(ComSurface dst, Rect2d dstRect);
-    ComResult copyTo(Rect2d srcRect, ComSurface dst, Rect2d dstRect);
+    ComResult copyTo(ComSurface dst, Rect2f dstRect);
+    ComResult copyTo(Rect2f srcRect, ComSurface dst, Rect2f dstRect);
 
     ComResult getCopyAlphaMod(out int mod);
     ComResult setCopyAlphaMod(int mod);

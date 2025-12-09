@@ -255,7 +255,7 @@ class DigitalClockFace : Control
     Sprite2d newMinHourSeparator(float w, float h)
     {
         import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-        import api.math.geom2.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2f;
 
         auto sepTexture = new Texture2d(w, h);
         buildInitCreate(sepTexture);
@@ -271,7 +271,7 @@ class DigitalClockFace : Control
 
         auto hOffset = h / 3;
 
-        auto dot1Center = Vec2d(w / 2, 1.5 * hOffset);
+        auto dot1Center = Vec2f(w / 2, 1.5 * hOffset);
         auto dot2Center = dot1Center;
         dot2Center.y += hOffset;
 

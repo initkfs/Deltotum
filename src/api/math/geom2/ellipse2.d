@@ -1,11 +1,11 @@
 module api.math.geom2.ellipse2;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
  */
-struct Ellipse2d
+struct Ellipse2f
 {
     float x = 0;
     float y = 0;
@@ -20,7 +20,7 @@ struct Ellipse2d
         return (dx * dx) / (width * 0.5 * width * 0.5) + (dy * dy) / (height * 0.5 * height * 0.5) <= 1.0;
     }
 
-    bool contains(Vec2d p) const  nothrow pure @safe
+    bool contains(Vec2f p) const  nothrow pure @safe
     {
         return contains(p.x, p.y);
     }

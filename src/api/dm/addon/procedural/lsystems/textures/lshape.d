@@ -5,7 +5,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 import api.dm.kit.graphics.brushes.brush : Brush;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.dm.addon.procedural.lsystems.lsystem_drawer : LSystemDrawer;
 import api.dm.addon.procedural.lsystems.lsystem: LSystemData;
 
@@ -20,7 +20,7 @@ class LShape : VShape
     {
         LSystemDrawer drawer;
         bool _firstPoint;
-        Vec2d firstPoint;
+        Vec2f firstPoint;
     }
 
     LSystemData data;

@@ -2,8 +2,8 @@ module api.dm.addon.math.geom2.triangulations.bourke;
 
 import std.container.slist : SList;
 import Math = api.math;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.triangle2 : Triangle2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.triangle2 : Triangle2f;
 
 import core.stdc.stdlib : malloc, realloc, free;
 
@@ -61,9 +61,9 @@ enum float EPSILON = 0.000001;
          return(0);
    }
 */
-Triangle2d[] triangulate(Vec2d[] points)
+Triangle2f[] triangulate(Vec2f[] points)
 {
-    Triangle2d[] result;
+    Triangle2f[] result;
 
     int* complete = null;
     IEDGE* edges = null;
@@ -318,7 +318,7 @@ Triangle2d[] triangulate(Vec2d[] points)
         auto tx3 = pxyz[v[ti].p3].x;
         auto ty3 = pxyz[v[ti].p3].y;
 
-        result ~= Triangle2d(Vec2d(tx1, ty1), Vec2d(tx2, ty2), Vec2d(tx3, ty3));
+        result ~= Triangle2f(Vec2f(tx1, ty1), Vec2f(tx2, ty2), Vec2f(tx3, ty3));
     }
 
     return result;
@@ -398,43 +398,43 @@ unittest
 
     enum eps = 0.0000001;
 
-    Vec2d[] points = [
-        Vec2d(10, 10),
-        Vec2d(20, 15),
-        Vec2d(15, 15),
-        Vec2d(12, 12),
-        Vec2d(5, 5),
+    Vec2f[] points = [
+        Vec2f(10, 10),
+        Vec2f(20, 15),
+        Vec2f(15, 15),
+        Vec2f(12, 12),
+        Vec2f(5, 5),
     ];
 
 
-    Triangle2d[] resultTrigs = triangulate(points);
+    Triangle2f[] resultTrigs = triangulate(points);
 
-    Triangle2d[] expected = [
-        Triangle2d(
-            Vec2d(x : 12.0000000000, y:
+    Triangle2f[] expected = [
+        Triangle2f(
+            Vec2f(x : 12.0000000000, y:
                 12.0000000000),
-            Vec2d(x
+            Vec2f(x
                 : 15.0000000000, y:
                 15.0000000000),
-            Vec2d(x : 20.0000000000, y:
+            Vec2f(x : 20.0000000000, y:
                 15.0000000000)),
 
-        Triangle2d(
-            Vec2d(x : 10.0000000000, y:
+        Triangle2f(
+            Vec2f(x : 10.0000000000, y:
                 10.0000000000),
-            Vec2d(x
+            Vec2f(x
                 : 12.0000000000, y:
                 12.0000000000),
-            Vec2d(x : 20.0000000000, y:
+            Vec2f(x : 20.0000000000, y:
                 15.0000000000)),
 
-        Triangle2d(
-            Vec2d(x : 5.0000000000, y:
+        Triangle2f(
+            Vec2f(x : 5.0000000000, y:
                 5.0000000000),
-            Vec2d(x
+            Vec2f(x
                 : 10.0000000000, y:
                 10.0000000000),
-            Vec2d(x : 20.0000000000, y:
+            Vec2f(x : 20.0000000000, y:
                 15.0000000000))
     ];
     

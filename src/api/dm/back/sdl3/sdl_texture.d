@@ -9,7 +9,7 @@ import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import api.math.pos2.flip : Flip;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -526,7 +526,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult lockToSurface(Rect2d src, ComSurface surf) nothrow
+    ComResult lockToSurface(Rect2f src, ComSurface surf) nothrow
     {
         assert(surf);
         SDL_Rect bounds = toSdlRect(src);
@@ -598,7 +598,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult update(Rect2d rect, void* pixels, int pitch) nothrow
+    ComResult update(Rect2f rect, void* pixels, int pitch) nothrow
     {
         assert(ptr);
 
@@ -702,13 +702,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    bool draw(Rect2d srcBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
+    bool draw(Rect2f srcBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         return draw(this, srcBounds, destBounds, angle, flip);
     }
 
-    bool draw(ComTexture other, Rect2d srcBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
+    bool draw(ComTexture other, Rect2f srcBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         SDL_FRect srcRect;
@@ -785,8 +785,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        Rect2d srcRect = {0, 0, width, height};
-        Rect2d destRect = {0, 0, width, height};
+        Rect2f srcRect = {0, 0, width, height};
+        Rect2f destRect = {0, 0, width, height};
 
         if (const err = copyTo(newTexture, srcRect, destRect))
         {
@@ -796,7 +796,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult copyTo(ComTexture toTexture, Rect2d srcRect, Rect2d destRect, float angle = 0, Flip flip = Flip
+    ComResult copyTo(ComTexture toTexture, Rect2f srcRect, Rect2f destRect, float angle = 0, Flip flip = Flip
             .none)
     {
         if (const err = toTexture.setBlendModeBlend)
@@ -822,7 +822,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult copyFrom(ComTexture other, Rect2d srcRect, Rect2d dstRect, float angle = 0, Flip flip = Flip
+    ComResult copyFrom(ComTexture other, Rect2f srcRect, Rect2f dstRect, float angle = 0, Flip flip = Flip
             .none)
     {
         if (const err = setBlendModeBlend)

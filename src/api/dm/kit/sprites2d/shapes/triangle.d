@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.shapes.shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.shapes.circle : Circle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.math.geom2.vec2: Vec2d;
+import api.math.geom2.vec2: Vec2f;
 
 /**
  * Authors: initkfs
@@ -25,7 +25,7 @@ class Triangle : Shape2d
     {
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        Vec2d[3] verts;
+        Vec2f[3] verts;
 
         graphic.color(style.lineColor);
         scope(exit){

@@ -1,48 +1,48 @@
 module api.dm.addon.math.geom2.clipping;
 
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.line2 : Line2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.line2 : Line2f;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
  */
-mixin template ClipUnitTest(bool function(Line2d, Rect2d, out Line2d) clip)
+mixin template ClipUnitTest(bool function(Line2f, Rect2f, out Line2f) clip)
 {
-    import api.math.geom2.rect2 : Rect2d;
-    import api.math.geom2.line2 : Line2d;
-    import api.math.geom2.vec2 : Vec2d;
+    import api.math.geom2.rect2 : Rect2f;
+    import api.math.geom2.line2 : Line2f;
+    import api.math.geom2.vec2 : Vec2f;
 
     enum funcType = clip.stringof;
 
     unittest
     {
-        Line2d clipped;
+        Line2f clipped;
 
-        Rect2d bound1 = {x: 10, y: 10, width: 100, height: 100};
+        Rect2f bound1 = {x: 10, y: 10, width: 100, height: 100};
 
-        auto lineAbove = Line2d(9, 9, 110, 9);
+        auto lineAbove = Line2f(9, 9, 110, 9);
         assert(!clip(lineAbove, bound1, clipped), funcType);
 
-        auto lineTop = Line2d(10, 10, 110, 10);
+        auto lineTop = Line2f(10, 10, 110, 10);
         assert(clip(lineTop, bound1, clipped), funcType);
         assert(lineTop == clipped, funcType);
 
-        auto lineLeftTopToLetfBottom = Line2d(10, 9, 10, 111);
+        auto lineLeftTopToLetfBottom = Line2f(10, 9, 10, 111);
         assert(clip(lineLeftTopToLetfBottom, bound1, clipped), funcType);
-        assert(clipped == Line2d(10, 10, 10, 110), funcType);
+        assert(clipped == Line2f(10, 10, 10, 110), funcType);
 
-        auto lineRightTopToRightBottom = Line2d(110, 5, 110, 115);
+        auto lineRightTopToRightBottom = Line2f(110, 5, 110, 115);
         assert(clip(lineRightTopToRightBottom, bound1, clipped), funcType);
-        assert(clipped == Line2d(110, 10, 110, 110), funcType);
+        assert(clipped == Line2f(110, 10, 110, 110), funcType);
 
-        auto lineLeftBottomToRightBottom = Line2d(5, 110, 115, 110);
+        auto lineLeftBottomToRightBottom = Line2f(5, 110, 115, 110);
         assert(clip(lineLeftBottomToRightBottom, bound1, clipped), funcType);
-        assert(clipped == Line2d(10, 110, 110, 110), funcType);
+        assert(clipped == Line2f(10, 110, 110, 110), funcType);
 
-        auto lineLeftTopToRightBottom = Line2d(9, 9, 111, 111);
+        auto lineLeftTopToRightBottom = Line2f(9, 9, 111, 111);
         assert(clip(lineLeftTopToRightBottom, bound1, clipped), funcType);
-        assert(clipped == Line2d(10, 10, 110, 110), funcType);
+        assert(clipped == Line2f(10, 10, 110, 110), funcType);
     }
 }
 
@@ -50,7 +50,7 @@ mixin template ClipUnitTest(bool function(Line2d, Rect2d, out Line2d) clip)
  * 
  * https://en.wikipedia.org/wiki/Liang–Barsky_algorithm
  */
-bool clipLiangBarsky(const Line2d line, const Rect2d bounds, out Line2d clipped)
+bool clipLiangBarsky(const Line2f line, const Rect2f bounds, out Line2f clipped)
 {
     float x1 = line.start.x;
     float y1 = line.start.y;
@@ -152,7 +152,7 @@ bool clipLiangBarsky(const Line2d line, const Rect2d bounds, out Line2d clipped)
     xn2 = x1 + p2 * rn2;
     yn2 = y1 + p4 * rn2;
 
-    clipped = Line2d(xn1, yn1, xn2, yn2);
+    clipped = Line2f(xn1, yn1, xn2, yn2);
     return true;
 }
 
@@ -167,7 +167,7 @@ enum ClipPosCS : ubyte
     left = 0b0001,
 }
 
-bool clipCohenSutherland(const Line2d line, const Rect2d bounds, out Line2d clipped)
+bool clipCohenSutherland(const Line2f line, const Rect2f bounds, out Line2f clipped)
 {
     float xMin = bounds.x;
     float xMax = bounds.right;
@@ -263,7 +263,7 @@ bool clipCohenSutherland(const Line2d line, const Rect2d bounds, out Line2d clip
 
     if (isClipped)
     {
-        clipped = Line2d(x1, y1, x2, y2);
+        clipped = Line2f(x1, y1, x2, y2);
     }
 
     return isClipped;

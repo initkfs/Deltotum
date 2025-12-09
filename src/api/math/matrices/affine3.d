@@ -1,7 +1,7 @@
 module api.math.matrices.affine3;
 
 import api.math.matrices.matrix;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.math.geom3.vec3 : Vec3f;
 
 import Math = api.math;
@@ -13,11 +13,11 @@ import Math = api.math;
    scale-> rotate -> translate
  */
 
-Matrix4x4f rotateMatrixX(float angleDeg)
+Matrix4x4 rotateMatrixX(float angleDeg)
 {
     import Math = api.math;
 
-    Matrix4x4f matrix;
+    Matrix4x4 matrix;
 
     float angleRad = Math.degToRad(angleDeg);
 
@@ -44,11 +44,11 @@ Matrix4x4f rotateMatrixX(float angleDeg)
     return matrix;
 }
 
-Matrix4x4f rotateMatrixY(float angleDeg)
+Matrix4x4 rotateMatrixY(float angleDeg)
 {
     import Math = api.math;
 
-    Matrix4x4f matrix;
+    Matrix4x4 matrix;
 
     float angleRad = Math.degToRad(angleDeg);
 
@@ -75,11 +75,11 @@ Matrix4x4f rotateMatrixY(float angleDeg)
     return matrix;
 }
 
-Matrix4x4f rotateMatrixZ(float angleDeg)
+Matrix4x4 rotateMatrixZ(float angleDeg)
 {
     import Math = api.math;
 
-    Matrix4x4f matrix;
+    Matrix4x4 matrix;
 
     float angleRad = Math.degToRad(angleDeg);
 
@@ -106,15 +106,15 @@ Matrix4x4f rotateMatrixZ(float angleDeg)
     return matrix;
 }
 
-Matrix4x4f rotateMatrix(float angleDeg, Vec3f angles) => rotateMatrix(angleDeg, angles.x, angles.y, angles
+Matrix4x4 rotateMatrix(float angleDeg, Vec3f angles) => rotateMatrix(angleDeg, angles.x, angles.y, angles
         .z);
 
-Matrix4x4f rotateMatrix(float angleDeg, float axisX, float axisY, float axisZ)
+Matrix4x4 rotateMatrix(float angleDeg, float axisX, float axisY, float axisZ)
 {
     //auto rotX = rotateMatrix(45.0f, 1.0f, 0.0f, 0.0f);
     import Math = api.math;
 
-    Matrix4x4f matrix;
+    Matrix4x4 matrix;
     matrix.fillInit;
 
     float angleRad = Math.degToRad(angleDeg);
@@ -152,7 +152,7 @@ Matrix4x4f rotateMatrix(float angleDeg, float axisX, float axisY, float axisZ)
     return matrix;
 }
 
-Matrix4x4f combinedRotation(float pitchX, float yawY, float rollZ)
+Matrix4x4 combinedRotation(float pitchX, float yawY, float rollZ)
 {
     //XYZ 
     //row vector XYZ
@@ -162,22 +162,22 @@ Matrix4x4f combinedRotation(float pitchX, float yawY, float rollZ)
        YZX - lock yaw = ±90°
        ZXY - lock roll = ±90°
      */
-    Matrix4x4f current = Matrix4x4f.onesDiag;
+    Matrix4x4 current = Matrix4x4.onesDiag;
     if (pitchX != 0)
     {
-        Matrix4x4f rotX = rotateMatrix(pitchX, 1, 0, 0); // Pitch, X
+        Matrix4x4 rotX = rotateMatrix(pitchX, 1, 0, 0); // Pitch, X
         current = current.mul(rotX);
     }
 
     if (yawY != 0)
     {
-        Matrix4x4f rotY = rotateMatrix(yawY, 0, 1, 0); // Yaw, Y 
+        Matrix4x4 rotY = rotateMatrix(yawY, 0, 1, 0); // Yaw, Y 
         current = current.mul(rotY);
     }
 
     if (rollZ != 0)
     {
-        Matrix4x4f rotZ = rotateMatrix(rollZ, 0, 0, 1); // Roll, Z
+        Matrix4x4 rotZ = rotateMatrix(rollZ, 0, 0, 1); // Roll, Z
         current = current.mul(rotZ);
     }
 
@@ -185,14 +185,14 @@ Matrix4x4f combinedRotation(float pitchX, float yawY, float rollZ)
     return current;
 }
 
-Matrix4x4f translateMatrix(Vec3f offsets) => translateMatrix(offsets.x, offsets.y, offsets.z);
+Matrix4x4 translateMatrix(Vec3f offsets) => translateMatrix(offsets.x, offsets.y, offsets.z);
 
-Matrix4x4f translateMatrix(float offsetX, float offsetY, float offsetZ)
+Matrix4x4 translateMatrix(float offsetX, float offsetY, float offsetZ)
 {
     //row-order
     import Math = api.math;
 
-    Matrix4x4f matrix;
+    Matrix4x4 matrix;
     matrix.fillInit;
 
     matrix[0][0] = 1;
@@ -210,13 +210,13 @@ Matrix4x4f translateMatrix(float offsetX, float offsetY, float offsetZ)
     return matrix;
 }
 
-Matrix4x4f scaleMatrix(Vec3f vec) => scaleMatrix(vec.x, vec.y, vec.z);
+Matrix4x4 scaleMatrix(Vec3f vec) => scaleMatrix(vec.x, vec.y, vec.z);
 
-Matrix4x4f scaleMatrix(float scaleX, float scaleY, float scaleZ)
+Matrix4x4 scaleMatrix(float scaleX, float scaleY, float scaleZ)
 {
     import Math = api.math;
 
-    Matrix4x4f matrix;
+    Matrix4x4 matrix;
     matrix.fillInit;
 
     matrix[0][0] = scaleX;
@@ -234,11 +234,11 @@ Matrix4x4f scaleMatrix(float scaleX, float scaleY, float scaleZ)
    0        0        zf/(zn-zf)        -1
    0        0        zn*zf/(zn-zf)      0 
  */
-Matrix4x4f perspectiveMatrixRH(float fovYDeg, float aspectRatio, float nearZ = 0.1, float farZ = 100)
+Matrix4x4 perspectiveMatrixRH(float fovYDeg, float aspectRatio, float nearZ = 0.1, float farZ = 100)
 {
     import Math = api.math;
 
-    Matrix4x4f matrix;
+    Matrix4x4 matrix;
     matrix.fillInit;
 
     float fovYRad = Math.degToRad(fovYDeg);
@@ -254,7 +254,7 @@ Matrix4x4f perspectiveMatrixRH(float fovYDeg, float aspectRatio, float nearZ = 0
     return matrix;
 }
 
-Matrix4x4f lookAt(Vec3f eye, Vec3f target, Vec3f up)
+Matrix4x4 lookAt(Vec3f eye, Vec3f target, Vec3f up)
 {
     import Math = api.math;
 
@@ -264,7 +264,7 @@ Matrix4x4f lookAt(Vec3f eye, Vec3f target, Vec3f up)
     Vec3f vb = up.cross(va).normalize;
     Vec3f vc = va.cross(vb);
 
-    Matrix4x4f view;
+    Matrix4x4 view;
     view.fillInit;
 
     view[0][0] = vb.x;

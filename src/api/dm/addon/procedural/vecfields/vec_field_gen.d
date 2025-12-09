@@ -5,8 +5,8 @@ import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.vec2 : Vec2f;
 import api.math.random : Random, rands;
 
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
@@ -66,10 +66,10 @@ class VecFieldGen : Container
 
                 ctx.color = RGBA.lightblue;
 
-                Vec2d[] points;
+                Vec2f[] points;
                 foreach (newX; vecField.gridBounds.x .. vecField.gridBounds.right)
                 {
-                    points ~= Vec2d(newX, vecField.gridBounds.bottom);
+                    points ~= Vec2f(newX, vecField.gridBounds.bottom);
                     import std;
                 }
 

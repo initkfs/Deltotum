@@ -6,8 +6,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -44,8 +44,8 @@ abstract class BaseScaleStatic : BaseDrawableScale
 
     protected
     {
-        Vec2d minorProtoDsize;
-        Vec2d majorProtoDsize;
+        Vec2f minorProtoDsize;
+        Vec2f majorProtoDsize;
     }
 
     this(float width = 0, float height = 0)
@@ -160,7 +160,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
             const dw = shape.width - shapeTexture.width;
             const dh = shape.height - shapeTexture.height;
 
-            minorProtoDsize = Vec2d(dw, dh);
+            minorProtoDsize = Vec2f(dw, dh);
 
             shapeProto.dispose;
 
@@ -188,7 +188,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
             const dw = newShape.width - shapeTexture.width;
             const dh = newShape.height - shapeTexture.height;
 
-            majorProtoDsize = Vec2d(dw, dh);
+            majorProtoDsize = Vec2f(dw, dh);
 
             shape.dispose;
 

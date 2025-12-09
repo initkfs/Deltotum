@@ -8,9 +8,9 @@ import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
 import api.dm.kit.inputs.keyboards.keyboard : Keyboard;
 import api.dm.com.inputs.com_joystick : ComJoystick;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
@@ -146,15 +146,15 @@ class Input
         return joystick.getAxisOr0(axisFrom0);
     }
 
-    Vec2d pointerPos()
+    Vec2f pointerPos()
     {
         assert(systemCursor);
 
-        Vec2d pos;
+        Vec2f pos;
         if (!systemCursor.getPos(pos))
         {
             logging.logger.error("Invalid cursor position: ", systemCursor.getLastErrorNew);
-            return Vec2d.init;
+            return Vec2f.init;
         }
         return pos;
     }

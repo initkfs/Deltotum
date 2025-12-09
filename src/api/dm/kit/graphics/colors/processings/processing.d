@@ -3,7 +3,7 @@ module api.dm.kit.graphics.colors.processings.processing;
 import api.dm.kit.graphics.colors.processings.convolutions;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import Math = api.dm.math;
 
 /**

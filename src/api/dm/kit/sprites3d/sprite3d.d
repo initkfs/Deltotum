@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.math.geom3.vec3 : Vec3f;
-import api.math.matrices.matrix : Matrix4x4f;
+import api.math.matrices.matrix : Matrix4x4;
 import api.math.quaternion : Quaternion;
 import Math = api.math;
 
@@ -23,8 +23,8 @@ class Sprite3d : Sprite2d
 
         align(16)
         {
-            Matrix4x4f _worldMatrix;
-            Matrix4x4f _worldMatrixInverse;
+            Matrix4x4 _worldMatrix;
+            Matrix4x4 _worldMatrixInverse;
         }
 
         float _angleX = 0;
@@ -61,7 +61,7 @@ class Sprite3d : Sprite2d
     {
         super.create;
 
-        _worldMatrix = Matrix4x4f.onesDiag;
+        _worldMatrix = Matrix4x4.onesDiag;
 
         calcWorldMatrix;
     }
@@ -218,7 +218,7 @@ class Sprite3d : Sprite2d
             //left right block for row-order matrix
             import api.math.matrices.decompose.lup : decompose, invert;
 
-            _worldMatrixInverse = Matrix4x4f.onesDiag;
+            _worldMatrixInverse = Matrix4x4.onesDiag;
 
             //TODO more optimal
             _worldMatrixInverse.eachRowRef((ri, ref scope float[4] row) {
@@ -240,7 +240,7 @@ class Sprite3d : Sprite2d
         isMatrixRecalc = false;
     }
 
-    ref Matrix4x4f worldMatrix()
+    ref Matrix4x4 worldMatrix()
     {
         if (isMatrixRecalc)
         {
@@ -251,7 +251,7 @@ class Sprite3d : Sprite2d
         return _worldMatrix;
     }
 
-    ref Matrix4x4f worldMatrixInverse() => _worldMatrixInverse;
+    ref Matrix4x4 worldMatrixInverse() => _worldMatrixInverse;
 
     Vec3f translatePos()
     {

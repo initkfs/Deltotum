@@ -3,7 +3,7 @@ module api.dm.kit.sprites2d.textures.rgba_texture;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 /**
  * Authors: initkfs

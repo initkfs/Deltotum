@@ -7,8 +7,8 @@ import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_window : ComWindowId, ComWindow, ComWindowProgressState;
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.vec2 : Vec2d, Vec2i;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.vec2 : Vec2f, Vec2i;
 
 //TODO extract COM interfaces
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
@@ -627,25 +627,25 @@ class Window : GraphicComponent
         currentScene.rescale(factorWidth, factorHeight);
     }
 
-    Rect2d boundsInScreen()
+    Rect2f boundsInScreen()
     {
-        const Vec2d winPos = pos;
-        const Vec2d winSize = size;
+        const Vec2f winPos = pos;
+        const Vec2f winSize = size;
 
-        return Rect2d(winPos.x, winPos.y, winSize.x, winSize.y);
+        return Rect2f(winPos.x, winPos.y, winSize.x, winSize.y);
     }
 
     alias boundsRect = boundsLocal;
 
-    Rect2d boundsLocal()
+    Rect2f boundsLocal()
     {
-        const Vec2d winSize = size;
-        return Rect2d(0, 0, winSize.x, winSize.y);
+        const Vec2f winSize = size;
+        return Rect2f(0, 0, winSize.x, winSize.y);
     }
 
-    Rect2d boundsSafe()
+    Rect2f boundsSafe()
     {
-        Rect2d bounds;
+        Rect2f bounds;
         if (const err = comWindow.getSafeBounds(bounds))
         {
             logger.error(err.toString);
@@ -691,27 +691,27 @@ class Window : GraphicComponent
     uint widthu() => cast(uint) width;
     uint heightu() => cast(uint) height;
 
-    Vec2d size()
+    Vec2f size()
     {
         int width, height;
         if (const err = comWindow.getSize(width, height))
         {
             logger.error(err.toString);
         }
-        return Vec2d(width, height);
+        return Vec2f(width, height);
     }
 
-    Vec2d pos()
+    Vec2f pos()
     {
         int x, y;
         if (const err = comWindow.getPos(x, y))
         {
             logger.trace(err.toString);
         }
-        return Vec2d(x, y);
+        return Vec2f(x, y);
     }
 
-    bool pos(Vec2d newPos)
+    bool pos(Vec2f newPos)
     {
         return pos(newPos.x, newPos.y);
     }
@@ -808,9 +808,9 @@ class Window : GraphicComponent
         return newWindow;
     }
 
-    import api.math.geom2.vec2 : Vec2d;
+    import api.math.geom2.vec2 : Vec2f;
 
-    Vec2d dpiRatio()
+    Vec2f dpiRatio()
     {
         const winSize = size;
 
@@ -820,13 +820,13 @@ class Window : GraphicComponent
         auto renderBounds = graphic.renderBounds;
         if (renderBounds.width == 0 || renderBounds.height == 0)
         {
-            return Vec2d.init;
+            return Vec2f.init;
         }
 
         float hRatio = renderBounds.width / winWidth;
         float vRatio = renderBounds.height / winHeight;
 
-        return Vec2d(hRatio, vRatio);
+        return Vec2f(hRatio, vRatio);
     }
 
     bool startTextInput()

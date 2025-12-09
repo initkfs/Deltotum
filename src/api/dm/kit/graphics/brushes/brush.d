@@ -1,8 +1,8 @@
 module api.dm.kit.graphics.brushes.brush;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 
 import Math = api.dm.math;
 
@@ -12,7 +12,7 @@ private
 {
     struct BrushState
     {
-        Vec2d pos;
+        Vec2f pos;
         float angleDeg = 0;
     }
 }
@@ -23,21 +23,21 @@ private
 class Brush
 {
     bool isBoundable;
-    Rect2d bounds = Rect2d(0, 0, 100, 100);
+    Rect2f bounds = Rect2f(0, 0, 100, 100);
 
     private
     {
-        Vec2d _pos;
-        Vec2d _initPos;
+        Vec2f _pos;
+        Vec2f _initPos;
 
         float _angleDeg = 0;
 
         SList!BrushState _states;
     }
 
-    void delegate(Vec2d, Vec2d) onDrawLineStartEnd;
+    void delegate(Vec2f, Vec2f) onDrawLineStartEnd;
 
-    this(Vec2d initPos = Vec2d(0, 0), float initAngleDeg = 0) pure @safe
+    this(Vec2f initPos = Vec2f(0, 0), float initAngleDeg = 0) pure @safe
     {
         _initPos = initPos;
         _pos = initPos;
@@ -60,7 +60,7 @@ class Brush
 
     bool move(float distance) @safe
     {
-        const newPos = _pos + Vec2d.fromPolarDeg(_angleDeg, distance);
+        const newPos = _pos + Vec2f.fromPolarDeg(_angleDeg, distance);
 
         if (isBoundable && !bounds.contains(newPos))
         {
@@ -84,15 +84,15 @@ class Brush
 
     void pos(float x, float y) @safe
     {
-        _pos = Vec2d(x, y);
+        _pos = Vec2f(x, y);
     }
 
-    void pos(Vec2d newPos) @safe
+    void pos(Vec2f newPos) @safe
     {
         _pos = newPos;
     }
 
-    Vec2d pos() @safe
+    Vec2f pos() @safe
     {
         return _pos;
     }
@@ -107,7 +107,7 @@ class Brush
         return _angleDeg;
     }
 
-    void setState(Vec2d pos, float angleDeg) @safe
+    void setState(Vec2f pos, float angleDeg) @safe
     {
         _pos = pos;
         _angleDeg = angleDeg;
@@ -135,11 +135,11 @@ class Brush
 
 unittest
 {
-    import api.math.geom2.vec2 : Vec2d;
-    import api.math.geom2.rect2 : Rect2d;
+    import api.math.geom2.vec2 : Vec2f;
+    import api.math.geom2.rect2 : Rect2f;
 
-    const brushBounds = Rect2d(0, 0, 100, 100);
-    auto brush = new Brush(Vec2d(0, 0), 0);
+    const brushBounds = Rect2f(0, 0, 100, 100);
+    auto brush = new Brush(Vec2f(0, 0), 0);
     brush.bounds = brushBounds;
 
     assert(brush.move(10));

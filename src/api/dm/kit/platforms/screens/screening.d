@@ -4,7 +4,7 @@ import api.dm.com.graphics.com_screen : ComScreenId, ComScreen;
 import api.dm.com.graphics.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenDpi, ComScreenOrientation;
 import api.dm.kit.screens.single_screen : SingleScreen;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import api.core.loggers.logging : Logging;
 
@@ -31,8 +31,8 @@ class Screening
     SingleScreen single(ComScreenId id)
     {
         string screenName = name(id);
-        Rect2d screenBounds = bounds(id);
-        Rect2d usable = usableBounds(id);
+        Rect2f screenBounds = bounds(id);
+        Rect2f usable = usableBounds(id);
         ComScreenMode screenMode = mode(id);
         return SingleScreen(id, screenName, screenBounds, usable, screenMode);
     }
@@ -42,7 +42,7 @@ class Screening
         comScreen.onScreens(onScreenIdIsContinue);
     }
 
-    Rect2d bounds(ComScreenId id)
+    Rect2f bounds(ComScreenId id)
     {
         int x, y, width, height;
         if (!comScreen.getBounds(id, x, y, width, height))
@@ -52,10 +52,10 @@ class Screening
             throw new Exception(format("Error getting screen bounds with id: ", id, comScreen
                     .getLastErrorNew));
         }
-        return Rect2d(x, y, width, height);
+        return Rect2f(x, y, width, height);
     }
 
-    Rect2d usableBounds(ComScreenId id)
+    Rect2f usableBounds(ComScreenId id)
     {
         int x, y, width, height;
         if (!comScreen.getUsableBounds(id, x, y, width, height))
@@ -65,7 +65,7 @@ class Screening
             throw new Exception(format("Error getting screen bounds with id %s: %s", id, comScreen
                     .getLastErrorNew));
         }
-        return Rect2d(x, y, width, height);
+        return Rect2f(x, y, width, height);
     }
 
     string name(ComScreenId id) => comScreen.getNameNew(id);

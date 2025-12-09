@@ -3,7 +3,7 @@ module api.dm.kit.graphics.colors.processings.transforms;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.numericals.interp : blerp;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import Math = api.math;
 
@@ -53,7 +53,7 @@ RGBA[][] bilinear(RGBA[][] colors, size_t newWidth, size_t newHeight)
     return buffer;
 }
 
-RGBA[][] crop(RGBA[][] colors, Rect2d area)
+RGBA[][] crop(RGBA[][] colors, Rect2f area)
 {
     //TODO check area
     assert(colors.length > 0);

@@ -1,7 +1,7 @@
 module api.math.random;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
 import std.range.primitives : isRandomAccessRange;
 import std.traits : isNumeric;
@@ -49,7 +49,7 @@ struct Random
 
     T betweenType(T)() pure @safe if (isNumeric!T) => between!T(T.min, T.max);
     float between0to1() pure @safe => between!float(0, 1);
-    Vec2d betweenVec(Vec2d min, Vec2d max) pure @safe => Vec2d(between(min.x, max.x), between(min.y, max
+    Vec2f betweenVec(Vec2f min, Vec2f max) pure @safe => Vec2f(between(min.x, max.x), between(min.y, max
             .y));
 
     U any(T : U[], U)(T container) pure @safe

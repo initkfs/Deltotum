@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.shapes.circle;
 
 import api.dm.kit.sprites2d.shapes.shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.circle2 : Circle2d;
+import api.math.geom2.circle2 : Circle2f;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
@@ -28,9 +28,9 @@ class Circle : Shape2d
         graphic.circle(centerX, centerY, currentRadius, style.lineColor, style.isFill);
     }
 
-    Circle2d shape()
+    Circle2f shape()
     {
-        return Circle2d(x, y, radius);
+        return Circle2f(x, y, radius);
     }
 
     override bool intersect(Sprite2d other)

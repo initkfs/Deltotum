@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.toggles.toggle;
 
 import api.dm.gui.controls.switches.toggles.base_orient_toggle: BaseOrientToggle;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.math.pos2.orientation : Orientation;
 import api.math.geom2.points2;
 
@@ -20,24 +20,24 @@ class Toggle : BaseOrientToggle
         this(label, 0, 0, iconName, orientation, graphicsGap);
     }
 
-    override Vec2d thumbSize()
+    override Vec2f thumbSize()
     {
         if (isVertical)
         {
-            return Vec2d(thumbHeight, thumbWidth);
+            return Vec2f(thumbHeight, thumbWidth);
         }
 
-        return Vec2d(thumbWidth, thumbHeight);
+        return Vec2f(thumbWidth, thumbHeight);
     }
 
-    override Vec2d thumbContainerSize()
+    override Vec2f thumbContainerSize()
     {
         if (isVertical)
         {
-            return Vec2d(thumbHeight, thumbWidth * 2);
+            return Vec2f(thumbHeight, thumbWidth * 2);
         }
 
-        return Vec2d(thumbWidth * 2, thumbHeight);
+        return Vec2f(thumbWidth * 2, thumbHeight);
     }
 
     override void initialize()
@@ -55,31 +55,31 @@ class Toggle : BaseOrientToggle
         }
     }
 
-    override Vec2d thumbAnimationMinValue()
+    override Vec2f thumbAnimationMinValue()
     {
         const hb = thumbContainer.boundsRect;
 
         if (isVertical)
         {
-            return Vec2d(hb.x + thumbContainer.padding.left, hb
+            return Vec2f(hb.x + thumbContainer.padding.left, hb
                     .bottom - thumbContainer.padding.bottom - thumb.height);
         }
 
-        return Vec2d(hb.x + thumbContainer.padding.left, hb
+        return Vec2f(hb.x + thumbContainer.padding.left, hb
                 .y + thumbContainer.padding.top);
     }
 
-    override Vec2d thumbAnimationMaxValue()
+    override Vec2f thumbAnimationMaxValue()
     {
         const hb = thumbContainer.boundsRect;
 
         if (isVertical)
         {
-            return Vec2d(hb.x + thumbContainer.padding.left, hb
+            return Vec2f(hb.x + thumbContainer.padding.left, hb
                     .y - thumbContainer.padding.top);
         }
 
-        return Vec2d(
+        return Vec2f(
             hb.right - thumb.width - thumbContainer.padding.right, hb
                 .y + thumbContainer.padding.top);
     }

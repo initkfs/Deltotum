@@ -8,7 +8,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 
 import Math = api.math;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
@@ -133,19 +133,19 @@ class RScroll : BaseRadialMonoScroll
 
         thumbShape.draw;
 
-        import api.math.geom2.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2f;
 
         auto pointerSize = thumbDiameter / 5;
         auto pointerRadius = thumbDiameter / 2;
 
-        auto pointerPos = Vec2d.fromPolarDeg(fromAngleDeg, pointerRadius);
+        auto pointerPos = Vec2f.fromPolarDeg(fromAngleDeg, pointerRadius);
 
         auto thumbPx = thumb.halfWidth - thumbPadding;
         auto thumbPy = thumb.halfHeight;
 
-        auto rightVert = Vec2d(thumbPx + pointerPos.x, thumbPy + pointerPos.y);
-        auto leftTopVert = Vec2d(thumbPx + pointerPos.x - pointerSize, thumbPy + pointerPos.y - pointerSize / 2);
-        auto leftBottomVert = Vec2d(thumbPx + pointerPos.x - pointerSize, thumbPy + pointerPos.y + pointerSize / 2);
+        auto rightVert = Vec2f(thumbPx + pointerPos.x, thumbPy + pointerPos.y);
+        auto leftTopVert = Vec2f(thumbPx + pointerPos.x - pointerSize, thumbPy + pointerPos.y - pointerSize / 2);
+        auto leftBottomVert = Vec2f(thumbPx + pointerPos.x - pointerSize, thumbPy + pointerPos.y + pointerSize / 2);
 
         graphic.fillTriangle(rightVert, leftTopVert, leftBottomVert, theme.colorAccent);
 

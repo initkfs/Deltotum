@@ -30,7 +30,7 @@ class TextureFactory : GraphicComponent
                 else
                 {
                     import api.dm.kit.graphics.colors.rgba : RGBA;
-                    import api.math.geom2.rect2 : Rect2d;
+                    import api.math.geom2.rect2 : Rect2f;
 
                     graphic.fillRect(0, 0, width, height, RGBA.white);
                 }

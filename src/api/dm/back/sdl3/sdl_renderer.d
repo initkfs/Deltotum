@@ -13,8 +13,8 @@ import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
 
 import api.math.pos2.flip : Flip;
-import api.math.geom2.vec2 : Vec2d, Vec2i, Vec2f;
-import api.math.geom2.rect2 : Rect2d, Rect2i, Rect2f;
+import api.math.geom2.vec2 : Vec2f, Vec2i;
+import api.math.geom2.rect2 : Rect2f, Rect2i;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -105,7 +105,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return SDL_GetRenderDrawColor(ptr, &r, &g, &b, &a);
     }
 
-    ComResult setClipRect(Rect2d clip) nothrow
+    ComResult setClipRect(Rect2f clip) nothrow
     {
         SDL_Rect rect;
         rect.x = cast(int) clip.x;
@@ -119,14 +119,14 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult getClipRect(out Rect2d clip) nothrow
+    ComResult getClipRect(out Rect2f clip) nothrow
     {
         SDL_Rect rect;
         if (!SDL_GetRenderClipRect(ptr, &rect))
         {
             return getErrorRes("Error getting SDL renderer clip");
         }
-        clip = Rect2d(rect.x, rect.y, rect.w, rect.h);
+        clip = Rect2f(rect.x, rect.y, rect.w, rect.h);
         return ComResult.success;
     }
 
@@ -169,7 +169,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult setBlendModeBlend() nothrow => setBlendMode(ComBlendMode.blend);
     ComResult setBlendModeNone() nothrow => setBlendMode(ComBlendMode.none);
 
-    private SDL_FPoint[] toSdlPoints(Vec2d[] vecs) nothrow
+    private SDL_FPoint[] toSdlPoints(Vec2f[] vecs) nothrow
     {
         import std.algorithm.iteration : map;
         import std.array : array;
@@ -180,16 +180,14 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     bool drawPoint(float x, float y) nothrow => SDL_RenderPoint(ptr, x, y);
     bool drawPoints(SDL_FPoint[] ps) nothrow => SDL_RenderPoints(ptr, ps.ptr, cast(int) ps.length);
-    bool drawPoints(Vec2d[] ps) nothrow => drawPoints(toSdlPoints(ps));
     bool drawPoints(Vec2f[] ps) nothrow => drawPoints(cast(SDL_FPoint[]) ps);
 
     bool drawLine(float startX, float startY, float endX, float endY) nothrow => SDL_RenderLine(ptr, startX, startY, endX, endY);
     bool drawLines(SDL_FPoint[] linePoints) nothrow => SDL_RenderLines(ptr, linePoints.ptr, cast(
             int) linePoints.length);
-    bool drawLines(Vec2d[] linePoints) nothrow => drawLines(toSdlPoints(linePoints));
     bool drawLines(Vec2f[] linePoints) nothrow => drawLines(cast(SDL_FPoint[]) linePoints);
 
-    protected SDL_FRect[] toSdlRects(Rect2d[] rects) nothrow
+    protected SDL_FRect[] toSdlRects(Rect2f[] rects) nothrow
     {
         import std.algorithm.iteration : map;
         import std.array : array;
@@ -208,7 +206,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     bool drawRect(SDL_FRect* r) nothrow => SDL_RenderRect(ptr, r);
     bool drawRects(SDL_FRect[] rects) nothrow => SDL_RenderRects(ptr, rects.ptr, cast(int) rects
             .length);
-    bool drawRects(Rect2d[] rects) nothrow => drawRects(toSdlRects(rects));
     bool drawRects(Rect2f[] rects) nothrow => drawRects(cast(SDL_FRect[]) rects);
 
     bool drawFillRect(float x, float y, float width, float height) nothrow
@@ -219,7 +216,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     bool drawFillRect(SDL_FRect* rect) nothrow => SDL_RenderFillRect(ptr, rect);
     bool drawFillRects(SDL_FRect[] rects) nothrow => SDL_RenderFillRects(ptr, rects.ptr, cast(int) rects.length);
-    bool drawFillRects(Rect2d[] rects) nothrow => drawFillRects(toSdlRects(rects));
     bool drawFillRects(Rect2f[] rects) nothrow => drawFillRects(cast(SDL_FRect[]) rects);
 
     ComResult getOutputSize(out int width, out int height) nothrow
@@ -236,14 +232,14 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult getSafeBounds(out Rect2d bounds) nothrow
+    ComResult getSafeBounds(out Rect2f bounds) nothrow
     {
         SDL_Rect* safeBounds;
         if (!SDL_GetRenderSafeArea(ptr, safeBounds))
         {
             return getErrorRes("Error getting SDL renderer safe area");
         }
-        bounds = Rect2d(safeBounds.x, safeBounds.y, safeBounds.w, safeBounds.h);
+        bounds = Rect2f(safeBounds.x, safeBounds.y, safeBounds.w, safeBounds.h);
         return ComResult.success;
     }
 
@@ -268,7 +264,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult getViewport(out Rect2d viewport) nothrow
+    ComResult getViewport(out Rect2f viewport) nothrow
     {
         SDL_Rect rect;
         if (!SDL_GetRenderViewport(ptr, &rect))
@@ -276,7 +272,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
             return getErrorRes("Error getting SDL renderer viewport");
         }
 
-        viewport = Rect2d(rect.x, rect.y, rect.w, rect.h);
+        viewport = Rect2f(rect.x, rect.y, rect.w, rect.h);
 
         return ComResult.success;
     }
@@ -290,7 +286,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult setViewport(Rect2d viewport) nothrow
+    ComResult setViewport(Rect2f viewport) nothrow
     {
         SDL_Rect rect = {
             x: cast(int) viewport.x,
@@ -444,7 +440,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     }
 
     //it should be called after rendering and before SDL_RenderPresent().
-    ComResult readPixels(Rect2d rect, ComSurface buffer) nothrow
+    ComResult readPixels(Rect2f rect, ComSurface buffer) nothrow
     {
         assert(ptr);
         assert(buffer);

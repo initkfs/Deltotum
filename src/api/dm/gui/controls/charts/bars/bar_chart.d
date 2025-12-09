@@ -9,7 +9,7 @@ import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic : VScaleDynamic
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
 struct BarData
@@ -87,7 +87,7 @@ class BarChart : XYChart
             {
                 auto dataBlockH = Math.round(rangeYToHeight(Math.abs(data.valueY), false));
                 auto posY = (data.valueY > 0) ? startPos.y - dataBlockH : startPos.y;
-                graphic.fillRect(Vec2d(nextX,posY), dataBlockW, dataBlockH, data.color);
+                graphic.fillRect(Vec2f(nextX,posY), dataBlockW, dataBlockH, data.color);
                 nextX+= dataBlockW;
             }
             nextX+= datasetSpacing;

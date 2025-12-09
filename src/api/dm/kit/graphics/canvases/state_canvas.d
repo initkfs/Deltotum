@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.canvases.state_canvas;
 
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
-import api.math.geom2.vec2: Vec2d;
+import api.math.geom2.vec2: Vec2f;
 
 /**
  * Authors: initkfs
@@ -20,7 +20,7 @@ abstract class StateCanvas : GraphicCanvas
         this.y = y;
     }
 
-    void moveTo(Vec2d pos){
+    void moveTo(Vec2f pos){
         moveTo(pos.x, pos.y);
     }
 

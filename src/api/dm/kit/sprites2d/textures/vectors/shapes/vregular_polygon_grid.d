@@ -4,13 +4,13 @@ import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.dm.math;
 
 struct RPolygonGeometry
 {
-    Vec2d pos;
+    Vec2f pos;
     VRegularPolygon hexagon;
 }
 
@@ -55,7 +55,7 @@ class VRegularPolygonGrid : Sprite2d
     {
         auto hex = new VRegularPolygon(hexagonSize, style);
         addCreate(hex);
-        hexagons ~= RPolygonGeometry(Vec2d(x, y), hex);
+        hexagons ~= RPolygonGeometry(Vec2f(x, y), hex);
     }
 
     override void create()

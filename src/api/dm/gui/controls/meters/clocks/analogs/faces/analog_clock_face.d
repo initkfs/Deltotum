@@ -8,10 +8,10 @@ import api.dm.gui.controls.indicators.segmentbars.radial_segmentbar : RadialSegm
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import Math = api.dm.math;
 
@@ -80,10 +80,10 @@ class AnalogClockFace : BaseRadialGauge
         }
     }
 
-    protected Vec2d handCone(float size)
+    protected Vec2f handCone(float size)
     {
         const goldenRes = Math.goldenDiv(size);
-        return Vec2d(goldenRes.shortest, goldenRes.longest);
+        return Vec2f(goldenRes.shortest, goldenRes.longest);
     }
 
     Sprite2d newHourHand()
@@ -157,7 +157,7 @@ class AnalogClockFace : BaseRadialGauge
         auto size = diameter * 0.9;
         auto scale = new RScaleStatic(size, minAngleDeg, maxAngleDeg);
         scale.isLastTickMajorTick = false;
-        scale.onVTickIsContinue = (ctx, Rect2d tickBounds, bool isMajorTick) {
+        scale.onVTickIsContinue = (ctx, Rect2f tickBounds, bool isMajorTick) {
             auto style = createFillStyle;
             ctx.color = style.fillColor;
 
@@ -174,7 +174,7 @@ class AnalogClockFace : BaseRadialGauge
             ctx.fill;
             return false;
         };
-        scale.labelTextProvider = (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) {
+        scale.labelTextProvider = (size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick) {
             size_t hourNum = (tickIndex / 5 + 3) % 12;
             if (hourNum == 0)
             {

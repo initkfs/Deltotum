@@ -7,9 +7,9 @@ import Math = api.math;
  */
 struct Vec3d
 {
-    float x = 0;
-    float y = 0;
-    float z = 0;
+    double x = 0;
+    double y = 0;
+    double z = 0;
 }
 
 struct Vec3f

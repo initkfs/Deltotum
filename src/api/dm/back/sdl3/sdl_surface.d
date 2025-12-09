@@ -9,7 +9,7 @@ import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.com.com_native_ptr : ComNativePtr;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import std.typecons : Tuple;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -259,7 +259,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult copyTo(ComSurface dst, Rect2d dstRect) nothrow
+    ComResult copyTo(ComSurface dst, Rect2f dstRect) nothrow
     {
         SDL_Rect sdlDstRect = {
             cast(int) dstRect.x, cast(int) dstRect.y, cast(int) dstRect.width, cast(int) dstRect
@@ -268,7 +268,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return copyTo(null, dst, &sdlDstRect);
     }
 
-    ComResult copyTo(Rect2d srcRect, ComSurface dst, Rect2d dstRect) nothrow
+    ComResult copyTo(Rect2f srcRect, ComSurface dst, Rect2f dstRect) nothrow
     {
         SDL_Rect sdlSrcRect = {
             cast(int) srcRect.x, cast(int) srcRect.y, cast(int) srcRect.width, cast(int) srcRect

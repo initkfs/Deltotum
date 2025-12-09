@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.math;
 
@@ -102,7 +102,7 @@ class RadialSegmentBar : Control
                     ctx.color = style.lineColor;
 
                     ctx.translate(radius, radius);
-                    Vec2d center = Vec2d(0, 0);
+                    Vec2f center = Vec2f(0, 0);
 
                     auto arcRadius = radius - style.lineWidth / 2;
 
@@ -230,12 +230,12 @@ class RadialSegmentBar : Control
             auto segmentOff = _segmentsOff[i];
             auto segmentOn = _segmentsOn[i];
             auto angleMiddle = Math.angleDegMiddle(startAngleDeg, endAngleDeg);
-            auto polarPos = Vec2d.fromPolarDeg(angleMiddle, radius);
+            auto polarPos = Vec2f.fromPolarDeg(angleMiddle, radius);
 
             segmentOff.xy = currPos.add(polarPos)
-                .sub(Vec2d(segmentOff.halfWidth, segmentOff.halfHeight));
+                .sub(Vec2f(segmentOff.halfWidth, segmentOff.halfHeight));
             segmentOn.xy = currPos.add(polarPos)
-                .sub(Vec2d(segmentOn.halfWidth, segmentOn.halfHeight));
+                .sub(Vec2f(segmentOn.halfWidth, segmentOn.halfHeight));
             return true;
         });
     }

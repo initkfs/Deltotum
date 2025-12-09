@@ -5,12 +5,12 @@ import api.dm.gui.controls.meters.scales.base_minmax_scale : BaseMinMaxScale;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.line2 : Line2d;
+import api.math.geom2.line2 : Line2f;
 import Math = api.math;
 
 import std.conv : to;
@@ -38,23 +38,23 @@ abstract class BaseDrawableScale : BaseMinMaxScale
 
     abstract
     {
-        Line2d axisPos();
+        Line2f axisPos();
 
-        Vec2d tickStartPos();
+        Vec2f tickStartPos();
         float tickOffset();
-        Vec2d tickStep(size_t i, Vec2d pos, float offsetTick);
+        Vec2f tickStep(size_t i, Vec2f pos, float offsetTick);
 
-        bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick);
+        bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick);
     }
 
-    Vec2d tickXY(Vec2d pos, float tickWidth, float tickHeight, bool isMajorTick)
+    Vec2f tickXY(Vec2f pos, float tickWidth, float tickHeight, bool isMajorTick)
     {
         auto tickX = pos.x - tickWidth / 2;
         auto tickY = pos.y - tickHeight / 2;
-        return Vec2d(tickX, tickY);
+        return Vec2f(tickX, tickY);
     }
 
-    bool drawTick(size_t i, Vec2d pos, bool isMajorTick, float offsetTick)
+    bool drawTick(size_t i, Vec2f pos, bool isMajorTick, float offsetTick)
     {
         auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
         auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
@@ -67,7 +67,7 @@ abstract class BaseDrawableScale : BaseMinMaxScale
         return true;
     }
 
-    void drawAxis(Vec2d start, Vec2d end, RGBA color)
+    void drawAxis(Vec2f start, Vec2f end, RGBA color)
     {
         graphic.line(start, end, color);
     }
@@ -80,24 +80,24 @@ abstract class BaseDrawableScale : BaseMinMaxScale
         }
 
         drawScale(
-            (Vec2d start, Vec2d end, RGBA) { drawAxis(start, end, axisColor); },
-            (size_t i, Vec2d pos, bool isMajorTick, float offsetTick) {
+            (Vec2f start, Vec2f end, RGBA) { drawAxis(start, end, axisColor); },
+            (size_t i, Vec2f pos, bool isMajorTick, float offsetTick) {
             return drawTick(i, pos, isMajorTick, offsetTick);
         },
-            (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) {
+            (size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick) {
             return drawLabel(labelIndex, tickIndex, pos, isMajorTick, offsetTick);
         },
-            (size_t i, Vec2d pos, float offsetTick) {
+            (size_t i, Vec2f pos, float offsetTick) {
             return tickStep(i, pos, offsetTick);
         }
         );
     }
 
     void drawScale(
-        scope void delegate(Vec2d, Vec2d, RGBA) onDrawAxis,
-        scope bool delegate(size_t i, Vec2d pos, bool isMajorTick, float offsetTick) onDrawTick,
-        scope bool delegate(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) onDrawLabel,
-        scope Vec2d delegate(size_t i, Vec2d pos, float offsetTick) onTickStep
+        scope void delegate(Vec2f, Vec2f, RGBA) onDrawAxis,
+        scope bool delegate(size_t i, Vec2f pos, bool isMajorTick, float offsetTick) onDrawTick,
+        scope bool delegate(size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick) onDrawLabel,
+        scope Vec2f delegate(size_t i, Vec2f pos, float offsetTick) onTickStep
     )
     {
         if (!isCreated)
@@ -107,7 +107,7 @@ abstract class BaseDrawableScale : BaseMinMaxScale
 
         if (isDrawAxis && onDrawAxis)
         {
-            const Line2d pos = axisPos;
+            const Line2f pos = axisPos;
             onDrawAxis(pos.start, pos.end, axisColor);
         }
 
@@ -122,7 +122,7 @@ abstract class BaseDrawableScale : BaseMinMaxScale
 
         auto offset = tickOffset;
 
-        Vec2d startPos = tickStartPos;
+        Vec2f startPos = tickStartPos;
 
         size_t labelCounter;
         bool isDrawTick;

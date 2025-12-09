@@ -14,8 +14,8 @@ import api.dm.gui.controls.texts.layouts.simple_text_layout : SimpleTextLayout;
 import api.dm.gui.controls.texts.buffers.base_text_buffer : BaseTextBuffer;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 
 import Math = api.math;
 import std.conv : to;
@@ -155,18 +155,18 @@ class BaseMonoText : Control
         }
     }
 
-    Vec2d viewportRowIndex() => viewportRowIndex(scrollPosition);
-    Vec2d viewportRowIndex(float scrollPosition)
+    Vec2f viewportRowIndex() => viewportRowIndex(scrollPosition);
+    Vec2f viewportRowIndex(float scrollPosition)
     {
         if (textLayout.lineBreaks.length == 0)
         {
-            return allGlyphs.length == 0 ? Vec2d(0, 0) : Vec2d(1, 1);
+            return allGlyphs.length == 0 ? Vec2f(0, 0) : Vec2f(1, 1);
         }
 
         const rowsInViewport = this.rowsInViewport;
         if (rowsInViewport == 0)
         {
-            return Vec2d(0, 0);
+            return Vec2f(0, 0);
         }
 
         if (scrollPosition >= 1.0)
@@ -199,7 +199,7 @@ class BaseMonoText : Control
             mustBeEndRowIndex = maxEndIndex;
         }
 
-        return Vec2d(mustBeStartRowIndex, mustBeEndRowIndex);
+        return Vec2f(mustBeStartRowIndex, mustBeEndRowIndex);
     }
 
     Glyph[] viewportRows(out size_t firstRowIndex) => viewportRows(
@@ -213,7 +213,7 @@ class BaseMonoText : Control
             return allGlyphs;
         }
 
-        Vec2d rowIndex = viewportRowIndex(scrollPosition);
+        Vec2f rowIndex = viewportRowIndex(scrollPosition);
 
         size_t startRowIndex = cast(size_t) rowIndex.x;
         size_t endRowIndex = cast(size_t) rowIndex.y;
@@ -530,8 +530,8 @@ class BaseMonoText : Control
 
         onViewportGlyphs((ref glyph, i) {
 
-            Rect2d textureBounds = glyph.geometry;
-            Rect2d destBounds = Rect2d(startPos.x + glyph.pos.x, startPos.y + glyph.pos.y, glyph
+            Rect2f textureBounds = glyph.geometry;
+            Rect2f destBounds = Rect2f(startPos.x + glyph.pos.x, startPos.y + glyph.pos.y, glyph
                 .geometry.width, glyph
                 .geometry.height);
             fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
@@ -542,7 +542,7 @@ class BaseMonoText : Control
 
     float startGlyphX() => boundsRect.x + padding.left;
     float startGlyphY() => boundsRect.y + padding.top;
-    Vec2d startGlyphPos() => Vec2d(startGlyphX, startGlyphY);
+    Vec2f startGlyphPos() => Vec2f(startGlyphX, startGlyphY);
 
     override void update(float delta)
     {
@@ -695,17 +695,17 @@ class BaseMonoText : Control
         return true;
     }
 
-    void copyTo(Texture2d texture, Rect2d destBounds)
+    void copyTo(Texture2d texture, Rect2f destBounds)
     {
         assert(texture);
         assert(fontTexture);
 
-        import api.math.geom2.rect2 : Rect2d;
+        import api.math.geom2.rect2 : Rect2f;
 
         //TODO remove duplication with render()
         foreach (ref glyph; allGlyphs)
         {
-            Rect2d textureBounds = glyph.geometry;
+            Rect2f textureBounds = glyph.geometry;
             texture.copyFrom(fontTexture, textureBounds, destBounds);
         }
     }

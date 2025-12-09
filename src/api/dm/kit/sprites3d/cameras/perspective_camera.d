@@ -6,7 +6,7 @@ import api.math.geom3.frustum3 : Frustum3f;
 
 import Math = api.math;
 import api.math.geom3.vec3 : Vec3f;
-import api.math.matrices.matrix : Matrix4x4f;
+import api.math.matrices.matrix : Matrix4x4;
 import api.math.matrices.affine3;
 
 /**
@@ -56,9 +56,9 @@ class PerspectiveCamera : Sprite2d
 
     align(16)
     {
-        Matrix4x4f view;
+        Matrix4x4 view;
         //TODO extract perspective
-        Matrix4x4f projection;
+        Matrix4x4 projection;
     }
 
     this(Scene3d targetScene)
@@ -118,7 +118,7 @@ class PerspectiveCamera : Sprite2d
         if (angleX != 0 || angleY != 0 || angle != 0)
         {
             Quaternion q1 = Quaternion.fromEuler(angleX, angleY, angle);
-            Matrix4x4f rotation = q1.toMatrix4x4LH;
+            Matrix4x4 rotation = q1.toMatrix4x4LH;
 
             cameraFront = rotation.transformDir(localFront).normalize;
             cameraUp = rotation.transformDir(localUp).normalize;
@@ -349,7 +349,7 @@ class PerspectiveCamera : Sprite2d
 
         Vec3f cameraOffset = Vec3f(0, 0, radius);
 
-        Matrix4x4f rotation = combinedRotation(verticalAngleDeg, horizontalAngleDeg, angle);
+        Matrix4x4 rotation = combinedRotation(verticalAngleDeg, horizontalAngleDeg, angle);
         cameraOffset = rotation.transformDir(cameraOffset);
 
         cameraPos = target + cameraOffset;

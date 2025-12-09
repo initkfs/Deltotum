@@ -1,11 +1,11 @@
 module api.math.geom2.circle2;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
  */
-struct Circle2d
+struct Circle2f
 {
     float x = 0;
     float y = 0;
@@ -17,7 +17,7 @@ struct Circle2d
         this.radius = radius;
     }
 
-    this(Vec2d center, float radius){
+    this(Vec2f center, float radius){
         this(center.x, center.y, radius);
     }
 
@@ -29,12 +29,12 @@ struct Circle2d
         return dx * dx + dy * dy <= radius * radius;
     }
 
-    bool contains(Vec2d p) const  nothrow pure @safe
+    bool contains(Vec2f p) const  nothrow pure @safe
     {
         return contains(p.x, p.y);
     }
 
-    bool contains(Circle2d other) const  nothrow pure @safe
+    bool contains(Circle2f other) const  nothrow pure @safe
     {
         immutable deltaRadius = radius - other.radius;
         if (deltaRadius < 0.0)
@@ -55,7 +55,7 @@ struct Circle2d
         return false;
     }
 
-    bool intersect(Circle2d other) const  nothrow pure @safe
+    bool intersect(Circle2f other) const  nothrow pure @safe
     {
         immutable dx = x - other.x;
         immutable dy = y - other.y;
@@ -73,7 +73,7 @@ struct Circle2d
         return radius * (math.PI * 2);
     }
 
-    Vec2d center() => Vec2d(x, y);
+    Vec2f center() => Vec2f(x, y);
 
     float area() const  nothrow pure @safe
     {

@@ -5,7 +5,7 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
 import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;

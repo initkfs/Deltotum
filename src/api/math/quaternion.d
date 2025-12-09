@@ -1,7 +1,7 @@
 module api.math.quaternion;
 
 import api.math.geom3.vec3 : Vec3f;
-import api.math.matrices.matrix : Matrix4x4f;
+import api.math.matrices.matrix : Matrix4x4;
 
 import Math = api.math;
 import api.math.matrices.matrix;
@@ -184,10 +184,10 @@ struct Quaternion
         return result.normalize;
     }
 
-    Matrix4x4f toMatrix4x4LH()
+    Matrix4x4 toMatrix4x4LH()
     {
 
-        Matrix4x4f mat;
+        Matrix4x4 mat;
         Quaternion q = normalize();
 
         float xx = q.v.x * q.v.x;
@@ -224,9 +224,9 @@ struct Quaternion
         return mat;
     }
 
-    Matrix4x4f toMatrix4x4RH()
+    Matrix4x4 toMatrix4x4RH()
     {
-        Matrix4x4f mat;
+        Matrix4x4 mat;
 
         Quaternion q = normalize;
 

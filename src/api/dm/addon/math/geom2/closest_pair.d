@@ -1,7 +1,7 @@
 module api.dm.addon.math.geom2.closest_pair;
 
 import Math = api.math;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
@@ -14,33 +14,33 @@ import api.math.geom2.vec2 : Vec2d;
  */
 struct ClosestPair
 {
-    Vec2d p1;
-    Vec2d p2;
+    Vec2f p1;
+    Vec2f p2;
     float distance = 0;
 
     enum maxDistance = float.max;
 
-    static ClosestPair infinity() => ClosestPair(Vec2d.infinity, Vec2d.infinity, maxDistance);
+    static ClosestPair infinity() => ClosestPair(Vec2f.infinity, Vec2f.infinity, maxDistance);
     bool isInfinity() => p1.isInfinity || p2.isInfinity;
 }
 
-protected void sortByX(Vec2d[] points)
+protected void sortByX(Vec2f[] points)
 {
     import std.algorithm.sorting : sort;
 
     points.sort!((p1, p2) => p1.x < p2.x);
 }
 
-protected void sortByY(Vec2d[] points)
+protected void sortByY(Vec2f[] points)
 {
     import std.algorithm.sorting : sort;
 
     points.sort!((p1, p2) => p1.y < p2.y);
 }
 
-ClosestPair closestBruteForce(Vec2d[] points) => closestBruteForce(points, points.length);
+ClosestPair closestBruteForce(Vec2f[] points) => closestBruteForce(points, points.length);
 
-ClosestPair closestBruteForce(Vec2d[] points, size_t len)
+ClosestPair closestBruteForce(Vec2f[] points, size_t len)
 {
     ClosestPair closestPair = ClosestPair.infinity;
 
@@ -75,7 +75,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    Vec2d[] vecs = [
+    Vec2f[] vecs = [
         {14, 10}, {10, 10}, {5, 10}, {10, 3}, {11, 11}, {10, 21}
     ];
 
@@ -95,7 +95,7 @@ unittest
     assert(pair3.distance == float.max);
 }
 
-protected ClosestPair stripClosestPoint(Vec2d[] points, size_t len, float minDistance)
+protected ClosestPair stripClosestPoint(Vec2f[] points, size_t len, float minDistance)
 {
     if (len > points.length)
     {
@@ -135,7 +135,7 @@ protected ClosestPair stripClosestPoint(Vec2d[] points, size_t len, float minDis
     return minPair;
 }
 
-protected ClosestPair closestDaQ(Vec2d[] sortedXPoints, size_t startIndex, size_t endIndex)
+protected ClosestPair closestDaQ(Vec2f[] sortedXPoints, size_t startIndex, size_t endIndex)
 {
     assert(startIndex <= endIndex);
     enum minPoints = 3;
@@ -146,7 +146,7 @@ protected ClosestPair closestDaQ(Vec2d[] sortedXPoints, size_t startIndex, size_
     }
 
     immutable size_t middleIndex = startIndex + indexRange / 2;
-    immutable Vec2d midPoint = sortedXPoints[middleIndex];
+    immutable Vec2f midPoint = sortedXPoints[middleIndex];
 
     immutable ClosestPair distLeft = closestDaQ(sortedXPoints, startIndex, middleIndex);
     immutable ClosestPair distRight = closestDaQ(sortedXPoints, middleIndex, endIndex);
@@ -154,7 +154,7 @@ protected ClosestPair closestDaQ(Vec2d[] sortedXPoints, size_t startIndex, size_
     immutable ClosestPair minDist = distLeft.distance < distRight.distance ? distLeft : distRight;
 
     //TODO free memory
-    Vec2d[] closerMinDist = new Vec2d[](endIndex);
+    Vec2f[] closerMinDist = new Vec2f[](endIndex);
     int j;
     foreach (i; 0 .. endIndex)
     {
@@ -170,9 +170,9 @@ protected ClosestPair closestDaQ(Vec2d[] sortedXPoints, size_t startIndex, size_
     return result;
 }
 
-ClosestPair closestDaQ(Vec2d[] points) => closestDaQ(points, points.length);
+ClosestPair closestDaQ(Vec2f[] points) => closestDaQ(points, points.length);
 
-ClosestPair closestDaQ(Vec2d[] points, size_t len)
+ClosestPair closestDaQ(Vec2f[] points, size_t len)
 {
     ClosestPair minPair = ClosestPair.infinity;
     if(len > points.length){
@@ -192,7 +192,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    Vec2d[] vecs = [
+    Vec2f[] vecs = [
         {14, 10}, {10, 10}, {5, 10}, {10, 3}, {11, 11}, {10, 21}
     ];
 

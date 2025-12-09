@@ -15,7 +15,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.tweens.targets.target_tween2d : TargetTween2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.labeled : Labeled;
 
@@ -43,7 +43,7 @@ class BaseToggle : BaseBiswitch
     Sprite2d thumbEffect;
     bool isCreateThumbEffect = true;
 
-    MinMaxTween2d!Vec2d thumbEffectAnimation;
+    MinMaxTween2d!Vec2f thumbEffectAnimation;
     bool isCreateThumbEffectAnimation = true;
 
     bool isCreatePointerListeners = true;
@@ -59,7 +59,7 @@ class BaseToggle : BaseBiswitch
         this(label, 0, 0, iconName, graphicsGap);
     }
 
-    Vec2d thumbSize() => Vec2d(thumbWidth, thumbHeight);
+    Vec2f thumbSize() => Vec2f(thumbWidth, thumbHeight);
 
     override void loadTheme()
     {
@@ -168,7 +168,7 @@ class BaseToggle : BaseBiswitch
 
     }
 
-    Vec2d thumbContainerSize() => Vec2d(thumbWidth * 2, thumbHeight);
+    Vec2f thumbContainerSize() => Vec2f(thumbWidth * 2, thumbHeight);
 
     Sprite2d newThumbEffect(float w, float h)
     {
@@ -184,14 +184,14 @@ class BaseToggle : BaseBiswitch
         return shape;
     }
 
-    MinMaxTween2d!Vec2d newThumbEffectAnimation()
+    MinMaxTween2d!Vec2f newThumbEffectAnimation()
     {
         import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
         import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto uniInterp = new UniInterpolator;
         uniInterp.interpolateMethod = &uniInterp.quadInOut;
-        auto animation = new LinearMotion2d(Vec2d.zero, Vec2d.zero, 200, uniInterp);
+        auto animation = new LinearMotion2d(Vec2f.zero, Vec2f.zero, 200, uniInterp);
         animation.addTarget(thumb);
         animation.onEnd ~= newOnEndThumbEffectAnimation;
         return animation;
@@ -219,8 +219,8 @@ class BaseToggle : BaseBiswitch
 
     abstract
     {
-        Vec2d thumbAnimationMinValue();
-        Vec2d thumbAnimationMaxValue();
+        Vec2f thumbAnimationMinValue();
+        Vec2f thumbAnimationMaxValue();
     }
 
     override protected void switchContentState(bool oldState, bool newState)

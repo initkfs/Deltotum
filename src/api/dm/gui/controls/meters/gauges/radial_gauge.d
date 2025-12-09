@@ -10,8 +10,8 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
 
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 
 import Math = api.math;
 

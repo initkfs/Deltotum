@@ -6,7 +6,7 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.selects.time_pickers.dialogs.choosers.base_circular_time_chooser : BaseCircularTimeChooser;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.containers.circle_box : CircleBox;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.math;
 
@@ -149,7 +149,7 @@ class MinSecChooser : BaseCircularTimeChooser
             float currAngle = 0;
             foreach (i; 0 .. labelsCount)
             {
-                auto pos = Vec2d.fromPolarDeg(currAngle, boxRadius - halfLabelSize);
+                auto pos = Vec2f.fromPolarDeg(currAngle, boxRadius - halfLabelSize);
                 proto.xy(textureCenter.x + pos.x - protoBounds.halfWidth, textureCenter.y + pos.y - protoBounds
                         .halfHeight);
                 proto.draw;
@@ -203,7 +203,7 @@ class MinSecChooser : BaseCircularTimeChooser
         const sliderBounds = thumb.boundsRect;
 
         auto angle = ((360.0 / 60) * v + 270) % 360;
-        auto pos = Vec2d.fromPolarDeg(angle, radius);
+        auto pos = Vec2f.fromPolarDeg(angle, radius);
 
         thumb.xy(center.x + pos.x - sliderBounds.halfWidth, center.y + pos.y - sliderBounds
                 .halfHeight);

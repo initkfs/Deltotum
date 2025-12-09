@@ -7,7 +7,7 @@ import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 import api.math.numericals.interp;
 
@@ -70,7 +70,7 @@ class Slider : Container
         _content = new CenterBox;
         addCreate(_content);
 
-        motionAnimation = new LinearMotion2d(Vec2d(0, 0), Vec2d(0, 0));
+        motionAnimation = new LinearMotion2d(Vec2f(0, 0), Vec2f(0, 0));
         addCreate(motionAnimation);
         motionAnimation.addTarget(this);
 
@@ -116,7 +116,7 @@ class Slider : Container
             if(!_expanded){
                 setInitialPos;
             }else {
-                Vec2d endPoint = getEndPointPanel(true);
+                Vec2f endPoint = getEndPointPanel(true);
                 x = endPoint.x;
                 y = endPoint.y;
             }
@@ -125,15 +125,15 @@ class Slider : Container
         _expanded = expand;
 
         //TODO remove switch?
-        Vec2d endPoint = getEndPointPanel(expand);
-        motionAnimation.minValue = Vec2d(x, y);
+        Vec2f endPoint = getEndPointPanel(expand);
+        motionAnimation.minValue = Vec2f(x, y);
         motionAnimation.maxValue = endPoint;
         motionAnimation.run;
     }
 
-    protected Vec2d getEndPointPanel(bool expand){
-        Vec2d endPoint;
-        Vec2d offset = getMotionOffset;
+    protected Vec2f getEndPointPanel(bool expand){
+        Vec2f endPoint;
+        Vec2f offset = getMotionOffset;
         auto offsetX = offset.x;
         auto offsetY = offset.y;
 
@@ -146,16 +146,16 @@ class Slider : Container
         final switch (position) with (SliderPos)
         {
             case left:
-                endPoint = Vec2d(x + offsetX, y);
+                endPoint = Vec2f(x + offsetX, y);
                 break;
             case top:
-                endPoint = Vec2d(x, y + offsetY);
+                endPoint = Vec2f(x, y + offsetY);
                 break;
             case bottom:
-                endPoint = Vec2d(x, y - offsetY);
+                endPoint = Vec2f(x, y - offsetY);
                 break;
             case right:
-                endPoint = Vec2d(x - offsetX, y);
+                endPoint = Vec2f(x - offsetX, y);
                 break;
         }
 
@@ -174,9 +174,9 @@ class Slider : Container
         switchState(expand : false);
     }
 
-    protected Vec2d getMotionOffset()
+    protected Vec2f getMotionOffset()
     {
-        Vec2d sceneBoundsEx = checkSceneBoundsExceed;
+        Vec2f sceneBoundsEx = checkSceneBoundsExceed;
         auto offsetX = sliderWidth - handle.width;
         auto offsetY = sliderHeight - handle.height;
         if (sceneBoundsEx.x > 0 && sceneBoundsEx.x < offsetX)
@@ -188,10 +188,10 @@ class Slider : Container
         {
             offsetY -= sceneBoundsEx.y;
         }
-        return Vec2d(offsetX, offsetY);
+        return Vec2f(offsetX, offsetY);
     }
 
-    protected Vec2d checkSceneBoundsExceed()
+    protected Vec2f checkSceneBoundsExceed()
     {
         float dx = 0, dy = 0;
         const sceneBounds = graphic.renderBounds;
@@ -203,7 +203,7 @@ class Slider : Container
         {
             dy = height - sceneBounds.height;
         }
-        return Vec2d(dx, dy);
+        return Vec2f(dx, dy);
     }
 
     protected float sliderWidth()
@@ -224,10 +224,10 @@ class Slider : Container
 
     void setInitialPos()
     {
-        import api.math.geom2.rect2 : Rect2d;
+        import api.math.geom2.rect2 : Rect2f;
 
         float newX = 0, newY = 0;
-        const Rect2d sceneBounds = graphic.renderBounds;
+        const Rect2f sceneBounds = graphic.renderBounds;
 
         final switch (position) with (SliderPos)
         {

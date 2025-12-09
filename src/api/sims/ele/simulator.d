@@ -19,7 +19,7 @@ import api.dm.gui.controls.switches.buttons.button : Button;
 import api.math.graphs.graph;
 import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import api.dm.lib.libxml.native;
 
@@ -656,7 +656,7 @@ class Simulator : Container
 
             if (auto element = cast(BaseElement) item)
             {
-                Vec2d translateOffset = Vec2d.zero;
+                Vec2f translateOffset = Vec2f.zero;
                 if (element.content)
                 {
                     translateOffset = element.content.pos;

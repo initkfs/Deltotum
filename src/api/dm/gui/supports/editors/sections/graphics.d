@@ -4,8 +4,8 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 import api.math.pos2.flip : Flip;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -96,8 +96,8 @@ class Graphics : Control
         {
             override void drawContent()
             {
-                Rect2d textureBounds = {0, 0, 25, 25};
-                Rect2d destBounds = {this.x, this.y, this.width, this.height};
+                Rect2f textureBounds = {0, 0, 25, 25};
+                Rect2f destBounds = {this.x, this.y, this.width, this.height};
                 drawTexture(texture, textureBounds, destBounds, this.angle);
             }
         }
@@ -106,8 +106,8 @@ class Graphics : Control
         {
             override void drawContent()
             {
-                Rect2d textureBounds = {25, 0, 25, 25};
-                Rect2d destBounds = {this.x, this.y, this.width, this.height};
+                Rect2f textureBounds = {25, 0, 25, 25};
+                Rect2f destBounds = {this.x, this.y, this.width, this.height};
                 drawTexture(texture, textureBounds, destBounds, this.angle);
             }
         }
@@ -116,8 +116,8 @@ class Graphics : Control
         {
             override void drawContent()
             {
-                Rect2d textureBounds = {0, 25, 25, 25};
-                Rect2d destBounds = {this.x, this.y, this.width, this.height};
+                Rect2f textureBounds = {0, 25, 25, 25};
+                Rect2f destBounds = {this.x, this.y, this.width, this.height};
                 drawTexture(texture, textureBounds, destBounds, this.angle);
             }
         }
@@ -126,8 +126,8 @@ class Graphics : Control
         {
             override void drawContent()
             {
-                Rect2d textureBounds = {25, 25, 25, 25};
-                Rect2d destBounds = {this.x, this.y, this.width, this.height};
+                Rect2f textureBounds = {25, 25, 25, 25};
+                Rect2f destBounds = {this.x, this.y, this.width, this.height};
                 drawTexture(texture, textureBounds, destBounds, this.angle);
             }
         }
@@ -221,23 +221,23 @@ class Graphics : Control
             graphic.point(startX + i * 5, startY);
         }
 
-        // graphic.linePoints(Vec2d(220, 120), Vec2d(250, 120), (p) {
+        // graphic.linePoints(Vec2f(220, 120), Vec2f(250, 120), (p) {
         //     graphic.point(p);
         //     return true;
         // });
 
-        // graphic.circlePoints(Vec2d(235, 150), 10, (p) {
+        // graphic.circlePoints(Vec2f(235, 150), 10, (p) {
         //     graphic.point(p);
         //     return true;
         // });
 
         // graphic.restoreColor;
 
-        // graphic.fillTriangle(Vec2d(300, 100), Vec2d(325, 150), Vec2d(350, 100), RGBA
+        // graphic.fillTriangle(Vec2f(300, 100), Vec2f(325, 150), Vec2f(350, 100), RGBA
         //         .yellowgreen);
-        // graphic.fillTriangle(Vec2d(360, 150), Vec2d(410, 150), Vec2d(385, 100), RGBA
+        // graphic.fillTriangle(Vec2f(360, 150), Vec2f(410, 150), Vec2f(385, 100), RGBA
         //         .yellowgreen);
-        // graphic.fillTriangle(Vec2d(420, 150), Vec2d(450, 100), Vec2d(430, 200), RGBA
+        // graphic.fillTriangle(Vec2f(420, 150), Vec2f(450, 100), Vec2f(430, 200), RGBA
         //         .yellowgreen);
 
         // graphic.fillRect(480, 100, 50, 20, RGBA.lightsalmon);
@@ -245,10 +245,10 @@ class Graphics : Control
 
         // graphic.changeColor(RGBA.lightskyblue);
 
-        // graphic.bezier(Vec2d(550, 150), Vec2d(510, 150), Vec2d(580, 100));
+        // graphic.bezier(Vec2f(550, 150), Vec2f(510, 150), Vec2f(580, 100));
 
-        // graphic.ellipse(Vec2d(650, 100), Vec2d(40, 20), RGBA.lightseagreen, true, false);
-        // graphic.ellipse(Vec2d(650, 150), Vec2d(40, 20), RGBA.lightseagreen, false, true);
+        // graphic.ellipse(Vec2f(650, 100), Vec2f(40, 20), RGBA.lightseagreen, true, false);
+        // graphic.ellipse(Vec2f(650, 150), Vec2f(40, 20), RGBA.lightseagreen, false, true);
 
         // import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 
@@ -258,11 +258,11 @@ class Graphics : Control
         // graphic.fillRect(775, 100, 50, 50, color2);
 
         // auto points = [
-        //     Vec2d(20, 200),
-        //     Vec2d(75, 240),
-        //     Vec2d(50, 270),
-        //     Vec2d(40, 260),
-        //     Vec2d(10, 270),
+        //     Vec2f(20, 200),
+        //     Vec2f(75, 240),
+        //     Vec2f(50, 270),
+        //     Vec2f(40, 260),
+        //     Vec2f(10, 270),
         // ];
         // graphic.polygon(points);
 

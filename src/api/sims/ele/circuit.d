@@ -6,7 +6,7 @@ import api.dm.gui.controls.control : Control;
 import api.sims.ele.components;
 
 import api.math.graphs.graph : Graph;
-import api.math.geom2.vec2: Vec2d;
+import api.math.geom2.vec2: Vec2f;
 
 import api.sims.ele.components.base_component: BaseComponent;
 import api.sims.ele.components.elements.base_element: BaseElement;
@@ -27,7 +27,7 @@ class Circuit : TypedContainer!BaseComponent
     protected
     {
         long nextId;
-        Vec2d nextPos;
+        Vec2f nextPos;
     }
 
     this()

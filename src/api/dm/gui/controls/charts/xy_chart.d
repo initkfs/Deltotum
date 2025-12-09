@@ -8,7 +8,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
 /**
@@ -410,7 +410,7 @@ class XYChart : Container
         return yScale1.maxValue - (h * yScale1.range / chartAreaHeight);
     }
 
-    protected Vec2d toChartAreaPos(float posX, float posY, bool isUseOffsets = true, bool isUseScale = true)
+    protected Vec2f toChartAreaPos(float posX, float posY, bool isUseOffsets = true, bool isUseScale = true)
     {
         assert(chartArea);
 
@@ -460,7 +460,7 @@ class XYChart : Container
             }
         }
 
-        return Vec2d(newX, newY);
+        return Vec2f(newX, newY);
     }
 
     void drawAxis()
@@ -523,7 +523,7 @@ class XYChart : Container
             trackPointerInfo.isVisible = true;
         }
 
-        Vec2d pointerPos = input.pointerPos;
+        Vec2f pointerPos = input.pointerPos;
         auto dx = pointerPos.x - chartArea.x;
         auto dy = pointerPos.y - chartArea.y;
         if (dx < 0 || dy < 0)

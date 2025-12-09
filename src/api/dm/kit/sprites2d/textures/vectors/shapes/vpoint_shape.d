@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.textures.vectors.shapes.vpoint_shape;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
@@ -17,9 +17,9 @@ class VPointShape : VShape
 
     void delegate() onDraw;
 
-    Vec2d[] points;
+    Vec2f[] points;
 
-    this(Vec2d[] points, float width, float height, GraphicStyle style = GraphicStyle.simple, bool isDrawFromCenter = false, bool isClosePath = true)
+    this(Vec2f[] points, float width, float height, GraphicStyle style = GraphicStyle.simple, bool isDrawFromCenter = false, bool isClosePath = true)
     {
         super(width, height, style);
 
@@ -42,7 +42,7 @@ class VPointShape : VShape
 
         ctx.lineWidth = style.lineWidth;
 
-        auto center = isDrawFromCenter ? Vec2d(width / 2, height / 2) : Vec2d.zero;
+        auto center = isDrawFromCenter ? Vec2f(width / 2, height / 2) : Vec2f.zero;
 
         ctx.moveTo(center.add(points[0]));
 

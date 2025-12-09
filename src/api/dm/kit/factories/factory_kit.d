@@ -35,9 +35,9 @@ class FactoryKit : GraphicComponent
     Texture2d placeholder(float pWidth = 50, float pHeight = 50, RGBA color = RGBA.lightcoral)
     {
         return textures.texture(pWidth, pHeight, () {
-            import api.math.geom2.vec2 : Vec2d;
+            import api.math.geom2.vec2 : Vec2f;
 
-            graphic.fillRect(Vec2d(0, 0), pWidth, pHeight, color);
+            graphic.fillRect(Vec2f(0, 0), pWidth, pHeight, color);
         });
     }
 

@@ -1,7 +1,7 @@
 module api.dm.addon.math.geom2.convex_hull;
 
-import api.math.geom2.polygon2 : Polygon2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.polygon2 : Polygon2f;
+import api.math.geom2.vec2 : Vec2f;
 import Points = api.math.geom2.points2;
 import Math = api.math;
 
@@ -15,9 +15,9 @@ import Math = api.math;
  * Port from https://github.com/bkiers/GrahamScan
  * under MIT License https://github.com/bkiers/GrahamScan/blob/master/LICENSE.txt
  */
-Vec2d[] graham(Vec2d[] points)
+Vec2f[] graham(Vec2f[] points)
 {
-    Vec2d[] result;
+    Vec2f[] result;
 
     enum minPoints = 3;
     if (points.length < minPoints)
@@ -25,9 +25,9 @@ Vec2d[] graham(Vec2d[] points)
         return result;
     }
 
-    Vec2d[] hullPoints = points.dup;
+    Vec2f[] hullPoints = points.dup;
 
-    Vec2d lowest = hullPoints[0];
+    Vec2f lowest = hullPoints[0];
     foreach (ref p; hullPoints[1 .. $])
     {
         if (p.y < lowest.y || (p.y == lowest.y && p.x < lowest.x))
@@ -38,7 +38,7 @@ Vec2d[] graham(Vec2d[] points)
 
     import std.algorithm.sorting : sort;
 
-    hullPoints.sort!((Vec2d a, Vec2d b) {
+    hullPoints.sort!((Vec2f a, Vec2f b) {
 
         float thetaA = Math.atan2(a.y - lowest.y, a.x - lowest.x);
         float thetaB = Math.atan2(b.y - lowest.y, b.x - lowest.x);
@@ -70,16 +70,16 @@ Vec2d[] graham(Vec2d[] points)
 
     import std.container.slist : SList;
 
-    SList!Vec2d stack;
+    SList!Vec2f stack;
     stack.insert(hullPoints[0]);
     stack.insert(hullPoints[1]);
 
     for (int i = 2; i < hullPoints.length; i++)
     {
-        Vec2d head = hullPoints[i];
-        Vec2d middle = stack.front;
+        Vec2f head = hullPoints[i];
+        Vec2f middle = stack.front;
         stack.removeFront;
-        Vec2d tail = stack.front;
+        Vec2f tail = stack.front;
 
         const orientation = Points.orientation(tail, middle, head);
 
@@ -115,17 +115,17 @@ unittest
 {
     import std.math.operations : isClose;
 
-    Vec2d[] points = [
-        Vec2d(1, 1), Vec2d(2, 2,), Vec2d(3, 2), Vec2d(3, 1), Vec2d(4, 3),
-        Vec2d(1, 4), Vec2d(2, 3)
+    Vec2f[] points = [
+        Vec2f(1, 1), Vec2f(2, 2,), Vec2f(3, 2), Vec2f(3, 1), Vec2f(4, 3),
+        Vec2f(1, 4), Vec2f(2, 3)
     ];
-    Vec2d[] res1 = graham(points);
-    Vec2d[] expected1 = [
-        Vec2d(1, 1),
-        Vec2d(1, 4),
-        Vec2d(4, 3),
-        Vec2d(3, 1),
-        Vec2d(1, 1),
+    Vec2f[] res1 = graham(points);
+    Vec2f[] expected1 = [
+        Vec2f(1, 1),
+        Vec2f(1, 4),
+        Vec2f(4, 3),
+        Vec2f(3, 1),
+        Vec2f(1, 1),
     ];
     assert(res1 == expected1);
 }

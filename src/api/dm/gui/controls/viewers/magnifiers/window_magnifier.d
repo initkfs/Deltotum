@@ -8,8 +8,8 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.viewers.magnifiers.base_magnifier : BaseMagnifier;
 import api.dm.gui.controls.containers.container : Container;
 
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.dm.math;
 
@@ -22,7 +22,7 @@ class WindowMagnifier : BaseMagnifier
     {
         ComSurface buffer;
         bool canUpdate;
-        Vec2d lastUpdatePos;
+        Vec2f lastUpdatePos;
         size_t lastUpdateTimeMs;
     }
 
@@ -82,7 +82,7 @@ class WindowMagnifier : BaseMagnifier
         if (isUpdateWhenShow)
         {
             canUpdate = false;
-            lastUpdatePos = Vec2d(pRelX, pRelY);
+            lastUpdatePos = Vec2f(pRelX, pRelY);
         }
     }
 
@@ -93,7 +93,7 @@ class WindowMagnifier : BaseMagnifier
         auto originalXRel = (window.width * pRelX) / thumbnail.width;
         auto originalYRel = (window.height * pRelY) / thumbnail.height;
 
-        Rect2d textureBounds = Rect2d(originalXRel, originalYRel, magnifier.width, magnifier
+        Rect2f textureBounds = Rect2f(originalXRel, originalYRel, magnifier.width, magnifier
                 .height);
 
         auto safeBounds = window.boundsSafe;

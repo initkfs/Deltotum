@@ -1,20 +1,20 @@
 module api.math.geom2.star_polygon2;
 
-import api.math.geom2.polygon2 : Polygon2d;
+import api.math.geom2.polygon2 : Polygon2f;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-struct StarPolygon2d
+struct StarPolygon2f
 {
     size_t spikeCount;
     float outerRadius = 0;
     float innerRadius = 0;
 
-    Polygon2d shape;
+    Polygon2f shape;
 
     this(size_t spikeCount, float innerRadius, float outerRadius)
     {
@@ -26,7 +26,7 @@ struct StarPolygon2d
         this.outerRadius = outerRadius;
     }
 
-    void draw(scope bool delegate(size_t, Vec2d) onIndexVertexIsContinue)
+    void draw(scope bool delegate(size_t, Vec2f) onIndexVertexIsContinue)
     {
         assert(spikeCount > 0);
         const angleRad = Math.PI / spikeCount;
@@ -34,7 +34,7 @@ struct StarPolygon2d
         foreach (i; 0 .. (2 * spikeCount))
         {
             const radius = ((i % 2) != 0) ? outerRadius : innerRadius;
-            const polarPos = Vec2d.fromPolarRad(i * angleRad, radius);
+            const polarPos = Vec2f.fromPolarRad(i * angleRad, radius);
             if (!onIndexVertexIsContinue(i, polarPos))
             {
                 return;
@@ -44,13 +44,13 @@ struct StarPolygon2d
 
     void create()
     {
-        shape = Polygon2d(createPoints);
+        shape = Polygon2f(createPoints);
     }
 
-    Vec2d[] createPoints()
+    Vec2f[] createPoints()
     {
         assert(spikeCount > 0);
-        Vec2d[] points = new Vec2d[](2 * spikeCount);
+        Vec2f[] points = new Vec2f[](2 * spikeCount);
         draw((i, p) { points[i] = p; return true; });
         return points;
     }

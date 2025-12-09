@@ -1,11 +1,11 @@
 module api.dm.gui.controls.meters.scales.dynamics.rscale_dynamic;
 
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.line2 : Line2d;
+import api.math.geom2.line2 : Line2f;
 
 import Math = api.math;
 
@@ -79,12 +79,12 @@ class RScaleDynamic : BaseScaleDynamic
         return angleDegDiff;
     }
 
-    override Vec2d tickStep(size_t i, Vec2d startPos, float tickOffset)
+    override Vec2f tickStep(size_t i, Vec2f startPos, float tickOffset)
     {
-        return boundsRect.center.add(Vec2d.fromPolarDeg((i + 1) * (tickOffset), radius));
+        return boundsRect.center.add(Vec2f.fromPolarDeg((i + 1) * (tickOffset), radius));
     }
 
-    override bool drawTick(size_t i, Vec2d pos, bool isMajorTick, float offsetTick)
+    override bool drawTick(size_t i, Vec2f pos, bool isMajorTick, float offsetTick)
     {
         auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
         auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
@@ -94,12 +94,12 @@ class RScaleDynamic : BaseScaleDynamic
 
         auto tickColor = isMajorTick ? theme.colorDanger : theme.colorAccent;
 
-        const end = pos.add(Vec2d.fromPolarDeg(i * tickOffset, tickH));
+        const end = pos.add(Vec2f.fromPolarDeg(i * tickOffset, tickH));
         graphic.line(pos, end, tickColor);
         return true;
     }
 
-    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick)
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick)
     {
         if (!isMajorTick || labelIndex >= labels.length)
         {
@@ -110,23 +110,23 @@ class RScaleDynamic : BaseScaleDynamic
         
         auto tickH = tickMajorHeight;
 
-        const labelPos = pos.add(Vec2d.fromPolarDeg(tickIndex * tickOffset, tickH));
+        const labelPos = pos.add(Vec2f.fromPolarDeg(tickIndex * tickOffset, tickH));
         label.xy(labelPos);
         showLabelIsNeed(labelIndex, label);
         return true;
     }
 
-    override Line2d axisPos()
+    override Line2f axisPos()
     {
         const bounds = boundsRect;
-        const start = Vec2d(bounds.middleX, bounds.y);
-        const end = Vec2d(bounds.middleX, bounds.bottom);
-        return Line2d(start, end);
+        const start = Vec2f(bounds.middleX, bounds.y);
+        const end = Vec2f(bounds.middleX, bounds.bottom);
+        return Line2f(start, end);
     }
 
-    override Vec2d tickStartPos()
+    override Vec2f tickStartPos()
     {
         const bounds = boundsRect;
-        return Vec2d.fromPolarDeg(minAngleDeg, radius).add(bounds.center);
+        return Vec2f.fromPolarDeg(minAngleDeg, radius).add(bounds.center);
     }
 }

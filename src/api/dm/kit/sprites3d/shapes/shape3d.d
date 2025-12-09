@@ -4,7 +4,7 @@ import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 import api.dm.kit.sprites3d.lightings.lighting_material : LightingMaterial;
 
-import api.math.matrices.matrix : Matrix4x4f;
+import api.math.matrices.matrix : Matrix4x4;
 import api.dm.back.sdl3.externs.csdl3;
 
 import api.math.geom3.vec3 : Vec3f;

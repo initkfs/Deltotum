@@ -1,17 +1,17 @@
 module api.math.geom2.parallelogram2;
 
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.line2 : Line2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.line2 : Line2f;
 
 import Math = api.dm.math;
 
 /**
  * Authors: initkfs
  */
-struct Parallelogram2d
+struct Parallelogram2f
 {
 
-    void draw(float width, float height, float angleDeg, bool isInverted, scope bool delegate(size_t, Vec2d) onVertexIsContinue)
+    void draw(float width, float height, float angleDeg, bool isInverted, scope bool delegate(size_t, Vec2f) onVertexIsContinue)
     {
         size_t vertexIndex;
         //h = a * sin(angle)
@@ -19,7 +19,7 @@ struct Parallelogram2d
 
         auto offset = Math.sqrt((a ^^ 2) - (height ^^ 2));
 
-        Vec2d leftTop = !isInverted ? Vec2d(offset, 0) :  Vec2d(0, 0);
+        Vec2f leftTop = !isInverted ? Vec2f(offset, 0) :  Vec2f(0, 0);
         if (!onVertexIsContinue(vertexIndex, leftTop))
         {
             return;
@@ -27,7 +27,7 @@ struct Parallelogram2d
 
         vertexIndex++;
 
-        Vec2d rightTop = !isInverted ? Vec2d(width, 0) : Vec2d(width - offset, 0);
+        Vec2f rightTop = !isInverted ? Vec2f(width, 0) : Vec2f(width - offset, 0);
         if (!onVertexIsContinue(vertexIndex, rightTop))
         {
             return;
@@ -35,7 +35,7 @@ struct Parallelogram2d
 
         vertexIndex++;
 
-        Vec2d rightBottom = !isInverted ? Vec2d(width - offset, height) : Vec2d(width, height);
+        Vec2f rightBottom = !isInverted ? Vec2f(width - offset, height) : Vec2f(width, height);
         if (!onVertexIsContinue(vertexIndex, rightBottom))
         {
             return;
@@ -43,7 +43,7 @@ struct Parallelogram2d
 
         vertexIndex++;
 
-        Vec2d leftBottom = !isInverted ? Vec2d(0, height) : Vec2d(offset, height);
+        Vec2f leftBottom = !isInverted ? Vec2f(0, height) : Vec2f(offset, height);
         onVertexIsContinue(vertexIndex, leftBottom);
     }
 

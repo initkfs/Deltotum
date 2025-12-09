@@ -7,7 +7,7 @@ import api.core.utils.factories : ProviderFactory;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.vec2 : Vec2d, Vec2i, Vec2f;
+import api.math.geom2.vec2 : Vec2f, Vec2i;
 import math = api.dm.math;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
@@ -15,8 +15,8 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import Math = api.dm.math;
 
 import api.math.pos2.flip : Flip;
-import api.math.geom2.rect2 : Rect2d, Rect2f;
-import api.math.geom2.line2 : Line2d;
+import api.math.geom2.rect2 : Rect2f, Rect2f;
+import api.math.geom2.line2 : Line2f;
 
 import api.core.loggers.logging : Logging;
 import std.conv : to;
@@ -71,9 +71,9 @@ class Graphic : LoggableUnit
         return cast(float) value;
     }
 
-    Rect2d clip()
+    Rect2f clip()
     {
-        Rect2d clip;
+        Rect2f clip;
         if (const err = renderer.getClipRect(clip))
         {
             import std.conv : text;
@@ -83,7 +83,7 @@ class Graphic : LoggableUnit
         return clip;
     }
 
-    void clip(Rect2d clipRect)
+    void clip(Rect2f clipRect)
     {
         if (const err = renderer.setClipRect(clipRect))
         {
@@ -103,7 +103,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    ComResult readPixels(Rect2d bounds, ComSurface pixelBuffer) => renderer.readPixels(bounds, pixelBuffer);
+    ComResult readPixels(Rect2f bounds, ComSurface pixelBuffer) => renderer.readPixels(bounds, pixelBuffer);
 
     RGBA color()
     {
@@ -191,22 +191,22 @@ class Graphic : LoggableUnit
         }
     }
 
-    void line(Vec2d start, Vec2d end)
+    void line(Vec2f start, Vec2f end)
     {
         line(start.x, start.y, end.x, end.y);
     }
 
-    void line(Vec2d start, Vec2d end, RGBA color = defaultColor)
+    void line(Vec2f start, Vec2f end, RGBA color = defaultColor)
     {
         line(start.x, start.y, end.x, end.y, color);
     }
 
-    void line(Line2d ln)
+    void line(Line2f ln)
     {
         line(ln.start, ln.end);
     }
 
-    void line(Line2d ln, RGBA color = defaultColor)
+    void line(Line2f ln, RGBA color = defaultColor)
     {
         line(ln.start, ln.end, color);
     }
@@ -221,7 +221,7 @@ class Graphic : LoggableUnit
         line(startX, startY, endX, endY);
     }
 
-    void polygon(Vec2d[] points)
+    void polygon(Vec2f[] points)
     {
         if (points.length == 0)
         {
@@ -241,9 +241,9 @@ class Graphic : LoggableUnit
         }
     }
 
-    void polygon(Vec2d[] points, RGBA color = defaultColor) => polygon(points, points.length, color);
+    void polygon(Vec2f[] points, RGBA color = defaultColor) => polygon(points, points.length, color);
 
-    void polygon(Vec2d[] points, size_t count, RGBA color = defaultColor)
+    void polygon(Vec2f[] points, size_t count, RGBA color = defaultColor)
     {
         if (points.length == 0)
         {
@@ -266,7 +266,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void point(Vec2d p)
+    void point(Vec2f p)
     {
         point(p.x, p.y);
     }
@@ -282,12 +282,12 @@ class Graphic : LoggableUnit
         point(x, y);
     }
 
-    void point(Vec2d p, RGBA color = defaultColor)
+    void point(Vec2f p, RGBA color = defaultColor)
     {
         point(p.x, p.y, color);
     }
 
-    void points(Vec2d[] points)
+    void points(Vec2f[] points)
     {
         if (points.length == 0)
         {
@@ -297,21 +297,6 @@ class Graphic : LoggableUnit
         {
             throw new Exception("float points drawing error: " ~ renderer.getLastErrorNew);
         }
-    }
-
-    void points(Vec2d[] p, RGBA color = defaultColor)
-    {
-        if (p.length == 0)
-        {
-            return;
-        }
-        this.color(color);
-        scope (exit)
-        {
-            restoreColor;
-        }
-
-        points(p);
     }
 
     void points(Vec2f[] p, RGBA color = defaultColor)
@@ -332,16 +317,16 @@ class Graphic : LoggableUnit
         }
     }
 
-    Vec2d[] linePoints(Vec2d start, Vec2d end)
+    Vec2f[] linePoints(Vec2f start, Vec2f end)
     {
         return linePoints(start.x, start.y, end.x, end.y);
     }
 
-    Vec2d[] linePoints(float startXPos, float startYPos, float endXPos, float endYPos)
+    Vec2f[] linePoints(float startXPos, float startYPos, float endXPos, float endYPos)
     {
         import std.array : appender;
 
-        auto points = appender!(Vec2d[]);
+        auto points = appender!(Vec2f[]);
         linePoints(startXPos, startYPos, endXPos, endYPos, (p) {
             points ~= p;
             return true;
@@ -349,14 +334,14 @@ class Graphic : LoggableUnit
         return points[];
     }
 
-    void linePoints(Vec2d start, Vec2d end, scope bool delegate(
-            Vec2d) onPoint)
+    void linePoints(Vec2f start, Vec2f end, scope bool delegate(
+            Vec2f) onPoint)
     {
         linePoints(start.x, start.y, end.x, end.y, onPoint);
     }
 
     void linePoints(float startXPos, float startYPos, float endXPos, float endYPos, scope bool delegate(
-            Vec2d) onPoint)
+            Vec2f) onPoint)
     {
         //Bresenham algorithm
         import math = api.dm.math;
@@ -417,7 +402,7 @@ class Graphic : LoggableUnit
         int num = 0;
         for (int i = 0; i <= longestLen; i++)
         {
-            if (!onPoint(Vec2d(startX, startY)))
+            if (!onPoint(Vec2f(startX, startY)))
             {
                 return;
             }
@@ -436,16 +421,16 @@ class Graphic : LoggableUnit
         }
     }
 
-    Vec2d[] circlePoints(Vec2d pos, int radius)
+    Vec2f[] circlePoints(Vec2f pos, int radius)
     {
         return circlePoints(pos.x, pos.y, radius);
     }
 
-    Vec2d[] circlePoints(float centerXPos, float centerYPos, int radius)
+    Vec2f[] circlePoints(float centerXPos, float centerYPos, int radius)
     {
         import std.array : appender;
 
-        auto points = appender!(Vec2d[]);
+        auto points = appender!(Vec2f[]);
         circlePoints(centerXPos, centerYPos, radius, (p) {
             points ~= p;
             return true;
@@ -453,13 +438,13 @@ class Graphic : LoggableUnit
         return points[];
     }
 
-    void circlePoints(Vec2d pos, int radius, scope bool delegate(Vec2d) onPoint)
+    void circlePoints(Vec2f pos, int radius, scope bool delegate(Vec2f) onPoint)
     {
         circlePoints(pos.x, pos.y, radius, onPoint);
     }
 
     void circlePoints(float centerXPos, float centerYPos, int radius, scope bool delegate(
-            Vec2d) onPoint)
+            Vec2f) onPoint)
     {
         ellipse(centerXPos, centerYPos, radius, radius, (p1, p2) {
             if (!onPoint(p1))
@@ -509,7 +494,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void fillCircle(Vec2d center, float radius)
+    void fillCircle(Vec2f center, float radius)
     {
         circle(center.x, center.y, radius, true);
     }
@@ -526,12 +511,12 @@ class Graphic : LoggableUnit
 
     void circle(float centerX, float centerY, float radius, bool isFill = false)
     {
-        ellipse(Vec2d(centerX, centerY), Vec2d(radius, radius), isFill, isFill);
+        ellipse(Vec2f(centerX, centerY), Vec2f(radius, radius), isFill, isFill);
     }
 
     void circle(float centerX, float centerY, float radius, RGBA color = defaultColor, bool isFill = false)
     {
-        ellipse(Vec2d(centerX, centerY), Vec2d(radius, radius), color, isFill, isFill);
+        ellipse(Vec2f(centerX, centerY), Vec2f(radius, radius), color, isFill, isFill);
     }
 
     void circle(float centerX, float centerY, float radius)
@@ -540,7 +525,7 @@ class Graphic : LoggableUnit
         ellipse(centerX, centerY, radiusInt, radiusInt);
     }
 
-    void ellipse(Vec2d centerPos, Vec2d radiusXY, RGBA color, bool isFillTop = false, bool isFillBottom = false)
+    void ellipse(Vec2f centerPos, Vec2f radiusXY, RGBA color, bool isFillTop = false, bool isFillBottom = false)
     {
         this.color(color);
         scope (exit)
@@ -550,7 +535,7 @@ class Graphic : LoggableUnit
         ellipse(centerPos, radiusXY, isFillTop, isFillBottom);
     }
 
-    void ellipse(Vec2d centerPos, Vec2d radiusXY, bool isFillTop = false, bool isFillBottom = false)
+    void ellipse(Vec2f centerPos, Vec2f radiusXY, bool isFillTop = false, bool isFillBottom = false)
     {
         ellipse(centerPos, radiusXY,
             (p1, p2) {
@@ -573,7 +558,7 @@ class Graphic : LoggableUnit
         });
     }
 
-    void ellipse(Vec2d centerPos, Vec2d radiusXY)
+    void ellipse(Vec2f centerPos, Vec2f radiusXY)
     {
         ellipse(centerPos.x, centerPos.y, toInt(radiusXY.x), toInt(radiusXY.y));
     }
@@ -585,32 +570,32 @@ class Graphic : LoggableUnit
             (p1, p2) { point(p1); point(p2); return true; });
     }
 
-    void ellipse(Vec2d centerPos, Vec2d radiusXY,
-        scope bool delegate(Vec2d, Vec2d) onTopQuadPoints,
-        scope bool delegate(Vec2d, Vec2d) onBottomQuadPoints)
+    void ellipse(Vec2f centerPos, Vec2f radiusXY,
+        scope bool delegate(Vec2f, Vec2f) onTopQuadPoints,
+        scope bool delegate(Vec2f, Vec2f) onBottomQuadPoints)
     {
         ellipse(centerPos.x, centerPos.y, toInt(radiusXY.x), toInt(radiusXY.y), onTopQuadPoints, onBottomQuadPoints);
     }
 
     void ellipse(float centerXPos, float centerYPos, int radiusX, int radiusY,
-        scope bool delegate(Vec2d, Vec2d) onTopQuadPoints,
-        scope bool delegate(Vec2d, Vec2d) onBottomQuadPoints)
+        scope bool delegate(Vec2f, Vec2f) onTopQuadPoints,
+        scope bool delegate(Vec2f, Vec2f) onBottomQuadPoints)
     {
         //John Kennedy fast Bresenham algorithm
         int centerX = toInt(centerXPos);
         int centerY = toInt(centerYPos);
 
         auto drawPoints = (int x, int y) {
-            auto quadrand1Point = Vec2d(centerX + x, centerY + y);
-            auto quadrand2Point = Vec2d(centerX - x, centerY + y);
+            auto quadrand1Point = Vec2f(centerX + x, centerY + y);
+            auto quadrand2Point = Vec2f(centerX - x, centerY + y);
 
             if (!onBottomQuadPoints(quadrand1Point, quadrand2Point))
             {
                 return false;
             }
 
-            auto quadrand3Point = Vec2d(centerX - x, centerY - y);
-            auto quadrand4Point = Vec2d(centerX + x, centerY - y);
+            auto quadrand3Point = Vec2f(centerX - x, centerY - y);
+            auto quadrand4Point = Vec2f(centerX + x, centerY - y);
 
             if (!onTopQuadPoints(quadrand3Point, quadrand4Point))
             {
@@ -676,7 +661,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void fillTriangle(Vec2d v01, Vec2d v02, Vec2d v03, RGBA fillColor)
+    void fillTriangle(Vec2f v01, Vec2f v02, Vec2f v03, RGBA fillColor)
     {
         color(fillColor);
         scope (exit)
@@ -687,9 +672,9 @@ class Graphic : LoggableUnit
         fillTriangle(v01, v02, v03);
     }
 
-    void fillTriangle(Vec2d v01, Vec2d v02, Vec2d v03)
+    void fillTriangle(Vec2f v01, Vec2f v02, Vec2f v03)
     {
-        void scanline(const ref Vec2d v1, const ref Vec2d v2, const ref Vec2d v3, bool isFlatBottom = true)
+        void scanline(const ref Vec2f v1, const ref Vec2f v2, const ref Vec2f v3, bool isFlatBottom = true)
         {
             float lineGradient1 = 0;
             float lineGradient2 = 0;
@@ -729,12 +714,12 @@ class Graphic : LoggableUnit
 
         import std.algorithm.sorting : sort;
 
-        Vec2d[3] vertexByY = [v01, v02, v03];
+        Vec2f[3] vertexByY = [v01, v02, v03];
         vertexByY[].sort!((v1, v2) => v1.y < v2.y);
 
-        Vec2d vt1 = vertexByY[0];
-        Vec2d vt2 = vertexByY[1];
-        Vec2d vt3 = vertexByY[2];
+        Vec2f vt1 = vertexByY[0];
+        Vec2f vt2 = vertexByY[1];
+        Vec2f vt3 = vertexByY[2];
 
         if (vt2.y == vt3.y)
         {
@@ -750,23 +735,23 @@ class Graphic : LoggableUnit
         {
             const tempX = vt1.x + ((vt2.y - vt1.y) / (vt3.y - vt1.y)) * (vt3.x - vt1.x);
             const tempY = vt2.y;
-            Vec2d temp = Vec2d(tempX, tempY);
+            Vec2f temp = Vec2f(tempX, tempY);
             scanline(vt1, vt2, temp);
             scanline(vt2, temp, vt3, false);
         }
     }
 
-    void fillRect(Rect2d bounds)
+    void fillRect(Rect2f bounds)
     {
         fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
-    void fillRect(Rect2d bounds, RGBA color)
+    void fillRect(Rect2f bounds, RGBA color)
     {
         fillRect(bounds.x, bounds.y, bounds.width, bounds.height, color);
     }
 
-    void fillRect(Vec2d pos, float width, float height, RGBA fillColor = defaultColor)
+    void fillRect(Vec2f pos, float width, float height, RGBA fillColor = defaultColor)
     {
         fillRect(pos.x, pos.y, width, height, fillColor);
     }
@@ -790,7 +775,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void fillRects(Rect2d[] rects, RGBA fillColor = defaultColor)
+    void fillRects(Rect2f[] rects, RGBA fillColor = defaultColor)
     {
         color(fillColor);
         scope (exit)
@@ -803,7 +788,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void rect(Vec2d pos, float width, float height, RGBA color = defaultColor)
+    void rect(Vec2f pos, float width, float height, RGBA color = defaultColor)
     {
         rect(pos.x, pos.y, width, height, color);
     }
@@ -818,12 +803,12 @@ class Graphic : LoggableUnit
         rect(x, y, width, height);
     }
 
-    void rect(Rect2d bounds)
+    void rect(Rect2f bounds)
     {
         rect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
-    void rect(Vec2d pos, float width, float height)
+    void rect(Vec2f pos, float width, float height)
     {
         rect(pos.x, pos.y, width, height);
     }
@@ -836,7 +821,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void rect(Vec2d pos, float width, float height, GraphicStyle style = GraphicStyle.simple)
+    void rect(Vec2f pos, float width, float height, GraphicStyle style = GraphicStyle.simple)
     {
         rect(pos.x, pos.y, width, height, style);
     }
@@ -857,8 +842,8 @@ class Graphic : LoggableUnit
                 .fillColor);
     }
 
-    void bezier(Vec2d p0, RGBA color, scope Vec2d delegate(float v) onInterpValue, bool delegate(
-            Vec2d) onPoint = null)
+    void bezier(Vec2f p0, RGBA color, scope Vec2f delegate(float v) onInterpValue, bool delegate(
+            Vec2f) onPoint = null)
     {
         this.color(color);
         scope (exit)
@@ -868,13 +853,13 @@ class Graphic : LoggableUnit
         bezier(p0, onInterpValue, onPoint);
     }
 
-    void bezier(Vec2d p0,
-        scope Vec2d delegate(float v) onInterpValue,
-        bool delegate(Vec2d) onPoint = null,
+    void bezier(Vec2f p0,
+        scope Vec2f delegate(float v) onInterpValue,
+        bool delegate(Vec2f) onPoint = null,
         float delta = 0.01)
     {
         //enum delta = 0.01; //100 segments
-        Vec2d start = p0;
+        Vec2f start = p0;
         //TODO exact comparison of floats?
         for (float i = 0; i < 1; i += delta)
         {
@@ -889,41 +874,41 @@ class Graphic : LoggableUnit
         }
     }
 
-    void bezier(Vec2d p0, Vec2d p1, Vec2d p2, scope bool delegate(
-            Vec2d) onPoint = null)
+    void bezier(Vec2f p0, Vec2f p1, Vec2f p2, scope bool delegate(
+            Vec2f) onPoint = null)
     {
         bezier(p0, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
     }
 
-    void bezier(Vec2d p0, Vec2d p1, Vec2d p2, Vec2d p3, scope bool delegate(
-            Vec2d) onPoint = null)
+    void bezier(Vec2f p0, Vec2f p1, Vec2f p2, Vec2f p3, scope bool delegate(
+            Vec2f) onPoint = null)
     {
         bezier(p0, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
     }
 
-    private Vec2d bezierInterp(Vec2d p0, Vec2d p1, Vec2d p2, Vec2d p3, float t) nothrow pure @safe
+    private Vec2f bezierInterp(Vec2f p0, Vec2f p1, Vec2f p2, Vec2f p3, float t) nothrow pure @safe
     {
         const dt = 1 - t;
-        Vec2d p0p1 = p0.scale(dt).add(p1.scale(t));
-        Vec2d p1p2 = p1.scale(dt).add(p2.scale(t));
-        Vec2d p2p3 = p2.scale(dt).add(p3.scale(t));
-        Vec2d p0p1p2 = p0p1.scale(dt).add(p1p2.scale(t));
-        Vec2d p1p2p3 = p1p2.scale(dt).add(p2p3.scale(t));
-        Vec2d result = p0p1p2.scale(dt).add(p1p2p3.scale(t));
+        Vec2f p0p1 = p0.scale(dt).add(p1.scale(t));
+        Vec2f p1p2 = p1.scale(dt).add(p2.scale(t));
+        Vec2f p2p3 = p2.scale(dt).add(p3.scale(t));
+        Vec2f p0p1p2 = p0p1.scale(dt).add(p1p2.scale(t));
+        Vec2f p1p2p3 = p1p2.scale(dt).add(p2p3.scale(t));
+        Vec2f result = p0p1p2.scale(dt).add(p1p2p3.scale(t));
 
         return result;
     }
 
-    private Vec2d bezierInterp(Vec2d p0, Vec2d p1, Vec2d p2, float t) nothrow pure @safe
+    private Vec2f bezierInterp(Vec2f p0, Vec2f p1, Vec2f p2, float t) nothrow pure @safe
     {
         const dt = 1 - t;
-        Vec2d p0p1 = p0.scale(dt).add(p1.scale(t));
-        Vec2d p1p2 = p1.scale(dt).add(p2.scale(t));
-        Vec2d result = p0p1.scale(dt).add(p1p2.scale(t));
+        Vec2f p0p1 = p0.scale(dt).add(p1.scale(t));
+        Vec2f p1p2 = p1.scale(dt).add(p2.scale(t));
+        Vec2f result = p0p1.scale(dt).add(p1p2.scale(t));
         return result;
     }
 
-    bool fillPolyLines(Vec2d[] vertexStart, Vec2d[] vertexEnd, RGBA fillColor)
+    bool fillPolyLines(Vec2f[] vertexStart, Vec2f[] vertexEnd, RGBA fillColor)
     {
         color(fillColor);
         scope (exit)
@@ -933,7 +918,7 @@ class Graphic : LoggableUnit
         return fillPolyLines(vertexStart, vertexEnd);
     }
 
-    bool fillPolyLines(Vec2d[] vertexStart, Vec2d[] vertexEnd)
+    bool fillPolyLines(Vec2f[] vertexStart, Vec2f[] vertexEnd)
     {
         foreach (i, vStart; vertexStart)
         {
@@ -980,9 +965,9 @@ class Graphic : LoggableUnit
         }
     }
 
-    Rect2d viewport()
+    Rect2f viewport()
     {
-        Rect2d v;
+        Rect2f v;
         if (const err = renderer.getViewport(v))
         {
             throw new Exception("Error getting renderer viewport: " ~ err);
@@ -990,7 +975,7 @@ class Graphic : LoggableUnit
         return v;
     }
 
-    void viewport(Rect2d v)
+    void viewport(Rect2f v)
     {
         if (const err = renderer.setViewport(v))
         {
@@ -1014,7 +999,7 @@ class Graphic : LoggableUnit
     //     }
     // }
 
-    Rect2d renderBounds()
+    Rect2f renderBounds()
     {
         int outputWidth;
         int outputHeight;
@@ -1022,9 +1007,9 @@ class Graphic : LoggableUnit
         if (const err = renderer.getOutputSize(outputWidth, outputHeight))
         {
             logger.error("Error getting renderer output size: ", err);
-            return Rect2d.init;
+            return Rect2f.init;
         }
 
-        return Rect2d(0, 0, outputWidth, outputHeight);
+        return Rect2f(0, 0, outputWidth, outputHeight);
     }
 }

@@ -3,7 +3,7 @@ module api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GradientStopPoint;
 import api.dm.lib.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 //TODO remove native api
 import api.dm.lib.cairo;
@@ -122,7 +122,7 @@ class VectorCanvas : GraphicCanvas
         cairo_move_to(cr, x, y);
     }
 
-    void moveTo(Vec2d pos)
+    void moveTo(Vec2f pos)
     {
         moveTo(pos.x, pos.y);
     }
@@ -144,7 +144,7 @@ class VectorCanvas : GraphicCanvas
         cairo_line_to(cr, endX, endY);
     }
 
-    void lineTo(Vec2d pos)
+    void lineTo(Vec2f pos)
     {
         lineTo(pos.x, pos.y);
     }
@@ -233,7 +233,7 @@ class VectorCanvas : GraphicCanvas
         cairo_curve_to(cr, x1, y1, x2, y2, x3, y3);
     }
 
-    void linearGradient(Vec2d start, Vec2d end, GradientStopPoint[] stopPoints, void delegate() onPattern){
+    void linearGradient(Vec2f start, Vec2f end, GradientStopPoint[] stopPoints, void delegate() onPattern){
         cairo_pattern_t * pattern = cairo_pattern_create_linear(start.x, start.y, end.x, end.y);
         
         foreach (stopPoint; stopPoints)
@@ -252,7 +252,7 @@ class VectorCanvas : GraphicCanvas
         }
     }
 
-    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern){
+    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern){
         
         cairo_pattern_t * pattern = cairo_pattern_create_radial(innerCenter.x, innerCenter.y, innerRadius, outerCenter.x, outerCenter.y, outerRadius);
         

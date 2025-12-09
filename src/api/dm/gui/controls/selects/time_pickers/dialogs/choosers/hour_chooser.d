@@ -5,7 +5,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.selects.time_pickers.dialogs.choosers.base_circular_time_chooser : BaseCircularTimeChooser;
 import api.dm.gui.controls.texts.text : Text;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import std.conv : to;
 
@@ -118,14 +118,14 @@ class HourChooser : BaseCircularTimeChooser
         const sliderBounds = thumb.boundsRect;
         auto angle = ((360.0 / 12) * (v % 12) + 270) % 360;
 
-        Vec2d pos;
+        Vec2f pos;
         if (v >= 1 && v <= 12)
         {
-            pos = Vec2d.fromPolarDeg(angle, radius);
+            pos = Vec2f.fromPolarDeg(angle, radius);
         }
         else
         {
-            pos = Vec2d.fromPolarDeg(angle, outerBoxRadius);
+            pos = Vec2f.fromPolarDeg(angle, outerBoxRadius);
         }
 
         thumb.xy(center.x + pos.x - sliderBounds.halfWidth, center.y + pos.y - sliderBounds

@@ -529,7 +529,7 @@ class Controls : Control
         gaugeContainer.addCreate(radGauge);
 
         radGauge.onPointerPress ~= (ref e) {
-            import api.math.geom2.vec2 : Vec2d;
+            import api.math.geom2.vec2 : Vec2f;
 
             auto pointerPos = radGauge.boundsRect.center.angleDeg360To(input.pointerPos);
             radGauge.valueAngle = pointerPos;

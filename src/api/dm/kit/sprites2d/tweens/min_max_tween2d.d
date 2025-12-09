@@ -3,7 +3,7 @@ module api.dm.kit.sprites2d.tweens.min_max_tween2d;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.tweens.min_max_tween : MinMaxTween;
 import api.dm.kit.tweens.curves.interpolator : Interpolator;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import std.traits : isIntegral, isFloatingPoint;
 
 import std.stdio;
@@ -11,7 +11,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class MinMaxTween2d(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween2d
+class MinMaxTween2d(T) if (isFloatingPoint!T || is(T : Vec2f)) : Tween2d
 {
     ref void delegate(T, T)[] onOldNewValue() => mTween.onOldNewValue;
     ref void delegate(T)[] onDeltaValue() => mTween.onDeltaValue;

@@ -1,9 +1,9 @@
 module api.dm.kit.sprites2d.sprite2d;
 
 import api.dm.kit.events.event_kit_target : EventKitTarget;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.polygon2 : Quadrilateral2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.polygon2 : Quadrilateral2f;
 import api.math.pos2.alignment : Alignment;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
@@ -72,19 +72,19 @@ class Sprite2d : EventKitTarget
 
     bool isPhysicsEnabled;
 
-    Vec2d velocity;
-    Vec2d acceleration;
+    Vec2f velocity;
+    Vec2f acceleration;
 
     Sprite2d isCollisionProcess;
     Sprite2d[] targetsForCollisions;
 
     bool delegate(Sprite2d, Sprite2d) onCollision;
 
-    Rect2d clip;
+    Rect2f clip;
     bool isMoveClip;
     bool isResizeClip;
-    void delegate(Rect2d* clip) onClipResize;
-    void delegate(Rect2d* clip) onClipMove;
+    void delegate(Rect2f* clip) onClipResize;
+    void delegate(Rect2f* clip) onClipMove;
     bool isOutClipForwardEvents;
 
     bool inScreenBounds;
@@ -1097,7 +1097,7 @@ class Sprite2d : EventKitTarget
 
     void setClipFromBounds()
     {
-        clip = Rect2d(x, y, width, height);
+        clip = Rect2f(x, y, width, height);
         isMoveClip = true;
         isResizeClip = true;
     }
@@ -1343,23 +1343,23 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    Rect2d boundsRect() => Rect2d(x, y, _width, _height);
-    Rect2d boundsLocal() => Rect2d(0, 0, _width, _height);
+    Rect2f boundsRect() => Rect2f(x, y, _width, _height);
+    Rect2f boundsLocal() => Rect2f(0, 0, _width, _height);
 
-    Rect2d boundsRectInParent()
+    Rect2f boundsRectInParent()
     {
         if (!parent)
         {
             return boundsRect;
         }
 
-        const Rect2d pBounds = {x - parent.x, y - parent.y, _width, _height};
+        const Rect2f pBounds = {x - parent.x, y - parent.y, _width, _height};
         return pBounds;
     }
 
-    Quadrilateral2d boundsPoly()
+    Quadrilateral2f boundsPoly()
     {
-        Quadrilateral2d bounds = Quadrilateral2d(x, y, _width, _height);
+        Quadrilateral2f bounds = Quadrilateral2f(x, y, _width, _height);
         if (_angle == 0)
         {
             return bounds;
@@ -1370,14 +1370,14 @@ class Sprite2d : EventKitTarget
         return bounds;
     }
 
-    Quadrilateral2d boundsPolyInParent()
+    Quadrilateral2f boundsPolyInParent()
     {
         if (!parent)
         {
             return boundsPoly;
         }
 
-        Quadrilateral2d bounds = Quadrilateral2d(x - parent.x, y - parent.y, _width, _height);
+        Quadrilateral2f bounds = Quadrilateral2f(x - parent.x, y - parent.y, _width, _height);
         if (_angle == 0)
         {
             return bounds;
@@ -1388,9 +1388,9 @@ class Sprite2d : EventKitTarget
         return bounds;
     }
 
-    void rotateBounds(ref Quadrilateral2d bounds, float angle)
+    void rotateBounds(ref Quadrilateral2f bounds, float angle)
     {
-        import api.math.matrices.matrix : Matrix2x2, Matrix2x1, toVec2d, fromVec2d;
+        import api.math.matrices.matrix : Matrix2x2, Matrix2x1, toVec2f, fromVec2f;
 
         import Math = api.math;
 
@@ -1403,32 +1403,32 @@ class Sprite2d : EventKitTarget
 
         Matrix2x1 vecm;
 
-        Vec2d pivot = bounds.center;
+        Vec2f pivot = bounds.center;
 
-        fromVec2d(vecm, bounds.leftTop.sub(pivot));
-        bounds.leftTop = rotM.mul(vecm).toVec2d.add(pivot);
+        fromVec2f(vecm, bounds.leftTop.sub(pivot));
+        bounds.leftTop = rotM.mul(vecm).toVec2f.add(pivot);
 
-        fromVec2d(vecm, bounds.rightTop.sub(pivot));
-        bounds.rightTop = rotM.mul(vecm).toVec2d.add(pivot);
+        fromVec2f(vecm, bounds.rightTop.sub(pivot));
+        bounds.rightTop = rotM.mul(vecm).toVec2f.add(pivot);
 
-        fromVec2d(vecm, bounds.rightBottom.sub(pivot));
-        bounds.rightBottom = rotM.mul(vecm).toVec2d.add(pivot);
+        fromVec2f(vecm, bounds.rightBottom.sub(pivot));
+        bounds.rightBottom = rotM.mul(vecm).toVec2f.add(pivot);
 
-        fromVec2d(vecm, bounds.leftBottom.sub(pivot));
-        bounds.leftBottom = rotM.mul(vecm).toVec2d.add(pivot);
+        fromVec2f(vecm, bounds.leftBottom.sub(pivot));
+        bounds.leftBottom = rotM.mul(vecm).toVec2f.add(pivot);
     }
 
-    Rect2d boundsRectPadding()
+    Rect2f boundsRectPadding()
     {
         const b = boundsRect;
-        const pBounds = Rect2d(b.x + padding.left, b.y + padding.top, b.width - padding.width, b.height - padding
+        const pBounds = Rect2f(b.x + padding.left, b.y + padding.top, b.width - padding.width, b.height - padding
                 .height);
         return pBounds;
     }
 
-    Rect2d boundsRectLayout()
+    Rect2f boundsRectLayout()
     {
-        Rect2d bounds = Rect2d(
+        Rect2f bounds = Rect2f(
             x - margin.left,
             y - margin.top,
             _width + margin.width,
@@ -1437,9 +1437,9 @@ class Sprite2d : EventKitTarget
         return bounds;
     }
 
-    Rect2d boundsRectGeom()
+    Rect2f boundsRectGeom()
     {
-        const Rect2d bounds = {0, 0, _width, _height};
+        const Rect2f bounds = {0, 0, _width, _height};
         return bounds;
     }
 
@@ -1455,7 +1455,7 @@ class Sprite2d : EventKitTarget
 
     bool toCenterX(bool isUseParent = false)
     {
-        Rect2d bounds = (isUseParent && parent) ? parent.boundsRect : graphic.renderBounds;
+        Rect2f bounds = (isUseParent && parent) ? parent.boundsRect : graphic.renderBounds;
         if (bounds.width == 0)
         {
             return false;
@@ -1474,7 +1474,7 @@ class Sprite2d : EventKitTarget
 
     bool toCenterY(bool isUseParent = false)
     {
-        Rect2d bounds = (isUseParent && parent) ? parent.boundsRect : graphic.renderBounds;
+        Rect2f bounds = (isUseParent && parent) ? parent.boundsRect : graphic.renderBounds;
         if (bounds.height == 0)
         {
             return false;
@@ -1491,12 +1491,12 @@ class Sprite2d : EventKitTarget
         return (y = middleY);
     }
 
-    Vec2d pos() @safe pure nothrow
+    Vec2f pos() @safe pure nothrow
     {
-        return Vec2d(x, y);
+        return Vec2f(x, y);
     }
 
-    bool pos(Vec2d newPos) => pos(newPos.x, newPos.y);
+    bool pos(Vec2f newPos) => pos(newPos.x, newPos.y);
 
     bool pos(float newX, float newY)
     {
@@ -1506,21 +1506,21 @@ class Sprite2d : EventKitTarget
         return isChangePos;
     }
 
-    Vec2d center()
+    Vec2f center()
     {
-        return Vec2d(x + (width / 2.0), y + (height / 2.0));
+        return Vec2f(x + (width / 2.0), y + (height / 2.0));
     }
 
     void centering(Sprite2d child)
     {
         assert(child);
-        auto childPos = center.sub(Vec2d(child.halfWidth, child.halfHeight));
+        auto childPos = center.sub(Vec2f(child.halfWidth, child.halfHeight));
         child.xy(childPos);
     }
 
-    Vec2d xy() => Vec2d(x, y);
+    Vec2f xy() => Vec2f(x, y);
 
-    bool xy(Vec2d newXY) => xy(newXY.x, newXY.y);
+    bool xy(Vec2f newXY) => xy(newXY.x, newXY.y);
 
     bool xy(float newX, float newY)
     {
@@ -2084,9 +2084,9 @@ class Sprite2d : EventKitTarget
 
         graphic.color(color);
 
-        import api.math.geom2.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2f;
 
-        graphic.rect(Vec2d(clip.x, clip.y), clip.width, clip.height);
+        graphic.rect(Vec2f(clip.x, clip.y), clip.width, clip.height);
 
         graphic.restoreColor;
     }
@@ -2280,9 +2280,9 @@ class Sprite2d : EventKitTarget
     ComSurface snapshot()
     {
         assert(width > 0 && height > 0);
-        import api.math.geom2.rect2 : Rect2d;
+        import api.math.geom2.rect2 : Rect2f;
 
-        auto bounds = Rect2d(
+        auto bounds = Rect2f(
             0, 0, width, height
         );
         auto surf = graphic.comSurfaceProvider.getNew();
@@ -2534,19 +2534,19 @@ class Sprite2d : EventKitTarget
         return _hitbox;
     }
 
-    Rect2d boundingBox() => boundingBox(angle);
+    Rect2f boundingBox() => boundingBox(angle);
 
-    Rect2d boundingBox(float angleDeg)
+    Rect2f boundingBox(float angleDeg)
     {
         import Math = api.math;
 
-        Rect2d box = boundsRect.boundingBox(angleDeg);
+        Rect2f box = boundsRect.boundingBox(angleDeg);
         box.x = x;
         box.y = y;
         return box;
     }
 
-    Rect2d boundingBoxMax() => boundsRect.boundingBoxMax;
+    Rect2f boundingBoxMax() => boundsRect.boundingBoxMax;
 
     void setGrow(bool isGrow = true)
     {

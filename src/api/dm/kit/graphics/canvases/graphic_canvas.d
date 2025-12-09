@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.canvases.graphic_canvas;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 struct GradientStopPoint
 {
@@ -52,10 +52,10 @@ interface GraphicCanvas
     void lineJoin(LineJoin join);
 
     void moveTo(float x, float y);
-    void moveTo(Vec2d pos);
+    void moveTo(Vec2f pos);
 
     void lineTo(float x, float y);
-    void lineTo(Vec2d pos);
+    void lineTo(Vec2f pos);
 
     void stroke();
     void strokePreserve();
@@ -74,6 +74,6 @@ interface GraphicCanvas
 
     void bezierCurveTo(float x1, float y1, float x2, float y2, float x3, float y3);
 
-    void linearGradient(Vec2d start, Vec2d end, GradientStopPoint[] stopPoints, void delegate() onPattern);
-    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern);
+    void linearGradient(Vec2f start, Vec2f end, GradientStopPoint[] stopPoints, void delegate() onPattern);
+    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern);
 }

@@ -1,7 +1,7 @@
 module api.math.matrices.matrix;
 
 import api.math.matrices.dense_matrix : DenseMatrix;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
@@ -9,12 +9,12 @@ import api.math.geom2.vec2 : Vec2d;
 alias Matrix2x1 = DenseMatrix!(float, 2, 1);
 alias Matrix2x2 = DenseMatrix!(float, 2, 2);
 alias Matrix3x3 = DenseMatrix!(float, 3, 3);
-alias Matrix4x4f = DenseMatrix!(float, 4, 4);
+alias Matrix4x4 = DenseMatrix!(float, 4, 4);
 alias Matrix3x1 = DenseMatrix!(float, 3, 1);
 
-Vec2d toVec2d(ref Matrix2x1 m) => Vec2d(m[0][0], m[1][0]);
-Vec2d toVec2d(Matrix2x1 m) => Vec2d(m[0][0], m[1][0]);
-void fromVec2d(ref Matrix2x1 m, Vec2d vec)
+Vec2f toVec2f(ref Matrix2x1 m) => Vec2f(m[0][0], m[1][0]);
+Vec2f toVec2f(Matrix2x1 m) => Vec2f(m[0][0], m[1][0]);
+void fromVec2f(ref Matrix2x1 m, Vec2f vec)
 {
     m[0][0] = vec.x;
     m[1][0] = vec.y;

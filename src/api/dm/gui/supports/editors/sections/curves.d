@@ -8,7 +8,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 
@@ -28,8 +28,8 @@ class Curves : Control
         enum shapeSize = 60;
         GraphicStyle shapeStyle = GraphicStyle.simple;
 
-        Vec2d[] pointsBuffer;
-        bool delegate(Vec2d) onBuffer;
+        Vec2f[] pointsBuffer;
+        bool delegate(Vec2f) onBuffer;
     }
 
     this()
@@ -61,7 +61,7 @@ class Curves : Control
         return sprite;
     }
 
-    Sprite2d createCurveInfo(string name, Vec2d[] points, bool isDrawFromCenter = true, bool isClosePath = false)
+    Sprite2d createCurveInfo(string name, Vec2f[] points, bool isDrawFromCenter = true, bool isClosePath = false)
     {
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;

@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.electronics;
 
 import api.dm.gui.controls.control : Control;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import std.stdio;
 

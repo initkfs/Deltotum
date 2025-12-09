@@ -1,7 +1,7 @@
 module api.dm.addon.procedural.vecfields.vec_field;
 
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.math;
 
@@ -10,7 +10,7 @@ struct FieldVec
     float polarAngleRad = 0;
     float length = 0;
 
-    Vec2d toVec2() => Vec2d.fromPolarRad(polarAngleRad, length);
+    Vec2f toVec2() => Vec2f.fromPolarRad(polarAngleRad, length);
 }
 
 /**
@@ -18,7 +18,7 @@ struct FieldVec
  */
 class VecField
 {
-    Rect2d gridBounds;
+    Rect2f gridBounds;
     FieldVec[][] grid;
 
     size_t steps = 20;
@@ -52,7 +52,7 @@ class VecField
         _colCount = cast(size_t)((rightX - leftX) / resolution);
         _rowCount = cast(size_t)((bottomY - topY) / resolution);
 
-        gridBounds = Rect2d(startX + leftX, startY + topY, rightX - leftX, bottomY - topY);
+        gridBounds = Rect2f(startX + leftX, startY + topY, rightX - leftX, bottomY - topY);
 
         //0.1%-0.5% width
         if (_stepLength == 0)
@@ -76,10 +76,10 @@ class VecField
     }
 
     void drawFlows(
-        Vec2d[] points,
-        scope bool delegate(Vec2d) onStartRowIsContinue,
-        scope bool delegate(Vec2d) onLinePointIsContinue,
-        scope bool delegate(Vec2d) onEndRowIsContinue,
+        Vec2f[] points,
+        scope bool delegate(Vec2f) onStartRowIsContinue,
+        scope bool delegate(Vec2f) onLinePointIsContinue,
+        scope bool delegate(Vec2f) onEndRowIsContinue,
     )
     {
         assert(onStartRowIsContinue);
@@ -98,7 +98,7 @@ class VecField
 
             foreach (n; 0 .. steps)
             {
-                if (!onLinePointIsContinue(Vec2d(startX, startY)))
+                if (!onLinePointIsContinue(Vec2f(startX, startY)))
                 {
                     return;
                 }
@@ -115,12 +115,12 @@ class VecField
                 }
 
                 auto gridVec = grid[rowIndex][columnIndex];
-                Vec2d xyStep = gridVec.toVec2;
+                Vec2f xyStep = gridVec.toVec2;
                 startX += xyStep.x;
                 startY += xyStep.y;
             }
 
-            if (!onEndRowIsContinue(Vec2d(startX, startY)))
+            if (!onEndRowIsContinue(Vec2f(startX, startY)))
             {
                 return;
             }
@@ -133,7 +133,7 @@ class VecField
         rotateGrid;
     }
 
-    void drawGrid(scope void delegate(Vec2d, Vec2d) onLine)
+    void drawGrid(scope void delegate(Vec2f, Vec2f) onLine)
     {
         if (grid.length == 0)
         {
@@ -146,8 +146,8 @@ class VecField
             float startX = gridBounds.x;
             foreach (ci, ref col; row)
             {
-                Vec2d startXY = Vec2d(startX, startY);
-                Vec2d endXY = Vec2d.fromPolarRad(col.polarAngleRad, resolution);
+                Vec2f startXY = Vec2f(startX, startY);
+                Vec2f endXY = Vec2f.fromPolarRad(col.polarAngleRad, resolution);
                 onLine(startXY, startXY.add(endXY));
                 startX += resolution;
             }

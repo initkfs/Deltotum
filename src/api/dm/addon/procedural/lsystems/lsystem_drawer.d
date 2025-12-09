@@ -4,7 +4,7 @@ import api.dm.kit.graphics.brushes.brush : Brush;
 import api.dm.addon.procedural.lsystems.lsystem_parser : LSystemParser;
 import api.dm.addon.procedural.lsystems.lsystem: LSystemData;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
@@ -16,7 +16,7 @@ class LSystemDrawer
 
     LSystemData data;
 
-    void delegate(Vec2d, Vec2d) onLineStartEnd;
+    void delegate(Vec2f, Vec2f) onLineStartEnd;
 
     this(LSystemParser parser = null, Brush newBrush = null)
     {

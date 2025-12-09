@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.toggles.base_orient_toggle;
 
 import api.dm.gui.controls.switches.toggles.base_toggle : BaseToggle;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.math.pos2.orientation : Orientation;
 
 /**

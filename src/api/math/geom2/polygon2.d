@@ -1,38 +1,38 @@
 module api.math.geom2.polygon2;
 
-import api.math.geom2.line2 : Line2d;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.rect2: Rect2d;
+import api.math.geom2.line2 : Line2f;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2: Rect2f;
 
 import Math = api.math;
 
-struct Quadrilateral2d
+struct Quadrilateral2f
 {
-    Vec2d leftTop;
-    Vec2d rightTop;
-    Vec2d rightBottom;
-    Vec2d leftBottom;
+    Vec2f leftTop;
+    Vec2f rightTop;
+    Vec2f rightBottom;
+    Vec2f leftBottom;
 
     this(float x, float y, float width, float height)
     {
-        leftTop = Vec2d(x, y);
-        rightTop = Vec2d(leftTop.x + width, leftTop.y);
-        rightBottom = Vec2d(rightTop.x, rightTop.y + height);
-        leftBottom = Vec2d(leftTop.x, rightBottom.y);
+        leftTop = Vec2f(x, y);
+        rightTop = Vec2f(leftTop.x + width, leftTop.y);
+        rightBottom = Vec2f(rightTop.x, rightTop.y + height);
+        leftBottom = Vec2f(leftTop.x, rightBottom.y);
     }
 
-    Vec2d middleLeft() const  nothrow pure @safe => leftBottom.add(leftTop).div(2.0);
-    Vec2d middleRight() const  nothrow pure @safe => rightBottom.add(rightTop).div(2.0);
-    Vec2d middleTop() const  nothrow pure @safe => rightTop.add(leftTop).div(2.0);
-    Vec2d middleBottom() const  nothrow pure @safe => rightBottom.add(
+    Vec2f middleLeft() const  nothrow pure @safe => leftBottom.add(leftTop).div(2.0);
+    Vec2f middleRight() const  nothrow pure @safe => rightBottom.add(rightTop).div(2.0);
+    Vec2f middleTop() const  nothrow pure @safe => rightTop.add(leftTop).div(2.0);
+    Vec2f middleBottom() const  nothrow pure @safe => rightBottom.add(
         leftBottom).div(2.0);
 
-    Vec2d center() const nothrow pure @safe
+    Vec2f center() const nothrow pure @safe
     {
-        import api.math.geom2.polygon2 : Polygon2d;
+        import api.math.geom2.polygon2 : Polygon2f;
 
-        Vec2d[4] vertx = [leftTop, rightTop, rightBottom, leftBottom];
-        const poly = Polygon2d(vertx[]);
+        Vec2f[4] vertx = [leftTop, rightTop, rightBottom, leftBottom];
+        const poly = Polygon2f(vertx[]);
         return poly.midpoint;
     }
 }
@@ -40,13 +40,13 @@ struct Quadrilateral2d
 /**
  * Authors: initkfs
  */
-struct Polygon2d
+struct Polygon2f
 {
-    Vec2d[] vertices;
+    Vec2f[] vertices;
 
-    bool contains(Vec2d point) => containsRayCast(point);
+    bool contains(Vec2f point) => containsRayCast(point);
 
-    bool containsRayCast(Vec2d point)
+    bool containsRayCast(Vec2f point)
     {
         if (vertices.length == 0)
         {
@@ -56,14 +56,14 @@ struct Polygon2d
         immutable vertLength = vertices.length;
         size_t crossCount;
 
-        foreach (i, const ref Vec2d p1; vertices)
+        foreach (i, const ref Vec2f p1; vertices)
         {
             if (p1 == point)
             {
                 return true;
             }
 
-            Vec2d p2 = vertices[(i + 1) % vertLength];
+            Vec2f p2 = vertices[(i + 1) % vertLength];
 
             if (
                 (point.y > Math.min(p1.y, p2.y)) &&
@@ -81,20 +81,20 @@ struct Polygon2d
         return crossCount % 2 == 1;
     }
 
-    bool containsRayCross(Vec2d point)
+    bool containsRayCross(Vec2f point)
     {
         size_t vertLength = vertices.length;
 
         bool isIntersect;
 
-        foreach (i, const ref Vec2d p1; vertices)
+        foreach (i, const ref Vec2f p1; vertices)
         {
             if (point == p1)
             {
                 return true;
             }
 
-            Vec2d p2 = vertices[(i + 1) % vertLength];
+            Vec2f p2 = vertices[(i + 1) % vertLength];
 
             immutable bool yCross = (p1.y > point.y) != (p2.y > point.y);
             immutable xCross = (p2.x - p1.x) * (point.y - p1.y) / (p2.y - p1.y) + p1.x;
@@ -107,13 +107,13 @@ struct Polygon2d
         return isIntersect;
     }
 
-    bool containsWinding(Vec2d point)
+    bool containsWinding(Vec2f point)
     {
-        float cross3p(Vec2d p1, Vec2d p2, Vec2d p3) => (p2.x - p1.x) * (
+        float cross3p(Vec2f p1, Vec2f p2, Vec2f p3) => (p2.x - p1.x) * (
             p3.y - p1.y)
             - (p2.y - p1.y) * (p3.x - p1.x);
 
-        bool isOnSegment(Vec2d p, Vec2d p1, Vec2d p2) =>
+        bool isOnSegment(Vec2f p, Vec2f p1, Vec2f p2) =>
             cross3p(p1, p2, p) == 0
             && p.x >= Math.min(p1.x, p2.x)
             && p.x <= Math.max(p1.x, p2.x)
@@ -123,9 +123,9 @@ struct Polygon2d
         size_t vertLength = vertices.length;
         int crossCount = 0;
 
-        foreach (i, const ref Vec2d p1; vertices)
+        foreach (i, const ref Vec2f p1; vertices)
         {
-            Vec2d p2 = vertices[(i + 1) % vertLength];
+            Vec2f p2 = vertices[(i + 1) % vertLength];
 
             //TODO float check
             if (p1 == point || p2 == point || isOnSegment(point, p1, p2))
@@ -169,7 +169,7 @@ struct Polygon2d
                 continue;
             }
 
-            const Vec2d* prev = &vertices[i - 1];
+            const Vec2f* prev = &vertices[i - 1];
             const dx = current.x - prev.x;
             const dy = current.y + prev.y;
 
@@ -179,7 +179,7 @@ struct Polygon2d
         return vertSum > 0;
     }
 
-    Vec2d midpoint() scope const nothrow pure @safe
+    Vec2f midpoint() scope const nothrow pure @safe
     {
         float xSum = 0;
         float ySum = 0;
@@ -189,7 +189,7 @@ struct Polygon2d
             ySum += p.y;
         }
 
-        return Vec2d(xSum / vertices.length, ySum / vertices.length);
+        return Vec2f(xSum / vertices.length, ySum / vertices.length);
     }
 
     //TODO https://math.stackexchange.com/questions/978642/how-to-sort-vertices-of-a-polygon-in-counter-clockwise-order
@@ -227,12 +227,12 @@ struct Polygon2d
         return result / 2;
     }
 
-    void onLineMidpoint(scope bool delegate(Vec2d) onMidIsContinue, bool isLastLineNeed = true)
+    void onLineMidpoint(scope bool delegate(Vec2f) onMidIsContinue, bool isLastLineNeed = true)
     {
         onLine((line) { return onMidIsContinue(line.midpoint); }, isLastLineNeed);
     }
 
-    void onLine(scope bool delegate(Line2d) onLineIsContinue, bool isLastLineNeed = true)
+    void onLine(scope bool delegate(Line2f) onLineIsContinue, bool isLastLineNeed = true)
     {
 
         if (vertices.length < 3)
@@ -240,13 +240,13 @@ struct Polygon2d
             return;
         }
 
-        foreach (i, ref Vec2d vert; vertices)
+        foreach (i, ref Vec2f vert; vertices)
         {
             if (i == 0)
             {
                 continue;
             }
-            if (!onLineIsContinue(Line2d(vertices[i - 1], vert)))
+            if (!onLineIsContinue(Line2f(vertices[i - 1], vert)))
             {
                 return;
             }
@@ -254,7 +254,7 @@ struct Polygon2d
 
         if (isLastLineNeed)
         {
-            onLineIsContinue(Line2d(vertices[$ - 1], vertices[0]));
+            onLineIsContinue(Line2f(vertices[$ - 1], vertices[0]));
         }
     }
 
@@ -267,7 +267,7 @@ struct Polygon2d
             auto next1 = vertices[(i + 1) % vertices.length];
             auto next2 = vertices[(i + 2) % vertices.length];
 
-            currCross = Vec2d.cross(point, next1, next2);
+            currCross = Vec2f.cross(point, next1, next2);
             if (currCross != 0)
             {
                 if (currCross * prevCross < 0)
@@ -283,11 +283,11 @@ struct Polygon2d
 
     unittest
     {
-        Vec2d[] points = [{0, 0}, {0, 5}, {5, 5}, {5, 0}];
-        assert((Polygon2d(points)).isConvex);
+        Vec2f[] points = [{0, 0}, {0, 5}, {5, 5}, {5, 0}];
+        assert((Polygon2f(points)).isConvex);
 
-        Vec2d[] points2 = [{0, 0}, {0, 5}, {0, 0}, {5, 5}, {5, 0}];
-        assert(!(Polygon2d(points2)).isConvex);
+        Vec2f[] points2 = [{0, 0}, {0, 5}, {0, 0}, {5, 5}, {5, 0}];
+        assert(!(Polygon2f(points2)).isConvex);
 
     }
 
@@ -295,14 +295,14 @@ struct Polygon2d
      * https://en.wikipedia.org/wiki/Sutherland-Hodgman_algorithm
      * https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm/
      */
-    static Vec2d[] clipSutherlandHodgman(Vec2d[] points, Vec2d x1y1, Vec2d x2y2)
+    static Vec2f[] clipSutherlandHodgman(Vec2f[] points, Vec2f x1y1, Vec2f x2y2)
     {
         if (points.length == 0)
         {
             return [];
         }
 
-        Vec2d[] newPoints;
+        Vec2f[] newPoints;
 
         float x1 = x1y1.x;
         float y1 = x1y1.y;
@@ -319,29 +319,29 @@ struct Polygon2d
             const ipos = (x2 - x1) * (iy - y1) - (y2 - y1) * (ix - x1);
             const kpos = (x2 - x1) * (ky - y1) - (y2 - y1) * (kx - x1);
 
-            Line2d l1 = Line2d(x1, y1, x2, y2);
-            Line2d l2 = Line2d(ix, iy, kx, ky);
+            Line2f l1 = Line2f(x1, y1, x2, y2);
+            Line2f l2 = Line2f(ix, iy, kx, ky);
 
             // points inside
             if (ipos < 0 && kpos < 0)
             {
-                newPoints ~= Vec2d(kx, ky);
+                newPoints ~= Vec2f(kx, ky);
             }
             // first point outside
             else if (ipos >= 0 && kpos < 0)
             {
                 const intersectPoint = l1.intersectWith(l2);
-                newPoints ~= Vec2d(
+                newPoints ~= Vec2f(
                     intersectPoint.x,
                     intersectPoint.y);
-                newPoints ~= Vec2d(kx, ky);
+                newPoints ~= Vec2f(kx, ky);
             }
             // second point outside
             else if (ipos < 0 && kpos >= 0)
             {
                 const intersectPoint = l1.intersectWith(l2);
                 //Only point of intersection with edge is added
-                newPoints ~= Vec2d(
+                newPoints ~= Vec2f(
                     intersectPoint.x,
                     intersectPoint.y
                 );
@@ -351,9 +351,9 @@ struct Polygon2d
         return newPoints;
     }
 
-    static Vec2d[] clipSutHodg(Vec2d[] points, Vec2d[] clipperPoints)
+    static Vec2f[] clipSutHodg(Vec2f[] points, Vec2f[] clipperPoints)
     {
-        Vec2d[] clipPoints = points.dup;
+        Vec2f[] clipPoints = points.dup;
         foreach (i; 0 .. clipperPoints.length)
         {
             size_t k = (i + 1) % clipperPoints.length;
@@ -368,22 +368,22 @@ struct Polygon2d
 
         float eps = 0.00001;
 
-        Vec2d[] points = [
-            Vec2d(100.0, 150), Vec2d(200.0, 250), Vec2d(300.0, 200)
+        Vec2f[] points = [
+            Vec2f(100.0, 150), Vec2f(200.0, 250), Vec2f(300.0, 200)
         ];
-        Vec2d[] clipPoints = [
-            Vec2d(150.0, 150), Vec2d(150.0, 200), Vec2d(200.0, 200),
-            Vec2d(200.0, 150)
+        Vec2f[] clipPoints = [
+            Vec2f(150.0, 150), Vec2f(150.0, 200), Vec2f(200.0, 200),
+            Vec2f(200.0, 150)
         ];
 
-        Vec2d[] result = clipSutHodg(points, clipPoints);
+        Vec2f[] result = clipSutHodg(points, clipPoints);
 
         float[][] expected = [
             [150, 162.5], [150.0, 200], [200.0, 200], [200.0, 175]
         ];
 
         assert(result.length == expected.length);
-        foreach (i, Vec2d poly; result)
+        foreach (i, Vec2f poly; result)
         {
             auto expectPoint = expected[i];
             assert(isClose(poly.x, expectPoint[0], eps));
@@ -391,7 +391,7 @@ struct Polygon2d
         }
     }
 
-    Rect2d bounds() const
+    Rect2f bounds() const
     {
         float minX = 0;
         float maxX = 0;
@@ -420,7 +420,7 @@ struct Polygon2d
             }
         }
 
-        return Rect2d(minX, minY, maxX - minX, maxY - minY);
+        return Rect2f(minX, minY, maxX - minX, maxY - minY);
     }
 
 }
@@ -428,58 +428,58 @@ struct Polygon2d
 //TODO add mixin test
 unittest
 {
-    Polygon2d poly1 = {[
+    Polygon2f poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 
-    assert(!poly1.containsRayCast(Vec2d(9, 9)));
-    assert(!poly1.containsRayCast(Vec2d(21, 10)));
-    assert(!poly1.containsRayCast(Vec2d(20, 21)));
-    assert(!poly1.containsRayCast(Vec2d(10, 21)));
+    assert(!poly1.containsRayCast(Vec2f(9, 9)));
+    assert(!poly1.containsRayCast(Vec2f(21, 10)));
+    assert(!poly1.containsRayCast(Vec2f(20, 21)));
+    assert(!poly1.containsRayCast(Vec2f(10, 21)));
 
-    assert(poly1.containsRayCast(Vec2d(10, 10)));
-    assert(poly1.containsRayCast(Vec2d(20, 10)));
+    assert(poly1.containsRayCast(Vec2f(10, 10)));
+    assert(poly1.containsRayCast(Vec2f(20, 10)));
 
-    assert(poly1.containsRayCast(Vec2d(15, 15)));
-    assert(poly1.containsRayCast(Vec2d(17, 11)));
+    assert(poly1.containsRayCast(Vec2f(15, 15)));
+    assert(poly1.containsRayCast(Vec2f(17, 11)));
 
 }
 
 unittest
 {
-    Polygon2d poly1 = {[
+    Polygon2f poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 
-    assert(!poly1.containsRayCross(Vec2d(9, 9)));
-    assert(!poly1.containsRayCross(Vec2d(21, 10)));
-    assert(!poly1.containsRayCross(Vec2d(20, 21)));
-    assert(!poly1.containsRayCross(Vec2d(10, 21)));
+    assert(!poly1.containsRayCross(Vec2f(9, 9)));
+    assert(!poly1.containsRayCross(Vec2f(21, 10)));
+    assert(!poly1.containsRayCross(Vec2f(20, 21)));
+    assert(!poly1.containsRayCross(Vec2f(10, 21)));
 
-    assert(poly1.containsRayCross(Vec2d(10, 10)));
-    assert(poly1.containsRayCross(Vec2d(20, 10)));
+    assert(poly1.containsRayCross(Vec2f(10, 10)));
+    assert(poly1.containsRayCross(Vec2f(20, 10)));
 
-    assert(poly1.containsRayCross(Vec2d(15, 15)));
-    assert(poly1.containsRayCross(Vec2d(17, 11)));
+    assert(poly1.containsRayCross(Vec2f(15, 15)));
+    assert(poly1.containsRayCross(Vec2f(17, 11)));
 
 }
 
 unittest
 {
-    Polygon2d poly1 = {[
+    Polygon2f poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 
-    assert(!poly1.containsWinding(Vec2d(9, 9)));
-    assert(!poly1.containsWinding(Vec2d(21, 10)));
-    assert(!poly1.containsWinding(Vec2d(20, 21)));
-    assert(!poly1.containsWinding(Vec2d(10, 21)));
+    assert(!poly1.containsWinding(Vec2f(9, 9)));
+    assert(!poly1.containsWinding(Vec2f(21, 10)));
+    assert(!poly1.containsWinding(Vec2f(20, 21)));
+    assert(!poly1.containsWinding(Vec2f(10, 21)));
 
-    assert(poly1.containsWinding(Vec2d(10, 10)));
-    assert(poly1.containsWinding(Vec2d(15, 10)));
-    assert(poly1.containsWinding(Vec2d(20, 10)));
+    assert(poly1.containsWinding(Vec2f(10, 10)));
+    assert(poly1.containsWinding(Vec2f(15, 10)));
+    assert(poly1.containsWinding(Vec2f(20, 10)));
 
-    assert(poly1.containsWinding(Vec2d(15, 15)));
-    assert(poly1.containsWinding(Vec2d(17, 11)));
+    assert(poly1.containsWinding(Vec2f(15, 15)));
+    assert(poly1.containsWinding(Vec2f(17, 11)));
 
 }

@@ -2,7 +2,7 @@ module api.dm.gui.controls.containers.scroll_box;
 
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -228,7 +228,7 @@ class ScrollBox : Container
 
     protected void updateClip()
     {
-        content.clip = Rect2d(
+        content.clip = Rect2f(
             (content.x - clipErrorDelta) + clipPadding,
             content.y - clipErrorDelta + clipPadding,
             content.width - clipPadding + clipErrorDelta * 2, content

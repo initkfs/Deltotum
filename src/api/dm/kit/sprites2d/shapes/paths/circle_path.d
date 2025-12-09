@@ -31,13 +31,13 @@ class CirclePath : Path
     override void create()
     {
         import math = api.dm.math;
-        import api.math.geom2.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2f;
 
         foreach (angleDeg; 1 .. 361)
         {
             immutable pX = width / 2 + radius * math.cosDeg(angleDeg);
             immutable pY = height / 2 + radius * math.sinDeg(angleDeg);
-            points ~= Vec2d(pX, pY);
+            points ~= Vec2f(pX, pY);
         }
         super.create;
     }

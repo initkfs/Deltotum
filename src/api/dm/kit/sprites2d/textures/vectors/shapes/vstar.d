@@ -31,10 +31,10 @@ class VStar : VShape
             canvas.color(style.fillColor);
         }
 
-        import api.math.geom2.star_polygon2 : StarPolygon2d;
+        import api.math.geom2.star_polygon2 : StarPolygon2f;
 
         const lineWidth = style.lineWidth;
-        auto polygon = StarPolygon2d(_spikeCount, _innerRadius, width / 2);
+        auto polygon = StarPolygon2f(_spikeCount, _innerRadius, width / 2);
 
         canvas.lineWidth(lineWidth);
 

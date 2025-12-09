@@ -9,7 +9,7 @@ import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.math.random : Random, rands;
 
 import Math = api.dm.math;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import std.conv : to;
 
 import std;

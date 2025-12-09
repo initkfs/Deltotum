@@ -14,7 +14,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
 
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import Math = api.math;
 
 /**
@@ -59,7 +59,7 @@ class ColorPickerDialog : Control
         ColorInfo[14 * 19] colorPixels;
         struct ColorInfo
         {
-            Rect2d bounds;
+            Rect2f bounds;
             RGBA color;
             string name;
         }
@@ -286,7 +286,7 @@ class ColorPickerDialog : Control
                 auto ctx = canvas;
 
                 import api.dm.kit.graphics.canvases.graphic_canvas : GradientStopPoint;
-                import api.math.geom2.vec2 : Vec2d;
+                import api.math.geom2.vec2 : Vec2f;
 
                 enum pointsCount = 10;
                 float offsetDelta = 1.0 / pointsCount;
@@ -308,7 +308,7 @@ class ColorPickerDialog : Control
 
                 points[$ - 1].offset = 1;
 
-                ctx.linearGradient(Vec2d(0, 0), Vec2d(colorBarW, 0), points, () {
+                ctx.linearGradient(Vec2f(0, 0), Vec2f(colorBarW, 0), points, () {
                     ctx.fillRect(0, 0, colorBarW, colorBarH);
                 });
 
@@ -403,7 +403,7 @@ class ColorPickerDialog : Control
                     graphic.color(RGBA.web(color));
                     graphic.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
-                    colorPixels[i] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphic
+                    colorPixels[i] = ColorInfo(Rect2f(nextX, nextY, paletteColorSize, paletteColorSize), graphic
                         .color, color);
 
                     nextX += paletteColorSize;
@@ -426,7 +426,7 @@ class ColorPickerDialog : Control
                 //         graphic.color(RGBA.web(__traits(getMember, MaterialPalette, color)));
                 //         graphic.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
-                //         colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphic
+                //         colorPixels[pixelCounter] = ColorInfo(Rect2f(nextX, nextY, paletteColorSize, paletteColorSize), graphic
                 //                 .color, color);
                 //         pixelCounter++;
 
@@ -450,10 +450,10 @@ class ColorPickerDialog : Control
         container.setContent(colorTexture, colorTextureW, height);
 
         colorTexture.onPointerPress ~= (ref e) {
-            import api.math.geom2.vec2 : Vec2d;
+            import api.math.geom2.vec2 : Vec2f;
 
             //binary search
-            auto rawPoint = Vec2d(e.x, e.y).sub(colorTexture.pos);
+            auto rawPoint = Vec2f(e.x, e.y).sub(colorTexture.pos);
             foreach (ref colorInfo; colorPixels)
             {
                 if (colorInfo.bounds.contains(rawPoint))

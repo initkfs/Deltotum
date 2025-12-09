@@ -1,20 +1,20 @@
 module api.math.geom2.regular_polygon2;
 
-import api.math.geom2.polygon2 : Polygon2d;
+import api.math.geom2.polygon2 : Polygon2f;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-struct RegularPolygon2d
+struct RegularPolygon2f
 {
     size_t sideCount;
     float radius = 0;
     bool isRotateCorrection;
 
-    Polygon2d shape;
+    Polygon2f shape;
 
     this(size_t sideCount, float radius, bool isRotateCorrection = true)
     {
@@ -26,7 +26,7 @@ struct RegularPolygon2d
         this.isRotateCorrection = isRotateCorrection;
     }
 
-    void draw(scope bool delegate(size_t, Vec2d) onIndexVertexIsContinue, float rotateAngle = 0)
+    void draw(scope bool delegate(size_t, Vec2f) onIndexVertexIsContinue, float rotateAngle = 0)
     {
         assert(sideCount > 0);
         float segmentAngle = Math.PI2 / sideCount;
@@ -48,7 +48,7 @@ struct RegularPolygon2d
         {
             float angle = rotateAngle != 0 ? (segmentAngle * i + rotateAngle) % Math.PI2 : segmentAngle * i;
 
-            Vec2d polarPos = Vec2d.fromPolarRad(angle, radius);
+            Vec2f polarPos = Vec2f.fromPolarRad(angle, radius);
             if (!onIndexVertexIsContinue(i, polarPos))
             {
                 return;
@@ -58,12 +58,12 @@ struct RegularPolygon2d
 
     void create()
     {
-        shape = Polygon2d(createPoints);
+        shape = Polygon2f(createPoints);
     }
 
-    Vec2d[] createPoints()
+    Vec2f[] createPoints()
     {
-        Vec2d[] points = new Vec2d[](sideCount);
+        Vec2f[] points = new Vec2f[](sideCount);
         draw((i, p) { points[i] = p; return true; });
         return points;
     }

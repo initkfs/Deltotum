@@ -8,7 +8,7 @@ import StdComp = std.algorithm.comparison;
 import StdRound = std.math.rounding;
 import StdAlgebraic = std.math.algebraic;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs

@@ -1,9 +1,9 @@
 module api.math.geom2.rect2;
 
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.circle2 : Circle2d;
+import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.circle2 : Circle2f;
 
-//TODO template from Rect2d
+//TODO template from Rect2f
 struct Rect2i
 {
     int x;
@@ -12,18 +12,18 @@ struct Rect2i
     int height;
 }
 
-struct Rect2f
+struct Rect2d
 {
-    float x;
-    float y;
-    float width;
-    float height;
+    double x = 0;
+    double y = 0;
+    double width = 0;
+    double height = 0;
 }
 
 /**
  * Authors: initkfs
  */
-struct Rect2d
+struct Rect2f
 {
     float x = 0;
     float y = 0;
@@ -35,25 +35,25 @@ struct Rect2d
         return x >= this.x && y >= this.y && x < right && y < bottom;
     }
 
-    bool contains(Vec2d point) const  nothrow pure @safe
+    bool contains(Vec2f point) const  nothrow pure @safe
     {
         return contains(point.x, point.y);
     }
 
-    bool contains(Circle2d circle) const  nothrow pure @safe
+    bool contains(Circle2f circle) const  nothrow pure @safe
     {
         return (circle.x + circle.radius <= right) && (circle.x - circle.radius >= x) && (
             circle.y + circle.radius <= bottom) && (
             circle.y - circle.radius >= y);
     }
 
-    bool contains(Rect2d rect) const  nothrow pure @safe
+    bool contains(Rect2f rect) const  nothrow pure @safe
     {
         return ((rect.x >= x && rect.x <= right) && (rect.right >= x && rect.right <= right))
             && ((rect.y >= y && rect.y <= bottom) && (rect.bottom >= y && rect.bottom <= bottom));
     }
 
-    bool intersect(Rect2d other)
+    bool intersect(Rect2f other)
     {
         // auto isOverlaps = (other.right > x) && (other.x < right) && (other.bottom > y) && (
         //    other.y < bottom);
@@ -71,7 +71,7 @@ struct Rect2d
         return true;
     }
 
-    bool intersect(Circle2d circle)
+    bool intersect(Circle2f circle)
     {
         import Math = api.dm.math;
 
@@ -129,9 +129,9 @@ struct Rect2d
         return height / 2;
     }
 
-    Vec2d center() const  nothrow pure @safe
+    Vec2f center() const  nothrow pure @safe
     {
-        return Vec2d(middleX, middleY);
+        return Vec2f(middleX, middleY);
     }
 
     float aspectRatio() const  nothrow pure @safe
@@ -155,17 +155,17 @@ struct Rect2d
         return v;
     }
 
-    Rect2d withPadding(float value){
-        return Rect2d(x + value, y + value, width - value, height - value);
+    Rect2f withPadding(float value){
+        return Rect2f(x + value, y + value, width - value, height - value);
     }
 
-    Rect2d boundingBoxMax()
+    Rect2f boundingBoxMax()
     {
         const diag = diagonal;
-        return Rect2d(x, y, diag, diag);
+        return Rect2f(x, y, diag, diag);
     }
 
-    Rect2d boundingBox(float angleDeg)
+    Rect2f boundingBox(float angleDeg)
     {
         import Math = api.math;
 
@@ -173,7 +173,7 @@ struct Rect2d
             Math.cosDeg(angleDeg));
         auto newW = width * Math.abs(Math.cosDeg(angleDeg)) + height * Math.abs(
             Math.sinDeg(angleDeg));
-        return Rect2d(0, 0, newW, newH);
+        return Rect2f(0, 0, newW, newH);
     }
 
     string toString() const
@@ -190,32 +190,32 @@ unittest
     enum w = 10;
     enum h = 10;
 
-    Rect2d rect1 = Rect2d(10, 10, w, h);
+    Rect2f rect1 = Rect2f(10, 10, w, h);
 
     assert(rect1.intersect(rect1));
-    assert(rect1.intersect(Rect2d(0, 0, w, h)));
+    assert(rect1.intersect(Rect2f(0, 0, w, h)));
 
-    assert(rect1.intersect(Rect2d(10, 0, w, h)));
-    assert(rect1.intersect(Rect2d(0, 10, w, h)));
+    assert(rect1.intersect(Rect2f(10, 0, w, h)));
+    assert(rect1.intersect(Rect2f(0, 10, w, h)));
 
-    assert(rect1.intersect(Rect2d(20, 0, w, h)));
-    assert(rect1.intersect(Rect2d(20, 10, w, h)));
+    assert(rect1.intersect(Rect2f(20, 0, w, h)));
+    assert(rect1.intersect(Rect2f(20, 10, w, h)));
 
-    assert(rect1.intersect(Rect2d(20, 20, w, h)));
-    assert(rect1.intersect(Rect2d(10, 20, w, h)));
+    assert(rect1.intersect(Rect2f(20, 20, w, h)));
+    assert(rect1.intersect(Rect2f(10, 20, w, h)));
 
     //overlap
-    assert(rect1.intersect(Rect2d(0, 0, w * 3, h * 3)));
-    assert(rect1.intersect(Rect2d(10, 0, w, h * 2)));
+    assert(rect1.intersect(Rect2f(0, 0, w * 3, h * 3)));
+    assert(rect1.intersect(Rect2f(10, 0, w, h * 2)));
 
-    assert(!rect1.intersect(Rect2d(0, 0, w - 1, h - 1)));
+    assert(!rect1.intersect(Rect2f(0, 0, w - 1, h - 1)));
 
-    assert(!rect1.intersect(Rect2d(10, 0, w, h - 1)));
-    assert(!rect1.intersect(Rect2d(0, 10, w - 1, h)));
+    assert(!rect1.intersect(Rect2f(10, 0, w, h - 1)));
+    assert(!rect1.intersect(Rect2f(0, 10, w - 1, h)));
 
-    assert(!rect1.intersect(Rect2d(20 + 1, 0, w, h)));
-    assert(!rect1.intersect(Rect2d(20 + 1, 10, w, h)));
+    assert(!rect1.intersect(Rect2f(20 + 1, 0, w, h)));
+    assert(!rect1.intersect(Rect2f(20 + 1, 10, w, h)));
 
-    assert(!rect1.intersect(Rect2d(20, 20 + 1, w, h)));
-    assert(!rect1.intersect(Rect2d(10, 20 + 1, w, h)));
+    assert(!rect1.intersect(Rect2f(20, 20 + 1, w, h)));
+    assert(!rect1.intersect(Rect2f(10, 20 + 1, w, h)));
 }

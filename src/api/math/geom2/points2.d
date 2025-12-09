@@ -13,14 +13,14 @@ enum PointsOrientation
     counterClockwise,
 }
 
-bool collinear(Vec2d[] points) {
+bool collinear(Vec2f[] points) {
 
         if(points.length < 2) {
             return true;
         }
 
-        Vec2d a = points[0];
-        Vec2d b = points[1];
+        Vec2f a = points[0];
+        Vec2f b = points[1];
 
         foreach(ref c; points[2..$]){
             if(orientation(a, b, c) != PointsOrientation.collinear) {
@@ -32,7 +32,7 @@ bool collinear(Vec2d[] points) {
     }
 
 //https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
-PointsOrientation orientation(Vec2d a, Vec2d b, Vec2d c)
+PointsOrientation orientation(Vec2f a, Vec2f b, Vec2f c)
 {
     //(b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)
     const slope = ((b.x - a.x) * (c.y - a.y)) - ((b.y - a.y) * (c.x - a.x));

@@ -4,7 +4,7 @@ import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
 import api.math.graphs.graph : Graph;
 
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.math;
 
@@ -23,7 +23,7 @@ void fru(Graph g, size_t iterations = 10, float repulsion = 10, float stiffness 
         //O(N²)
         g.onVertex((v, edges) {
 
-            v.force = Vec2d(0, 0);
+            v.force = Vec2f(0, 0);
 
             g.onVertex((u, edges2) {
                 if (u !is v)
@@ -31,7 +31,7 @@ void fru(Graph g, size_t iterations = 10, float repulsion = 10, float stiffness 
                     auto dir = v.pos - u.pos;
                     if (dir.isZero)
                     {
-                        dir = Vec2d(1, 1);
+                        dir = Vec2f(1, 1);
                     }
                     auto magnSqr = dir.lengthSquared;
 
@@ -50,7 +50,7 @@ void fru(Graph g, size_t iterations = 10, float repulsion = 10, float stiffness 
         });
 
         g.onVertex((v, edges) {
-            v.force = Vec2d(0, 0);
+            v.force = Vec2f(0, 0);
             foreach (Edge e; (*edges)[])
             {
                 e.isVisited = false;
@@ -83,7 +83,7 @@ void fru(Graph g, size_t iterations = 10, float repulsion = 10, float stiffness 
             (v, edges) {
             auto gridX = Math.round(v.pos.x / gridSize) * gridSize;
             auto gridY = Math.round(v.pos.y / gridSize) * gridSize;
-            auto gridTarget = Vec2d(gridX, gridY);
+            auto gridTarget = Vec2f(gridX, gridY);
 
             auto gridForce = (gridTarget - v.pos).scale(gridStrength);
             v.force += gridForce;

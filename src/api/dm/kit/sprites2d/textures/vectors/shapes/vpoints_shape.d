@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.textures.vectors.shapes.vpoints_shape;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 import std.container.dlist : DList;
 
@@ -18,12 +18,12 @@ class VPointsShape : VShape
 
     // protected
     // {
-    DList!Vec2d points;
+    DList!Vec2f points;
     //}
 
     bool isFlipY;
 
-    this(Vec2d[] points, float width, float height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
+    this(Vec2f[] points, float width, float height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
 
@@ -31,7 +31,7 @@ class VPointsShape : VShape
         this.isClosePath = isClosePath;
         this.isDrawFromCenter = isDrawFromCenter;
 
-        this.points = DList!Vec2d(points);
+        this.points = DList!Vec2f(points);
     }
 
     size_t length()

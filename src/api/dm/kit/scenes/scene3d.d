@@ -16,10 +16,10 @@ import api.dm.back.sdl3.externs.csdl3;
 
 struct SceneTransforms
 {
-    Matrix4x4f world;
-    Matrix4x4f camera;
-    Matrix4x4f projection;
-    Matrix4x4f normal;
+    Matrix4x4 world;
+    Matrix4x4 camera;
+    Matrix4x4 projection;
+    Matrix4x4 normal;
 }
 
 class Scene3d : Scene2d

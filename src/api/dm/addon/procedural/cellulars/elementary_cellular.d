@@ -3,7 +3,7 @@ module api.dm.addon.procedural.cellulars.elementary_cellular;
 import api.dm.addon.procedural.cellulars.cellular_automata;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 class ElementaryCellular : CellularAutomaton

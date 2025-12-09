@@ -75,7 +75,7 @@ class ParallelogramButton : BaseButton
             return vShape;
         }
 
-        import api.math.geom2.parallelogram2 : Parallelogram2d;
+        import api.math.geom2.parallelogram2 : Parallelogram2f;
         import api.dm.kit.sprites2d.shapes.parallelogram : Parallelogram;
 
         auto pShape = new Parallelogram(width, height, angleDeg, isInverted, style);

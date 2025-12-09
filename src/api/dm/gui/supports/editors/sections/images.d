@@ -230,11 +230,11 @@ class Images : Control
         bilinear.load(ColorProcessor.bilinear(colorBuff, imageWidth / 2, imageHeight / 2));
         container2.addCreate(createImageInfo("Bilinear", bilinear));
 
-        import api.math.geom2.rect2 : Rect2d;
+        import api.math.geom2.rect2 : Rect2f;
 
         auto crop = new Image(50, 50);
         build(crop);
-        crop.load(ColorProcessor.crop(colorBuff, Rect2d(10, 10, 50, 50)));
+        crop.load(ColorProcessor.crop(colorBuff, Rect2f(10, 10, 50, 50)));
         container2.addCreate(createImageInfo("Crop", crop));
 
         auto container3 = new HBox;

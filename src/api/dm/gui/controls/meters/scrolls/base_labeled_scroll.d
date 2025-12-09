@@ -71,26 +71,26 @@ abstract class BaseLabeledScroll : BaseMonoScroll
 
     void updateLabelPos()
     {
-        import api.math.geom2.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2f;
 
-        Vec2d newPos;
+        Vec2f newPos;
 
         const thumbBounds = thumb.boundsRect;
 
         switch (labelPos) with (Position)
         {
             case topCenter:
-                newPos = Vec2d(thumbBounds.middleX - label.halfWidth, thumbBounds.y - label
+                newPos = Vec2f(thumbBounds.middleX - label.halfWidth, thumbBounds.y - label
                         .height);
                 break;
             case bottomCenter:
-                newPos = Vec2d(thumbBounds.middleX - label.halfWidth, thumbBounds.bottom);
+                newPos = Vec2f(thumbBounds.middleX - label.halfWidth, thumbBounds.bottom);
                 break;
             case centerLeft:
-                newPos = Vec2d(thumbBounds.x - label.width, thumbBounds.middleY - label.halfHeight);
+                newPos = Vec2f(thumbBounds.x - label.width, thumbBounds.middleY - label.halfHeight);
                 break;
             case centerRight:
-                newPos = Vec2d(thumbBounds.right, thumbBounds.middleY - label.halfHeight);
+                newPos = Vec2f(thumbBounds.right, thumbBounds.middleY - label.halfHeight);
                 break;
             default:
                 import std.conv : text;

@@ -30,11 +30,11 @@ class VRegularPolygon : VShape
             canvas.color(style.fillColor);
         }
 
-        import api.math.geom2.regular_polygon2 : RegularPolygon2d;
+        import api.math.geom2.regular_polygon2 : RegularPolygon2f;
 
         const lineWidth = style.lineWidth;
         float radius = width / 2 - lineWidth / 2;
-        auto polygon = RegularPolygon2d(sideCount, radius);
+        auto polygon = RegularPolygon2f(sideCount, radius);
 
         canvas.lineWidth(lineWidth);
 

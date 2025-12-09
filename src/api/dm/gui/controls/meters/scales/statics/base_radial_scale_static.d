@@ -4,11 +4,11 @@ import api.dm.gui.controls.meters.scales.statics.base_scale_static : BaseScaleSt
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.texts.text : Text;
-import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.line2 : Line2d;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.line2 : Line2f;
 import Math = api.math;
 
 import std.conv : to;
@@ -29,10 +29,10 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
     bool isOuterLabel = true;
 
-    dstring delegate(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) labelTextProvider;
+    dstring delegate(size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick) labelTextProvider;
     float delegate(float angledDeg, float radius) labelPosRadiusProvider;
 
-    bool delegate(GraphicCanvas ctx, Rect2d tickBounds, bool isMajorTick) onVTickIsContinue;
+    bool delegate(GraphicCanvas ctx, Rect2f tickBounds, bool isMajorTick) onVTickIsContinue;
 
     protected
     {
@@ -146,7 +146,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
                     drawScale(
                 onDrawAxis : null,
-                        (size_t i, Vec2d pos, bool isMajorTick, float offsetTick) {
+                        (size_t i, Vec2f pos, bool isMajorTick, float offsetTick) {
 
                         auto tickW = tickMinorHeight;
                         auto tickH = tickMinorWidth;
@@ -170,7 +170,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
                         }
                         auto leftTopY = -tickH / 2;
 
-                        if (onVTickIsContinue && !onVTickIsContinue(canvas, Rect2d(leftTopX, leftTopY, tickW, tickH), isMajorTick))
+                        if (onVTickIsContinue && !onVTickIsContinue(canvas, Rect2f(leftTopX, leftTopY, tickW, tickH), isMajorTick))
                         {
 
                             canvas.restore;
@@ -242,10 +242,10 @@ class BaseRadialScaleStatic : BaseScaleStatic
         onDrawAxis : null,
         onDrawTick:
                 null,
-                (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) {
+                (size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick) {
                 return drawLabel(labelIndex, tickIndex, pos, isMajorTick, offsetTick);
             },
-                (size_t i, Vec2d pos, float offsetTick) {
+                (size_t i, Vec2f pos, float offsetTick) {
                 return tickStep(i, pos, offsetTick);
             });
         }
@@ -253,18 +253,18 @@ class BaseRadialScaleStatic : BaseScaleStatic
         addCreate(scaleShape);
     }
 
-    override Line2d axisPos()
+    override Line2f axisPos()
     {
         const bounds = boundsRect;
-        const start = Vec2d(bounds.middleX, bounds.y);
-        const end = Vec2d(bounds.middleX, bounds.bottom);
-        return Line2d(start, end);
+        const start = Vec2f(bounds.middleX, bounds.y);
+        const end = Vec2f(bounds.middleX, bounds.bottom);
+        return Line2f(start, end);
     }
 
-    override Vec2d tickStartPos()
+    override Vec2f tickStartPos()
     {
         const bounds = boundsRect;
-        return Vec2d.fromPolarDeg(minAngleDeg, radius).add(bounds.center);
+        return Vec2f.fromPolarDeg(minAngleDeg, radius).add(bounds.center);
     }
 
     override float tickOffset()
@@ -275,12 +275,12 @@ class BaseRadialScaleStatic : BaseScaleStatic
         return angleDegDiff;
     }
 
-    override Vec2d tickStep(size_t i, Vec2d pos, float offsetTick)
+    override Vec2f tickStep(size_t i, Vec2f pos, float offsetTick)
     {
-        return scaleShape.boundsRect.center.add(Vec2d.fromPolarDeg((i + 1) * (tickOffset), radius));
+        return scaleShape.boundsRect.center.add(Vec2f.fromPolarDeg((i + 1) * (tickOffset), radius));
     }
 
-    override bool drawTick(size_t i, Vec2d pos, bool isMajorTick, float offsetTick)
+    override bool drawTick(size_t i, Vec2f pos, bool isMajorTick, float offsetTick)
     {
         auto proto = isMajorTick ? majorTickProto : minorTickProto;
 
@@ -292,7 +292,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
         auto tickX = pos.x - proto.boundsRect.halfWidth;
         auto tickY = pos.y - proto.boundsRect.halfHeight;
 
-        proto.xy = Vec2d(tickX, tickY);
+        proto.xy = Vec2f(tickX, tickY);
 
         proto.angle = i * tickOffset;
         proto.angle = (proto.angle + 90) % 360;
@@ -301,7 +301,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
         return true;
     }
 
-    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick)
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick)
     {
         if (!isMajorTick || !labelProto)
         {
@@ -326,7 +326,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
         float textPosRadius = isOuterLabel ? radius + Math.max(tickMinorHeight, tickMajorHeight) / 2 : radius - Math.max(
             tickMinorHeight, tickMajorHeight) * 1.5;
 
-        auto textPos = Vec2d.fromPolarDeg(angleDeg, textPosRadius);
+        auto textPos = Vec2f.fromPolarDeg(angleDeg, textPosRadius);
 
         float textX = 0;
         float textY = 0;
@@ -386,7 +386,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
         labelProto.onFontTexture((fontTexture, const glyphPtr) {
 
-            Rect2d textDest =
+            Rect2f textDest =
             {nextX, textY, glyphPtr.geometry.width, glyphPtr.geometry.height};
 
             scaleShape.copyFrom(fontTexture, glyphPtr.geometry, textDest);

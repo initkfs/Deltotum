@@ -3,7 +3,7 @@ module api.dm.addon.math.geom2.triangulations.delaunator;
  * Authors: initkfs
  */
 import Math = api.math;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2f;
 
 /** 
   * Ported from https://github.com/nol1fe/delaunator-sharp. Copyright (c) 2019 Patryk Grech
@@ -12,11 +12,11 @@ import api.math.geom2.vec2 : Vec2d;
 
 struct Edge
 {
-    Vec2d P;
-    Vec2d Q;
+    Vec2f P;
+    Vec2f Q;
     int index;
 
-    this(int e, Vec2d p, Vec2d q)
+    this(int e, Vec2f p, Vec2f q)
     {
         index = e;
         P = p;
@@ -28,9 +28,9 @@ struct Triangle
 {
     int index;
 
-    Vec2d[] points;
+    Vec2f[] points;
 
-    this(int t, Vec2d[] newPoints)
+    this(int t, Vec2f[] newPoints)
     {
         points = newPoints;
         index = t;
@@ -39,9 +39,9 @@ struct Triangle
 
 struct VoronoiCell
 {
-    Vec2d[] points;
+    Vec2f[] points;
     int index;
-    this(int triangleIndex, Vec2d[] newPoints)
+    this(int triangleIndex, Vec2f[] newPoints)
     {
         points = newPoints;
         index = triangleIndex;
@@ -55,7 +55,7 @@ class Delaunator
         float epsilon = float.epsilon;
         int[] edgeStack = new int[](512);
 
-        Vec2d[] points;
+        Vec2f[] points;
 
         // One value per half-edge, containing the point index of where a given half edge starts.
         int[] triangles;
@@ -79,7 +79,7 @@ class Delaunator
         int hullSize;
     }
 
-    void triangulate(Vec2d[] newPoints)
+    void triangulate(Vec2f[] newPoints)
     {
         if (newPoints.length < 3)
         {
@@ -578,7 +578,7 @@ class Delaunator
         return x * x + y * y;
     }
 
-    private Vec2d circumcenter(float ax, float ay, float bx, float by, float cx, float cy)
+    private Vec2f circumcenter(float ax, float ay, float bx, float by, float cx, float cy)
     {
         auto dx = bx - ax;
         auto dy = by - ay;
@@ -590,7 +590,7 @@ class Delaunator
         auto x = ax + (ey * bl - dy * cl) * d;
         auto y = ay + (dx * cl - ex * bl) * d;
 
-        return Vec2d(x, y);
+        return Vec2f(x, y);
     }
 
     private float dist(float ax, float ay, float bx, float by)
@@ -625,7 +625,7 @@ class Delaunator
         return edges;
     }
 
-    Edge[] voronoiEdges(Vec2d delegate(int) triangleVerticeSelector = null)
+    Edge[] voronoiEdges(Vec2f delegate(int) triangleVerticeSelector = null)
     {
         Edge[] edges;
         if (triangleVerticeSelector == null)
@@ -645,7 +645,7 @@ class Delaunator
     Edge[] voronoiEdgesOnCircumCenter() => voronoiEdges(&triangleCircumcenter);
     Edge[] voronoiEdgesOnCentroids() => voronoiEdges(&centroid);
 
-    VoronoiCell[] voronoiCells(Vec2d delegate(int) triangleVerticeSelector = null)
+    VoronoiCell[] voronoiCells(Vec2f delegate(int) triangleVerticeSelector = null)
     {
         VoronoiCell[] cells;
         if (triangleVerticeSelector == null)
@@ -671,7 +671,7 @@ class Delaunator
         }
 
         HashSet seen;
-        Vec2d[] vertices; // Keep it outside the loop, reuse capacity, less resizes.
+        Vec2f[] vertices; // Keep it outside the loop, reuse capacity, less resizes.
 
         for (auto e = 0; e < triangles.length; e++)
         {
@@ -699,9 +699,9 @@ class Delaunator
 
     Edge[] hullEdges() => createHull(hullPoints());
 
-    Vec2d[] hullPoints()
+    Vec2f[] hullPoints()
     {
-        Vec2d[] newPoints;
+        Vec2f[] newPoints;
         foreach (x; hull)
         {
             newPoints ~= points[x];
@@ -709,9 +709,9 @@ class Delaunator
         return newPoints;
     }
 
-    Vec2d[] trianglePoints(int t)
+    Vec2f[] trianglePoints(int t)
     {
-        Vec2d[] newPoints;
+        Vec2f[] newPoints;
         foreach (p; pointsOfTriangle(t))
         {
             newPoints ~= points[p];
@@ -719,9 +719,9 @@ class Delaunator
         return newPoints;
     }
 
-    Vec2d[] rellaxedPoints()
+    Vec2f[] rellaxedPoints()
     {
-        Vec2d[] newPoints;
+        Vec2f[] newPoints;
         foreach (cell; voronoiCellsOnCircumcenters())
         {
             newPoints ~= centroid(cell.points);
@@ -737,7 +737,7 @@ class Delaunator
         return edges;
     }
 
-    Edge[] createHull(Vec2d[] newPoints)
+    Edge[] createHull(Vec2f[] newPoints)
     {
         import std.range : zip;
         import std.array : array;
@@ -752,22 +752,22 @@ class Delaunator
         return edges;
     }
 
-    Vec2d triangleCircumcenter(int t)
+    Vec2f triangleCircumcenter(int t)
     {
         auto vertices = trianglePoints(t);
         return calcCircumcenter(vertices[0], vertices[1], vertices[2]);
     }
 
-    Vec2d centroid(int t)
+    Vec2f centroid(int t)
     {
         auto vertices = trianglePoints(t);
         return centroid(vertices);
     }
 
-    Vec2d calcCircumcenter(Vec2d a, Vec2d b, Vec2d c) => circumcenter(a.x, a.y, b.x, b.y, c.x, c
+    Vec2f calcCircumcenter(Vec2f a, Vec2f b, Vec2f c) => circumcenter(a.x, a.y, b.x, b.y, c.x, c
             .y);
 
-    Vec2d centroid(Vec2d[] newPoints)
+    Vec2f centroid(Vec2f[] newPoints)
     {
         float accumulatedArea = 0.0f;
         float centerX = 0.0f;
@@ -783,10 +783,10 @@ class Delaunator
         }
 
         if (Math.abs(accumulatedArea) < 1E-7f)
-            return Vec2d();
+            return Vec2f();
 
         accumulatedArea *= 3f;
-        return Vec2d(centerX / accumulatedArea, centerY / accumulatedArea);
+        return Vec2f(centerX / accumulatedArea, centerY / accumulatedArea);
     }
 
     void eachTriangle(void delegate(Triangle) callback)
@@ -829,7 +829,7 @@ class Delaunator
         }
     }
 
-    void eachVoronoiCell(void delegate(VoronoiCell) callback, Vec2d delegate(int) triangleVertexSelector = null)
+    void eachVoronoiCell(void delegate(VoronoiCell) callback, Vec2f delegate(int) triangleVertexSelector = null)
     {
         foreach (cell; voronoiCells(triangleVertexSelector))
         {
@@ -899,12 +899,12 @@ unittest
 
     float eps = 0.0001;
 
-    Vec2d[] newPoints = [
-        Vec2d(10, 10),
-        Vec2d(20, 15),
-        Vec2d(15, 15),
-        Vec2d(12, 12),
-        Vec2d(5, 5),
+    Vec2f[] newPoints = [
+        Vec2f(10, 10),
+        Vec2f(20, 15),
+        Vec2f(15, 15),
+        Vec2f(12, 12),
+        Vec2f(5, 5),
     ];
 
     auto generator = new Delaunator;
@@ -913,21 +913,21 @@ unittest
 
     Triangle[] expectedTriangles = [
         Triangle(0, [
-            Vec2d(x : 12.0000000000, y:
-                12.0000000000), Vec2d(x : 20.0000000000, y:
-                15.0000000000), Vec2d(x : 10.0000000000, y:
+            Vec2f(x : 12.0000000000, y:
+                12.0000000000), Vec2f(x : 20.0000000000, y:
+                15.0000000000), Vec2f(x : 10.0000000000, y:
                 10.0000000000)
         ]),
         Triangle(1, [
-            Vec2d(x : 12.0000000000, y:
-                12.0000000000), Vec2d(x : 15.0000000000, y:
-                15.0000000000), Vec2d(x : 20.0000000000, y:
+            Vec2f(x : 12.0000000000, y:
+                12.0000000000), Vec2f(x : 15.0000000000, y:
+                15.0000000000), Vec2f(x : 20.0000000000, y:
                 15.0000000000)
         ]),
         Triangle(2, [
-            Vec2d(x : 20.0000000000, y:
-                15.0000000000), Vec2d(x : 5.0000000000, y:
-                5.0000000000), Vec2d(x : 10.0000000000, y:
+            Vec2f(x : 20.0000000000, y:
+                15.0000000000), Vec2f(x : 5.0000000000, y:
+                5.0000000000), Vec2f(x : 10.0000000000, y:
                 10.0000000000)
         ])
     ];
@@ -947,12 +947,12 @@ unittest
         }
     }
 
-     Vec2d[][] expectedCells = [
-        [Vec2d(14, 12.3333)],
-        [Vec2d(14, 12.3333), Vec2d(11.6667, 10)],
-        [Vec2d(15.6667, 14)],
-        [Vec2d(14, 12.3333), Vec2d(15.6667, 14)],
-        [Vec2d(11.6667, 10)]
+     Vec2f[][] expectedCells = [
+        [Vec2f(14, 12.3333)],
+        [Vec2f(14, 12.3333), Vec2f(11.6667, 10)],
+        [Vec2f(15.6667, 14)],
+        [Vec2f(14, 12.3333), Vec2f(15.6667, 14)],
+        [Vec2f(11.6667, 10)]
     ];
 
     auto vcells1 = generator.voronoiCells;

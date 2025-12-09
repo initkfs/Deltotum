@@ -1,7 +1,7 @@
 module api.dm.addon.procedural.cellulars.cellular_automata;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 enum NeighborhoodType : uint
@@ -42,7 +42,7 @@ class CellularAutomaton : Sprite2d
         size_t _rows;
     }
 
-    Rect2d[] cellDrawBuffer;
+    Rect2f[] cellDrawBuffer;
 
     this(CellConfig config = CellConfig.init)
     {
@@ -54,7 +54,7 @@ class CellularAutomaton : Sprite2d
         _currentState = new bool[][](_rows, _cols);
         _nextState = new bool[][](_rows, _cols);
 
-        cellDrawBuffer = new Rect2d[_rows * _cols];
+        cellDrawBuffer = new Rect2f[_rows * _cols];
         //initializeState;
 
         resize(config.width, config.height);
@@ -330,7 +330,7 @@ class CellularAutomaton : Sprite2d
 
         size_t bufferPos;
 
-        cellDrawBuffer[] = Rect2d.init;
+        cellDrawBuffer[] = Rect2f.init;
 
         if (firstRow != 0)
         {
@@ -355,7 +355,7 @@ class CellularAutomaton : Sprite2d
                 if (isRule)
                 {
                     _nextState[ri][ci] = true;
-                    cellDrawBuffer[bufferPos] = Rect2d(x + ci * config.cellSize, y + (
+                    cellDrawBuffer[bufferPos] = Rect2f(x + ci * config.cellSize, y + (
                             ri * config.cellSize + (firstRow * config.cellSize)), config
                             .cellSize, config
                             .cellSize);

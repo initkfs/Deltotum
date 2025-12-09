@@ -55,9 +55,9 @@ class PathGraph : Graph
 {
     float heuristic(IndexableVertex a, IndexableVertex b)
     {
-        import api.math.geom2.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2f;
 
-        return Vec2d(b.x, b.y).manhattan(Vec2d(a.x, a.y));
+        return Vec2f(b.x, b.y).manhattan(Vec2f(a.x, a.y));
     }
 }
 
