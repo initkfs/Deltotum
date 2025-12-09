@@ -12,7 +12,7 @@ class BaseColorBar : Control
 {
     ColorBarData[] rangeData;
 
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         this._width = width;
         this._height = height;
@@ -37,9 +37,9 @@ class BaseColorBar : Control
         }
     }
 
-    double rangeSum()
+    float rangeSum()
     {
-        double sum = 0;
+        float sum = 0;
         foreach (r; rangeData)
         {
             sum += r.value;

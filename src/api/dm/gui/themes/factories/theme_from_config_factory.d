@@ -54,7 +54,7 @@ class ThemeFromConfigFactory : ApplicationUnit
                     }
                     alias fieldType = typeof(__traits(getMember, T, fieldName));
 
-                    static if (is(fieldType == double))
+                    static if (is(fieldType == float))
                     {
                         auto value = config.getDouble(themeConfigKey);
                     }

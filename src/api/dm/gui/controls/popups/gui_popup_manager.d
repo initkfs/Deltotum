@@ -157,7 +157,7 @@ class GuiPopupManager : Container, PopupManager
         size_t activeUrgentPopupsCount;
     }
 
-    double spacing = 5;
+    float spacing = 5;
 
     this(){
         isLayoutManaged = false;
@@ -174,7 +174,7 @@ class GuiPopupManager : Container, PopupManager
         super.applyLayout;
         if (activeNotifyPopupsCount > 0)
         {
-            double nextX = 0, nextY = 0;
+            float nextX = 0, nextY = 0;
             foreach (Popup popup; activeNotifyPopups[])
             {
                 popup.x = nextX;
@@ -188,8 +188,8 @@ class GuiPopupManager : Container, PopupManager
         if (activeUrgentPopupsCount > 0)
         {
             auto middleBounds = graphic.renderBounds;
-            double nextX = middleBounds.middleX;
-            double nextY = middleBounds.middleY;
+            float nextX = middleBounds.middleX;
+            float nextY = middleBounds.middleY;
             foreach (Popup popup; activeUrgentPopups[])
             {
                 popup.x = nextX - popup.boundsRect.halfWidth;

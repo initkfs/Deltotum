@@ -11,14 +11,14 @@ import api.math.geom2.parallelogram2 : Parallelogram2d;
  */
 class Parallelogram : Shape2d
 {
-    double angleDeg;
+    float angleDeg;
     bool isInverted;
 
     protected {
         Parallelogram2d shape;
     }
 
-    this(double width, double height, double angleDeg, bool isInverted, GraphicStyle style)
+    this(float width, float height, float angleDeg, bool isInverted, GraphicStyle style)
     {
         super(width, height, style);
         this.angleDeg = angleDeg;
@@ -37,15 +37,15 @@ class Parallelogram : Shape2d
             graphic.restoreColor;
         }
 
-        double prevX;
-        double prevY;
+        float prevX;
+        float prevY;
 
-        double firstX;
-        double firstY;
+        float firstX;
+        float firstY;
 
         shape.draw(width, height, angleDeg, isInverted, (i, p) {
-            double endX = x + p.x;
-            double endY = y + p.y;
+            float endX = x + p.x;
+            float endY = y + p.y;
             if (i == 0)
             {
                 firstX = endX;

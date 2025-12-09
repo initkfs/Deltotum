@@ -9,16 +9,16 @@ import api.math.geom2.rect2: Rect2d;
  */
 abstract class RadialMinMaxMeter(ValueType) : MinMaxMeter!ValueType
 {
-    double minAngleDeg = 0;
-    double maxAngleDeg = 0;
+    float minAngleDeg = 0;
+    float maxAngleDeg = 0;
 
     protected
     {
-        double _diameter = 0;
-        double _radius;
+        float _diameter = 0;
+        float _radius;
     }
 
-    this(double diameter = 0, ValueType minValue = 0, ValueType maxValue = 1, double minAngleDeg = 0, double maxAngleDeg = 180)
+    this(float diameter = 0, ValueType minValue = 0, ValueType maxValue = 1, float minAngleDeg = 0, float maxAngleDeg = 180)
     {
         super(minValue, maxValue);
 
@@ -39,7 +39,7 @@ abstract class RadialMinMaxMeter(ValueType) : MinMaxMeter!ValueType
         return handStyle;
     }
 
-    Rect2d handBoundingBox(double handSize){
+    Rect2d handBoundingBox(float handSize){
         return (Rect2d(0, 0, handSize, handSize)).boundingBoxMax;
     }
 
@@ -57,12 +57,12 @@ abstract class RadialMinMaxMeter(ValueType) : MinMaxMeter!ValueType
         return range;
     }
 
-    void diameter(double value)
+    void diameter(float value)
     {
         _diameter = value;
         _radius = _diameter / 2;
     }
 
-    double diameter() => _diameter;
-    double radius() => _radius;
+    float diameter() => _diameter;
+    float radius() => _radius;
 }

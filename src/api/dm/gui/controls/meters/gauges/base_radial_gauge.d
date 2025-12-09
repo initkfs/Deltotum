@@ -9,7 +9,7 @@ import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 /**
  * Authors: initkfs
  */
-abstract class BaseRadialGauge : RadialMinMaxMeter!double
+abstract class BaseRadialGauge : RadialMinMaxMeter!float
 {
     RScaleStatic scale;
     bool isCreateScale = true;
@@ -17,7 +17,7 @@ abstract class BaseRadialGauge : RadialMinMaxMeter!double
     void delegate(RScaleStatic) onConfiguredScale;
     void delegate(RScaleStatic) onCreatedScale;
 
-    this(double diameter = 0, double minValue = 0, double maxValue = 1, double minAngleDeg = 0, double maxAngleDeg = 180)
+    this(float diameter = 0, float minValue = 0, float maxValue = 1, float minAngleDeg = 0, float maxAngleDeg = 180)
     {
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
 

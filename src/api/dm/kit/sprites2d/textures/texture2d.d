@@ -26,13 +26,13 @@ class Texture2d : Sprite2d
     private
     {
         //hack to reduce memory leak
-        double oldChangedWidth = 0;
-        double oldChangedHeight = 0;
-        double changeSizeDelta = 5;
+        float oldChangedWidth = 0;
+        float oldChangedHeight = 0;
+        float changeSizeDelta = 5;
     }
 
-    void delegate(double, double) onPreRecreateWidthOldNew;
-    void delegate(double, double) onPreRecreateHeightOldNew;
+    void delegate(float, float) onPreRecreateWidthOldNew;
+    void delegate(float, float) onPreRecreateHeightOldNew;
 
     this()
     {
@@ -40,7 +40,7 @@ class Texture2d : Sprite2d
         //isResizedByParent = true;
     }
 
-    this(double width, double height)
+    this(float width, float height)
     {
         this();
         this.width = width;
@@ -213,13 +213,13 @@ class Texture2d : Sprite2d
         drawTexture(textureBounds, destBounds, this.angle, this.flip);
     }
 
-    void drawTexture(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    void drawTexture(Rect2d textureBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         drawTexture(texture, textureBounds, destBounds, angle, flip);
     }
 
-    void drawTexture(ComTexture texture, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    void drawTexture(ComTexture texture, Rect2d textureBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         if (!texture.draw(textureBounds, destBounds, angle, flip))
@@ -249,15 +249,15 @@ class Texture2d : Sprite2d
         {
             throw new Exception(err.toString);
         }
-        return RGBA(r, g, b, a / (cast(double) ubyte.max));
+        return RGBA(r, g, b, a / (cast(float) ubyte.max));
     }
 
-    override double width()
+    override float width()
     {
         return super.width;
     }
 
-    override bool width(double value)
+    override bool width(float value)
     {
         auto isResized = super.width(value);
         if (!isResizable)
@@ -294,12 +294,12 @@ class Texture2d : Sprite2d
         return isResized;
     }
 
-    override double height()
+    override float height()
     {
         return super.height;
     }
 
-    override bool height(double value)
+    override bool height(float value)
     {
         auto isResized = super.height(value);
         if (!isResizable)
@@ -354,7 +354,7 @@ class Texture2d : Sprite2d
         return toTexture;
     }
 
-    Texture2d copyTo(double toWidth, double toHeight, bool isToCenter = false)
+    Texture2d copyTo(float toWidth, float toHeight, bool isToCenter = false)
     {
         auto newTexture = new Texture2d(toWidth, toHeight);
         buildInitCreate(newTexture);
@@ -540,7 +540,7 @@ class Texture2d : Sprite2d
         }
     }
 
-    RGBA pixelColor(double x, double y)
+    RGBA pixelColor(float x, float y)
     {
         import std.conv : to;
 
@@ -567,12 +567,12 @@ class Texture2d : Sprite2d
         }
     }
 
-    override double opacity()
+    override float opacity()
     {
         return super.opacity;
     }
 
-    override bool opacity(double value)
+    override bool opacity(float value)
     {
         assert(texture);
 

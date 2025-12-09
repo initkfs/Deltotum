@@ -24,7 +24,7 @@ class MinSecChooser : BaseCircularTimeChooser
     void delegate(Container) onConfiguredMinSec0to55Box;
     void delegate(Container) onCreatedMinSec0to55Box;
 
-    double labelSize = 0;
+    float labelSize = 0;
     Sprite2d labelBox;
     bool isCreateLabelBox = true;
     Sprite2d delegate(Sprite2d) onNewLabelBox;
@@ -77,8 +77,8 @@ class MinSecChooser : BaseCircularTimeChooser
                 thumb.x = center.x + sliderPos.x - sliderBounds.halfWidth;
                 thumb.y = center.y + sliderPos.y - sliderBounds.halfHeight;
 
-                double angleOffset = (angleDeg + 90) % 360;
-                double angleRangeMinSec = 60 / 360.0;
+                float angleOffset = (angleDeg + 90) % 360;
+                float angleRangeMinSec = 60 / 360.0;
 
                 auto value = cast(int) Math.round(angleOffset * angleRangeMinSec);
                 if (value > 59)
@@ -145,8 +145,8 @@ class MinSecChooser : BaseCircularTimeChooser
             const protoBounds = proto.boundsRect;
 
             size_t labelsCount = 60;
-            double angleDiff = Math.round(360 / labelsCount);
-            double currAngle = 0;
+            float angleDiff = Math.round(360 / labelsCount);
+            float currAngle = 0;
             foreach (i; 0 .. labelsCount)
             {
                 auto pos = Vec2d.fromPolarDeg(currAngle, boxRadius - halfLabelSize);
@@ -209,7 +209,7 @@ class MinSecChooser : BaseCircularTimeChooser
                 .halfHeight);
     }
 
-    double angleFromXY(double cx, double cy, double eventX, double eventY)
+    float angleFromXY(float cx, float cy, float eventX, float eventY)
     {
         auto dy = eventY - cy;
         auto dx = eventX - cx;

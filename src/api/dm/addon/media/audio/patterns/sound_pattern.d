@@ -7,10 +7,10 @@ struct SoundPattern
 {
     NoteType noteType = NoteType.note1_4;
 
-    double freqHz = 0;
+    float freqHz = 0;
     
-    double fmHz = 0;
-    double fmIndex = 0;
+    float fmHz = 0;
+    float fmIndex = 0;
 
     ADSR adsr;
 

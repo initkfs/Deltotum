@@ -27,22 +27,22 @@ class SevenSegment : Control
 
         Sprite2d[] segments;
 
-        double segmentVAngleXOffset = 0;
+        float segmentVAngleXOffset = 0;
     }
 
-    double hSegmentWidth = 0;
-    double hSegmentHeight = 0;
-    double vSegmentWidth = 0;
-    double vSegmentHeight = 0;
-    double segmentCornerBevel = 0;
-    double segmentSpacing = 0;
+    float hSegmentWidth = 0;
+    float hSegmentHeight = 0;
+    float vSegmentWidth = 0;
+    float vSegmentHeight = 0;
+    float segmentCornerBevel = 0;
+    float segmentSpacing = 0;
 
-    double dotDiameter = 0;
-    double dotPadding = 0;
+    float dotDiameter = 0;
+    float dotPadding = 0;
 
-    double segmentAngle = 0;
+    float segmentAngle = 0;
 
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         this.width = width;
         this.height = height;
@@ -222,7 +222,7 @@ class SevenSegment : Control
 
     protected Sprite2d createDotSegment()
     {
-        const double size = dotDiameter;
+        const float size = dotDiameter;
 
         Rect2d box = Rect2d(0, 0, size, size).boundingBox(segmentAngle);
         auto segment = createVShapeSegment(box, size, size, segmentAngle, size, createSegmentStyle);
@@ -233,7 +233,7 @@ class SevenSegment : Control
     protected Sprite2d createHSegment()
     {
         Rect2d box = Rect2d(0, 0, hSegmentWidth, hSegmentHeight);
-        double cornerBevel = segmentCornerBevel;
+        float cornerBevel = segmentCornerBevel;
         return createHShapeSegment(box, cornerBevel, createSegmentStyle);
     }
 
@@ -258,7 +258,7 @@ class SevenSegment : Control
         return segment;
     }
 
-    protected Sprite2d createVShapeSegment(Rect2d box, double w, double h, double angle, double cornerBevel, GraphicStyle segmentStyle)
+    protected Sprite2d createVShapeSegment(Rect2d box, float w, float h, float angle, float cornerBevel, GraphicStyle segmentStyle)
     {
         import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 
@@ -307,7 +307,7 @@ class SevenSegment : Control
         return segment;
     }
 
-    protected Sprite2d createHShapeSegment(Rect2d box, double cornerBevel, GraphicStyle segmentStyle)
+    protected Sprite2d createHShapeSegment(Rect2d box, float cornerBevel, GraphicStyle segmentStyle)
     {
         import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 

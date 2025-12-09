@@ -7,7 +7,7 @@ import api.math.geom2.vec2 : Vec2d;
  * Authors: initkfs
  */
 
-Matrix3x1 posMatrix(Vec2d pos, double defaultNorm = 1)
+Matrix3x1 posMatrix(Vec2d pos, float defaultNorm = 1)
 {
     Matrix3x1 matrix;
     matrix[0][0] = pos.x;
@@ -77,7 +77,7 @@ Matrix3x3 scaleMatrix(Vec2d pos)
 
 Vec2d scale(Vec2d pos, Vec2d factor) => mul2Affine(scaleMatrix(pos), posMatrix(factor));
 
-Matrix3x3 rotateMatrix(double angleDeg)
+Matrix3x3 rotateMatrix(float angleDeg)
 {
     import Math = api.math;
 
@@ -97,9 +97,9 @@ Matrix3x3 rotateMatrix(double angleDeg)
     return matrix;
 }
 
-Vec2d rotate(Vec2d pos, double angleDeg) => mul2Affine(rotateMatrix(angleDeg), posMatrix(pos));
+Vec2d rotate(Vec2d pos, float angleDeg) => mul2Affine(rotateMatrix(angleDeg), posMatrix(pos));
 
-Matrix3x3 shearMatrix(double k)
+Matrix3x3 shearMatrix(float k)
 {
     import Math = api.math;
 
@@ -118,7 +118,7 @@ Matrix3x3 shearMatrix(double k)
     return matrix;
 }
 
-Matrix3x3 shearMatrix(double angleDegX, double angleDegY)
+Matrix3x3 shearMatrix(float angleDegX, float angleDegY)
 {
     import Math = api.math;
 
@@ -138,10 +138,10 @@ Matrix3x3 shearMatrix(double angleDegX, double angleDegY)
     return matrix;
 }
 
-Vec2d shear(Vec2d pos, double angleDegX, double angleDegY) => mul2Affine(
+Vec2d shear(Vec2d pos, float angleDegX, float angleDegY) => mul2Affine(
     shearMatrix(angleDegX, angleDegY), posMatrix(pos));
 
-Matrix3x3 reflectMatrix(double x, double y)
+Matrix3x3 reflectMatrix(float x, float y)
 {
     Matrix3x3 matrix;
     matrix[0][0] = x;
@@ -168,7 +168,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    const double eps = 0.0001;
+    const float eps = 0.0001;
 
     const origin = Vec2d(4.6, 16.9);
 

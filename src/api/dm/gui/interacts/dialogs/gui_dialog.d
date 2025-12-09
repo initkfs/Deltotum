@@ -41,7 +41,7 @@ class GuiDialog : Container
     void delegate(Container) onButtonPanelCreate;
     void delegate(Button) onButtonCreate;
 
-    this(double width = 100, double height = 150)
+    this(float width = 100, float height = 150)
     {
         _width = width;
         _height = height;

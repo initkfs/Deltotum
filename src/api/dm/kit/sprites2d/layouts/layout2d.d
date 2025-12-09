@@ -27,20 +27,20 @@ abstract class Layout2d
     bool isDecreaseRootWidth;
     bool isDecreaseRootHeight;
 
-    double sizeChangeDelta = 0.15;
+    float sizeChangeDelta = 0.15;
 
-    double delegate(Sprite2d) childrenWidthProvider;
-    double delegate(Sprite2d) childrenHeightProvider;
+    float delegate(Sprite2d) childrenWidthProvider;
+    float delegate(Sprite2d) childrenHeightProvider;
 
     abstract
     {
         void applyLayout(Sprite2d root);
 
-        double calcChildrenWidth(Sprite2d root);
-        double calcChildrenHeight(Sprite2d root);
+        float calcChildrenWidth(Sprite2d root);
+        float calcChildrenHeight(Sprite2d root);
     }
 
-    double childrenWidth(Sprite2d root)
+    float childrenWidth(Sprite2d root)
     {
         if (childrenWidthProvider)
         {
@@ -49,7 +49,7 @@ abstract class Layout2d
         return calcChildrenWidth(root);
     }
 
-    double childrenHeight(Sprite2d root)
+    float childrenHeight(Sprite2d root)
     {
         if (childrenHeightProvider)
         {
@@ -58,7 +58,7 @@ abstract class Layout2d
         return calcChildrenHeight(root);
     }
 
-    double freeMaxWidth(Sprite2d root)
+    float freeMaxWidth(Sprite2d root)
     {
         const childrenW = childrenWidth(root);
         const maxW = root.maxWidth - root.padding.width;
@@ -70,7 +70,7 @@ abstract class Layout2d
         return maxW - childrenW;
     }
 
-    double freeMaxHeight(Sprite2d root)
+    float freeMaxHeight(Sprite2d root)
     {
         const childrenH = childrenHeight(root);
         const maxH = root.maxHeight - root.padding.height;

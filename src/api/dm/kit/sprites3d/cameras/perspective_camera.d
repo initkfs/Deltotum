@@ -22,10 +22,10 @@ class PerspectiveCamera : Sprite2d
         Frustum3f _frustum;
     }
 
-    double lastCursorX = 0;
-    double lastCursorY = 0;
-    double cursorYaw = -90.0f;
-    double cursorPitch = 0.0f;
+    float lastCursorX = 0;
+    float lastCursorY = 0;
+    float cursorYaw = -90.0f;
+    float cursorPitch = 0.0f;
 
     Vec3f cameraPos = Vec3f(0.0f, 0.0f, 3.0f);
 
@@ -40,7 +40,7 @@ class PerspectiveCamera : Sprite2d
     float nearPlane = 0.1;
     float farPlane = 100;
 
-    double fov = 45;
+    float fov = 45;
 
     float angleX = 0;
     float angleY = 0;
@@ -49,7 +49,7 @@ class PerspectiveCamera : Sprite2d
 
     float mouseSensitivity = 0.1f;
     bool mouseCaptured = false;
-    double lastMouseX = 0, lastMouseY = 0;
+    float lastMouseX = 0, lastMouseY = 0;
     bool firstMouse = true;
 
     bool isAutoRecalcFrustum = true;
@@ -105,7 +105,7 @@ class PerspectiveCamera : Sprite2d
         recalcView;
     }
 
-    double targetDistance;
+    float targetDistance;
 
     void recalcView()
     {
@@ -161,7 +161,7 @@ class PerspectiveCamera : Sprite2d
 
     Frustum3f frustum() const => _frustum;
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
 
@@ -247,7 +247,7 @@ class PerspectiveCamera : Sprite2d
         }
     }
 
-    void handlePointerMove(double mouseX, double mouseY, bool ctrlPressed)
+    void handlePointerMove(float mouseX, float mouseY, bool ctrlPressed)
     {
         if (ctrlPressed)
         {
@@ -265,8 +265,8 @@ class PerspectiveCamera : Sprite2d
                 return;
             }
 
-            double deltaX = mouseX - lastMouseX;
-            double deltaY = mouseY - lastMouseY;
+            float deltaX = mouseX - lastMouseX;
+            float deltaY = mouseY - lastMouseY;
             lastMouseX = mouseX;
             lastMouseY = mouseY;
 

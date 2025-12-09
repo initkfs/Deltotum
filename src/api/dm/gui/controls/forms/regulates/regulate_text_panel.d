@@ -15,7 +15,7 @@ class RegulateTextPanel : Container
 
     import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 
-    this(double fieldSpacing = SpaceableLayout.DefaultSpacing)
+    this(float fieldSpacing = SpaceableLayout.DefaultSpacing)
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
@@ -47,7 +47,7 @@ class RegulateTextPanel : Container
     void alignFields()
     {
         //TODO both directions
-        double maxLabelWidth = 0;
+        float maxLabelWidth = 0;
         foreach (field; fields)
         {
             if (field.labelField.width > maxLabelWidth)

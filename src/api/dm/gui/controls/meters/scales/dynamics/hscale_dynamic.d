@@ -13,7 +13,7 @@ import Math = api.math;
  */
 class HScaleDynamic : BaseScaleDynamic
 {
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         super(width, height);
     }
@@ -47,9 +47,9 @@ class HScaleDynamic : BaseScaleDynamic
         }
     }
 
-    override double tickOffset() => width / (tickCount - 1);
+    override float tickOffset() => width / (tickCount - 1);
 
-    override Vec2d tickStep(size_t i, Vec2d pos, double tickOffset)
+    override Vec2d tickStep(size_t i, Vec2d pos, float tickOffset)
     {
         if (isInvertX)
         {
@@ -62,7 +62,7 @@ class HScaleDynamic : BaseScaleDynamic
         return pos;
     }
 
-    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick)
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick)
     {
         if (!isMajorTick || labelIndex >= labels.length)
         {
@@ -105,7 +105,7 @@ class HScaleDynamic : BaseScaleDynamic
         return true;
     }
 
-    override Vec2d tickXY(Vec2d pos, double tickWidth, double tickHeight, bool isMajorTick)
+    override Vec2d tickXY(Vec2d pos, float tickWidth, float tickHeight, bool isMajorTick)
     {
         auto tickX = pos.x - tickWidth / 2;
         auto tickY = isMajorTick ? pos.y : pos.y + tickHeight / 2;
@@ -123,8 +123,8 @@ class HScaleDynamic : BaseScaleDynamic
 
     override Vec2d tickStartPos()
     {
-        double startX = !isInvertX ? x : boundsRect.right;
-        double startY = !isInvertY ? y : boundsRect.bottom - tickMajorHeight;
+        float startX = !isInvertX ? x : boundsRect.right;
+        float startY = !isInvertY ? y : boundsRect.bottom - tickMajorHeight;
 
         return Vec2d(startX, startY);
     }

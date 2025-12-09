@@ -24,7 +24,7 @@ class BaseBiswitch : Labeled
         RGBA lastLabelColor;
     }
 
-    this(dstring labelText = null, string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring labelText = null, string iconName = null, float graphicsGap = 0, bool isCreateLayout = true)
     {
         super(labelText, iconName, graphicsGap, isCreateLayout);
     }

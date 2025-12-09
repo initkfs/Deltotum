@@ -22,13 +22,13 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
     void delegate(Texture2d) onConfiguredLed;
     void delegate(Texture2d) onCreatedLed;
 
-    double colSpacing = 0;
-    double rowSpacing = 0;
+    float colSpacing = 0;
+    float rowSpacing = 0;
 
-    double ledWidth = 0;
-    double ledHeight = 0;
+    float ledWidth = 0;
+    float ledHeight = 0;
 
-    this(double ledWidth = 0, double ledHeight = 0)
+    this(float ledWidth = 0, float ledHeight = 0)
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
@@ -111,7 +111,7 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
         }
     }
 
-    Texture2d newLed(double w, double h)
+    Texture2d newLed(float w, float h)
     {
         auto ledStyle = createFillStyle;
         ledStyle.fillColor = RGBA.white;

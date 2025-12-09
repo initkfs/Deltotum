@@ -111,7 +111,7 @@ class GuiScene : Scene3d
         window.showingTasks ~= (dt) { debugWrapper.setInitialPos; };
     }
 
-    override void update(double dt){
+    override void update(float dt){
         super.update(dt);
 
         if (debugger && debugger.isVisible)

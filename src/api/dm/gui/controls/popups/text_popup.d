@@ -12,7 +12,7 @@ class TextPopup : BaseTextPopup
 
     }
 
-    this(dstring text = "Popup", string iconName = null, double graphicsGap = 0)
+    this(dstring text = "Popup", string iconName = null, float graphicsGap = 0)
     {
         super(text, iconName, graphicsGap, isCreateLayout : true);
     }

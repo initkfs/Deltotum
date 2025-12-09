@@ -75,7 +75,7 @@ class WindowMagnifier : BaseMagnifier
 
     }
 
-    override void pointerMove(double pRelX, double pRelY, ref PointerEvent e)
+    override void pointerMove(float pRelX, float pRelY, ref PointerEvent e)
     {
         drawMagnifier(pRelX, pRelY);
 
@@ -86,7 +86,7 @@ class WindowMagnifier : BaseMagnifier
         }
     }
 
-    void drawMagnifier(double pRelX, double pRelY)
+    void drawMagnifier(float pRelX, float pRelY)
     {
         assert(thumbnail);
 
@@ -125,7 +125,7 @@ class WindowMagnifier : BaseMagnifier
         }
     }
 
-    override Texture2d newMagnifier(double w, double h)
+    override Texture2d newMagnifier(float w, float h)
     {
         auto magn = new Texture2d(w, h);
         build(magn);
@@ -133,7 +133,7 @@ class WindowMagnifier : BaseMagnifier
         return magn;
     }
 
-    override Texture2d newThumbnail(double w, double h)
+    override Texture2d newThumbnail(float w, float h)
     {
         auto t = new Texture2d(w, h);
         build(t);
@@ -152,7 +152,7 @@ class WindowMagnifier : BaseMagnifier
 
     }
 
-    override void update(double dt){
+    override void update(float dt){
         super.update(dt);
 
         if (isUpdateWhenShow && isMagnVisible)

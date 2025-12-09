@@ -3,8 +3,8 @@ module api.dm.addon.dsp.signal_funcs;
 /**
  * Authors: initkfs
  */
-void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels, scope double delegate(
-        size_t, double, double) onIndexFrameTimeNormTime)
+void onBuffer(T)(T[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, size_t channels, scope float delegate(
+        size_t, float, float) onIndexFrameTimeNormTime)
 {
     assert(buffer.length > 0);
 
@@ -14,11 +14,11 @@ void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, si
     const bool isMultiChans = channels > 1;
     const bool isStereo = channels == 2;
 
-    double frameTime = 0;
-    double normTime = 0;
+    float frameTime = 0;
+    float normTime = 0;
     for (size_t i = 0; i < buffer.length; i += channels)
     {
-        double value = onIndexFrameTimeNormTime(i, frameTime, normTime);
+        float value = onIndexFrameTimeNormTime(i, frameTime, normTime);
         T buffValue = cast(T)(value * amplitude0to1 * T.max);
         buffer[i] = buffValue;
 
@@ -60,7 +60,7 @@ void hann(T)(T[] data)
 
     foreach (i, v; data)
     {
-        double winVal = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (size - 1)));
+        float winVal = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (size - 1)));
         data[i] = cast(T)(data[i] * winVal);
     }
 }
@@ -78,7 +78,7 @@ void hamming(T)(T[] data)
 
     foreach (i, v; data)
     {
-        double winVal = 0.54 - 0.46 * Math.cos((2 * Math.PI * i) / (size - 1));
+        float winVal = 0.54 - 0.46 * Math.cos((2 * Math.PI * i) / (size - 1));
         data[i] = cast(T)(data[i] * winVal);
     }
 }
@@ -96,7 +96,7 @@ void blackman(T)(T[] data)
 
     foreach (i, v; data)
     {
-        double winVal = 0.42 - 0.5 * Math.cos(
+        float winVal = 0.42 - 0.5 * Math.cos(
             (2 * Math.PI * i) / (size - 1)) + 0.08 * Math.cos((4 * Math.PI * i) / (size - 1));
         data[i] = cast(T)(data[i] * winVal);
     }

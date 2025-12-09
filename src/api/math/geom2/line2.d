@@ -18,7 +18,7 @@ struct Line2d
         this.end = newEnd;
     }
 
-    this(double x0, double y0, double x1, double y1) pure  @safe
+    this(float x0, float y0, float x1, float y1) pure  @safe
     {
         start = Vec2d(x0, y0);
         end = Vec2d(x1, y1);
@@ -31,7 +31,7 @@ struct Line2d
         return Vec2d(midx, midy);
     }
 
-    double angle()
+    float angle()
     {
         const ax = end.x - start.x;
         const ay = end.y - start.y;
@@ -40,7 +40,7 @@ struct Line2d
     }
 
     //https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-    double distanceToSquared(Vec2d point)
+    float distanceToSquared(Vec2d point)
     {
         if (point == start || point == end)
         {
@@ -54,13 +54,13 @@ struct Line2d
 
         const dot = a * c + b * d;
         const lenSquare = c * c + d * d;
-        double param = -1;
+        float param = -1;
         if (lenSquare != 0)
         {
             param = dot / lenSquare;
         }
 
-        double xx = 0, yy = 0;
+        float xx = 0, yy = 0;
 
         if (param < 0)
         {
@@ -83,7 +83,7 @@ struct Line2d
         return dx * dx + dy * dy;
     }
 
-    double lengthSquared()
+    float lengthSquared()
     {
 
         const dx = end.x - start.x;
@@ -92,9 +92,9 @@ struct Line2d
         return dx * dx + dy * dy;
     }
 
-    double length() => Math.sqrt(lengthSquared);
+    float length() => Math.sqrt(lengthSquared);
 
-    double distanceTo(Vec2d point) => Math.sqrt(distanceToSquared(point));
+    float distanceTo(Vec2d point) => Math.sqrt(distanceToSquared(point));
 
     unittest
     {
@@ -105,7 +105,7 @@ struct Line2d
         assert(isClose(line1.distanceTo(p1), 0.61394061351));
     }
 
-    double x1(double y1)
+    float x1(float y1)
     {
 
         if (start.y == y1)
@@ -121,19 +121,19 @@ struct Line2d
         const dy = end.y - start.y;
         if (dy == 0)
         {
-            return double.infinity;
+            return float.infinity;
         }
 
         const dx = end.x - start.x;
         if (dx == 0)
         {
-            return double.infinity;
+            return float.infinity;
         }
 
         return (start.x + ((y1 - start.y) * dx / dy));
     }
 
-    double y1(double x1)
+    float y1(float x1)
     {
         if (start.x == x1)
         {
@@ -148,13 +148,13 @@ struct Line2d
         const dx = end.x - start.x;
         if (dx == 0)
         {
-            return double.infinity;
+            return float.infinity;
         }
 
         const dy = end.y - start.y;
         if (dy == 0)
         {
-            return double.infinity;
+            return float.infinity;
         }
 
         return (start.y + ((x1 - start.x) * dy / dx));

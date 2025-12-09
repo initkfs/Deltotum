@@ -57,17 +57,17 @@ class Sprite2d : EventKitTarget
 
     protected
     {
-        double _angle = 0;
+        float _angle = 0;
     }
 
     bool isAngleForChildren = true;
 
-    double scale = 1;
-    double mass = 1;
-    double speed = 0;
+    float scale = 1;
+    float mass = 1;
+    float speed = 0;
 
-    double _opacity = 1;
-    double maxOpacity = double.max;
+    float _opacity = 1;
+    float maxOpacity = float.max;
     bool isOpacityForChildren;
 
     bool isPhysicsEnabled;
@@ -158,7 +158,7 @@ class Sprite2d : EventKitTarget
     Sprite2d[] children;
     //}
 
-    bool delegate(double, double) onDragXY;
+    bool delegate(float, float) onDragXY;
     void delegate() onStartDrag;
     void delegate() onStopDrag;
 
@@ -167,16 +167,16 @@ class Sprite2d : EventKitTarget
     void delegate()[] invalidateListeners;
 
     //old, new
-    void delegate(double, double) onChangeWidthOldNew;
-    void delegate(double, double) onChangeHeightOldNew;
+    void delegate(float, float) onChangeWidthOldNew;
+    void delegate(float, float) onChangeHeightOldNew;
 
-    void delegate(double, double)[] onResize;
+    void delegate(float, float)[] onResize;
 
-    double minWidth = 1.0;
-    double minHeight = 1.0;
+    float minWidth = 1.0;
+    float minHeight = 1.0;
 
-    double multiplyInitWidth = 1.0;
-    double multiplyInitHeight = 1.0;
+    float multiplyInitWidth = 1.0;
+    float multiplyInitHeight = 1.0;
 
     //TODO replace with field
     Scene2d delegate() sceneProvider;
@@ -195,17 +195,17 @@ class Sprite2d : EventKitTarget
     version (SdlBackend)
     {
         //TODO correct max size
-        double maxWidth = 16384;
-        double maxHeight = 16384;
+        float maxWidth = 16384;
+        float maxHeight = 16384;
     }
     else
     {
-        double maxWidth = double.max;
-        double maxHeight = double.max;
+        float maxWidth = float.max;
+        float maxHeight = float.max;
     }
 
-    void delegate(double, double) onChangeXOldNew;
-    void delegate(double, double) onChangeYOldNew;
+    void delegate(float, float) onChangeXOldNew;
+    void delegate(float, float) onChangeYOldNew;
 
     bool isInvalidationProcess;
     bool isValidatableChildren = true;
@@ -219,14 +219,14 @@ class Sprite2d : EventKitTarget
         Sprite2d _hitbox;
         GraphicCanvas _gContext;
 
-        double _width = 0;
-        double _height = 0;
+        float _width = 0;
+        float _height = 0;
 
-        double offsetX = 0;
-        double offsetY = 0;
+        float offsetX = 0;
+        float offsetY = 0;
 
-        double _x = 0;
-        double _y = 0;
+        float _x = 0;
+        float _y = 0;
 
         ulong lastClickTimeMs;
     }
@@ -235,12 +235,12 @@ class Sprite2d : EventKitTarget
 
     bool isDrag;
 
-    enum double defaultTrashold = 0.01;
+    enum float defaultTrashold = 0.01;
 
-    double xChangeThreshold = defaultTrashold;
-    double yChangeThreshold = defaultTrashold;
-    double widthChangeThreshold = defaultTrashold;
-    double heightChangeThreshold = defaultTrashold;
+    float xChangeThreshold = defaultTrashold;
+    float yChangeThreshold = defaultTrashold;
+    float widthChangeThreshold = defaultTrashold;
+    float heightChangeThreshold = defaultTrashold;
 
     bool isConstructed;
 
@@ -1030,7 +1030,7 @@ class Sprite2d : EventKitTarget
         return isRemove;
     }
 
-    void startDrag(double x, double y)
+    void startDrag(float x, float y)
     {
         //TODO parent coordinates
         offsetX = _x - x;
@@ -1086,7 +1086,7 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    bool inClipBounds(double x, double y)
+    bool inClipBounds(float x, float y)
     {
         if (!isClipped)
         {
@@ -1200,21 +1200,21 @@ class Sprite2d : EventKitTarget
         applyLayout;
     }
 
-    void update(double delta)
+    void update(float delta)
     {
-        double dx = 0;
-        double dy = 0;
+        float dx = 0;
+        float dy = 0;
 
         checkCollisions;
 
         if (isUpdatable && isPhysicsEnabled)
         {
             //TODO check velocity is 0 || acceleration is 0
-            const double accelerationDx = acceleration.x * invMass * delta;
-            const double accelerationDy = acceleration.y * invMass * delta;
+            const float accelerationDx = acceleration.x * invMass * delta;
+            const float accelerationDy = acceleration.y * invMass * delta;
 
-            double newVelocityX = velocity.x + accelerationDx;
-            double newVelocityY = velocity.y + accelerationDy;
+            float newVelocityX = velocity.x + accelerationDx;
+            float newVelocityY = velocity.y + accelerationDy;
 
             dx = newVelocityX * delta;
             dy = newVelocityY * delta;
@@ -1285,7 +1285,7 @@ class Sprite2d : EventKitTarget
 
     bool isClipSet() => clip.width > 0 || clip.height > 0;
 
-    bool containsPoint(double x, double y)
+    bool containsPoint(float x, float y)
     {
         return boundsRect.contains(x, y);
     }
@@ -1388,7 +1388,7 @@ class Sprite2d : EventKitTarget
         return bounds;
     }
 
-    void rotateBounds(ref Quadrilateral2d bounds, double angle)
+    void rotateBounds(ref Quadrilateral2d bounds, float angle)
     {
         import api.math.matrices.matrix : Matrix2x2, Matrix2x1, toVec2d, fromVec2d;
 
@@ -1498,7 +1498,7 @@ class Sprite2d : EventKitTarget
 
     bool pos(Vec2d newPos) => pos(newPos.x, newPos.y);
 
-    bool pos(double newX, double newY)
+    bool pos(float newX, float newY)
     {
         bool isChangePos;
         isChangePos |= (x = newX);
@@ -1522,7 +1522,7 @@ class Sprite2d : EventKitTarget
 
     bool xy(Vec2d newXY) => xy(newXY.x, newXY.y);
 
-    bool xy(double newX, double newY)
+    bool xy(float newX, float newY)
     {
         bool isChangeXY;
         isChangeXY |= x(newX);
@@ -1530,12 +1530,12 @@ class Sprite2d : EventKitTarget
         return isChangeXY;
     }
 
-    double x() @safe pure nothrow
+    float x() @safe pure nothrow
     {
         return _x;
     }
 
-    bool x(double newX)
+    bool x(float newX)
     {
         if (isRoundEvenX)
         {
@@ -1551,8 +1551,8 @@ class Sprite2d : EventKitTarget
         {
             if (child.isManaged)
             {
-                double dx = newX - _x;
-                double newChildX = child.x + dx;
+                float dx = newX - _x;
+                float newChildX = child.x + dx;
                 child.x = !isRoundEvenChildX ? newChildX : Math.roundEven(newChildX);
             }
         }
@@ -1582,12 +1582,12 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
-    double y() @safe pure nothrow
+    float y() @safe pure nothrow
     {
         return _y;
     }
 
-    bool y(double newY)
+    bool y(float newY)
     {
         if (isRoundEvenY)
         {
@@ -1603,8 +1603,8 @@ class Sprite2d : EventKitTarget
         {
             if (child.isManaged)
             {
-                double dy = newY - _y;
-                double newChildY = child.y + dy;
+                float dy = newY - _y;
+                float newChildY = child.y + dy;
                 child.y = !isRoundEvenChildY ? newChildY : Math.roundEven(newChildY);
             }
         }
@@ -1646,19 +1646,19 @@ class Sprite2d : EventKitTarget
         isRoundEvenChildY = isRound;
     }
 
-    bool initWidth(double newWidth) => width = newWidth * multiplyInitWidth;
-    bool initHeight(double newHeight) => height = newHeight * multiplyInitHeight;
-    void initWidthForce(double newWidth)
+    bool initWidth(float newWidth) => width = newWidth * multiplyInitWidth;
+    bool initHeight(float newHeight) => height = newHeight * multiplyInitHeight;
+    void initWidthForce(float newWidth)
     {
         _width = newWidth * multiplyInitWidth;
     }
 
-    void initHeightForce(double newHeight)
+    void initHeightForce(float newHeight)
     {
         _height = newHeight * multiplyInitHeight;
     }
 
-    protected bool initSizeIfZero(double newWidth, double newHeight)
+    protected bool initSizeIfZero(float newWidth, float newHeight)
     {
         bool isWidth, isHeight;
 
@@ -1675,31 +1675,31 @@ class Sprite2d : EventKitTarget
         return isWidth || isHeight;
     }
 
-    protected bool initSizeIfZero(double newSize) => initSizeIfZero(newSize, newSize);
+    protected bool initSizeIfZero(float newSize) => initSizeIfZero(newSize, newSize);
 
-    protected bool initSize(double newWidth, double newHeight)
+    protected bool initSize(float newWidth, float newHeight)
     {
         bool isWidth = initWidth(newWidth);
         bool isHeight = initHeight(newHeight);
         return isWidth || isHeight;
     }
 
-    protected bool initSize(double newSize) => initSize(newSize, newSize);
+    protected bool initSize(float newSize) => initSize(newSize, newSize);
 
-    protected void initSizeForce(double newWidth, double newHeight)
+    protected void initSizeForce(float newWidth, float newHeight)
     {
         initWidthForce(newWidth);
         initHeightForce(newHeight);
     }
 
-    double width() @safe pure nothrow
+    float width() @safe pure nothrow
     {
         return _width;
     }
 
-    double halfWidth() @safe pure nothrow => width / 2;
+    float halfWidth() @safe pure nothrow => width / 2;
 
-    bool canChangeWidth(double value)
+    bool canChangeWidth(float value)
     {
         if (value < minWidth || value > maxWidth)
         {
@@ -1722,7 +1722,7 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
-    bool tryWidth(double value)
+    bool tryWidth(float value)
     {
         if (!canChangeWidth(value))
         {
@@ -1732,19 +1732,19 @@ class Sprite2d : EventKitTarget
         return setWidth(value);
     }
 
-    void forceWidth(double value)
+    void forceWidth(float value)
     {
         _width = value;
     }
 
-    void forceHeight(double value)
+    void forceHeight(float value)
     {
         _height = value;
     }
 
-    bool setWidth(double value)
+    bool setWidth(float value)
     {
-        immutable double oldWidth = _width;
+        immutable float oldWidth = _width;
         _width = value;
 
         bool isResized = true;
@@ -1776,7 +1776,7 @@ class Sprite2d : EventKitTarget
 
         if (isResizeChildren && children.length > 0)
         {
-            immutable double dw = _width - oldWidth;
+            immutable float dw = _width - oldWidth;
 
             //Branch expanded for easier debugging
             foreach (child; children)
@@ -1808,31 +1808,31 @@ class Sprite2d : EventKitTarget
         return isResized;
     }
 
-    bool width(double value)
+    bool width(float value)
     {
         return tryWidth(value);
     }
 
-    protected void incChildWidth(Sprite2d child, double dw)
+    protected void incChildWidth(Sprite2d child, float dw)
     {
         const newWidth = child.width + dw;
         child.width = newWidth;
     }
 
-    protected void incChildHeight(Sprite2d child, double dh)
+    protected void incChildHeight(Sprite2d child, float dh)
     {
         const newHeight = child.height + dh;
         child.height = newHeight;
     }
 
-    double height() @safe pure nothrow
+    float height() @safe pure nothrow
     {
         return _height;
     }
 
-    double halfHeight() @safe pure nothrow => height / 2;
+    float halfHeight() @safe pure nothrow => height / 2;
 
-    bool canChangeHeight(double value)
+    bool canChangeHeight(float value)
     {
         if (value < minHeight || value > maxHeight)
         {
@@ -1854,7 +1854,7 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
-    bool tryHeight(double value)
+    bool tryHeight(float value)
     {
         if (!canChangeHeight(value))
         {
@@ -1864,9 +1864,9 @@ class Sprite2d : EventKitTarget
         return setHeight(value);
     }
 
-    bool setHeight(double value)
+    bool setHeight(float value)
     {
-        immutable double oldHeight = _height;
+        immutable float oldHeight = _height;
         _height = value;
 
         bool isResized = true;
@@ -1929,12 +1929,12 @@ class Sprite2d : EventKitTarget
         return isResized;
     }
 
-    bool height(double value)
+    bool height(float value)
     {
         return tryHeight(value);
     }
 
-    bool resize(double newWidth, double newHeight, bool isForce = false)
+    bool resize(float newWidth, float newHeight, bool isForce = false)
     {
         bool isResized;
         if (isForce)
@@ -1950,7 +1950,7 @@ class Sprite2d : EventKitTarget
         return isResized;
     }
 
-    bool rescale(double factorWidth, double factorHeight)
+    bool rescale(float factorWidth, float factorHeight)
     {
         if (!isScalable)
         {
@@ -1964,7 +1964,7 @@ class Sprite2d : EventKitTarget
             return resize(newWidth, newHeight);
         }
 
-        double scaleFactorWidth = 1, scaleFactorHeight = 1;
+        float scaleFactorWidth = 1, scaleFactorHeight = 1;
         if (width >= height)
         {
             scaleFactorWidth = newWidth / width;
@@ -1983,7 +1983,7 @@ class Sprite2d : EventKitTarget
         return resize(newW, newH);
     }
 
-    bool rescale(double factor) => rescale(factor, factor);
+    bool rescale(float factor) => rescale(factor, factor);
     bool rescale2() => rescale(2, 2);
     bool rescale05() => rescale(0.5, 0.5);
 
@@ -2033,15 +2033,15 @@ class Sprite2d : EventKitTarget
 
         const b = boundsRect;
         //graphic.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
-        const double leftTopX = b.x, leftTopY = b.y;
+        const float leftTopX = b.x, leftTopY = b.y;
 
-        const double rightTopX = leftTopX + b.width, rightTopY = leftTopY;
+        const float rightTopX = leftTopX + b.width, rightTopY = leftTopY;
         graphic.line(leftTopX, leftTopY, rightTopX, rightTopY);
 
-        const double rightBottomX = rightTopX, rightBottomY = rightTopY + b.height;
+        const float rightBottomX = rightTopX, rightBottomY = rightTopY + b.height;
         graphic.line(rightTopX, rightTopY, rightBottomX, rightBottomY);
 
-        const double leftBottomX = leftTopX, leftBottomY = leftTopY + b.height;
+        const float leftBottomX = leftTopX, leftBottomY = leftTopY + b.height;
         graphic.line(rightBottomX, rightBottomY, leftBottomX, leftBottomY);
 
         graphic.line(leftBottomX, leftBottomY, leftTopX, leftTopY);
@@ -2235,7 +2235,7 @@ class Sprite2d : EventKitTarget
 
     import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
-    Texture2d toTexture(double scaleX = 1, double scaleY = 1, Texture2d delegate() newTextureProvider = null)
+    Texture2d toTexture(float scaleX = 1, float scaleY = 1, Texture2d delegate() newTextureProvider = null)
     {
         assert(width > 0);
         assert(height > 0);
@@ -2346,32 +2346,32 @@ class Sprite2d : EventKitTarget
         _padding = value;
     }
 
-    void padding(double value)
+    void padding(float value)
     {
         _padding = Insets(value);
     }
 
-    void padding(double top = 0, double right = 0, double bottom = 0, double left = 0)
+    void padding(float top = 0, float right = 0, float bottom = 0, float left = 0)
     {
         _padding = Insets(top, right, bottom, left);
     }
 
-    void paddingTop(double value)
+    void paddingTop(float value)
     {
         _padding.top = value;
     }
 
-    void paddingRight(double value)
+    void paddingRight(float value)
     {
         _padding.right = value;
     }
 
-    void paddingLeft(double value)
+    void paddingLeft(float value)
     {
         _padding.left = value;
     }
 
-    void paddingBottom(double value)
+    void paddingBottom(float value)
     {
         _padding.bottom = value;
     }
@@ -2386,27 +2386,27 @@ class Sprite2d : EventKitTarget
         _margin = value;
     }
 
-    void margin(double value)
+    void margin(float value)
     {
         _margin = Insets(value);
     }
 
-    void margin(double top, double right, double bottom, double left)
+    void margin(float top, float right, float bottom, float left)
     {
         _margin = Insets(top, right, bottom, left);
     }
 
-    double marginTop() => _margin.top;
-    double marginTop(double value) => _margin.top = value;
+    float marginTop() => _margin.top;
+    float marginTop(float value) => _margin.top = value;
 
-    double marginBottom() => _margin.bottom;
-    double marginBottom(double value) => _margin.bottom = value;
+    float marginBottom() => _margin.bottom;
+    float marginBottom(float value) => _margin.bottom = value;
 
-    double marginRight() => _margin.right;
-    double marginRight(double value) => _margin.right = value;
+    float marginRight() => _margin.right;
+    float marginRight(float value) => _margin.right = value;
 
-    double marginLeft() => _margin.left;
-    double marginLeft(double value) => _margin.left = value;
+    float marginLeft() => _margin.left;
+    float marginLeft(float value) => _margin.left = value;
 
     void onScenePause()
     {
@@ -2477,7 +2477,7 @@ class Sprite2d : EventKitTarget
         invalidateListeners = null;
     }
 
-    bool canExpandW(double value)
+    bool canExpandW(float value)
     {
         Sprite2d curParent = parent;
         if (!curParent || !curParent.layout)
@@ -2502,7 +2502,7 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
-    bool canExpandH(double value)
+    bool canExpandH(float value)
     {
         Sprite2d curParent = parent;
         while (curParent)
@@ -2536,7 +2536,7 @@ class Sprite2d : EventKitTarget
 
     Rect2d boundingBox() => boundingBox(angle);
 
-    Rect2d boundingBox(double angleDeg)
+    Rect2d boundingBox(float angleDeg)
     {
         import Math = api.math;
 
@@ -2625,19 +2625,19 @@ class Sprite2d : EventKitTarget
         _layoutMovable = value;
     }
 
-    double invMass() pure @safe nothrow
+    float invMass() pure @safe nothrow
     {
         return 1.0 / mass;
     }
 
-    double opacity()
+    float opacity()
     {
         return _opacity;
     }
 
-    bool canSetOpacity(double value) => value >= 0 && value <= maxOpacity;
+    bool canSetOpacity(float value) => value >= 0 && value <= maxOpacity;
 
-    bool opacity(double value)
+    bool opacity(float value)
     {
         if (!canSetOpacity(value))
         {
@@ -2704,7 +2704,7 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    void opacityLimit(double v)
+    void opacityLimit(float v)
     {
         maxOpacity = v;
         opacity = v;
@@ -2723,7 +2723,7 @@ class Sprite2d : EventKitTarget
         _gContext = context;
     }
 
-    bool angle(double value)
+    bool angle(float value)
     {
         if (_angle == value)
         {
@@ -2744,7 +2744,7 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
-    double angle()
+    float angle()
     {
         return _angle;
     }

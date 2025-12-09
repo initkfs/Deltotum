@@ -10,10 +10,10 @@ import Math = api.math;
  */
 abstract class BaseScale : Control
 {
-    double tickMinorWidth = 0;
-    double tickMinorHeight = 0;
-    double tickMajorWidth = 0;
-    double tickMajorHeight = 0;
+    float tickMinorWidth = 0;
+    float tickMinorHeight = 0;
+    float tickMajorWidth = 0;
+    float tickMajorHeight = 0;
 
     size_t majorTickStep = 5;
 
@@ -86,7 +86,7 @@ abstract class BaseScale : Control
         assert(tickMajorHeight > 0);
     }
 
-    dstring formatLabelValue(double value)
+    dstring formatLabelValue(float value)
     {
         import std.conv : to;
         import std.math.rounding : trunc;
@@ -108,10 +108,10 @@ abstract class BaseScale : Control
         return format("%.*f"d, labelNumberPrecision, value);
     }
 
-    double tickMinWidth() => Math.min(tickMinorWidth, tickMajorWidth);
-    double tickMaxWidth() => Math.max(tickMinorWidth, tickMajorWidth);
+    float tickMinWidth() => Math.min(tickMinorWidth, tickMajorWidth);
+    float tickMaxWidth() => Math.max(tickMinorWidth, tickMajorWidth);
 
-    double tickMinHeight() => Math.min(tickMinorHeight, tickMajorHeight);
-    double tickMaxHeight() => Math.max(tickMinorHeight, tickMajorHeight);
+    float tickMinHeight() => Math.min(tickMinorHeight, tickMajorHeight);
+    float tickMaxHeight() => Math.max(tickMinorHeight, tickMajorHeight);
 
 }

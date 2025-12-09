@@ -16,12 +16,12 @@ import std.conv : to;
  */
 class Led : BaseLed
 {
-    this(RGBA colorHue = RGBA.red, double width = 0, double height = 0)
+    this(RGBA colorHue = RGBA.red, float width = 0, float height = 0)
     {
         super(colorHue, width, height);
     }
 
-    override protected Sprite2d newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize)
+    override protected Sprite2d newLayerShape(GraphicStyle style, float layerInnerPadding, float blurSize)
     {
         auto diameter = layerInnerPadding;
 

@@ -18,9 +18,9 @@ class CenterLayout : ManagedLayout
         return isAlign;
     }
 
-    override double calcChildrenWidth(Sprite2d root)
+    override float calcChildrenWidth(Sprite2d root)
     {
-        double maxWidth = 0;
+        float maxWidth = 0;
         foreach (child; childrenForLayout(root))
         {
             const childW = child.width + child.margin.width;
@@ -33,9 +33,9 @@ class CenterLayout : ManagedLayout
         return maxWidth;
     }
 
-    override double calcChildrenHeight(Sprite2d root)
+    override float calcChildrenHeight(Sprite2d root)
     {
-        double maxHeight = 0;
+        float maxHeight = 0;
         foreach (child; childrenForLayout(root))
         {
             const childH = child.height + child.margin.height;

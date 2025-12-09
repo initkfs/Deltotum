@@ -73,8 +73,8 @@ nothrow:
     ComResult setFullScreen(bool isFullScreen);
     ComResult getFullScreen(out bool isFullScreen);
 
-    ComResult setOpacity(double value0to1);
-    ComResult getOpacity(out double value0to1);
+    ComResult setOpacity(float value0to1);
+    ComResult getOpacity(out float value0to1);
 
     ComResult getSize(out int width, out int height);
     ComResult getWidth(out int width);

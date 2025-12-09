@@ -7,8 +7,8 @@ import Math = api.math;
 
 struct FieldVec
 {
-    double polarAngleRad = 0;
-    double length = 0;
+    float polarAngleRad = 0;
+    float length = 0;
 
     Vec2d toVec2() => Vec2d.fromPolarRad(polarAngleRad, length);
 }
@@ -22,26 +22,26 @@ class VecField
     FieldVec[][] grid;
 
     size_t steps = 20;
-    double resolution = 40;
+    float resolution = 40;
 
     protected
     {
         size_t _colCount;
         size_t _rowCount;
 
-        double _width = 0;
-        double _height = 0;
+        float _width = 0;
+        float _height = 0;
 
-        double _stepLength = 0;
+        float _stepLength = 0;
     }
 
-    this(double fieldWidth = 100, double fieldHeight = 100)
+    this(float fieldWidth = 100, float fieldHeight = 100)
     {
         _width = fieldWidth;
         _height = fieldHeight;
     }
 
-    void createGrid(double startX, double startY)
+    void createGrid(float startX, float startY)
     {
         auto leftX = _width * -0.5;
         auto rightX = _width * 1.5;
@@ -69,7 +69,7 @@ class VecField
         {
             foreach (c, ref col; row)
             {
-                const angle = (c / cast(double) _colCount) * Math.PI2;
+                const angle = (c / cast(float) _colCount) * Math.PI2;
                 col = FieldVec(angle, _stepLength);
             }
         }
@@ -88,8 +88,8 @@ class VecField
 
         foreach (ref p; points)
         {
-            double startX = p.x;
-            double startY = p.y;
+            float startX = p.x;
+            float startY = p.y;
 
             if (!onStartRowIsContinue(p))
             {
@@ -127,7 +127,7 @@ class VecField
         }
     }
 
-    void create(double startX, double startY)
+    void create(float startX, float startY)
     {
         createGrid(startX, startY);
         rotateGrid;
@@ -140,10 +140,10 @@ class VecField
             return;
         }
 
-        double startY = gridBounds.y;
+        float startY = gridBounds.y;
         foreach (ri, ref row; grid)
         {
-            double startX = gridBounds.x;
+            float startX = gridBounds.x;
             foreach (ci, ref col; row)
             {
                 Vec2d startXY = Vec2d(startX, startY);
@@ -169,7 +169,7 @@ class VecField
         }
     }
 
-    void stepLength(double value)
+    void stepLength(float value)
     {
         _stepLength = value;
         if (grid.length == 0)

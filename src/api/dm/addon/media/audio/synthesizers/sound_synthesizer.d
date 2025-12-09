@@ -16,12 +16,12 @@ import Math = api.math;
 
 class SoundSynthesizer(T) : BaseSynthesizer!T
 {
-    this(double sampleRateHz)
+    this(float sampleRateHz)
     {
         super(sampleRateHz);
     }
 
-    void note(MusicNote n, double amplitude0to1, T[]delegate(double) bufferOnTimeProvider)
+    void note(MusicNote n, float amplitude0to1, T[]delegate(float) bufferOnTimeProvider)
     {
         note(n, amplitude0to1, (scopeBuff, time) {
             T[] outBuff = bufferOnTimeProvider(time);
@@ -36,7 +36,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         });
     }
 
-    void note(MusicNote n, double amplitude0to1, scope void delegate(T[], double) onScopeBufferTime)
+    void note(MusicNote n, float amplitude0to1, scope void delegate(T[], float) onScopeBufferTime)
     {
         auto time = n.durationMs;
         auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
@@ -55,7 +55,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         onScopeBufferTime(noteBuff.buffer, time);
     }
 
-    void sequence(MusicNote[] notes, double amplitude0to1, T[]delegate(double) bufferOnTimeProvider)
+    void sequence(MusicNote[] notes, float amplitude0to1, T[]delegate(float) bufferOnTimeProvider)
     {
         sequence(notes, amplitude0to1, (scopeBuff, time) {
             T[] outBuff = bufferOnTimeProvider(time);
@@ -70,11 +70,11 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         });
     }
 
-    void sequence(MusicNote[] notes, double amplitude0to1, scope void delegate(T[], double) onScopeBufferTime)
+    void sequence(MusicNote[] notes, float amplitude0to1, scope void delegate(T[], float) onScopeBufferTime)
     {
         assert(notes.length > 0);
 
-        double fullTimeMs = 0;
+        float fullTimeMs = 0;
         foreach (n; notes)
         {
             fullTimeMs += n.durationMs;
@@ -89,9 +89,9 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         size_t buffIndex = 0;
 
         //TODO reset phase
-        //double phase = 0; if (phase >= 1.0) phase -= 1.0;
+        //float phase = 0; if (phase >= 1.0) phase -= 1.0;
 
-        double phase = 0.0;
+        float phase = 0.0;
 
         import std.math : fmod;
 
@@ -100,7 +100,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
             auto time = n.durationMs;
             auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
 
-            // double prevAmp = 0;
+            // float prevAmp = 0;
             // size_t maxLastSamples = 50;
             // if (buffIndex > 0 && buffIndex >= maxLastSamples)
             // {
@@ -109,7 +109,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
             //         auto val = seqBuff.buffer[i];
             //         if (val != 0)
             //         {
-            //             prevAmp = ((cast(double) val) / T.max);
+            //             prevAmp = ((cast(float) val) / T.max);
             //             break;
             //         }
             //     }
@@ -135,8 +135,8 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
             //             break;
             //         }
 
-            //         double ratio = (cast(double) i) / overlap;
-            //         double overval = seqBuff.buffer[ovIndex] * (1.0 - ratio) + noteBuff.buffer[i] * ratio;
+            //         float ratio = (cast(float) i) / overlap;
+            //         float overval = seqBuff.buffer[ovIndex] * (1.0 - ratio) + noteBuff.buffer[i] * ratio;
             //         seqBuff.buffer[ovIndex] = cast(T)(overval);
             //         ovIndex++;
             //     }

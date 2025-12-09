@@ -15,7 +15,7 @@ class PointsShape : Shape2d
 
     Vec2d[] points;
 
-    this(double width = 100, double height = 100, GraphicStyle style = GraphicStyle.simple, Vec2d[] points = null, bool isClosePath = false, bool isDrawFromCenter = false)
+    this(float width = 100, float height = 100, GraphicStyle style = GraphicStyle.simple, Vec2d[] points = null, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
         this.isClosePath = isClosePath;
@@ -32,11 +32,11 @@ class PointsShape : Shape2d
             return;
         }
 
-        const double firstX = points[0].x, firstY = points[0].y;
+        const float firstX = points[0].x, firstY = points[0].y;
 
         const thisBounds = boundsRect;
 
-        double offsetX = thisBounds.x, offsetY = thisBounds.y;
+        float offsetX = thisBounds.x, offsetY = thisBounds.y;
         if (isDrawFromCenter)
         {
             if (width > 0)
@@ -50,7 +50,7 @@ class PointsShape : Shape2d
 
         }
 
-        double startX = firstX, startY = firstY;
+        float startX = firstX, startY = firstY;
         foreach (p; points[1 .. $])
         {
             graphic.line(offsetX + startX, offsetY + startY, offsetX + p.x, offsetY + p.y);

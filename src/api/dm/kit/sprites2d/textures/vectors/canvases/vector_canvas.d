@@ -79,7 +79,7 @@ class VectorCanvas : GraphicCanvas
         }
     }
 
-    void lineWidth(double width)
+    void lineWidth(float width)
     {
         cairo_set_line_width(cr, width);
     }
@@ -92,17 +92,17 @@ class VectorCanvas : GraphicCanvas
         }
     }
 
-    void translate(double x, double y)
+    void translate(float x, float y)
     {
         cairo_translate(cr, x, y);
     }
 
-    void scale(double sx, double sy)
+    void scale(float sx, float sy)
     {
         cairo_scale(cr, sx, sy);
     }
 
-    void rotateRad(double angleRad)
+    void rotateRad(float angleRad)
     {
         cairo_rotate(cr, angleRad);
     }
@@ -117,7 +117,7 @@ class VectorCanvas : GraphicCanvas
         cairo_restore(cr);
     }
 
-    void moveTo(double x, double y)
+    void moveTo(float x, float y)
     {
         cairo_move_to(cr, x, y);
     }
@@ -139,7 +139,7 @@ class VectorCanvas : GraphicCanvas
         cairo_move_to(cr, 0, 0);
     }
 
-    void lineTo(double endX, double endY)
+    void lineTo(float endX, float endY)
     {
         cairo_line_to(cr, endX, endY);
     }
@@ -169,18 +169,18 @@ class VectorCanvas : GraphicCanvas
         cairo_fill_preserve(cr);
     }
 
-    void rect(double x, double y, double width, double height)
+    void rect(float x, float y, float width, float height)
     {
         cairo_rectangle(cr, x, y, width, height);
     }
 
-    void fillRect(double x, double y, double width, double height)
+    void fillRect(float x, float y, float width, float height)
     {
         rect(x, y, width, height);
         fill;
     }
 
-    void clearRect(double x, double y, double width, double height)
+    void clearRect(float x, float y, float width, float height)
     {
         color(RGBA.transparent);
         scope (exit)
@@ -191,7 +191,7 @@ class VectorCanvas : GraphicCanvas
         fill;
     }
 
-    bool isPointInPath(double x, double y)
+    bool isPointInPath(float x, float y)
     {
         if (cairo_in_stroke(cr, x, y) || cairo_in_fill(cr, x, y))
         {
@@ -201,7 +201,7 @@ class VectorCanvas : GraphicCanvas
         return false;
     }
 
-    void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
+    void fillTriangle(float x1, float y1, float x2, float y2, float x3, float y3)
     {
         moveTo(x1, y1);
         lineTo(x2, y2);
@@ -224,12 +224,12 @@ class VectorCanvas : GraphicCanvas
         cairo_clip(cr);
     }
 
-    void arc(double xc, double yc, double radius, double angle1Rad, double angle2Rad)
+    void arc(float xc, float yc, float radius, float angle1Rad, float angle2Rad)
     {
         cairo_arc(cr, xc, yc, radius, angle1Rad, angle2Rad);
     }
 
-    void bezierCurveTo(double x1, double y1, double x2, double y2, double x3, double y3){
+    void bezierCurveTo(float x1, float y1, float x2, float y2, float x3, float y3){
         cairo_curve_to(cr, x1, y1, x2, y2, x3, y3);
     }
 
@@ -252,7 +252,7 @@ class VectorCanvas : GraphicCanvas
         }
     }
 
-    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, double innerRadius, double outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern){
+    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern){
         
         cairo_pattern_t * pattern = cairo_pattern_create_radial(innerCenter.x, innerCenter.y, innerRadius, outerCenter.x, outerCenter.y, outerRadius);
         

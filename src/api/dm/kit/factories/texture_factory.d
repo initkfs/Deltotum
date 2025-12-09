@@ -12,7 +12,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
  */
 class TextureFactory : GraphicComponent
 {
-    Texture2d texture(double newWidth = 100, double newHeight = 100, void delegate() contentDrawer = null)
+    Texture2d texture(float newWidth = 100, float newHeight = 100, void delegate() contentDrawer = null)
     {
         auto newTexture = new class RgbaTexture
         {

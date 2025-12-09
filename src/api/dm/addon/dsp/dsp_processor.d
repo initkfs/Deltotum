@@ -27,11 +27,11 @@ class DspProcessor(SignalType, size_t SignalBufferSize, size_t SignalChannels = 
 
     AnalogSignal[] fftBuffer;
 
-    double sampleFreq = 0;
+    float sampleFreq = 0;
 
     void delegate() onUpdateFTBuffer;
 
-    this(shared Mutex m, AnalogSignalAnalyzer signalAnalyzer, double sampleFreq, size_t sampleWindowSize, Logging logger)
+    this(shared Mutex m, AnalogSignalAnalyzer signalAnalyzer, float sampleFreq, size_t sampleWindowSize, Logging logger)
     {
         super(logger);
 

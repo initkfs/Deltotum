@@ -289,13 +289,13 @@ class ColorPickerDialog : Control
                 import api.math.geom2.vec2 : Vec2d;
 
                 enum pointsCount = 10;
-                double offsetDelta = 1.0 / pointsCount;
+                float offsetDelta = 1.0 / pointsCount;
 
                 GradientStopPoint[pointsCount] points;
 
                 HSLA currentColor = HSLA(0, 1, 0.5, 1);
-                double currentOffset = 0;
-                double hueDelta = 360 / pointsCount;
+                float currentOffset = 0;
+                float hueDelta = 360 / pointsCount;
 
                 ctx.color = currentColor.toRGBA;
 
@@ -394,8 +394,8 @@ class ColorPickerDialog : Control
 
             override void createTextureContent()
             {
-                double nextX = 0;
-                double nextY = 0;
+                float nextX = 0;
+                float nextY = 0;
                 size_t colIndex;
                 auto oldColor = graphic.color;
 
@@ -492,7 +492,7 @@ class ColorPickerDialog : Control
         return container;
     }
 
-    double alpha()
+    float alpha()
     {
         assert(alphaField);
         //TODO HSVA min\max value?

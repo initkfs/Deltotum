@@ -23,9 +23,9 @@ class RoundButton : BaseRoundButton
 
     this(
         dstring text,
-        double diameter = 0,
+        float diameter = 0,
         string iconName = null,
-        double graphicsGap = 0,
+        float graphicsGap = 0,
     )
     {
         super(text, diameter, iconName, graphicsGap);
@@ -33,7 +33,7 @@ class RoundButton : BaseRoundButton
 
     alias createShape = Control.createShape;
 
-    protected override Sprite2d createShape(double width, double height, double angle, GraphicStyle style)
+    protected override Sprite2d createShape(float width, float height, float angle, GraphicStyle style)
     {
         return theme.circleShape(_diameter, style);
     }

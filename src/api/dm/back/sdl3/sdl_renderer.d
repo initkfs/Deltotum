@@ -433,7 +433,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return SDL_RenderTexture9GridTiled(ptr, texture, srcrect, leftWidth, rightWidth, topHeight, bottomHeight, scale, dstrect, tileScale);
     }
 
-    ComResult renderTextureEx(SdlTexture texture, SDL_FRect* srcRect = null, SDL_FRect* destRect = null, double angle = 0, SDL_FPoint* center = null, SDL_FlipMode flip = SDL_FLIP_NONE) nothrow
+    ComResult renderTextureEx(SdlTexture texture, SDL_FRect* srcRect = null, SDL_FRect* destRect = null, float angle = 0, SDL_FPoint* center = null, SDL_FlipMode flip = SDL_FLIP_NONE) nothrow
     {
         const result = SDL_RenderTextureRotated(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
         if (!result)

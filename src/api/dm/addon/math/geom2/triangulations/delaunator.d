@@ -52,7 +52,7 @@ class Delaunator
 {
     private
     {
-        double epsilon = double.epsilon;
+        float epsilon = float.epsilon;
         int[] edgeStack = new int[](512);
 
         Vec2d[] points;
@@ -70,11 +70,11 @@ class Delaunator
         int[] hullTri;
         int[] hullHash;
 
-        double cx = 0;
-        double cy = 0;
+        float cx = 0;
+        float cy = 0;
 
         int trianglesLen;
-        double[] coords;
+        float[] coords;
         int hullStart;
         int hullSize;
     }
@@ -88,7 +88,7 @@ class Delaunator
 
         points = newPoints;
 
-        coords = new double[](points.length * 2);
+        coords = new float[](points.length * 2);
 
         for (size_t i = 0; i < points.length; i++)
         {
@@ -112,10 +112,10 @@ class Delaunator
 
         auto ids = new int[](n);
 
-        auto minX = double.infinity;
-        auto minY = double.infinity;
-        auto maxX = -double.infinity;
-        auto maxY = -double.infinity;
+        auto minX = float.infinity;
+        auto minY = float.infinity;
+        auto maxX = -float.infinity;
+        auto maxY = -float.infinity;
 
         for (auto i = 0; i < n; i++)
         {
@@ -135,7 +135,7 @@ class Delaunator
         auto cx = (minX + maxX) / 2;
         auto cy = (minY + maxY) / 2;
 
-        auto minDist = double.infinity;
+        auto minDist = float.infinity;
         auto i0 = 0;
         auto i1 = 0;
         auto i2 = 0;
@@ -153,7 +153,7 @@ class Delaunator
         auto i0x = coords[2 * i0];
         auto i0y = coords[2 * i0 + 1];
 
-        minDist = double.infinity;
+        minDist = float.infinity;
 
         // find the point closest to the seed
         for (int i = 0; i < n; i++)
@@ -171,7 +171,7 @@ class Delaunator
         auto i1x = coords[2 * i1];
         auto i1y = coords[2 * i1 + 1];
 
-        auto minRadius = double.infinity;
+        auto minRadius = float.infinity;
 
         // find the third point which forms the smallest circumcircle with the first two
         for (int i = 0; i < n; i++)
@@ -188,7 +188,7 @@ class Delaunator
         auto i2x = coords[2 * i2];
         auto i2y = coords[2 * i2 + 1];
 
-        if (minRadius == double.infinity)
+        if (minRadius == float.infinity)
         {
             throw new Exception("No Delaunay triangulation exists for this input.");
         }
@@ -210,7 +210,7 @@ class Delaunator
         this.cx = center.x;
         this.cy = center.y;
 
-        auto dists = new double[](n);
+        auto dists = new float[](n);
         for (auto i = 0; i < n; i++)
         {
             dists[i] = dist(coords[2 * i], coords[2 * i + 1], center.x, center.y);
@@ -238,8 +238,8 @@ class Delaunator
         trianglesLen = 0;
         addTriangle(i0, i1, i2, -1, -1, -1);
 
-        double xp = 0;
-        double yp = 0;
+        float xp = 0;
+        float yp = 0;
 
         for (auto k = 0; k < ids.length; k++)
         {
@@ -448,7 +448,7 @@ class Delaunator
         return ar;
     }
 
-    private bool inCircle(double ax, double ay, double bx, double by, double cx, double cy, double px, double py)
+    private bool inCircle(float ax, float ay, float bx, float by, float cx, float cy, float px, float py)
     {
         auto dx = ax - px;
         auto dy = ay - py;
@@ -489,15 +489,15 @@ class Delaunator
             halfedges[b] = a;
     }
 
-    private int hashKey(double x, double y) => cast(int)(Math.floor(pseudoAngle(x - cx, y - cy) * hashSize) % hashSize);
+    private int hashKey(float x, float y) => cast(int)(Math.floor(pseudoAngle(x - cx, y - cy) * hashSize) % hashSize);
 
-    private double pseudoAngle(double dx, double dy)
+    private float pseudoAngle(float dx, float dy)
     {
         auto p = dx / (Math.abs(dx) + Math.abs(dy));
         return (dy > 0 ? 3 - p : 1 + p) / 4; // [0..1]
     }
 
-    private void quicksort(int[] ids, double[] dists, int left, int right)
+    private void quicksort(int[] ids, float[] dists, int left, int right)
     {
         if (right - left <= 20)
         {
@@ -562,9 +562,9 @@ class Delaunator
         arr[j] = tmp;
     }
 
-    private bool orient(double px, double py, double qx, double qy, double rx, double ry) => (
+    private bool orient(float px, float py, float qx, float qy, float rx, float ry) => (
         qy - py) * (rx - qx) - (qx - px) * (ry - qy) < 0;
-    private double circumradius(double ax, double ay, double bx, double by, double cx, double cy)
+    private float circumradius(float ax, float ay, float bx, float by, float cx, float cy)
     {
         auto dx = bx - ax;
         auto dy = by - ay;
@@ -578,7 +578,7 @@ class Delaunator
         return x * x + y * y;
     }
 
-    private Vec2d circumcenter(double ax, double ay, double bx, double by, double cx, double cy)
+    private Vec2d circumcenter(float ax, float ay, float bx, float by, float cx, float cy)
     {
         auto dx = bx - ax;
         auto dy = by - ay;
@@ -593,7 +593,7 @@ class Delaunator
         return Vec2d(x, y);
     }
 
-    private double dist(double ax, double ay, double bx, double by)
+    private float dist(float ax, float ay, float bx, float by)
     {
         auto dx = ax - bx;
         auto dy = ay - by;
@@ -769,9 +769,9 @@ class Delaunator
 
     Vec2d centroid(Vec2d[] newPoints)
     {
-        double accumulatedArea = 0.0f;
-        double centerX = 0.0f;
-        double centerY = 0.0f;
+        float accumulatedArea = 0.0f;
+        float centerX = 0.0f;
+        float centerY = 0.0f;
 
         for (int i = 0, j = cast(int)(newPoints.length - 1); i < newPoints.length;
             j = i++)
@@ -897,7 +897,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    double eps = 0.0001;
+    float eps = 0.0001;
 
     Vec2d[] newPoints = [
         Vec2d(10, 10),

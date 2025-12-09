@@ -14,10 +14,10 @@ import Math = api.dm.math;
  */
 class BaseRadialProgressBar : BaseLabeledProgressBar
 {
-    double minAngleDeg = 0;
-    double maxAngleDeg = 0;
+    float minAngleDeg = 0;
+    float maxAngleDeg = 0;
 
-    double diameter = 0;
+    float diameter = 0;
 
     RadialSegmentBar segmentBar;
 
@@ -26,7 +26,7 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
     void delegate(RadialSegmentBar) onConfiguredSegmentBar;
     void delegate(RadialSegmentBar) onCreatedSegmentBar;
 
-    this(double diameter = 0, double minValue = 0, double maxValue = 1.0, double minAngleDeg = 0, double maxAngleDeg = 360)
+    this(float diameter = 0, float minValue = 0, float maxValue = 1.0, float minAngleDeg = 0, float maxAngleDeg = 360)
     {
         super(minValue, maxValue);
 
@@ -97,13 +97,13 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
         return bar;
     }
 
-    override protected void setProgressData(double oldV, double newV)
+    override protected void setProgressData(float oldV, float newV)
     {
         super.setProgressData(oldV, newV);
         setSegmentsFill(oldV, newV);
     }
 
-    protected void setSegmentsFill(double oldV, double newV)
+    protected void setSegmentsFill(float oldV, float newV)
     {
         assert(segmentBar);
 

@@ -12,26 +12,26 @@ class BandEqualizer
     size_t numFreqBands;
 
     size_t bandScale;
-    double bandStartOffset = 0;
-    double bandEndOffset = 0;
+    float bandStartOffset = 0;
+    float bandEndOffset = 0;
 
     void delegate() onUpdateStart;
     void delegate(AnalogSignal) onUpdate;
     void delegate() onUpdateEnd;
 
-    void delegate(size_t, double, double) onUpdateIndexFreqStartEnd;
+    void delegate(size_t, float, float) onUpdateIndexFreqStartEnd;
 
     //protected
     //{
-    double[] bandValues;
+    float[] bandValues;
     //}
 
     AnalogSignal delegate(size_t fftIndex) signalProvider;
 
-    double sampleWindowSize = 0;
-    double sampleRateHz = 0;
+    float sampleWindowSize = 0;
+    float sampleRateHz = 0;
 
-    this(double sampleWindowSize, double sampleRateHz, AnalogSignal delegate(size_t fftIndex) signalProvider, size_t numFregBands = 10, size_t bandScale = 1, double bandStartOffset = 0, double bandEndOffset = 0)
+    this(float sampleWindowSize, float sampleRateHz, AnalogSignal delegate(size_t fftIndex) signalProvider, size_t numFregBands = 10, size_t bandScale = 1, float bandStartOffset = 0, float bandEndOffset = 0)
     {
         assert(sampleWindowSize > 0);
         this.sampleWindowSize = sampleWindowSize;
@@ -49,7 +49,7 @@ class BandEqualizer
         this.bandEndOffset = bandEndOffset;
         this.bandScale = bandScale;
 
-        bandValues = new double[](numFreqBands);
+        bandValues = new float[](numFreqBands);
         bandValues[] = 0;
     }
 
@@ -64,7 +64,7 @@ class BandEqualizer
 
         size_t startIndexOffset = 0;
 
-        const double df = sampleRateHz / sampleWindowSize;
+        const float df = sampleRateHz / sampleWindowSize;
 
         size_t maxEndIndex = cast(size_t)(sampleWindowSize / 2);
         if (bandEndOffset > 0)
@@ -72,31 +72,31 @@ class BandEqualizer
             maxEndIndex = cast(size_t)(bandEndOffset / df);
         }
 
-        double bandWidth = 0;
+        float bandWidth = 0;
 
         if (bandEndOffset > 0)
         {
             startIndexOffset = cast(size_t)(bandStartOffset / df);
             assert(bandEndOffset > bandStartOffset);
 
-            //double totalBandwidth = bandEndOffset - bandStartOffset;
+            //float totalBandwidth = bandEndOffset - bandStartOffset;
             //bandWidth = totalBandwidth / numFreqBands;
             bandWidth = (maxEndIndex - startIndexOffset) / numFreqBands;
             
         }
         else if (bandStartOffset > 0)
         {
-            double fMax = sampleRateHz / 2.0;
-            double effectiveWidth = (fMax - bandStartOffset) / numFreqBands;
+            float fMax = sampleRateHz / 2.0;
+            float effectiveWidth = (fMax - bandStartOffset) / numFreqBands;
             bandWidth = effectiveWidth / df;
             startIndexOffset = cast(size_t)(bandStartOffset / df);
         }
         else
         {
-            bandWidth = (sampleWindowSize / 2 / bandScale) / cast(double) numFreqBands;
+            bandWidth = (sampleWindowSize / 2 / bandScale) / cast(float) numFreqBands;
         }
 
-        foreach (i, ref double v; bandValues)
+        foreach (i, ref float v; bandValues)
         {
             size_t start = startIndexOffset + cast(size_t)(i * bandWidth);
             size_t end = startIndexOffset + cast(size_t)((i + 1) * bandWidth);
@@ -149,10 +149,10 @@ class BandEqualizer
         }
     }
 
-    double ampToDb(double amp)
+    float ampToDb(float amp)
     {
         import std.math : log10;
 
-        return 20 * log10(amp == 0 ? double.epsilon : amp);
+        return 20 * log10(amp == 0 ? float.epsilon : amp);
     }
 }

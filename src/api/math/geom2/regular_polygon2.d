@@ -11,12 +11,12 @@ import Math = api.math;
 struct RegularPolygon2d
 {
     size_t sideCount;
-    double radius = 0;
+    float radius = 0;
     bool isRotateCorrection;
 
     Polygon2d shape;
 
-    this(size_t sideCount, double radius, bool isRotateCorrection = true)
+    this(size_t sideCount, float radius, bool isRotateCorrection = true)
     {
         assert(sideCount > 0);
         assert(radius > 0);
@@ -26,12 +26,12 @@ struct RegularPolygon2d
         this.isRotateCorrection = isRotateCorrection;
     }
 
-    void draw(scope bool delegate(size_t, Vec2d) onIndexVertexIsContinue, double rotateAngle = 0)
+    void draw(scope bool delegate(size_t, Vec2d) onIndexVertexIsContinue, float rotateAngle = 0)
     {
         assert(sideCount > 0);
-        double segmentAngle = Math.PI2 / sideCount;
+        float segmentAngle = Math.PI2 / sideCount;
 
-        double newRotateAngle = rotateAngle;
+        float newRotateAngle = rotateAngle;
         if (isRotateCorrection && newRotateAngle == 0)
         {
             if (sideCount == 3 || (sideCount >= 5 && (sideCount % 2 != 0)))
@@ -46,7 +46,7 @@ struct RegularPolygon2d
 
         foreach (i; 0 .. sideCount)
         {
-            double angle = rotateAngle != 0 ? (segmentAngle * i + rotateAngle) % Math.PI2 : segmentAngle * i;
+            float angle = rotateAngle != 0 ? (segmentAngle * i + rotateAngle) % Math.PI2 : segmentAngle * i;
 
             Vec2d polarPos = Vec2d.fromPolarRad(angle, radius);
             if (!onIndexVertexIsContinue(i, polarPos))

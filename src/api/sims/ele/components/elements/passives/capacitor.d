@@ -28,7 +28,7 @@ class Capacitor : BaseTwoPinElement
         this.capacitance = capMf / 1_000_000;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         //TODO dt < R * C
         super.update(dt);

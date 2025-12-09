@@ -10,7 +10,7 @@ import Math = api.math;
  */
 struct HSVA
 {
-    static enum : double
+    static enum : float
     {
         minHue = 0,
         maxHue = 360,
@@ -22,14 +22,14 @@ struct HSVA
         maxAlpha = 1
     }
 
-    double h = 0;
-    double s = maxSaturation;
-    double v = maxValue;
-    double a= maxAlpha;
+    float h = 0;
+    float s = maxSaturation;
+    float v = maxValue;
+    float a= maxAlpha;
 
     import api.math.random : Random;
 
-    static HSVA random(Random rnd, double alpha = maxAlpha)
+    static HSVA random(Random rnd, float alpha = maxAlpha)
     {
         return HSVA(
             rnd.between(minHue, maxHue),
@@ -48,9 +48,9 @@ struct HSVA
             return color;
         }
 
-        double hue = h, sat = s, value = v;
-        double r = 0, g = 0, b = 0;
-        double f = 0, p = 0, q = 0, t = 0;
+        float hue = h, sat = s, value = v;
+        float r = 0, g = 0, b = 0;
+        float f = 0, p = 0, q = 0, t = 0;
         int i;
 
         if (s == 0)
@@ -67,7 +67,7 @@ struct HSVA
 
             // s *= 0.01;
             // v *= 0.01;
-            enum double maxValue = 1.0;
+            enum float maxValue = 1.0;
 
             p = value * (maxValue - sat);
             q = value * (maxValue - (sat * f));
@@ -116,7 +116,7 @@ struct HSVA
         import std.conv : to;
 
         //TODO loss of precision and fractional values
-        ubyte toRGBAColor(double value) => to!ubyte(round(value * RGBA.maxColor));
+        ubyte toRGBAColor(float value) => to!ubyte(round(value * RGBA.maxColor));
 
         RGBA result = RGBA(toRGBAColor(r), toRGBAColor(g), toRGBAColor(b), a);
         return result;
@@ -127,22 +127,22 @@ struct HSVA
      */
     HSLA toHSLA() const @safe
     {
-        double newHue = h;
-        double lightness = v - v * s / 2.0;
+        float newHue = h;
+        float lightness = v - v * s / 2.0;
 
-        double m = Math.min(lightness, 1 - lightness);
-        double sat = m != 0 ? (v - lightness) / m : 0;
+        float m = Math.min(lightness, 1 - lightness);
+        float sat = m != 0 ? (v - lightness) / m : 0;
 
         return HSLA(newHue, sat, lightness, a);
     }
 
-    double setMaxHue() => h = maxHue;
-    double setMaxValue() => v = maxValue;
-    double setMaxSaturation() => s = maxSaturation;
+    float setMaxHue() => h = maxHue;
+    float setMaxValue() => v = maxValue;
+    float setMaxSaturation() => s = maxSaturation;
 
-    double setMinHue() => h = minHue;
-    double setMinValue() => v = minValue;
-    double setMinSaturation() => s = minSaturation;
+    float setMinHue() => h = minHue;
+    float setMinValue() => v = minValue;
+    float setMinSaturation() => s = minSaturation;
 }
 
 unittest

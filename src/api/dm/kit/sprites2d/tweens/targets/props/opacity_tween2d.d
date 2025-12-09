@@ -8,7 +8,7 @@ import api.dm.kit.tweens.curves.interpolator : Interpolator;
  */
 class OpacityTween2d : ValueTween2d
 {
-    this(int timeMs = 200, double minValue = 0, double maxValue = 1.0, bool isInfinite = false, bool isReverse = false, Interpolator interpolator = null)
+    this(int timeMs = 200, float minValue = 0, float maxValue = 1.0, bool isInfinite = false, bool isReverse = false, Interpolator interpolator = null)
     {
         super(minValue, maxValue, timeMs, interpolator);
 

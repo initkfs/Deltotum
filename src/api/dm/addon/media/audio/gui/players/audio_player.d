@@ -31,19 +31,19 @@ class AudioPlayer : Control
         ComAudioClip audio;
         string _path;
 
-        double audioFullTime = 0;
+        float audioFullTime = 0;
 
         PauseTween2d checkPosTween;
     }
 
-    double volume = 0;
+    float volume = 0;
 
     protected
     {
         AudioPlayerState _state;
     }
 
-    this(string path, double volume = 1.0)
+    this(string path, float volume = 1.0)
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
@@ -107,7 +107,7 @@ class AudioPlayer : Control
             }
 
             assert(panel);
-            double pos;
+            float pos;
             if (const err = audio.getPosTimeMs(pos))
             {
                 logger.error(err);
@@ -157,7 +157,7 @@ class AudioPlayer : Control
                     logger.error(err);
                 }
 
-                double timeMs;
+                float timeMs;
                 if (const err = audio.getDurationTimeMs(timeMs))
                 {
                     logger.error("Error getting audio duration: ", err);

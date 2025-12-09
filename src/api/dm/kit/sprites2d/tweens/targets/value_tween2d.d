@@ -7,9 +7,9 @@ import api.dm.kit.sprites2d.tweens.targets.target_tween2d : TargetTween2d;
 /**
  * Authors: initkfs
  */
-class ValueTween2d : TargetTween2d!(double, Sprite2d)
+class ValueTween2d : TargetTween2d!(float, Sprite2d)
 {
-    this(double minValue = 0, double maxValue = 1, int timeMs = 200, Interpolator interpolator = null)
+    this(float minValue = 0, float maxValue = 1, int timeMs = 200, Interpolator interpolator = null)
     {
         super(minValue, maxValue, timeMs, interpolator);
     }

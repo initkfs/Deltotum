@@ -10,12 +10,12 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
  */
 abstract class BaseRegularMonoScroll : BaseLabeledScroll
 {
-    double thumbWidth = 0;
-    double thumbHeight = 0;
+    float thumbWidth = 0;
+    float thumbHeight = 0;
 
     GraphicStyle thumbStyle;
 
-    this(double minValue = 0, double maxValue = 1.0)
+    this(float minValue = 0, float maxValue = 1.0)
     {
         super(minValue, maxValue);
     }
@@ -39,7 +39,7 @@ abstract class BaseRegularMonoScroll : BaseLabeledScroll
         }
     }
 
-    Sprite2d newThumbShape(double w, double h, double angle, GraphicStyle style){
+    Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style){
         return theme.shape(w, h, angle, style);
     }
 

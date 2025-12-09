@@ -10,7 +10,7 @@ import Math = api.math;
  */
 class AnalogSignalAnalyzer
 {
-    void fftFrames(SignalType)(size_t windowSize, double signalFreq, SignalType[] samples, scope bool delegate(double, AnalogSignal[] fftBuffer) onFrameIsContinue)
+    void fftFrames(SignalType)(size_t windowSize, float signalFreq, SignalType[] samples, scope bool delegate(float, AnalogSignal[] fftBuffer) onFrameIsContinue)
     {
         size_t overlap = windowSize / 2;
 
@@ -33,13 +33,13 @@ class AnalogSignalAnalyzer
         }
     }
 
-    bool fftFull(SignalType)(size_t windowSize, double signalFreq, SignalType[] samples, AnalogSignal[] outBuffer)
+    bool fftFull(SignalType)(size_t windowSize, float signalFreq, SignalType[] samples, AnalogSignal[] outBuffer)
     {
         DspWinFunc.hann(samples);
         return fft(windowSize, signalFreq, samples, outBuffer);
     }
 
-    bool fft(SignalType)(size_t windowSize, double signalFreq, SignalType[] samples, AnalogSignal[] outBuffer)
+    bool fft(SignalType)(size_t windowSize, float signalFreq, SignalType[] samples, AnalogSignal[] outBuffer)
     {
         import std.math.traits : isPowerOf2;
 
@@ -67,7 +67,7 @@ class AnalogSignalAnalyzer
             //fftVal.re = fftVal.re / fftResLen;
             //fftVal.im = fftVal.im / fftResLen;
 
-            double length = Math.sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
+            float length = Math.sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
 
             length = Math.clamp(length, 0, SignalType.max) / SignalType.max;
 
@@ -80,7 +80,7 @@ class AnalogSignalAnalyzer
             }
 
             //length = length / (sampleWindowSize / 2)
-            double freq = i * signalFreq / fftResLen;
+            float freq = i * signalFreq / fftResLen;
             outBuffer[i] = AnalogSignal(freq, length);
         }
 

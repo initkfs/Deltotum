@@ -662,7 +662,7 @@ class Control : GuiComponent
         }
     }
 
-    Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
+    Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
     {
         Sprite2d shape;
         if (auto stylePtr = hasStyle(ControlStyle.background))
@@ -682,12 +682,12 @@ class Control : GuiComponent
         return newBackground(width, height, angle, createThisStyle);
     }
 
-    Sprite2d newHoverEffectShape(double w, double h, double angle, GraphicStyle style)
+    Sprite2d newHoverEffectShape(float w, float h, float angle, GraphicStyle style)
     {
         return createShape(w, h, angle, style);
     }
 
-    Sprite2d newHoverEffect(double w, double h, double angle, GraphicStyle style)
+    Sprite2d newHoverEffect(float w, float h, float angle, GraphicStyle style)
     {
         Sprite2d newHover = newHoverEffectShape(w, h, angle, style);
         return newHover;
@@ -798,12 +798,12 @@ class Control : GuiComponent
         };
     }
 
-    Sprite2d newActionEffectShape(double w, double h, double angle, GraphicStyle style)
+    Sprite2d newActionEffectShape(float w, float h, float angle, GraphicStyle style)
     {
         return createShape(w, h, angle, style);
     }
 
-    Sprite2d newActionEffect(double w, double h, double angle, GraphicStyle style)
+    Sprite2d newActionEffect(float w, float h, float angle, GraphicStyle style)
     {
         Sprite2d effect = newActionEffectShape(w, h, angle, style);
         return effect;
@@ -1007,17 +1007,17 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    protected Sprite2d createThisShape(double w, double h)
+    protected Sprite2d createThisShape(float w, float h)
     {
         return createShape(w, h, angle, createThisStyle);
     }
 
-    protected Sprite2d createShape(double w, double h)
+    protected Sprite2d createShape(float w, float h)
     {
         return createShape(w, h, angle, createStyle);
     }
 
-    protected Sprite2d createShape(double w, double h, double angle, GraphicStyle style)
+    protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
     {
         return theme.background(w, h, angle, &style);
     }
@@ -1157,7 +1157,7 @@ class Control : GuiComponent
     import api.dm.kit.sprites2d.images.image : Image;
 
     //TODO or move to scene factory?
-    Sprite2d createIcon(string iconName, double newIconSize = 0, RGBA delegate(int x, int y, RGBA color) onColor = null)
+    Sprite2d createIcon(string iconName, float newIconSize = 0, RGBA delegate(int x, int y, RGBA color) onColor = null)
     {
         assert(isCreated, "Sprite2d not created");
 
@@ -1254,8 +1254,8 @@ class Control : GuiComponent
         {
             //TODO focus discharge
             //e.isConsumed = true;
-            e.x = double.nan;
-            e.y = double.nan;
+            e.x = float.nan;
+            e.y = float.nan;
         }
     }
 
@@ -1360,7 +1360,7 @@ class Control : GuiComponent
         return id in styles;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
 

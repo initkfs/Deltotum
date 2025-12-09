@@ -17,13 +17,13 @@ class VRegularPolygon : VShape
         size_t sideCount;
     }
 
-    this(double size, GraphicStyle style, size_t sideCount = 6)
+    this(float size, GraphicStyle style, size_t sideCount = 6)
     {
         super(size, size, style);
         this.sideCount = sideCount;
     }
 
-    void drawPolygon(double width, double x, double y)
+    void drawPolygon(float width, float x, float y)
     {
         if (style.isFill)
         {
@@ -33,7 +33,7 @@ class VRegularPolygon : VShape
         import api.math.geom2.regular_polygon2 : RegularPolygon2d;
 
         const lineWidth = style.lineWidth;
-        double radius = width / 2 - lineWidth / 2;
+        float radius = width / 2 - lineWidth / 2;
         auto polygon = RegularPolygon2d(sideCount, radius);
 
         canvas.lineWidth(lineWidth);

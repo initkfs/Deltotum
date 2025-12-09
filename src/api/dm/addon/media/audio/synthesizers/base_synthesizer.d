@@ -14,28 +14,28 @@ import Math = api.math;
 
 class BaseSynthesizer(T)
 {
-    double sampleRateHz = 0;
+    float sampleRateHz = 0;
     size_t channels = 2;
 
     bool isFadeInOut = true;
 
     ADSR adsr;
 
-    double function(double time, double freq, double phase) sampleFunc = &sinovertones;
-    double delegate(double time, double freq, double phase) sampleProvider;
+    float function(float time, float freq, float phase) sampleFunc = &sinovertones;
+    float delegate(float time, float freq, float phase) sampleProvider;
 
     invariant
     {
         assert(sampleRateHz > 0);
     }
 
-    this(double sampleRateHz)
+    this(float sampleRateHz)
     {
         assert(sampleRateHz > 0);
         this.sampleRateHz = sampleRateHz;
     }
 
-    void sound(T[] buffer, double freqHz = 0, double amplitude0to1 = 0.9, double phase = 0)
+    void sound(T[] buffer, float freqHz = 0, float amplitude0to1 = 0.9, float phase = 0)
     {
         onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, frameTime, time) {
             //time = time / channels;

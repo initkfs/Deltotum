@@ -20,7 +20,7 @@ import std.conv : to;
  */
 abstract class BaseScaleStatic : BaseDrawableScale
 {
-    double prefLabelWidth = 0;
+    float prefLabelWidth = 0;
 
     Texture2d scaleShape;
 
@@ -48,7 +48,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         Vec2d majorProtoDsize;
     }
 
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         this._width = width;
         this.height = height;
@@ -140,7 +140,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         }
     }
 
-    Sprite2d newMinorTickProtoShape(double width, double height, double angle, GraphicStyle style)
+    Sprite2d newMinorTickProtoShape(float width, float height, float angle, GraphicStyle style)
     {
         auto shapeProto = theme.rectShape(width, height, angle, style);
         buildInitCreate(shapeProto);
@@ -170,7 +170,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         return shapeProto;
     }
 
-    Sprite2d newMajorTickProtoShape(double width, double height, double angle, GraphicStyle style)
+    Sprite2d newMajorTickProtoShape(float width, float height, float angle, GraphicStyle style)
     {
         auto shape = newMinorTickProtoShape(width, height, angle, style);
         shape.isResizable = false;

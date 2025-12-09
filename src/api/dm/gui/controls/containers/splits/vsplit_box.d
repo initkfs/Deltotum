@@ -16,8 +16,8 @@ class VSplitBox : BaseSplitBox
         layout.isAutoResize = true;
     }
 
-    override double dividerWidth() => width - padding.width;
-    override double dividerHeight() => dividerSize;
+    override float dividerWidth() => width - padding.width;
+    override float dividerHeight() => dividerSize;
 
     override void create()
     {
@@ -46,7 +46,7 @@ class VSplitBox : BaseSplitBox
         }
     }
 
-    override bool delegate(double, double) newOnSepDragXY(Sprite2d sep)
+    override bool delegate(float, float) newOnSepDragXY(Sprite2d sep)
     {
         return (x, y) {
 

@@ -39,14 +39,14 @@ abstract class Tween2d : Sprite2d
     ref void delegate()[] onResume() => tween.onResume;
     ref void delegate()[] onEnd() => tween.onEnd;
 
-    double frameRateHz() => tween.frameRateHz;
-    void frameRateHz(double v)
+    float frameRateHz() => tween.frameRateHz;
+    void frameRateHz(float v)
     {
         tween.frameRateHz = v;
     }
 
-    double timeMs() => tween.timeMs;
-    void timeMs(double v)
+    float timeMs() => tween.timeMs;
+    void timeMs(float v)
     {
         tween.timeMs = v;
     }
@@ -73,9 +73,9 @@ abstract class Tween2d : Sprite2d
         isManagedByScene = true;
     }
 
-    double frameRate() => tween.frameRate;
-    double frameCount(double frameRateHz) => tween.frameCount(frameRateHz);
-    double frameCount() => tween.frameCount;
+    float frameRate() => tween.frameRate;
+    float frameCount(float frameRateHz) => tween.frameCount(frameRateHz);
+    float frameCount() => tween.frameCount;
 
     override void initialize(){
         super.initialize;
@@ -108,7 +108,7 @@ abstract class Tween2d : Sprite2d
         }
     }
 
-    override void update(double delta)
+    override void update(float delta)
     {
         if (!isRunning)
         {

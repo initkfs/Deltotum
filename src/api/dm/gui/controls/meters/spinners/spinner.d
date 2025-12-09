@@ -12,9 +12,9 @@ import std.conv : to;
  * Authors: initkfs
  */
 
-class FracSpinner : Spinner!double
+class FracSpinner : Spinner!float
 {
-    this(double minValue = 0.0, double maxValue = 1.0, double initValue = 0.0, double initInc = 0.1, double initDec = 0.1)
+    this(float minValue = 0.0, float maxValue = 1.0, float initValue = 0.0, float initInc = 0.1, float initDec = 0.1)
     {
         super(minValue, maxValue, initValue, initInc, initDec);
     }
@@ -52,7 +52,7 @@ class Spinner(T) : MinMaxValueMeter!T
     void delegate(Button) onConfiguredDecButton;
     void delegate(Button) onCreatedDecButton;
 
-    double textWidth = 0;
+    float textWidth = 0;
 
     protected
     {
@@ -177,7 +177,7 @@ class Spinner(T) : MinMaxValueMeter!T
 
             incTextExpander.contentContainer.addCreate(incLabel);
 
-            window.showingTasks ~= (double dt) { incTextExpander.close; };
+            window.showingTasks ~= (float dt) { incTextExpander.close; };
 
             if (onCreatedIncLabel)
             {
@@ -234,7 +234,7 @@ class Spinner(T) : MinMaxValueMeter!T
 
             decTextExpander.contentContainer.addCreate(decLabel);
 
-            window.showingTasks ~= (double dt) { decTextExpander.close; };
+            window.showingTasks ~= (float dt) { decTextExpander.close; };
 
             if (onCreatedDecLabel)
             {

@@ -32,13 +32,13 @@ class AnimImage : Image
     size_t frameCols;
     size_t frameRows;
 
-    double frameWidth = 0;
-    double frameHeight = 0;
+    float frameWidth = 0;
+    float frameHeight = 0;
 
     protected
     {
-        double _textureWidth = 0;
-        double _textureHeight = 0;
+        float _textureWidth = 0;
+        float _textureHeight = 0;
     }
 
     enum defaultAnimation = "idle";
@@ -306,7 +306,7 @@ class AnimImage : Image
         super.drawContent;
     }
 
-    override void update(double delta)
+    override void update(float delta)
     {
         super.update(delta);
 
@@ -360,8 +360,8 @@ class AnimImage : Image
         currentAnimationIndex = newIndex;
     }
 
-    double frameWidthHalf() => frameWidth / 2;
-    double frameHeightHalf() => frameHeight / 2;
+    float frameWidthHalf() => frameWidth / 2;
+    float frameHeightHalf() => frameHeight / 2;
 
     override void dispose()
     {

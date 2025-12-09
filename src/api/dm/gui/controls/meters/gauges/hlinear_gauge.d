@@ -22,7 +22,7 @@ import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 /**
  * Authors: initkfs
  */
-class HLinearGauge : MinMaxMeter!double
+class HLinearGauge : MinMaxMeter!float
 {
     Sprite2d scale;
     ColorBar colorRangeBar;
@@ -50,8 +50,8 @@ class HLinearGauge : MinMaxMeter!double
     void delegate(Text) onConfiguredLabel;
     void delegate(Text) onCreatedLabel;
 
-    double thumbWidth = 0;
-    double thumbHeight = 0;
+    float thumbWidth = 0;
+    float thumbHeight = 0;
 
     Sprite2d[] thumbs;
 
@@ -60,13 +60,13 @@ class HLinearGauge : MinMaxMeter!double
     protected
     {
         Sprite2d lastUsedThumb;
-        double mouseWheelDeltaX = 2;
+        float mouseWheelDeltaX = 2;
 
     }
 
-    void delegate(double newValue, size_t thumbIndex)[] onThumbMove;
+    void delegate(float newValue, size_t thumbIndex)[] onThumbMove;
 
-    this(double minValue = 0, double maxValue = 1, double width = 0, double height = 0)
+    this(float minValue = 0, float maxValue = 1, float width = 0, float height = 0)
     {
         super(minValue, maxValue);
 
@@ -86,7 +86,7 @@ class HLinearGauge : MinMaxMeter!double
                 return;
             }
             //TODO check bounds;
-            const double dx = e.y * mouseWheelDeltaX;
+            const float dx = e.y * mouseWheelDeltaX;
             if (lastUsedThumb)
             {
                 auto newX = lastUsedThumb.x + dx;
@@ -288,7 +288,7 @@ class HLinearGauge : MinMaxMeter!double
                 auto freeSpace = thumbContainer.width - firstThumb.boundsRect.width - lastThumb
                     .boundsRect.width;
                 auto dtX = Math.trunc(freeSpace / mediumThumbs);
-                double nextX = firstThumb.boundsRect.right;
+                float nextX = firstThumb.boundsRect.right;
 
                 foreach (i; (firstThumbIndex + 1) .. lastThumbIndex)
                 {
@@ -309,7 +309,7 @@ class HLinearGauge : MinMaxMeter!double
         return thumb;
     }
 
-    protected void moveThumb(Sprite2d thumb, double x, double y)
+    protected void moveThumb(Sprite2d thumb, float x, float y)
     {
         import std.math.operations : isClose;
 
@@ -327,8 +327,8 @@ class HLinearGauge : MinMaxMeter!double
             return;
         }
 
-        double minX = bounds.x - lastUsedThumb.width / 2;
-        double maxX = bounds.right - lastUsedThumb.width / 2;
+        float minX = bounds.x - lastUsedThumb.width / 2;
+        float maxX = bounds.right - lastUsedThumb.width / 2;
 
         if (thumbs.length > 1)
         {
@@ -370,7 +370,7 @@ class HLinearGauge : MinMaxMeter!double
         setLabelValue(value);
     }
 
-    void setLabelValue(double newValue)
+    void setLabelValue(float newValue)
     {
         if (!label)
         {

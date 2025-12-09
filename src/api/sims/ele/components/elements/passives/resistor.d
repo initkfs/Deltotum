@@ -22,7 +22,7 @@ class Resistor : BaseTwoPinElement
         this.resistance = R;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
 

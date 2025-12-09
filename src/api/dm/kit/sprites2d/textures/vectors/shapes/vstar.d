@@ -13,10 +13,10 @@ class VStar : VShape
     protected
     {
         size_t _spikeCount; 
-        double _innerRadius = 0; 
+        float _innerRadius = 0; 
     }
 
-    this(double size, GraphicStyle style, size_t spikeCount = 3, double innerRadius = 5)
+    this(float size, GraphicStyle style, size_t spikeCount = 3, float innerRadius = 5)
     {
         super(size, size, style);
         assert(innerRadius <= size / 2);
@@ -24,7 +24,7 @@ class VStar : VShape
         _innerRadius = innerRadius;
     }
 
-    void drawPolygon(double width, double x, double y)
+    void drawPolygon(float width, float x, float y)
     {
         if (style.isFill)
         {

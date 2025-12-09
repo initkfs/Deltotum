@@ -10,12 +10,12 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
  */
 class Rectangle : Shape2d
 {
-    this(double width, double height, GraphicStyle style)
+    this(float width, float height, GraphicStyle style)
     {
         super(width, height, style);
     }
 
-    this(double width, double height)
+    this(float width, float height)
     {
         super(width, height, GraphicStyle.simple);
     }

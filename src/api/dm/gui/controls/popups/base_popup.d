@@ -9,7 +9,7 @@ class BasePopup : Control
 {
     void delegate()[] onShow;
 
-    double showPadding = 10;
+    float showPadding = 10;
 
     this(bool isCreateLayout = true)
     {
@@ -39,7 +39,7 @@ class BasePopup : Control
         show(pointerPos.x, pointerPos.y);
     }
 
-    void show(double x, double y)
+    void show(float x, float y)
     {
         const windowBounds = window.boundsLocal;
         const thisBounds = boundsRect;

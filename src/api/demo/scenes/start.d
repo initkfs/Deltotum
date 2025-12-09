@@ -217,7 +217,7 @@ class Start : GuiScene
         //         }
         //     }
 
-        //     const double speed = 1;
+        //     const float speed = 1;
         //     if (e.axis == 1)
         //     {
         //         if (normalizedValue > 0)
@@ -254,7 +254,7 @@ class Start : GuiScene
     float currentPitchX = 0.0f;
     float currentRollZ = 0.0f;
 
-    void moveDown(double speed)
+    void moveDown(float speed)
     {
         shape.angleX = Math.wrapAngle(shape.angleX - speed, -360, 360);
         auto dist = shape.translatePos.sub(camera.cameraPos).length;
@@ -267,7 +267,7 @@ class Start : GuiScene
         lamp2.z = lamp2.z - 0.1;
     }
 
-    void moveUp(double speed)
+    void moveUp(float speed)
     {
         shape.angleX = Math.wrapAngle(shape.angleX + speed, -360, 360);
         auto dist = shape.translatePos.sub(camera.cameraPos).length;
@@ -280,7 +280,7 @@ class Start : GuiScene
         lamp2.z = lamp2.z + 0.1;
     }
 
-    void moveLeft(double speedShape, double speedCamera)
+    void moveLeft(float speedShape, float speedCamera)
     {
         shape.angleY = shape.angleY - speedShape;
         //shape.angle = shape.angle - speedShape / 3;
@@ -295,7 +295,7 @@ class Start : GuiScene
 
     }
 
-    void moveRight(double speedShape, double speedCamera)
+    void moveRight(float speedShape, float speedCamera)
     {
         shape.angleY = shape.angleY + speedShape;
         //shape.angle = shape.angle + speedShape / 3;
@@ -309,15 +309,15 @@ class Start : GuiScene
         lamp2.x = lamp2.x + 0.1;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
 
         import api.math.matrices.affine3;
 
         const int deadzone = 4000;
-        const double speed = 2;
-        const double cameraSpeed = 0.5;
+        const float speed = 2;
+        const float cameraSpeed = 0.5;
         const int upDownAxis = 1;
         const int leftRightAxis = 0;
         if (const udV = input.isJoystickAxisNorm01(upDownAxis, deadzone))
@@ -366,7 +366,7 @@ class Start : GuiScene
             moveRight(1, 0.5);
         }
 
-        // static double anglev = 0;
+        // static float anglev = 0;
         // if(anglev >= 360){
         //     anglev = 0;
         // }

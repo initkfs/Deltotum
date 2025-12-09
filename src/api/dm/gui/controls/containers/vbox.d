@@ -8,7 +8,7 @@ import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
  */
 class VBox : SpaceableContainer
 {
-    this(double spacing = SpaceableLayout.DefaultSpacing)
+    this(float spacing = SpaceableLayout.DefaultSpacing)
     {
         super(spacing);
 

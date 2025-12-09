@@ -16,9 +16,9 @@ struct ClosestPair
 {
     Vec2d p1;
     Vec2d p2;
-    double distance = 0;
+    float distance = 0;
 
-    enum maxDistance = double.max;
+    enum maxDistance = float.max;
 
     static ClosestPair infinity() => ClosestPair(Vec2d.infinity, Vec2d.infinity, maxDistance);
     bool isInfinity() => p1.isInfinity || p2.isInfinity;
@@ -92,10 +92,10 @@ unittest
     auto pair3 = closestBruteForce(vecs, 2);
     assert(pair3.p1.isInfinity);
     assert(pair3.p2.isInfinity);
-    assert(pair3.distance == double.max);
+    assert(pair3.distance == float.max);
 }
 
-protected ClosestPair stripClosestPoint(Vec2d[] points, size_t len, double minDistance)
+protected ClosestPair stripClosestPoint(Vec2d[] points, size_t len, float minDistance)
 {
     if (len > points.length)
     {

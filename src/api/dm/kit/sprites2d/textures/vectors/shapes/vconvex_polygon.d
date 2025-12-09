@@ -10,10 +10,10 @@ class VConvexPolygon : VShape
 {
     protected
     {
-        double cornerPadding = 0;
+        float cornerPadding = 0;
     }
 
-    this(double width, double height, GraphicStyle style = GraphicStyle.simpleFill, double cornerPadding = 0)
+    this(float width, float height, GraphicStyle style = GraphicStyle.simpleFill, float cornerPadding = 0)
     {
         super(width, height, style);
         this.cornerPadding = cornerPadding;
@@ -30,7 +30,7 @@ class VConvexPolygon : VShape
         canvas.lineWidth(lineWidth);
 
         //TODO check corners + halfLine
-        double halfLine = lineWidth / 2;
+        float halfLine = lineWidth / 2;
 
         const topLineEndX = width - cornerPadding - halfLine;
         const topLineEndY = halfLine;

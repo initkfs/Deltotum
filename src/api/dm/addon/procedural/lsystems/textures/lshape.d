@@ -25,7 +25,7 @@ class LShape : VShape
 
     LSystemData data;
 
-    this(double width = 100, double height = 100, GraphicStyle style = GraphicStyle
+    this(float width = 100, float height = 100, GraphicStyle style = GraphicStyle
             .simple, bool isClosePath = false, bool isDrawFromCenter = true)
     {
         super(width, height, style);

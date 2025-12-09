@@ -18,12 +18,12 @@ import std;
  */
 class Perlin : Noise
 {
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         super(width, height);
     }
 
-    double freq = 0.7f;
+    float freq = 0.7f;
     int depth = 5;
     int scale = 10;
     int xOrg = 100000;
@@ -82,39 +82,39 @@ class Perlin : Noise
         return result;
     }
 
-    double lin_inter(double x, double y, double s)
+    float lin_inter(float x, float y, float s)
     {
         return x + s * (y - x);
     }
 
-    double smooth_inter(double x, double y, double s)
+    float smooth_inter(float x, float y, float s)
     {
         return lin_inter(x, y, s * s * (3 - 2 * s));
     }
 
-    double noise2d(double x, double y)
+    float noise2d(float x, float y)
     {
         const int x_int = cast(int) Math.floor(x);
         const int y_int = cast(int) Math.floor(y);
-        const double x_frac = x - x_int;
-        const double y_frac = y - y_int;
+        const float x_frac = x - x_int;
+        const float y_frac = y - y_int;
         const int s = noise2(x_int, y_int);
         const int t = noise2(x_int + 1, y_int);
         const int u = noise2(x_int, y_int + 1);
         const int v = noise2(x_int + 1, y_int + 1);
-        const double low = smooth_inter(s, t, x_frac);
-        const double high = smooth_inter(u, v, x_frac);
-        const double result = smooth_inter(low, high, y_frac);
+        const float low = smooth_inter(s, t, x_frac);
+        const float high = smooth_inter(u, v, x_frac);
+        const float result = smooth_inter(low, high, y_frac);
         return result;
     }
 
-    double perlin2d(double x, double y, double freq, int depth)
+    float perlin2d(float x, float y, float freq, int depth)
     {
-        double xa = x * freq;
-        double ya = y * freq;
-        double amp = 1.0;
-        double fin = 0;
-        double div = 0.0;
+        float xa = x * freq;
+        float ya = y * freq;
+        float amp = 1.0;
+        float fin = 0;
+        float div = 0.0;
         for (int i = 0; i < depth; i++)
         {
             div += 256 * amp;

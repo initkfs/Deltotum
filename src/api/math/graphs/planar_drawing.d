@@ -13,7 +13,7 @@ import Math = api.math;
  */
 
 //Fruchterman-Reingold
-void fru(Graph g, size_t iterations = 10, double repulsion = 10, double stiffness = 0.5, double damping = 0.2, double gridSize = 100, double gridStrength = 5)
+void fru(Graph g, size_t iterations = 10, float repulsion = 10, float stiffness = 0.5, float damping = 0.2, float gridSize = 100, float gridStrength = 5)
 {
     assert(g, "Graph must not be null");
 
@@ -35,7 +35,7 @@ void fru(Graph g, size_t iterations = 10, double repulsion = 10, double stiffnes
                     }
                     auto magnSqr = dir.lengthSquared;
 
-                    double minDistanceSqr = 1;
+                    float minDistanceSqr = 1;
                     if (magnSqr < minDistanceSqr)
                     {
                         magnSqr = minDistanceSqr;
@@ -64,7 +64,7 @@ void fru(Graph g, size_t iterations = 10, double repulsion = 10, double stiffnes
             {
                 if (e.src is v && !e.isVisited)
                 {
-                    //double stretch = dir.length - edge.desiredLength;
+                    //float stretch = dir.length - edge.desiredLength;
                     //auto springForce = dir.normalize.scale(stretch * stiffness);
                     auto springForce = (e.dest.pos - e.src.pos).scale(stiffness);
                     e.src.force += springForce;

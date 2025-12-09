@@ -30,9 +30,9 @@ class Expander : Control
     {
         Control expandBar;
         Sprite2d expandLabel;
-        MinMaxTween2d!double clipTween;
+        MinMaxTween2d!float clipTween;
         ExpanderState state = ExpanderState.opened;
-        double labelAngleDt = 0;
+        float labelAngleDt = 0;
     }
 
     this()
@@ -62,7 +62,7 @@ class Expander : Control
         layout.isAutoResize = true;
     }
 
-    protected void createExpandBar(double w, double h)
+    protected void createExpandBar(float w, float h)
     {
         import api.dm.gui.controls.containers.hbox;
 
@@ -139,8 +139,8 @@ class Expander : Control
     {
         super.create;
 
-        double w = width;
-        double h = height;
+        float w = width;
+        float h = height;
         if (w == 0)
         {
             w = 15;
@@ -178,7 +178,7 @@ class Expander : Control
                 break;
         }
 
-        clipTween = new MinMaxTween2d!double(0, 1, 250);
+        clipTween = new MinMaxTween2d!float(0, 1, 250);
         addCreate(clipTween);
 
         clipTween.onOldNewValue ~= (oldValue, newValue) {

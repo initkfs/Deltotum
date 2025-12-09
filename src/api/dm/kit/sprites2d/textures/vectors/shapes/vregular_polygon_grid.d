@@ -22,13 +22,13 @@ class VRegularPolygonGrid : Sprite2d
     protected
     {
         size_t sideCount;
-        double hexagonSize = 0;
+        float hexagonSize = 0;
         GraphicStyle style;
     }
 
     RPolygonGeometry[] hexagons;
 
-    this(double width, double height, double hexagonSize, GraphicStyle style, size_t sideCount = 6)
+    this(float width, float height, float hexagonSize, GraphicStyle style, size_t sideCount = 6)
     {
         this.width = width;
         this.height = height;
@@ -51,7 +51,7 @@ class VRegularPolygonGrid : Sprite2d
         }
     }
 
-    void drawPolygon(double x, double y)
+    void drawPolygon(float x, float y)
     {
         auto hex = new VRegularPolygon(hexagonSize, style);
         addCreate(hex);
@@ -65,7 +65,7 @@ class VRegularPolygonGrid : Sprite2d
         //algorithm ported from https://github.com/eperezcosano/hexagonal-grid/tree/master
         //under MIT license
         //may also be useful https://stackoverflow.com/questions/71942765/honeycomb-hexagonal-grid
-        double radius = hexagonSize / 2;
+        float radius = hexagonSize / 2;
         const angle = Math.PI2 / sideCount;
         const angleCos = Math.cos(angle);
         const angleSin = Math.sin(angle);
@@ -73,11 +73,11 @@ class VRegularPolygonGrid : Sprite2d
         const polarX1 = radius * (1 + angleCos);
         const polarY = radius * angleSin;
 
-        double y = radius, j = 0, offsetX = 0, offsetY = 0;
+        float y = radius, j = 0, offsetX = 0, offsetY = 0;
 
         while (offsetY < height)
         {
-            double x = radius;
+            float x = radius;
             while (offsetX < width)
             {
                 drawPolygon(x, y);

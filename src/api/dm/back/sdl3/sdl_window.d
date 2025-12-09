@@ -394,7 +394,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult setOpacity(double value0to1) nothrow
+    ComResult setOpacity(float value0to1) nothrow
     {
         assert(ptr);
 
@@ -411,7 +411,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult getOpacity(out double value0to1) nothrow
+    ComResult getOpacity(out float value0to1) nothrow
     {
         assert(ptr);
 

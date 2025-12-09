@@ -26,7 +26,7 @@ class Input
     bool isJoystickActive;
     bool isJoystickChangeAxis;
     bool isJoystickChangeAxisValue;
-    double joystickAxisDelta = 0;
+    float joystickAxisDelta = 0;
     bool isJoystickPressed;
 
     JoystickEvent lastJoystickEvent;
@@ -100,7 +100,7 @@ class Input
         return joystick.getButton(buttonIndexFrom0);
     }
 
-    float isJoystickAxisNorm01(size_t axisFrom0, double deadzone = 2000, double errorDelta = 0.01, double maxValue = short
+    float isJoystickAxisNorm01(size_t axisFrom0, float deadzone = 2000, float errorDelta = 0.01, float maxValue = short
             .max)
     {
         if (!joystick)

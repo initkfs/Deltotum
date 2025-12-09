@@ -11,16 +11,16 @@ Authors: initkfs
 
 struct MusicNote
 {
-    double freqHz = 0;
-    double durationMs = 0;
+    float freqHz = 0;
+    float durationMs = 0;
 
-    this(double freqHz, double durMs)
+    this(float freqHz, float durMs)
     {
         this.freqHz = freqHz;
         this.durationMs = durMs;
     }
 
-    this(double freqHz, NoteType type, double bpm, double minDurationMs = 10)
+    this(float freqHz, NoteType type, float bpm, float minDurationMs = 10)
     {
         this.freqHz = freqHz;
         this.durationMs = noteTimeMs(bpm, type, minDurationMs);
@@ -36,15 +36,15 @@ enum NoteType
     note1_16 = 16
 }
 
-double fromMIDI(int midiNote) => 440.0 * Math.pow(2.0, (midiNote - 69) / 12.0);
+float fromMIDI(int midiNote) => 440.0 * Math.pow(2.0, (midiNote - 69) / 12.0);
 
-double noteTimeMs(double bpm, NoteType noteType, double minDurMs = 50)
+float noteTimeMs(float bpm, NoteType noteType, float minDurMs = 50)
 {
     const dur = (60.0 / bpm) * (4.0 / noteType) * 1000;
     return dur < minDurMs ? minDurMs : dur;
 }
 
-enum Octave : double
+enum Octave : float
 {
     //do(С) re(D) mi(Е) fa(F) sol(G) la(A) ti(B\H)
 

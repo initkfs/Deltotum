@@ -12,14 +12,14 @@ class VPointShape : VShape
     bool isClosePath;
     bool isDrawFromCenter;
 
-    double translateX = 0;
-    double translateY = 0;
+    float translateX = 0;
+    float translateY = 0;
 
     void delegate() onDraw;
 
     Vec2d[] points;
 
-    this(Vec2d[] points, double width, double height, GraphicStyle style = GraphicStyle.simple, bool isDrawFromCenter = false, bool isClosePath = true)
+    this(Vec2d[] points, float width, float height, GraphicStyle style = GraphicStyle.simple, bool isDrawFromCenter = false, bool isClosePath = true)
     {
         super(width, height, style);
 

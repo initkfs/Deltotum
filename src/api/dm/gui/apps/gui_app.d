@@ -63,7 +63,7 @@ abstract class GuiApp : LoopApp
     {
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        double frameRate = 0;
+        float frameRate = 0;
         if (uservices.config.hasKey(KitConfigKeys.engineFrameRate))
         {
             frameRate = uservices.config.getDouble(KitConfigKeys.engineFrameRate);

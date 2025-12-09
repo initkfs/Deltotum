@@ -14,7 +14,7 @@ import std.conv : to;
  */
 class HourChooser : BaseCircularTimeChooser
 {
-    double outerBoxRadius = 0;
+    float outerBoxRadius = 0;
 
     Container hour1to12Box;
     bool isCreateHour1To12Box = true;

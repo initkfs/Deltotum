@@ -16,7 +16,7 @@ abstract class Shape2d : Sprite2d
         
     }
 
-    this(double width, double height, GraphicStyle style)
+    this(float width, float height, GraphicStyle style)
     {
         this.width = width;
         this.height = height;

@@ -7,7 +7,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
  */
 struct GraphicStyle
 {
-    double lineWidth = 1;
+    float lineWidth = 1;
     RGBA lineColor = RGBA.lime;
 
     bool isFill;

@@ -126,7 +126,7 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
         return ComResult.success;
     }
 
-    ComResult setMusicPosition(double positionMs) nothrow
+    ComResult setMusicPosition(float positionMs) nothrow
     {
         const positionSec = positionMs * 1000;
         if (!Mix_SetMusicPosition(positionSec))

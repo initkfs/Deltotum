@@ -14,7 +14,7 @@ import Math = api.math;
 class ColorBar : BaseMonoColorBar
 {
 
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         super(width, height);
     }
@@ -70,7 +70,7 @@ class ColorBar : BaseMonoColorBar
     {
         const rangeSum = rangeSum;
 
-        double nextX = x;
+        float nextX = x;
         foreach (r; rangeData)
         {
             const rangeWidth = Math.round(r.value * width / rangeSum);

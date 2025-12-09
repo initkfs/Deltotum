@@ -9,8 +9,8 @@ import core.stdc.stdlib : malloc, free;
  */
 struct FiniteSignalBuffer(T)
 {
-    double freqHz = 0;
-    double durationMs = 0;
+    float freqHz = 0;
+    float durationMs = 0;
     size_t channels = 1;
 
     bool isFreed;
@@ -20,7 +20,7 @@ struct FiniteSignalBuffer(T)
         T[] _buffer;
     }
 
-    this(double freqHz, double durationMs, size_t channels = 2) nothrow
+    this(float freqHz, float durationMs, size_t channels = 2) nothrow
     {
         import std.math.traits : isFinite;
 

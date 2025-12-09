@@ -43,7 +43,7 @@ auto mediaPlayer(
     size_t VideoQueueSize = 40960,
     size_t AudioQueueSize = 40960,
     size_t VideoBufferSize = 200,
-    size_t AudioBufferSize = 819200)(string path, double width = 200, double height = 200)
+    size_t AudioBufferSize = 819200)(string path, float width = 200, float height = 200)
 {
 
     return new VideoPlayer!(
@@ -80,7 +80,7 @@ class VideoPlayer(
 
     string path;
 
-    this(string path, double width = 200, double height = 200)
+    this(string path, float width = 200, float height = 200)
     {
         initSize(width, height);
         isDrawBounds = true;
@@ -202,7 +202,7 @@ class VideoPlayer(
                 videoTimeBase = stream.time_base;
                 videoAvgRate = stream.avg_frame_rate;
 
-                //fpsrendering = 1.0 / (cast(double) rational.num / cast(double)(rational.den));
+                //fpsrendering = 1.0 / (cast(float) rational.num / cast(float)(rational.den));
                 foundVideo = true;
             }
             else if (codecParam.codec_type == AVMEDIA_TYPE_AUDIO && !foundAudio)
@@ -248,7 +248,7 @@ class VideoPlayer(
         demuxer.start;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
 
@@ -328,7 +328,7 @@ class VideoPlayer(
         const syncThreshold = 0.1;
         const maxSyncThreshold = syncThreshold * 10;
 
-        double diffTime = videoTimeSec - audioTime;
+        float diffTime = videoTimeSec - audioTime;
         if (Math.abs(diffTime) > maxSyncThreshold)
         {
             //logger.warningf("Video and audio out of sync by more than %s: %s", maxSyncThreshold, diffTime);
@@ -373,7 +373,7 @@ class VideoPlayer(
             vframe.vPlane.ptr, cast(int) vframe.vPitch);
     }
 
-    __gshared double audioTimeSec;
+    __gshared float audioTimeSec;
     __gshared ulong audioSamplesCount;
 
     void handleAudioData(SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow
@@ -412,8 +412,8 @@ class VideoPlayer(
 
                     size_t bytesPerSample = float.sizeof * 2;
                     auto queueBytes = SDL_GetAudioStreamQueued(stream);
-                    double buffTime = cast(double) queueBytes / (44000 * bytesPerSample);
-                    // double buffTime = 0;
+                    float buffTime = cast(float) queueBytes / (44000 * bytesPerSample);
+                    // float buffTime = 0;
                     audioTimeSec = audioSamplesCount / 44000.0 - buffTime;
                 }
 

@@ -11,13 +11,13 @@ import Math = api.dm.math;
  */
 class FlowLayout : ManagedLayout
 {
-    double vgap = 0;
-    double hgap = 0;
+    float vgap = 0;
+    float hgap = 0;
 
-    double flowWidth = 0;
+    float flowWidth = 0;
     bool isUseFlowWidth;
 
-    this(double hgap = 0, double vgap = 0, double flowWidth = 0) pure
+    this(float hgap = 0, float vgap = 0, float flowWidth = 0) pure
     {
         this.hgap = hgap;
         this.vgap = vgap;
@@ -29,8 +29,8 @@ class FlowLayout : ManagedLayout
     {
         const rootBounds = root.boundsRect;
 
-        double nextX = 0;
-        double nextY = 0;
+        float nextX = 0;
+        float nextY = 0;
 
         if (isFillStartToEnd)
         {
@@ -116,9 +116,9 @@ class FlowLayout : ManagedLayout
         return true;
     }
 
-    override double calcChildrenWidth(Sprite2d root)
+    override float calcChildrenWidth(Sprite2d root)
     {
-        double calcChildrenWidth = 0;
+        float calcChildrenWidth = 0;
         size_t childCount;
         foreach (child; childrenForLayout(root))
         {
@@ -133,9 +133,9 @@ class FlowLayout : ManagedLayout
         return calcChildrenWidth;
     }
 
-    override double calcChildrenHeight(Sprite2d root)
+    override float calcChildrenHeight(Sprite2d root)
     {
-        double calcChildrenHeight = 0;
+        float calcChildrenHeight = 0;
         size_t childCount;
         foreach (child; childrenForLayout(root))
         {

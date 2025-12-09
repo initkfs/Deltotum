@@ -10,11 +10,11 @@ abstract class StateCanvas : GraphicCanvas
 {
     protected
     {
-        double x = 0;
-        double y = 0;
+        float x = 0;
+        float y = 0;
     }
 
-    void moveTo(double x, double y)
+    void moveTo(float x, float y)
     {
         this.x = x;
         this.y = y;

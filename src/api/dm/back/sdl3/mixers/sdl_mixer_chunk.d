@@ -19,7 +19,7 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
     protected
     {
         enum msInSec = 1000;
-        enum double doubleErr = -1;
+        enum float floatErr = -1;
 
         int _lastChannel = -1;
     }

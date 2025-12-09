@@ -19,7 +19,7 @@ class RegularPolygon : Shape2d
         RegularPolygon2d polyDrawer;
     }
 
-    this(double size, GraphicStyle style, size_t sideCount = 6)
+    this(float size, GraphicStyle style, size_t sideCount = 6)
     {
         super(size, size, style);
         this.sideCount = sideCount;
@@ -29,7 +29,7 @@ class RegularPolygon : Shape2d
     {
         super.create;
 
-        double radius = width / 2;
+        float radius = width / 2;
         polyDrawer = RegularPolygon2d(sideCount, radius);
     }
 
@@ -48,10 +48,10 @@ class RegularPolygon : Shape2d
     void drawPolygon()
     {
         auto center = boundsRect.center;
-        double firstX;
-        double firstY;
-        double prevX;
-        double prevY;
+        float firstX;
+        float firstY;
+        float prevX;
+        float prevY;
         polyDrawer.draw((i, p) {
 
             const newX = center.x + p.x;

@@ -21,15 +21,15 @@ struct ComScreenMode
     ComScreenId id;
     int width;
     int height;
-    double rateHz;
-    double density;
+    float rateHz;
+    float density;
 }
 
 struct ComScreenDpi
 {
-    double diagonalDPI = 0;
-    double horizontalDPI = 0;
-    double verticalDPI = 0;
+    float diagonalDPI = 0;
+    float horizontalDPI = 0;
+    float verticalDPI = 0;
 }
 
 /**

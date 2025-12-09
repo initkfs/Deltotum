@@ -79,7 +79,7 @@ class Media : Control
         enum sampleBufferSize = 40960;
     }
 
-    double sampleFreq = 0;
+    float sampleFreq = 0;
 
     alias Sint16 = short;
     alias Uint8 = ubyte;
@@ -185,7 +185,7 @@ class Media : Control
             //     {Octave.F4},
             // ];
 
-            // synt.sequence(notes, 44100, (short[] buff, double time) {
+            // synt.sequence(notes, 44100, (short[] buff, float time) {
 
             //     auto chunk = media.newHeapChunk!short(time);
             //     chunks ~= chunk;
@@ -202,7 +202,7 @@ class Media : Control
 
             synt.adsr = piano.settings.adsr;
 
-            double amp = piano.settings.amp;
+            float amp = piano.settings.amp;
             synt.fm = piano.settings.fm;
             synt.index = piano.settings.fmIndex;
             synt.isFcMulFm = piano.settings.isFcMulFm;
@@ -353,7 +353,7 @@ class Media : Control
         dspProcessor.unblock;
     }
 
-    override void update(double delta)
+    override void update(float delta)
     {
         super.update(delta);
         dspProcessor.step;

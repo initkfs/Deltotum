@@ -12,15 +12,15 @@ import std.complex;
 abstract class ComplexFractalImage : Texture2d
 {
     size_t iterations = 500;
-    double scaleFactor = 1.0;
+    float scaleFactor = 1.0;
 
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         this.width = width;
         this.height = height;
     }
 
-    RGBA calcColor(double x, double y)
+    RGBA calcColor(float x, float y)
     {
         return RGBA.white;
     }
@@ -41,10 +41,10 @@ abstract class ComplexFractalImage : Texture2d
 
         foreach (yi; 0 .. h)
         {
-            double y = (centerY - yi) * scaleFactor;
+            float y = (centerY - yi) * scaleFactor;
             foreach (xi; 0 .. w)
             {
-                double x = (xi - centerX) * scaleFactor;
+                float x = (xi - centerX) * scaleFactor;
 
                 RGBA color = calcColor(x, y);
 

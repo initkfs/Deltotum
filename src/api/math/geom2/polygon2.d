@@ -13,7 +13,7 @@ struct Quadrilateral2d
     Vec2d rightBottom;
     Vec2d leftBottom;
 
-    this(double x, double y, double width, double height)
+    this(float x, float y, float width, float height)
     {
         leftTop = Vec2d(x, y);
         rightTop = Vec2d(leftTop.x + width, leftTop.y);
@@ -109,7 +109,7 @@ struct Polygon2d
 
     bool containsWinding(Vec2d point)
     {
-        double cross3p(Vec2d p1, Vec2d p2, Vec2d p3) => (p2.x - p1.x) * (
+        float cross3p(Vec2d p1, Vec2d p2, Vec2d p3) => (p2.x - p1.x) * (
             p3.y - p1.y)
             - (p2.y - p1.y) * (p3.x - p1.x);
 
@@ -127,7 +127,7 @@ struct Polygon2d
         {
             Vec2d p2 = vertices[(i + 1) % vertLength];
 
-            //TODO double check
+            //TODO float check
             if (p1 == point || p2 == point || isOnSegment(point, p1, p2))
             {
                 return true;
@@ -159,7 +159,7 @@ struct Polygon2d
             return false;
         }
 
-        double vertSum = 0;
+        float vertSum = 0;
 
         //(x2 - x1) * (y2 + y1)
         foreach (i, const ref current; vertices)
@@ -181,8 +181,8 @@ struct Polygon2d
 
     Vec2d midpoint() scope const nothrow pure @safe
     {
-        double xSum = 0;
-        double ySum = 0;
+        float xSum = 0;
+        float ySum = 0;
         foreach (ref p; vertices)
         {
             xSum += p.x;
@@ -203,16 +203,16 @@ struct Polygon2d
 
         vertices.sort!((p1, p2) {
             //TODO check if xy correct for atan2(y, x) 
-            const double pm1 = (Math.radToDeg(Math.atan2(p1.x - mid.x, p1.y - mid.y)) + 360) % 360;
-            const double pm2 = (Math.radToDeg(Math.atan2(p2.x - mid.x, p2.y - mid.y)) + 360) % 360;
+            const float pm1 = (Math.radToDeg(Math.atan2(p1.x - mid.x, p1.y - mid.y)) + 360) % 360;
+            const float pm2 = (Math.radToDeg(Math.atan2(p2.x - mid.x, p2.y - mid.y)) + 360) % 360;
             const int dm = isClockwise ? cast(int)(pm1 - pm2) : cast(int)(pm2 - pm1);
             return dm < 0;
         });
     }
 
-    double closedArea()
+    float closedArea()
     {
-        double result = 0;
+        float result = 0;
 
         if (vertices.length < 3)
         {
@@ -260,8 +260,8 @@ struct Polygon2d
 
     bool isConvex()
     {
-        double prevCross = 0;
-        double currCross = 0;
+        float prevCross = 0;
+        float currCross = 0;
         foreach (i, ref point; vertices)
         {
             auto next1 = vertices[(i + 1) % vertices.length];
@@ -304,10 +304,10 @@ struct Polygon2d
 
         Vec2d[] newPoints;
 
-        double x1 = x1y1.x;
-        double y1 = x1y1.y;
-        double x2 = x2y2.x;
-        double y2 = x2y2.y;
+        float x1 = x1y1.x;
+        float y1 = x1y1.y;
+        float x2 = x2y2.x;
+        float y2 = x2y2.y;
 
         foreach (i; 0 .. points.length)
         {
@@ -366,7 +366,7 @@ struct Polygon2d
     {
         import std.math.operations : isClose;
 
-        double eps = 0.00001;
+        float eps = 0.00001;
 
         Vec2d[] points = [
             Vec2d(100.0, 150), Vec2d(200.0, 250), Vec2d(300.0, 200)
@@ -378,7 +378,7 @@ struct Polygon2d
 
         Vec2d[] result = clipSutHodg(points, clipPoints);
 
-        double[][] expected = [
+        float[][] expected = [
             [150, 162.5], [150.0, 200], [200.0, 200], [200.0, 175]
         ];
 
@@ -393,10 +393,10 @@ struct Polygon2d
 
     Rect2d bounds() const
     {
-        double minX = 0;
-        double maxX = 0;
-        double minY = 0;
-        double maxY = 0;
+        float minX = 0;
+        float maxX = 0;
+        float minY = 0;
+        float maxY = 0;
         foreach (ref p; vertices)
         {
             if (p.x < minX)

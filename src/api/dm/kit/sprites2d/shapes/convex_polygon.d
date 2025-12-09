@@ -9,12 +9,12 @@ import api.math.geom2.line2 : Line2d;
  */
 class ConvexPolygon : Shape2d
 {
-    double cornerPadding;
+    float cornerPadding;
 
     //TODO other sides  
     Line2d topClip;
 
-    this(double width, double height, GraphicStyle style, double cornerPadding)
+    this(float width, float height, GraphicStyle style, float cornerPadding)
     {
         super(width, height, style);
         this.cornerPadding = cornerPadding;

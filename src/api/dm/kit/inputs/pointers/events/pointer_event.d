@@ -28,17 +28,17 @@ struct PointerEvent
 
     Event event;
 
-    double x = 0;
-    double y = 0;
+    float x = 0;
+    float y = 0;
 
     int button;
 
-    double movementX;
-    double movementY;
+    float movementX;
+    float movementY;
 
     bool isPrimary = true;
 
-    this(Event event, int ownerId = 0, double x = 0, double y = 0, int button = 0, double movementX = 0, double movementY = 0)
+    this(Event event, int ownerId = 0, float x = 0, float y = 0, int button = 0, float movementX = 0, float movementY = 0)
     {
         this.event = event;
         this.ownerId = ownerId;

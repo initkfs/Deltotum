@@ -10,12 +10,12 @@ import api.math.geom2.points2;
  */
 class Toggle : BaseOrientToggle
 {
-    this(dstring label, double width, double height, string iconName = null, Orientation orientation, double graphicsGap = 5)
+    this(dstring label, float width, float height, string iconName = null, Orientation orientation, float graphicsGap = 5)
     {
         super(label, width, height, iconName, orientation, graphicsGap);
     }
 
-    this(dstring label = "Toggle", string iconName = null, Orientation orientation = Orientation.horizontal, double graphicsGap = 5)
+    this(dstring label = "Toggle", string iconName = null, Orientation orientation = Orientation.horizontal, float graphicsGap = 5)
     {
         this(label, 0, 0, iconName, orientation, graphicsGap);
     }

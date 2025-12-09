@@ -10,8 +10,8 @@ import api.dm.gui.controls.containers.circle_box : CircleBox;
  */
 abstract class BaseCircularTimeChooser : BaseTimeChooser
 {
-    double radius = 0;
-    double startAngleDeg = 0;
+    float radius = 0;
+    float startAngleDeg = 0;
 
     override void loadTheme(){
         super.loadTheme;
@@ -29,7 +29,7 @@ abstract class BaseCircularTimeChooser : BaseTimeChooser
         return newCircleBox(radius, startAngleDeg);
     }
 
-    CircleBox newCircleBox(double radius, double angleDeg)
+    CircleBox newCircleBox(float radius, float angleDeg)
     {
         assert(radius > 0);
         auto box = new CircleBox(radius, angleDeg);

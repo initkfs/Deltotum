@@ -32,7 +32,7 @@ class FactoryKit : GraphicComponent
         this.textures = textures;
     }
 
-    Texture2d placeholder(double pWidth = 50, double pHeight = 50, RGBA color = RGBA.lightcoral)
+    Texture2d placeholder(float pWidth = 50, float pHeight = 50, RGBA color = RGBA.lightcoral)
     {
         return textures.texture(pWidth, pHeight, () {
             import api.math.geom2.vec2 : Vec2d;

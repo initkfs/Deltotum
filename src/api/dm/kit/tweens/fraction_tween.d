@@ -6,13 +6,13 @@ import api.dm.kit.tweens.curves.interpolator : Interpolator;
 /**
  * Authors: initkfs
  */
-class FractionTween : MinMaxTween!double
+class FractionTween : MinMaxTween!float
 {
-    double value = 0;
+    float value = 0;
 
-    void delegate(double, double)[] onOldNewFrac;
+    void delegate(float, float)[] onOldNewFrac;
 
-    this(double value = 0, size_t timeMs = 200, Interpolator interpolator = null)
+    this(float value = 0, size_t timeMs = 200, Interpolator interpolator = null)
     {
         super(0, 1, timeMs, interpolator);
         this.value = value;
@@ -40,7 +40,7 @@ class FractionTween : MinMaxTween!double
         };
     }
 
-    bool removeOnOldNewFrac(void delegate(double, double) dg)
+    bool removeOnOldNewFrac(void delegate(float, float) dg)
     {
         import api.core.utils.arrays : drop;
 

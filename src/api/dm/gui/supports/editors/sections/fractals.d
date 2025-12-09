@@ -35,7 +35,7 @@ class Fractals : Control
         Random random;
     }
 
-    double shapeSize = 100;
+    float shapeSize = 100;
 
     this()
     {
@@ -74,7 +74,7 @@ class Fractals : Control
         return container;
     }
 
-    protected LShape createShape(LSystemData data, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = true, double translateX = 0, double translateY = 0)
+    protected LShape createShape(LSystemData data, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = true, float translateX = 0, float translateY = 0)
     {
         auto shape = new LShape(shapeSize, shapeSize, style, isClosePath, isDrawFromCenter);
         shape.translateX = translateX;
@@ -104,7 +104,7 @@ class Fractals : Control
         return container;
     }
 
-    Sprite2d createFractalInfo(string name, LSystemData fractal, GraphicStyle style, bool isDrawFromCenter = true, double translateX = 0, double translateY = 0, double rotateAngle = 0)
+    Sprite2d createFractalInfo(string name, LSystemData fractal, GraphicStyle style, bool isDrawFromCenter = true, float translateX = 0, float translateY = 0, float rotateAngle = 0)
     {
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;

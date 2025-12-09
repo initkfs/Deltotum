@@ -25,12 +25,12 @@ struct Rect2f
  */
 struct Rect2d
 {
-    double x = 0;
-    double y = 0;
-    double width = 0;
-    double height = 0;
+    float x = 0;
+    float y = 0;
+    float width = 0;
+    float height = 0;
 
-    bool contains(double x, double y) const  nothrow pure @safe
+    bool contains(float x, float y) const  nothrow pure @safe
     {
         return x >= this.x && y >= this.y && x < right && y < bottom;
     }
@@ -75,11 +75,11 @@ struct Rect2d
     {
         import Math = api.dm.math;
 
-        double circleDistanceX = Math.abs(circle.x - x);
-        double circleDistanceY = Math.abs(circle.y - y);
+        float circleDistanceX = Math.abs(circle.x - x);
+        float circleDistanceY = Math.abs(circle.y - y);
 
-        const double halfWidth = width / 2.0;
-        const double halfHeight = height / 2.0;
+        const float halfWidth = width / 2.0;
+        const float halfHeight = height / 2.0;
 
         if (circleDistanceX > (halfWidth + circle.radius) ||
             circleDistanceY > (halfHeight + circle.radius))
@@ -92,39 +92,39 @@ struct Rect2d
             return true;
         }
 
-        double cornerDistance = (circleDistanceX - halfWidth) ^^ 2 +
+        float cornerDistance = (circleDistanceX - halfWidth) ^^ 2 +
             (
                 circleDistanceY - halfHeight) ^^ 2;
 
         return (cornerDistance <= (circle.radius ^^ 2));
     }
 
-    double right() const  nothrow pure @safe
+    float right() const  nothrow pure @safe
     {
         return x + width;
     }
 
-    double bottom() const  nothrow pure @safe
+    float bottom() const  nothrow pure @safe
     {
         return y + height;
     }
 
-    double halfWidth() const  nothrow pure @safe
+    float halfWidth() const  nothrow pure @safe
     {
         return width / 2;
     }
 
-    double middleX() const  nothrow pure @safe
+    float middleX() const  nothrow pure @safe
     {
         return x + halfWidth;
     }
 
-    double middleY() const  nothrow pure @safe
+    float middleY() const  nothrow pure @safe
     {
         return y + halfHeight;
     }
 
-    double halfHeight() const  nothrow pure @safe
+    float halfHeight() const  nothrow pure @safe
     {
         return height / 2;
     }
@@ -134,7 +134,7 @@ struct Rect2d
         return Vec2d(middleX, middleY);
     }
 
-    double aspectRatio() const  nothrow pure @safe
+    float aspectRatio() const  nothrow pure @safe
     {
         import std.math.operations : isClose;
 
@@ -146,7 +146,7 @@ struct Rect2d
         return width / height;
     }
 
-    double diagonal() const  nothrow pure @safe
+    float diagonal() const  nothrow pure @safe
     {
         import Math = api.math;
 
@@ -155,7 +155,7 @@ struct Rect2d
         return v;
     }
 
-    Rect2d withPadding(double value){
+    Rect2d withPadding(float value){
         return Rect2d(x + value, y + value, width - value, height - value);
     }
 
@@ -165,7 +165,7 @@ struct Rect2d
         return Rect2d(x, y, diag, diag);
     }
 
-    Rect2d boundingBox(double angleDeg)
+    Rect2d boundingBox(float angleDeg)
     {
         import Math = api.math;
 

@@ -28,8 +28,8 @@ struct Vec2f
 //TODO template types, operator overloads
 struct Vec2d
 {
-    double x = 0;
-    double y = 0;
+    float x = 0;
+    float y = 0;
 
     alias l1Norm = manhattan;
     alias l2norm = distanceTo;
@@ -38,15 +38,15 @@ struct Vec2d
 
     static nothrow pure @safe Vec2d zero() => Vec2d();
     nothrow pure @safe bool isZero() const => (x == 0) && (y == 0);
-    static nothrow pure @safe Vec2d infinity() => Vec2d(double.infinity, double.infinity);
-    bool isInfinity() const => (x == double.infinity) || (y == double.infinity);
+    static nothrow pure @safe Vec2d infinity() => Vec2d(float.infinity, float.infinity);
+    bool isInfinity() const => (x == float.infinity) || (y == float.infinity);
 
-    static Vec2d fromPolarDeg(double angleDeg, double radius) nothrow pure @safe
+    static Vec2d fromPolarDeg(float angleDeg, float radius) nothrow pure @safe
     {
         return fromPolarRad(Math.degToRad(angleDeg), radius);
     }
 
-    static Vec2d fromPolarRad(double angleRad, double radius) nothrow pure @safe
+    static Vec2d fromPolarRad(float angleRad, float radius) nothrow pure @safe
     {
         immutable pX = radius * Math.cos(angleRad);
         immutable pY = radius * Math.sin(angleRad);
@@ -55,7 +55,7 @@ struct Vec2d
 
     static Vec2d toPolarRad(Vec2d vec) nothrow pure @safe => toPolarRad(vec.x, vec.y);
 
-    static Vec2d toPolarRad(double x, double y) nothrow pure @safe
+    static Vec2d toPolarRad(float x, float y) nothrow pure @safe
     {
         const radius = Math.sqrt(x * x + y * y);
         const angleRad = Math.atan2(y, x);
@@ -65,7 +65,7 @@ struct Vec2d
 
     static Vec2d toPolarDeg(Vec2d vec) nothrow pure @safe => toPolarDeg(vec.x, vec.y);
 
-    static Vec2d toPolarDeg(double x, double y) nothrow pure @safe
+    static Vec2d toPolarDeg(float x, float y) nothrow pure @safe
     {
         const polarRad = toPolarRad(x, y);
         return Vec2d(polarRad.x, Math.radToDeg(polarRad.y));
@@ -86,9 +86,9 @@ struct Vec2d
 
         Vec2d normalize()
         {
-            const double len = length;
-            double normX = 0;
-            double normY = 0;
+            const float len = length;
+            float normX = 0;
+            float normY = 0;
             if (len != 0)
             {
                 normX = x / len;
@@ -102,36 +102,36 @@ struct Vec2d
 
         Vec2d clone() => Vec2d(x, y);
 
-        double length() => lengthXY(x, y);
-        double lengthSquared() => lengthSquaredXY(x, y);
-        double lengthSquaredXY(double x, double y) => x * x + y * y;
-        double lengthXY(double x, double y) => sqrt(lengthSquaredXY(x, y));
+        float length() => lengthXY(x, y);
+        float lengthSquared() => lengthSquaredXY(x, y);
+        float lengthSquaredXY(float x, float y) => x * x + y * y;
+        float lengthXY(float x, float y) => sqrt(lengthSquaredXY(x, y));
 
-        double distanceTo(Vec2d other)
+        float distanceTo(Vec2d other)
         {
-            const double powX = (other.x - x) ^^ 2;
-            const double powY = (other.y - y) ^^ 2;
+            const float powX = (other.x - x) ^^ 2;
+            const float powY = (other.y - y) ^^ 2;
             return sqrt(powX + powY);
         }
 
-        double manhattan(Vec2d other)
+        float manhattan(Vec2d other)
         {
             return Math.abs(other.x - x) + Math.abs(other.y - y);
         }
 
-        double cosineSimilarity(Vec2d other)
+        float cosineSimilarity(Vec2d other)
         {
             return dot(other) / (length * other.length);
         }
 
-        Vec2d scale(double factor) => Vec2d(x * factor, y * factor);
+        Vec2d scale(float factor) => Vec2d(x * factor, y * factor);
 
         Vec2d mul(Vec2d other)
         {
             return Vec2d(x * other.x, y * other.y);
         }
 
-        Vec2d div(double factor)
+        Vec2d div(float factor)
         {
             assert(factor != 0);
             const newX = x / factor;
@@ -139,13 +139,13 @@ struct Vec2d
             return Vec2d(newX, newY);
         }
 
-        Vec2d inc(double value) => Vec2d(x + value, y + value);
-        Vec2d incXY(double xValue, double yValue) => Vec2d(
+        Vec2d inc(float value) => Vec2d(x + value, y + value);
+        Vec2d incXY(float xValue, float yValue) => Vec2d(
             x + xValue, y + yValue);
 
-        Vec2d decXY(double xValue, double yValue) => Vec2d(
+        Vec2d decXY(float xValue, float yValue) => Vec2d(
             x - xValue, y - yValue);
-        Vec2d dec(double value) => Vec2d(x - value, y - value);
+        Vec2d dec(float value) => Vec2d(x - value, y - value);
 
         Vec2d perpendicular()
         {
@@ -154,16 +154,16 @@ struct Vec2d
             return Vec2d(-y, x);
         }
 
-        Vec2d translate(double tx, double ty) => Vec2d(x + tx, y + ty);
+        Vec2d translate(float tx, float ty) => Vec2d(x + tx, y + ty);
 
-        Vec2d rotate(double angleDeg)
+        Vec2d rotate(float angleDeg)
         {
             immutable newX = x * Math.cosDeg(angleDeg) - y * Math.sinDeg(angleDeg);
             immutable newY = x * Math.sinDeg(angleDeg) + y * Math.cosDeg(angleDeg);
             return Vec2d(newX, newY);
         }
 
-        Vec2d shear(double sx, double sy)
+        Vec2d shear(float sx, float sy)
         {
             immutable newX = x + sx * y;
             immutable newY = y + sy * x;
@@ -177,49 +177,49 @@ struct Vec2d
             return otherProject;
         }
 
-        double project(Vec2d other)
+        float project(Vec2d other)
         {
             const dop = dot(other);
             const otherLen = other.length;
             return dop / otherLen;
         }
 
-        Vec2d project(double factor)
+        Vec2d project(float factor)
         in (factor != 0.0)
         {
             return Vec2d(x / factor, y / factor);
         }
 
-        double dot(Vec2d other) => x * other.x + y * other.y;
+        float dot(Vec2d other) => x * other.x + y * other.y;
 
         bool isCollinear(Vec2d other) => cross(other) == 0;
 
-        double cross(Vec2d other) => x * other.y - y * other.x;
+        float cross(Vec2d other) => x * other.y - y * other.x;
 
-        static double cross(Vec2d p0, Vec2d p1, Vec2d p2) nothrow pure @safe
+        static float cross(Vec2d p0, Vec2d p1, Vec2d p2) nothrow pure @safe
         {
             return (p1.x - p0.x) * (p2.y - p0.y) -
                 (p2.x - p0.x) * (p1.y - p0.y);
         }
 
-        Vec2d crossVecScalar(double s) => Vec2d(s * y, -s * x);
-        Vec2d crossScalarVec(double s) => Vec2d(-s * y, s * x);
+        Vec2d crossVecScalar(float s) => Vec2d(s * y, -s * x);
+        Vec2d crossScalarVec(float s) => Vec2d(-s * y, s * x);
 
-        double angleRadTo(Vec2d other)
+        float angleRadTo(Vec2d other)
         {
             immutable direction = directionTo(other);
             immutable angle = angleRad(direction);
             return angle;
         }
 
-        double angleDegTo(Vec2d other)
+        float angleDegTo(Vec2d other)
         {
             immutable angleRad = angleRadTo(other);
             immutable anleDeg = Math.radToDeg(angleRad);
             return anleDeg;
         }
 
-        double angleDeg360To(Vec2d other)
+        float angleDeg360To(Vec2d other)
         {
             auto anleDeg = angleDegTo(other);
             if (anleDeg < 0)
@@ -230,25 +230,25 @@ struct Vec2d
             return anleDeg;
         }
 
-        double angleRad(Vec2d vec)
+        float angleRad(Vec2d vec)
         {
             //clockwise 0..180, counter-clockwise 0..-180
             immutable angle = Math.atan2(vec.y, vec.x);
             return angle;
         }
 
-        double angleDeg(Vec2d vec)
+        float angleDeg(Vec2d vec)
         {
             immutable anleDeg = Math.radToDeg(angleRad(vec));
             return anleDeg;
         }
 
-        double angleRad() => angleRad(this);
-        double angleDeg() => angleDeg(this);
+        float angleRad() => angleRad(this);
+        float angleDeg() => angleDeg(this);
 
-        double angleDegBetween(Vec2d other)
+        float angleDegBetween(Vec2d other)
         {
-            const double delta = (x * other.x + y * other.y) / sqrt(
+            const float delta = (x * other.x + y * other.y) / sqrt(
                 lengthSquaredXY(x, y) * lengthSquaredXY(other.x, other.y));
 
             if (delta > 1.0)
@@ -290,9 +290,9 @@ struct Vec2d
             return Vec2d(newX, newY);
         }
 
-        Vec2d truncate(double maxValue)
+        Vec2d truncate(float maxValue)
         {
-            double scaleFactor = maxValue / this.length;
+            float scaleFactor = maxValue / this.length;
 
             import std.math.operations : cmp;
 
@@ -301,7 +301,7 @@ struct Vec2d
             return result;
         }
 
-        Vec2d clip(double minX, double minY, double maxX, double maxY)
+        Vec2d clip(float minX, float minY, float maxX, float maxY)
         {
             auto x = Math.clamp(x, minX, maxX);
             auto y = Math.clamp(y, minY, maxY);
@@ -329,7 +329,7 @@ struct Vec2d
         return Vec2d(result.value(0, 0), result.value(1, 0));
     }
 
-    void opIndexAssign(double value, size_t i) @safe
+    void opIndexAssign(float value, size_t i) @safe
     {
         if (i == 0)
             x = value;
@@ -343,7 +343,7 @@ struct Vec2d
         }
     }
 
-    double opIndex(size_t i) const pure @safe
+    float opIndex(size_t i) const pure @safe
     {
         if (i == 0)
             return x;
@@ -407,7 +407,7 @@ unittest
     assert(horizontalReflect.x == -5);
     assert(horizontalReflect.y == 6);
 
-    double dot = Vec2d(5, 6).dot(Vec2d(2, 4));
+    float dot = Vec2d(5, 6).dot(Vec2d(2, 4));
     assert(dot == 34);
 
     auto mVec1 = Vec2d(23, 25);

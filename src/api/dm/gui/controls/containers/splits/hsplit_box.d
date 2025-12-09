@@ -47,10 +47,10 @@ class HSplitBox : BaseSplitBox
         }
     }
 
-    override double dividerWidth() => dividerSize;
-    override double dividerHeight() => height - padding.height;
+    override float dividerWidth() => dividerSize;
+    override float dividerHeight() => height - padding.height;
 
-    override bool delegate(double, double) newOnSepDragXY(Sprite2d sep)
+    override bool delegate(float, float) newOnSepDragXY(Sprite2d sep)
     {
         return (x, y) {
 

@@ -37,7 +37,7 @@ class FractalNoise : Texture2d
     /// The frequencies for each octave.
     float[] frequencies;
 
-    this(double width = 100, double height = 100, int octaves = 4, float frequency = 1.0, float amplitude = 1.0f)
+    this(float width = 100, float height = 100, int octaves = 4, float frequency = 1.0, float amplitude = 1.0f)
     {
         super(width, height);
         this.octaves = octaves;
@@ -47,13 +47,13 @@ class FractalNoise : Texture2d
         this.gain = 0.5f;
     }
 
-    this(SampleNoise noise, double width = 100, double height = 100, int octaves = 4, float frequency = 1.0, float amplitude = 1.0f)
+    this(SampleNoise noise, float width = 100, float height = 100, int octaves = 4, float frequency = 1.0, float amplitude = 1.0f)
     {
         this(width, height, octaves, frequency, amplitude);
         updateTable([noise]);
     }
 
-    this(SampleNoise[] noises, double width = 100, double height = 100, int octaves = 4, float frequency = 1.0, float amplitude = 1.0f)
+    this(SampleNoise[] noises, float width = 100, float height = 100, int octaves = 4, float frequency = 1.0, float amplitude = 1.0f)
     {
         this(width, height, octaves, frequency, amplitude);
         updateTable(noises);

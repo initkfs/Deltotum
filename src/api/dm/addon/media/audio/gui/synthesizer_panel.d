@@ -228,13 +228,13 @@ class SynthesizerPanel : Container
         return field;
     }
 
-    double amp()
+    float amp()
     {
         assert(ampField);
         return ampField.value;
     }
 
-    void amp(double v, bool isTriggerListeners = true)
+    void amp(float v, bool isTriggerListeners = true)
     {
         assert(ampField);
         ampField.value(v, isTriggerListeners);
@@ -248,37 +248,37 @@ class SynthesizerPanel : Container
         isFcMulFmField.isOn(v, isTriggerListeners);
     }
 
-    double fc()
+    float fc()
     {
         assert(fcField);
         return fcField.value;
     }
 
-    void fc(double v, bool isTriggerListeners = true)
+    void fc(float v, bool isTriggerListeners = true)
     {
         assert(fcField);
         fcField.value(v, isTriggerListeners);
     }
 
-    double fm()
+    float fm()
     {
         assert(fmField);
         return fmField.value;
     }
 
-    void fm(double v, bool isTriggerListeners = true)
+    void fm(float v, bool isTriggerListeners = true)
     {
         assert(fmField);
         fmField.value(v, isTriggerListeners);
     }
 
-    double fmIndex()
+    float fmIndex()
     {
         assert(fmIndexField);
         return fmIndexField.value;
     }
 
-    void fmIndex(double v, bool isTriggerListeners = true)
+    void fmIndex(float v, bool isTriggerListeners = true)
     {
         assert(fmIndexField);
         fmIndexField.value(v, isTriggerListeners);

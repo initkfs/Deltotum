@@ -15,12 +15,12 @@ class Newton : ComplexFractalImage
 {
     protected
     {
-        Complex!double[] roots;
-        Complex!double c1 = Complex!double(1.0, 0);
-        Complex!double c3 = Complex!double(3.0, 0);
+        Complex!float[] roots;
+        Complex!float c1 = Complex!float(1.0, 0);
+        Complex!float c3 = Complex!float(3.0, 0);
     }
 
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         super(width, height);
     }
@@ -31,14 +31,14 @@ class Newton : ComplexFractalImage
 
         roots = [
             c1,
-            Complex!double(-0.5, Math.sqrt(3.0) / 2.0),
-            Complex!double(-0.5, -Math.sqrt(3.0) / 2.0)
+            Complex!float(-0.5, Math.sqrt(3.0) / 2.0),
+            Complex!float(-0.5, -Math.sqrt(3.0) / 2.0)
         ];
     }
 
-    override RGBA calcColor(double x, double y)
+    override RGBA calcColor(float x, float y)
     {
-        Complex!double z = Complex!double(x, y);
+        Complex!float z = Complex!float(x, y);
 
         size_t i;
         for (i = 0; i <= iterations; i++)

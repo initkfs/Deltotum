@@ -50,7 +50,7 @@ class AnalogClockFace : BaseRadialGauge
     void delegate(Sprite2d) onConfiguredHandHolder;
     void delegate(Sprite2d) onCreatedHandHolder;
 
-    double handWidth = 0;
+    float handWidth = 0;
 
     protected
     {
@@ -60,7 +60,7 @@ class AnalogClockFace : BaseRadialGauge
         MeterHandFactory handFactory;
     }
 
-    this(double diameter = 0)
+    this(float diameter = 0)
     {
         super(diameter, 0, 60, 0, 360);
     }
@@ -80,7 +80,7 @@ class AnalogClockFace : BaseRadialGauge
         }
     }
 
-    protected Vec2d handCone(double size)
+    protected Vec2d handCone(float size)
     {
         const goldenRes = Math.goldenDiv(size);
         return Vec2d(goldenRes.shortest, goldenRes.longest);
@@ -174,7 +174,7 @@ class AnalogClockFace : BaseRadialGauge
             ctx.fill;
             return false;
         };
-        scale.labelTextProvider = (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick) {
+        scale.labelTextProvider = (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) {
             size_t hourNum = (tickIndex / 5 + 3) % 12;
             if (hourNum == 0)
             {
@@ -353,8 +353,8 @@ class AnalogClockFace : BaseRadialGauge
         // auto minDeg = 6.0 * min;
         // auto secDeg = 6.0 * sec;
 
-        enum double minSecInHour = 60.0;
-        enum double fullAngle = 360.0;
+        enum float minSecInHour = 60.0;
+        enum float fullAngle = 360.0;
 
         const secDeg = ((sec / minSecInHour) * fullAngle);
         const minDeg = ((min / minSecInHour) * fullAngle) + ((sec / minSecInHour) * 6.0);

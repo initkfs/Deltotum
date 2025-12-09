@@ -9,11 +9,11 @@ class CircleBox : Container
 {
     protected
     {
-        double _radius = 0;
-        double _startAngle = 0;
+        float _radius = 0;
+        float _startAngle = 0;
     }
 
-    this(double radius = 0, double startAngle = 0)
+    this(float radius = 0, float startAngle = 0)
     {
         this._radius = radius;
 
@@ -33,7 +33,7 @@ class CircleBox : Container
         isBorder = true;
     }
 
-    void radius(double v)
+    void radius(float v)
     {
 
         _radius = v;
@@ -46,7 +46,7 @@ class CircleBox : Container
         }
     }
 
-    void startAngle(double v)
+    void startAngle(float v)
     {
         _startAngle = v;
 
@@ -58,7 +58,7 @@ class CircleBox : Container
         }
     }
 
-    double diameter() => _radius * 2;
+    float diameter() => _radius * 2;
 
     override void loadTheme()
     {

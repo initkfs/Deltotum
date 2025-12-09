@@ -11,7 +11,7 @@ import api.math.geom2.vec2: Vec2d;
  */
 class VParallelogram : VShape
 {
-    double angleDeg;
+    float angleDeg;
     bool isInverted;
 
     protected
@@ -19,7 +19,7 @@ class VParallelogram : VShape
         Parallelogram2d shape;
     }
 
-    this(double width, double height, double angleDeg, bool isInverted, GraphicStyle style)
+    this(float width, float height, float angleDeg, bool isInverted, GraphicStyle style)
     {
         super(width, height, style);
         this.angleDeg = angleDeg;

@@ -9,9 +9,9 @@ class SpaceableLayout : ManagedLayout
 {
     enum DefaultSpacing = -1;
 
-    double spacing = 0;
+    float spacing = 0;
 
-    this(double spacing = DefaultSpacing) pure
+    this(float spacing = DefaultSpacing) pure
     {
         this.spacing = spacing;
     }

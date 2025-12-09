@@ -21,10 +21,10 @@ class RadialLoader : BaseLoader
         size_t segmentDistance = 40;
         size_t segmentDiameter = 15;
 
-        double progress = 0;
+        float progress = 0;
     }
 
-    double speed = 2;
+    float speed = 2;
 
     this(size_t segmentsCount = 6)
     {
@@ -102,7 +102,7 @@ class RadialLoader : BaseLoader
         const bounds = boundsRect;
         const center = bounds.center;
 
-        const double fullAngleDeg = 360;
+        const float fullAngleDeg = 360;
 
         auto angleDiff = fullAngleDeg / segmentsCount;
         float currAngle = progress;
@@ -135,7 +135,7 @@ class RadialLoader : BaseLoader
             //+1, shift to range [0, 2].
             //x/2, normalize to [0, 1].
             const minSpriteOpacity = 0.1;
-            double opacity = minSpriteOpacity + (1 - minSpriteOpacity) * (
+            float opacity = minSpriteOpacity + (1 - minSpriteOpacity) * (
                 Math.sinDeg(currAngle) + 1.0) / 2.0;
             s.opacity = opacity;
         }

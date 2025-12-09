@@ -219,7 +219,7 @@ class TimePicker : BaseDropDownSelector!(TimePickerDialog, TimeOfDay)
         {
             import api.dm.gui.controls.containers.vbox : VBox;
 
-            double spacing = 0;
+            float spacing = 0;
 
             auto hoursContainer = new VBox(spacing);
             timeContainer.addCreate(hoursContainer);

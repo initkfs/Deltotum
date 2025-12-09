@@ -8,7 +8,7 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-void superformula(scope bool delegate(Vec2d) onPointIsContinue, double a, double b, double m, double n1, double n2, double n3, double scale = 1.0, double step = 0.01)
+void superformula(scope bool delegate(Vec2d) onPointIsContinue, float a, float b, float m, float n1, float n2, float n3, float scale = 1.0, float step = 0.01)
 {
     assert(onPointIsContinue);
 
@@ -21,7 +21,7 @@ void superformula(scope bool delegate(Vec2d) onPointIsContinue, double a, double
     });
 }
 
-void superellipse(scope bool delegate(Vec2d) onPointIsContinue, double a, double b, double n, double scale = 1.0, double step = 0.1)
+void superellipse(scope bool delegate(Vec2d) onPointIsContinue, float a, float b, float n, float scale = 1.0, float step = 0.1)
 {
     assert(onPointIsContinue);
 
@@ -35,7 +35,7 @@ void superellipse(scope bool delegate(Vec2d) onPointIsContinue, double a, double
     });
 }
 
-void squircle(scope bool delegate(Vec2d) onPointIsContinue, double scale = 1.0, double step = 0.1)
+void squircle(scope bool delegate(Vec2d) onPointIsContinue, float scale = 1.0, float step = 0.1)
 {
     superellipse(onPointIsContinue, 1, 1, 4, scale, step);
 }

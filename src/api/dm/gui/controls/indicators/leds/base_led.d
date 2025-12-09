@@ -19,7 +19,7 @@ class BaseLed : Control
 {
     RGBA colorHue;
 
-    this(RGBA colorHue, double width = 0, double height = 0)
+    this(RGBA colorHue, float width = 0, float height = 0)
     {
         this.width = width;
         this.height = height;
@@ -37,10 +37,10 @@ class BaseLed : Control
         super.loadTheme;
     }
 
-    abstract Sprite2d newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize);
+    abstract Sprite2d newLayerShape(GraphicStyle style, float layerInnerPadding, float blurSize);
     abstract Sprite2d createLedLayer();
 
-    protected void setColorProcessing(T)(T shape, double blurSize)
+    protected void setColorProcessing(T)(T shape, float blurSize)
     {
         import std.conv : to;
 
@@ -90,9 +90,9 @@ class BaseLed : Control
         return color;
     }
 
-    double bottomLayerOpacity() => 1;
-    double middleLayerOpacity() => 0.8;
-    double topLayerOpacity() => 0.2;
+    float bottomLayerOpacity() => 1;
+    float middleLayerOpacity() => 0.8;
+    float topLayerOpacity() => 0.2;
 
     protected GraphicStyle layersStyle()
     {
@@ -122,7 +122,7 @@ class BaseLed : Control
         return style;
     }
 
-    protected Sprite2d createLayer(GraphicStyle style, double layerSize, double blurSize)
+    protected Sprite2d createLayer(GraphicStyle style, float layerSize, float blurSize)
     {
         auto shape = newLayerShape(style, layerSize, blurSize);
         if (!shape.isBuilt)

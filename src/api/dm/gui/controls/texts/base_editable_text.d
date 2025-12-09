@@ -596,7 +596,7 @@ class BaseEditableText : BaseMonoText
         const startRow = startCursorPos.rowIndexAbs;
         const endRow = endCursorPos.rowIndexAbs;
 
-        double shapeWidth = 0;
+        float shapeWidth = 0;
 
         if (startRow == endRow)
         {
@@ -691,11 +691,11 @@ class BaseEditableText : BaseMonoText
     //     return index;
     // }
 
-    protected CursorPos coordsToRowPos(double x, double y)
+    protected CursorPos coordsToRowPos(float x, float y)
     {
         const thisBounds = boundsRect;
-        double startX = thisBounds.x + padding.left;
-        double startY = thisBounds.y + padding.top;
+        float startX = thisBounds.x + padding.left;
+        float startY = thisBounds.y + padding.top;
 
         CursorPos result;
 
@@ -760,7 +760,7 @@ class BaseEditableText : BaseMonoText
         return CursorPos.init;
     }
 
-    bool findFromRowX(Glyph[] needRow, double x, size_t prevBreakLine, size_t rowIndexAbs, size_t ri, out CursorPos result)
+    bool findFromRowX(Glyph[] needRow, float x, size_t prevBreakLine, size_t rowIndexAbs, size_t ri, out CursorPos result)
     {
         if (needRow.length == 0)
         {
@@ -982,7 +982,7 @@ class BaseEditableText : BaseMonoText
         return allGlyphs[prevBreak + 1 .. currentBreak + 1];
     }
 
-    double rowWidth(size_t rowIndex)
+    float rowWidth(size_t rowIndex)
     {
         auto glyphs = row(rowIndex);
 
@@ -996,7 +996,7 @@ class BaseEditableText : BaseMonoText
             return glyphs[0].geometry.width;
         }
 
-        double dt = glyphs[$ - 1].pos.x - glyphs[0].pos.x;
+        float dt = glyphs[$ - 1].pos.x - glyphs[0].pos.x;
         return dt < 0 ? 0 : dt;
     }
 
@@ -1109,7 +1109,7 @@ class BaseEditableText : BaseMonoText
         return false;
     }
 
-    override bool scrollTo(double value0to1)
+    override bool scrollTo(float value0to1)
     {
         if (!super.scrollTo(value0to1))
         {

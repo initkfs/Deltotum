@@ -24,7 +24,7 @@ class LedIcon : BaseLed
 {
     string iconName;
 
-    this(string iconName, RGBA colorHue = RGBA.red, double width = 0, double height = 0)
+    this(string iconName, RGBA colorHue = RGBA.red, float width = 0, float height = 0)
     {
         super(colorHue, width, height);
         this.iconName = iconName;
@@ -50,7 +50,7 @@ class LedIcon : BaseLed
         }
     }
 
-    override protected Sprite2d newLayerShape(GraphicStyle style, double iconSize, double blurSize)
+    override protected Sprite2d newLayerShape(GraphicStyle style, float iconSize, float blurSize)
     {
         auto buffSize = iconSize.to!size_t;
         RGBA[][] buff = new RGBA[][](buffSize, buffSize);

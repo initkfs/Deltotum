@@ -12,8 +12,8 @@ abstract class BaseTimeChooser : Control
     void delegate(dstring) onStrValue;
     void delegate(int) onNumValue;
 
-    double thumbSize = 0;
-    double thumbOpacity = 0.8;
+    float thumbSize = 0;
+    float thumbOpacity = 0.8;
 
     Sprite2d thumb;
     bool isCreateThumb = true;

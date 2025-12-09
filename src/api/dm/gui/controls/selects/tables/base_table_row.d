@@ -32,7 +32,7 @@ class BaseTableRow(TItem, TCol:
     void delegate(Container) onConfiguredColumnContainer;
     void delegate(Container) onCreatedColumnContainer;
 
-    double dividerSize = 0;
+    float dividerSize = 0;
 
     Sprite2d bottomBorder;
     string bottomBorderId = "bottom_border";
@@ -50,7 +50,7 @@ class BaseTableRow(TItem, TCol:
         bool _empty;
     }
 
-    this(double dividerSize)
+    this(float dividerSize)
     {
         assert(dividerSize > 0);
         this.dividerSize = dividerSize;
@@ -194,7 +194,7 @@ class BaseTableRow(TItem, TCol:
                 return super.newBackground(width, height, angle, style);
             }
 
-            override Sprite2d createShape(double w, double h, double angle, GraphicStyle style)
+            override Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }
@@ -217,7 +217,7 @@ class BaseTableRow(TItem, TCol:
         return createColumn(width);
     }
 
-    bool createColumn(double colWidth)
+    bool createColumn(float colWidth)
     {
         assert(isCreated);
         auto col = new TCol(dividerSize);

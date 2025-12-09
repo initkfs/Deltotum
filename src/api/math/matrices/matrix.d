@@ -6,11 +6,11 @@ import api.math.geom2.vec2 : Vec2d;
 /**
  * Authors: initkfs
  */
-alias Matrix2x1 = DenseMatrix!(double, 2, 1);
-alias Matrix2x2 = DenseMatrix!(double, 2, 2);
-alias Matrix3x3 = DenseMatrix!(double, 3, 3);
+alias Matrix2x1 = DenseMatrix!(float, 2, 1);
+alias Matrix2x2 = DenseMatrix!(float, 2, 2);
+alias Matrix3x3 = DenseMatrix!(float, 3, 3);
 alias Matrix4x4f = DenseMatrix!(float, 4, 4);
-alias Matrix3x1 = DenseMatrix!(double, 3, 1);
+alias Matrix3x1 = DenseMatrix!(float, 3, 1);
 
 Vec2d toVec2d(ref Matrix2x1 m) => Vec2d(m[0][0], m[1][0]);
 Vec2d toVec2d(Matrix2x1 m) => Vec2d(m[0][0], m[1][0]);
@@ -20,9 +20,9 @@ void fromVec2d(ref Matrix2x1 m, Vec2d vec)
     m[1][0] = vec.y;
 }
 
-double[][] newInitMatrixD(size_t rowDim, size_t colDim) pure nothrow
+float[][] newInitMatrixD(size_t rowDim, size_t colDim) pure nothrow
 {
-    return newInitMatrix!double(rowDim, colDim, 0);
+    return newInitMatrix!float(rowDim, colDim, 0);
 }
 
 //TODO constraints
@@ -43,9 +43,9 @@ T[][] newInitMatrix(T, I)(size_t rowDim, size_t colDim, I initValue) pure nothro
     return result;
 }
 
-double[] newInitVectorD(size_t colDim) pure nothrow
+float[] newInitVectorD(size_t colDim) pure nothrow
 {
-    return newInitVector!double(colDim, 0);
+    return newInitVector!float(colDim, 0);
 }
 
 T[] newInitVector(T, I)(size_t colDim, I initValue) pure nothrow

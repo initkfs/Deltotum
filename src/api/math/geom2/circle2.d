@@ -7,21 +7,21 @@ import api.math.geom2.vec2 : Vec2d;
  */
 struct Circle2d
 {
-    double x = 0;
-    double y = 0;
-    double radius = 0;
+    float x = 0;
+    float y = 0;
+    float radius = 0;
 
-    this(double x, double y, double radius){
+    this(float x, float y, float radius){
         this.x = x;
         this.y = y;
         this.radius = radius;
     }
 
-    this(Vec2d center, double radius){
+    this(Vec2d center, float radius){
         this(center.x, center.y, radius);
     }
 
-    bool contains(double x1, double y1) const  nothrow pure @safe
+    bool contains(float x1, float y1) const  nothrow pure @safe
     {
         //(x-centerX)^2 + (y - centerY)^2 < radius^2, or <=
         immutable dx = x - x1;
@@ -66,7 +66,7 @@ struct Circle2d
         return distanceSqr < radiusAll * radiusAll;
     }
 
-    double circumference() const  nothrow pure @safe
+    float circumference() const  nothrow pure @safe
     {
         import math = api.dm.math;
 
@@ -75,7 +75,7 @@ struct Circle2d
 
     Vec2d center() => Vec2d(x, y);
 
-    double area() const  nothrow pure @safe
+    float area() const  nothrow pure @safe
     {
         import math = api.dm.math;
 

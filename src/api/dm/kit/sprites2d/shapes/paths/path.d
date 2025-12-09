@@ -12,7 +12,7 @@ class Path : Shape2d
     Vec2d[] points;
     bool isDrawPoints = false;
 
-    this(double canvasWidth, double canvasHeight, GraphicStyle style)
+    this(float canvasWidth, float canvasHeight, GraphicStyle style)
     {
         super(canvasWidth, canvasHeight, style);
         debug

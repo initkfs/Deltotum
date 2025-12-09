@@ -61,10 +61,10 @@ class RadialGauge : BaseRadialGauge
 
     protected
     {
-        double _value;
+        float _value;
     }
 
-    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 180, double minValue = 0, double maxValue = 1)
+    this(float diameter = 0, float minAngleDeg = 0, float maxAngleDeg = 180, float minValue = 0, float maxValue = 1)
     {
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
     }
@@ -225,7 +225,7 @@ class RadialGauge : BaseRadialGauge
         labelText(minValue);
     }
 
-    protected void handAngleDeg(double angleDeg)
+    protected void handAngleDeg(float angleDeg)
     {
         auto newAngle = (angleDeg + 90);
 
@@ -243,12 +243,12 @@ class RadialGauge : BaseRadialGauge
         handHolder.angle = newAngle;
     }
 
-    void labelText(double value)
+    void labelText(float value)
     {
         label.text = value.to!dstring;
     }
 
-    protected void handAngleDegAnim(double angleDeg)
+    protected void handAngleDegAnim(float angleDeg)
     {
         if (handTween.isRunning)
         {
@@ -263,7 +263,7 @@ class RadialGauge : BaseRadialGauge
         handTween.run;
     }
 
-    bool valueAngle(double angleDeg)
+    bool valueAngle(float angleDeg)
     {
         if (angleDeg < minAngleDeg || angleDeg > maxAngleDeg)
         {
@@ -278,9 +278,9 @@ class RadialGauge : BaseRadialGauge
         return true;
     }
 
-    void value(double v)
+    void value(float v)
     {
-        double value = Math.clamp(v, minValue, maxValue);
+        float value = Math.clamp(v, minValue, maxValue);
 
         auto range = Math.abs(maxValue - minValue);
         auto angleRange = Math.abs(minAngleDeg - maxAngleDeg);

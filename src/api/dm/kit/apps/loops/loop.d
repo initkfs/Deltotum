@@ -16,26 +16,26 @@ abstract class Loop
     bool isRunning;
     bool isAutoStart;
 
-    double msInSec = 1000;
-    double frameRate = 0;
+    float msInSec = 1000;
+    float frameRate = 0;
 
-    double frameTimeMs = 0;
-    double updateDelta = 0;
+    float frameTimeMs = 0;
+    float updateDelta = 0;
 
     size_t delegate() timestampMsProvider;
 
     void delegate(size_t) onLoopUpdateMs;
-    void delegate(double) onFreqLoopUpdateDelta;
+    void delegate(float) onFreqLoopUpdateDelta;
 
     void delegate() onDelay;
-    void delegate(double) onDelayTimeRestMs;
-    void delegate(double) onRender;
+    void delegate(float) onDelayTimeRestMs;
+    void delegate(float) onRender;
 
     void delegate() onInit;
     void delegate() onRun;
     void delegate() onExit;
 
-    this(double frameRate)
+    this(float frameRate)
     {
         this.frameRate = frameRate;
         assert(frameRate > 0);

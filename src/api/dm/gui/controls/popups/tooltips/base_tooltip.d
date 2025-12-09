@@ -12,7 +12,7 @@ class BaseTooltip : BaseTextPopup
 
     }
 
-    this(dstring text, string iconName, double graphicsGap)
+    this(dstring text, string iconName, float graphicsGap)
     {
         super(text, iconName, graphicsGap, isCreateLayout : true);
     }

@@ -13,7 +13,7 @@ class VLayout : SpaceableLayout
 {
     bool isInvertX;
 
-    this(double spacing = SpaceableLayout.DefaultSpacing) pure
+    this(float spacing = SpaceableLayout.DefaultSpacing) pure
     {
         super(spacing);
     }
@@ -21,7 +21,7 @@ class VLayout : SpaceableLayout
     override bool alignChildren(Sprite2d root)
     {
         auto bounds = root.boundsRect;
-        double nextY = 0;
+        float nextY = 0;
         if (isFillStartToEnd)
         {
             nextY = bounds.y + root.padding.top;
@@ -76,9 +76,9 @@ class VLayout : SpaceableLayout
         return true;
     }
 
-    override double calcChildrenWidth(Sprite2d root)
+    override float calcChildrenWidth(Sprite2d root)
     {
-        double calcChildrenWidth = 0;
+        float calcChildrenWidth = 0;
         foreach (child; childrenForLayout(root))
         {
             const chWidth = child.width + child.margin.width;
@@ -91,9 +91,9 @@ class VLayout : SpaceableLayout
         return calcChildrenWidth;
     }
 
-    override double calcChildrenHeight(Sprite2d root)
+    override float calcChildrenHeight(Sprite2d root)
     {
-        double calcChildrenHeight = 0;
+        float calcChildrenHeight = 0;
         size_t childCount;
         foreach (child; childrenForLayout(root))
         {
@@ -109,12 +109,12 @@ class VLayout : SpaceableLayout
         return calcChildrenHeight;
     }
 
-    override double freeWidth(Sprite2d root, Sprite2d child)
+    override float freeWidth(Sprite2d root, Sprite2d child)
     {
         return root.width - child.width - root.padding.width;
     }
 
-    override double freeHeight(Sprite2d root, Sprite2d child)
+    override float freeHeight(Sprite2d root, Sprite2d child)
     {
         return root.height - calcChildrenHeight(root) - root.padding.height;
     }

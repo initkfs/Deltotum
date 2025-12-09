@@ -40,7 +40,7 @@ abstract class Maze : Control
         Random rnd;
     }
 
-    this(double width = 100, double height = 100, size_t cellWidth = 10, size_t cellHeight = 10, uint seed = unpredictableSeed)
+    this(float width = 100, float height = 100, size_t cellWidth = 10, size_t cellHeight = 10, uint seed = unpredictableSeed)
     {
         assert(width > 0);
         assert(height > 0);

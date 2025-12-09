@@ -17,7 +17,7 @@ class Hyperlink : Labeled
     bool isOpenBrowser;
 
     Sprite2d underline;
-    double underlineHeight = 0;
+    float underlineHeight = 0;
 
     bool isCreateUnderline = true;
     Sprite2d delegate(Sprite2d) onNewUnderline;
@@ -30,7 +30,7 @@ class Hyperlink : Labeled
     void delegate(BaseTooltip) onConfiguredUrlTooltip;
     void delegate(BaseTooltip) onCreatedUrlTooltip;
 
-    this(dstring text = "Hyperlink", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring text = "Hyperlink", string iconName = null, float graphicsGap = 0, bool isCreateLayout = true)
     {
         super(text, iconName, graphicsGap, isCreateLayout);
         _labelText = text;

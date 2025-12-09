@@ -9,10 +9,10 @@ import api.math.pos2.alignment : Alignment;
  */
 class CircleLayout : ManagedLayout
 {
-    double radius = 0;
-    double startAngle = 0;
+    float radius = 0;
+    float startAngle = 0;
 
-    this(double radius = 0, double startAngle = 0) pure
+    this(float radius = 0, float startAngle = 0) pure
     {
         this.radius = radius;
         this.startAngle = startAngle;
@@ -40,15 +40,15 @@ class CircleLayout : ManagedLayout
             return false;
         }
 
-        const double fullAngle = 360.0;
+        const float fullAngle = 360.0;
 
-        const double angleDegStep = fullAngle / childCount;
+        const float angleDegStep = fullAngle / childCount;
 
         const rootBounds = root.boundsRect;
         const startX = rootBounds.center.x;
         const startY = rootBounds.center.y;
 
-        double nextDeg = isFillStartToEnd ? startAngle : (fullAngle - startAngle);
+        float nextDeg = isFillStartToEnd ? startAngle : (fullAngle - startAngle);
         foreach (child; children)
         {
             const childBounds = child.boundsRect;
@@ -71,10 +71,10 @@ class CircleLayout : ManagedLayout
     }
 
     //FIXME padding is not always calculated correctly, check on an odd number
-    override double calcChildrenWidth(Sprite2d root)
+    override float calcChildrenWidth(Sprite2d root)
     {
-        double minX = 0;
-        double maxX = 0;
+        float minX = 0;
+        float maxX = 0;
         foreach (child; childrenForLayout(root))
         {
             if (minX == 0 || child.x < minX)
@@ -96,12 +96,12 @@ class CircleLayout : ManagedLayout
         return 0;
     }
 
-    override double calcChildrenHeight(Sprite2d root)
+    override float calcChildrenHeight(Sprite2d root)
     {
         const rootBounds = root.boundsRect;
 
-        double minY = 0;
-        double maxY = 0;
+        float minY = 0;
+        float maxY = 0;
         foreach (child; childrenForLayout(root))
         {
             if (minY == 0 || child.y < minY)

@@ -17,7 +17,7 @@ abstract class BaseLabeledProgressBar : BaseProgressBar
 
     bool isPercentMode = true;
 
-    this(double minValue = 0, double maxValue = 1.0)
+    this(float minValue = 0, float maxValue = 1.0)
     {
         super(minValue, maxValue);
     }
@@ -50,7 +50,7 @@ abstract class BaseLabeledProgressBar : BaseProgressBar
         return new Text("0");
     }
 
-    override protected void setProgressData(double oldV, double newV)
+    override protected void setProgressData(float oldV, float newV)
     {
         if (label)
         {
@@ -58,7 +58,7 @@ abstract class BaseLabeledProgressBar : BaseProgressBar
         }
     }
 
-    protected void setLabelText(double oldV, double newV)
+    protected void setLabelText(float oldV, float newV)
     {
         assert(label);
 

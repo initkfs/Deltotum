@@ -11,12 +11,12 @@ import Math = api.math;
 struct StarPolygon2d
 {
     size_t spikeCount;
-    double outerRadius = 0;
-    double innerRadius = 0;
+    float outerRadius = 0;
+    float innerRadius = 0;
 
     Polygon2d shape;
 
-    this(size_t spikeCount, double innerRadius, double outerRadius)
+    this(size_t spikeCount, float innerRadius, float outerRadius)
     {
         assert(spikeCount > 0);
         assert(outerRadius > 0);

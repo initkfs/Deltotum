@@ -28,14 +28,14 @@ class BaseTableColumn(TItem) : Container
     Sprite2d leftBorder;
     string leftBorderId = "left_border";
 
-    double dividerSize = 0;
+    float dividerSize = 0;
 
     bool isCreateLeftBorder;
     Sprite2d delegate(Sprite2d) onNewLeftBorder;
     void delegate(Sprite2d) onConfiguredLeftBorder;
     void delegate(Sprite2d) onCreatedLeftBorder;
 
-    this(TItem initItem, double dividerSize)
+    this(TItem initItem, float dividerSize)
     {
         this(dividerSize);
         _item = initItem;
@@ -43,7 +43,7 @@ class BaseTableColumn(TItem) : Container
         id = "base_table_column";
     }
 
-    this(double dividerSize)
+    this(float dividerSize)
     {
         assert(dividerSize > 0);
         this.dividerSize = dividerSize;

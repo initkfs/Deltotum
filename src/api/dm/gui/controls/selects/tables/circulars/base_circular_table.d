@@ -34,7 +34,7 @@ abstract class BaseCircularTable(T, TCol:
         size_t visibleRowsLength;
     }
 
-    double maxRowHeight = 0;
+    float maxRowHeight = 0;
 
     VScroll vScroll;
 
@@ -93,7 +93,7 @@ abstract class BaseCircularTable(T, TCol:
 
         contentContainerOrThis.addCreate(vScroll);
 
-        double lastScrollValue = vScroll.value;
+        float lastScrollValue = vScroll.value;
 
         vScroll.onValue ~= (v) {
             auto dt = v - lastScrollValue;
@@ -232,7 +232,7 @@ abstract class BaseCircularTable(T, TCol:
         T rowItem(size_t rowIndex, size_t colIndex);
     }
 
-    protected void moveVisibleRowsY(double dy)
+    protected void moveVisibleRowsY(float dy)
     {
         foreach (vrow; visibleRows)
         {
@@ -319,7 +319,7 @@ abstract class BaseCircularTable(T, TCol:
         }
     }
 
-    override protected void resizeColumn(size_t index, double newWidth)
+    override protected void resizeColumn(size_t index, float newWidth)
     {
         foreach (row; visibleRows)
         {

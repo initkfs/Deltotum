@@ -63,8 +63,8 @@ nothrow:
     ComResult setBlendModeBlend();
     ComResult setBlendModeNone();
 
-    ComResult getOpacity(out double value);
-    ComResult setOpacity(double opacity);
+    ComResult getOpacity(out float value);
+    ComResult setOpacity(float opacity);
 
     ComResult getScaleMode(out ComTextureScaleMode);
     ComResult setScaleMode(ComTextureScaleMode);
@@ -90,15 +90,15 @@ nothrow:
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
     ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
 
-    bool draw(ComTexture other, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    bool draw(ComTexture other, Rect2d textureBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
             .none);
-    bool draw(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    bool draw(Rect2d textureBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
             .none);
 
     ComResult copyToNew(out ComTexture);
-    ComResult copyTo(ComTexture toTexture, Rect2d srcRect, Rect2d destRect, double angle = 0, Flip flip = Flip
+    ComResult copyTo(ComTexture toTexture, Rect2d srcRect, Rect2d destRect, float angle = 0, Flip flip = Flip
             .none);
-    ComResult copyFrom(ComTexture other, Rect2d srcRect, Rect2d dstRect, double angle = 0, Flip flip = Flip
+    ComResult copyFrom(ComTexture other, Rect2d srcRect, Rect2d dstRect, float angle = 0, Flip flip = Flip
             .none);
 
     ComResult nativePtr(out ComNativePtr ptr);

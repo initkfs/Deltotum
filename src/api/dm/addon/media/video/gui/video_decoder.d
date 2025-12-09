@@ -27,7 +27,7 @@ struct UVFrame
     ubyte[] uPlane;
     ubyte[] vPlane;
 
-    double ptsSec = 0;
+    float ptsSec = 0;
 
     this(AVFrame* frame)
     {
@@ -117,7 +117,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
     AVFilter* colorbalance;
     AVFilterContext* colorbalanceCtx;
 
-    void setColor(double r, double g, double b){
+    void setColor(float r, float g, float b){
         assert(colorbalanceCtx, "Color balance is null");
         const isSet = av_opt_set_double(colorbalanceCtx, "rm", r, AV_OPT_SEARCH_CHILDREN);
         assert(isSet >= 0, errorText(isSet));
@@ -491,7 +491,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
                 UVFrame uvFrame = UVFrame(filterFrame);
 
-                double ptsSec = 0;
+                float ptsSec = 0;
                 enum ulong AV_NOPTS_VALUE = 0x8000000000000000;
                 //TODO precalculate
                 if (frame.pts == AV_NOPTS_VALUE)

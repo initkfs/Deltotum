@@ -23,7 +23,7 @@ class VPointsShape : VShape
 
     bool isFlipY;
 
-    this(Vec2d[] points, double width, double height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
+    this(Vec2d[] points, float width, float height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
 
@@ -78,7 +78,7 @@ class VPointsShape : VShape
         assert(!points.empty);
         auto ctx = cairoContext.getObject;
 
-        double startX = points.front.x, startY = points.front.y;
+        float startX = points.front.x, startY = points.front.y;
         cairo_move_to(ctx, startX, startY);
 
         import std.range : enumerate;

@@ -10,7 +10,7 @@ import api.math.geom2.rect2 : Rect2d;
  */
 abstract class RgbaTexture : Texture2d
 {
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         super();
         this.width = width;

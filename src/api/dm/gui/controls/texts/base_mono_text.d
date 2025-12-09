@@ -25,9 +25,9 @@ import std.conv : to;
  */
 class BaseMonoText : Control
 {
-    double spaceWidth = 5;
-    double rowHeight = 0;
-    double maxRowWidth = 0;
+    float spaceWidth = 5;
+    float rowHeight = 0;
+    float maxRowWidth = 0;
 
     BitmapFont fontTexture;
 
@@ -49,7 +49,7 @@ class BaseMonoText : Control
     {
         BaseTextBuffer!Glyph _textBuffer;
 
-        double scrollPosition = 0;
+        float scrollPosition = 0;
 
         dstring tempText;
     }
@@ -156,7 +156,7 @@ class BaseMonoText : Control
     }
 
     Vec2d viewportRowIndex() => viewportRowIndex(scrollPosition);
-    Vec2d viewportRowIndex(double scrollPosition)
+    Vec2d viewportRowIndex(float scrollPosition)
     {
         if (textLayout.lineBreaks.length == 0)
         {
@@ -205,7 +205,7 @@ class BaseMonoText : Control
     Glyph[] viewportRows(out size_t firstRowIndex) => viewportRows(
         firstRowIndex, scrollPosition);
 
-    Glyph[] viewportRows(out size_t firstRowIndex, double scrollPosition)
+    Glyph[] viewportRows(out size_t firstRowIndex, float scrollPosition)
     {
         //TODO first line without \n
         if (textLayout.lineBreaks.length == 0)
@@ -256,7 +256,7 @@ class BaseMonoText : Control
             return 0;
         }
 
-        double heightDt = height - padding.height;
+        float heightDt = height - padding.height;
         if (heightDt <= 0)
         {
             heightDt = height;
@@ -318,15 +318,15 @@ class BaseMonoText : Control
 
         rowHeight = 0;
 
-        const double startRowTextX = 0;
-        const double endRowTextX = maxWidth - padding.width;
-        const double startRowTextY = 0;
+        const float startRowTextX = 0;
+        const float endRowTextX = maxWidth - padding.width;
+        const float startRowTextY = 0;
 
-        double glyphPosX = startRowTextX;
-        double glyphPosY = startRowTextY;
+        float glyphPosX = startRowTextX;
+        float glyphPosY = startRowTextY;
 
         maxRowWidth = 0;
-        double lastRowWidth = 0;
+        float lastRowWidth = 0;
 
         size_t lastIndex;
         foreach (ref i, ref item; _textBuffer.buffer)
@@ -491,8 +491,8 @@ class BaseMonoText : Control
             return;
         }
 
-        const double startRowTextY = 0;
-        double glyphPosY = startRowTextY;
+        const float startRowTextY = 0;
+        float glyphPosY = startRowTextY;
 
         import std.range : assumeSorted;
 
@@ -540,11 +540,11 @@ class BaseMonoText : Control
         });
     }
 
-    double startGlyphX() => boundsRect.x + padding.left;
-    double startGlyphY() => boundsRect.y + padding.top;
+    float startGlyphX() => boundsRect.x + padding.left;
+    float startGlyphY() => boundsRect.y + padding.top;
     Vec2d startGlyphPos() => Vec2d(startGlyphX, startGlyphY);
 
-    override void update(double delta)
+    override void update(float delta)
     {
         super.update(delta);
 
@@ -575,7 +575,7 @@ class BaseMonoText : Control
         }
     }
 
-    override bool canChangeWidth(double value)
+    override bool canChangeWidth(float value)
     {
         if (maxRowWidth > 0 && value < (maxRowWidth + padding.width))
         {
@@ -584,14 +584,14 @@ class BaseMonoText : Control
         return super.canChangeWidth(value);
     }
 
-    double calcTextWidth(const(dchar)[] str)
+    float calcTextWidth(const(dchar)[] str)
     {
         return calcTextWidth(str, fontSize);
     }
 
-    double calcTextWidth(const(dchar)[] str, FontSize fontSize)
+    float calcTextWidth(const(dchar)[] str, FontSize fontSize)
     {
-        double sum = 0;
+        float sum = 0;
         foreach (ref grapheme; str)
         {
             foreach (glyph; asset.fontBitmap(fontSize).glyphs)
@@ -687,7 +687,7 @@ class BaseMonoText : Control
         updateRows(isForce : true);
     }
 
-    bool scrollTo(double value0to1)
+    bool scrollTo(float value0to1)
     {
         import Math = api.math;
 

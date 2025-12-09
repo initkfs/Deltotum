@@ -42,8 +42,8 @@ class Window : GraphicComponent
 
         bool isClosing;
 
-        double lastChangedWidth = 0;
-        double lastChangedHeight = 0;
+        float lastChangedWidth = 0;
+        float lastChangedHeight = 0;
 
         size_t lastShowingTick = 0;
     }
@@ -56,12 +56,12 @@ class Window : GraphicComponent
     SdlGPUDevice gpuDevice;
 
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
-    void delegate(double, double, double, double)[] onResizeOldNewWidthHeight;
+    void delegate(float, float, float, float)[] onResizeOldNewWidthHeight;
 
-    void delegate(double)[] showingTasks;
+    void delegate(float)[] showingTasks;
     size_t showingTaskDelayTicks = 1;
 
-    void delegate(double)[] drawingSceneTasks;
+    void delegate(float)[] drawingSceneTasks;
 
     //Some delegates can be called by the event manager
     void delegate()[] onCreate;
@@ -73,7 +73,7 @@ class Window : GraphicComponent
     void delegate()[] onBeforeDestroy;
     void delegate()[] onAfterDestroy;
 
-    double frameRate = 0;
+    float frameRate = 0;
 
     bool isDestroyScenes = true;
     bool isDestroyRenderer = true;
@@ -308,7 +308,7 @@ class Window : GraphicComponent
         return value;
     }
 
-    bool draw(double alpha)
+    bool draw(float alpha)
     {
         if (!_currentScene)
         {
@@ -594,7 +594,7 @@ class Window : GraphicComponent
         return resizable;
     }
 
-    bool resize(double newWidth, double newHeight)
+    bool resize(float newWidth, float newHeight)
     {
         if (const err = comWindow.setSize(cast(int) newWidth, cast(int) newHeight))
         {
@@ -606,7 +606,7 @@ class Window : GraphicComponent
         return true;
     }
 
-    void confirmResize(double newWidth, double newHeight)
+    void confirmResize(float newWidth, float newHeight)
     {
         if (onResizeOldNewWidthHeight.length > 0)
         {
@@ -618,8 +618,8 @@ class Window : GraphicComponent
 
         import std.math.operations : isClose;
 
-        double factorWidth = isClose(lastChangedWidth, newWidth) ? 1 : newWidth / lastChangedWidth;
-        double factorHeight = isClose(lastChangedHeight, newHeight) ? 1 : newHeight / lastChangedHeight;
+        float factorWidth = isClose(lastChangedWidth, newWidth) ? 1 : newWidth / lastChangedWidth;
+        float factorHeight = isClose(lastChangedHeight, newHeight) ? 1 : newHeight / lastChangedHeight;
 
         lastChangedWidth = newWidth;
         lastChangedHeight = newHeight;
@@ -653,10 +653,10 @@ class Window : GraphicComponent
         return bounds;
     }
 
-    double halfWidth() => width / 2;
-    double halfHeight() => height / 2;
+    float halfWidth() => width / 2;
+    float halfHeight() => height / 2;
 
-    double frameCount(double delayMsec)
+    float frameCount(float delayMsec)
     {
         import Math = api.math;
 
@@ -668,7 +668,7 @@ class Window : GraphicComponent
         return Math.round(delayMsec / (1000 / frameRate));
     }
 
-    double width()
+    float width()
     {
         int width;
         if (const err = comWindow.getWidth(width))
@@ -678,7 +678,7 @@ class Window : GraphicComponent
         return width;
     }
 
-    double height()
+    float height()
     {
         int height;
         if (const err = comWindow.getHeight(height))
@@ -716,7 +716,7 @@ class Window : GraphicComponent
         return pos(newPos.x, newPos.y);
     }
 
-    bool pos(double x, double y)
+    bool pos(float x, float y)
     {
         if (const err = comWindow.setPos(cast(int) x, cast(int) y))
         {
@@ -726,8 +726,8 @@ class Window : GraphicComponent
         return true;
     }
 
-    double x() => pos.x;
-    double y() => pos.y;
+    float x() => pos.x;
+    float y() => pos.y;
 
     dstring title()
     {
@@ -769,7 +769,7 @@ class Window : GraphicComponent
         return id;
     }
 
-    void update(double delta)
+    void update(float delta)
     {
         if (_currentScene)
         {
@@ -814,8 +814,8 @@ class Window : GraphicComponent
     {
         const winSize = size;
 
-        double winWidth = winSize.x;
-        double winHeight = winSize.y;
+        float winWidth = winSize.x;
+        float winHeight = winSize.y;
 
         auto renderBounds = graphic.renderBounds;
         if (renderBounds.width == 0 || renderBounds.height == 0)
@@ -823,8 +823,8 @@ class Window : GraphicComponent
             return Vec2d.init;
         }
 
-        double hRatio = renderBounds.width / winWidth;
-        double vRatio = renderBounds.height / winHeight;
+        float hRatio = renderBounds.width / winWidth;
+        float vRatio = renderBounds.height / winHeight;
 
         return Vec2d(hRatio, vRatio);
     }

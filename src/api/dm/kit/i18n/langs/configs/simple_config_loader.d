@@ -104,7 +104,7 @@ class SimpleConfigLoader : ConfigLoader
                 {
                     if (!messageValue.endsWith(quoteSymbol))
                     {
-                        throw new Exception("Message without double quotes: " ~ message);
+                        throw new Exception("Message without float quotes: " ~ message);
                     }
                     messageValue = messageValue.strip(quoteSymbol);
                 }

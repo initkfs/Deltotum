@@ -20,7 +20,7 @@ class TextureMagnifier : BaseMagnifier
         Texture2d _original;
     }
 
-    override void pointerMove(double pRelX, double pRelY, ref PointerEvent e)
+    override void pointerMove(float pRelX, float pRelY, ref PointerEvent e)
     {
         assert(_original);
 
@@ -40,7 +40,7 @@ class TextureMagnifier : BaseMagnifier
         _original.drawTexture(textureBounds, destBounds);
     }
 
-    override Texture2d newMagnifier(double w, double h)
+    override Texture2d newMagnifier(float w, float h)
     {
         auto t = new Texture2d(w, h);
         build(t);
@@ -48,7 +48,7 @@ class TextureMagnifier : BaseMagnifier
         return t;
     }
 
-    override Texture2d newThumbnail(double w, double h)
+    override Texture2d newThumbnail(float w, float h)
     {
         auto t = new Texture2d(w, h);
         build(t);

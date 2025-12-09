@@ -32,14 +32,14 @@ import Math = api.math;
      */
 class FMSynthesizer(T) : SoundSynthesizer!T
 {
-    double fm = 0;
-    double index = 0;
+    float fm = 0;
+    float index = 0;
     bool isFcMulFm;
 
-    this(double sampleRateHz)
+    this(float sampleRateHz)
     {
         super(sampleRateHz);
-        sampleProvider = (double time, double freq, double phase) {
+        sampleProvider = (float time, float freq, float phase) {
 
             auto targetFm = fm;
             if (isFcMulFm)
@@ -51,7 +51,7 @@ class FMSynthesizer(T) : SoundSynthesizer!T
         };
     }
 
-    void sequence(FMdata[] notes, double amplitude0to1, T[]delegate(double) bufferOnTimeProvider)
+    void sequence(FMdata[] notes, float amplitude0to1, T[]delegate(float) bufferOnTimeProvider)
     {
         sequence(notes, amplitude0to1, (scopeBuff, time) {
             T[] outBuff = bufferOnTimeProvider(time);
@@ -66,11 +66,11 @@ class FMSynthesizer(T) : SoundSynthesizer!T
         });
     }
 
-    void sequence(FMdata[] notes, double amplitude0to1, scope void delegate(T[], double) onScopeBufferTime)
+    void sequence(FMdata[] notes, float amplitude0to1, scope void delegate(T[], float) onScopeBufferTime)
     {
         assert(notes.length > 0);
 
-        double fullTimeMs = 0;
+        float fullTimeMs = 0;
         foreach (n; notes)
         {
             fullTimeMs += n.durationMs;

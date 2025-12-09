@@ -32,9 +32,9 @@ class BaseMagnifier : Control
     void delegate(Texture2d) onConfiguredThumbnail;
     void delegate(Texture2d) onCreatedThumbnail;
 
-    double scale = 1;
-    double defaultWidth = 100;
-    double defaultHeight = 100;
+    float scale = 1;
+    float defaultWidth = 100;
+    float defaultHeight = 100;
 
     this()
     {
@@ -111,7 +111,7 @@ class BaseMagnifier : Control
 
     bool isMagnVisible() => magnifierContainer && magnifierContainer.isVisible;
 
-    void pointerMove(double pRelX, double pRelY, ref PointerEvent e)
+    void pointerMove(float pRelX, float pRelY, ref PointerEvent e)
     {
 
     }
@@ -182,12 +182,12 @@ class BaseMagnifier : Control
         return new CenterBox;
     }
 
-    Texture2d newMagnifier(double w, double h)
+    Texture2d newMagnifier(float w, float h)
     {
         return new Texture2d(w, h);
     }
 
-    Texture2d newThumbnail(double w, double h)
+    Texture2d newThumbnail(float w, float h)
     {
         return new Texture2d(w, h);
     }

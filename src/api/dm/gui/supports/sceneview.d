@@ -275,19 +275,19 @@ class SceneView : VBox
         h1.enablePadding;
         wInfo = new TextField("0");
         wInfo.onEnter = (ref e) {
-            onObjectDebug((object) { object.width = wInfo.text.to!double; });
+            onObjectDebug((object) { object.width = wInfo.text.to!float; });
         };
         wInfo.width = textWidth;
 
         hInfo = new TextField("0");
         hInfo.onEnter = (ref e) {
-            onObjectDebug((object) { object.height = hInfo.text.to!double; });
+            onObjectDebug((object) { object.height = hInfo.text.to!float; });
         };
         hInfo.width = textWidth;
 
         rInfo = new TextField("0");
         rInfo.onEnter = (ref e) {
-            onObjectDebug((object) { object.angle = rInfo.text.to!double; });
+            onObjectDebug((object) { object.angle = rInfo.text.to!float; });
         };
         rInfo.width = textWidth;
 
@@ -305,7 +305,7 @@ class SceneView : VBox
             {
                 import std.conv : to;
 
-                objectOnDebug.x = xInfo.text.to!double;
+                objectOnDebug.x = xInfo.text.to!float;
             }
         };
         xInfo.width = textWidth;
@@ -315,7 +315,7 @@ class SceneView : VBox
             {
                 import std.conv : to;
 
-                objectOnDebug.y = yInfo.text.to!double;
+                objectOnDebug.y = yInfo.text.to!float;
             }
         };
         yInfo.width = textWidth;
@@ -343,7 +343,7 @@ class SceneView : VBox
         paddingTop.onEnter = (ref e) {
             if (objectOnDebug)
             {
-                objectOnDebug.padding.top = paddingTop.textTo!double;
+                objectOnDebug.padding.top = paddingTop.textTo!float;
             }
         };
         paddingRight = new TextField("0");
@@ -351,7 +351,7 @@ class SceneView : VBox
         paddingRight.onEnter = (ref e) {
             if (objectOnDebug)
             {
-                objectOnDebug.padding.right = paddingRight.textTo!double;
+                objectOnDebug.padding.right = paddingRight.textTo!float;
             }
         };
         paddingBottom = new TextField("0");
@@ -359,7 +359,7 @@ class SceneView : VBox
         paddingBottom.onEnter = (ref e) {
             if (objectOnDebug)
             {
-                objectOnDebug.padding.bottom = paddingBottom.textTo!double;
+                objectOnDebug.padding.bottom = paddingBottom.textTo!float;
             }
         };
         paddingLeft = new TextField("0");
@@ -367,7 +367,7 @@ class SceneView : VBox
         paddingLeft.onEnter = (ref e) {
             if (objectOnDebug)
             {
-                objectOnDebug.padding.left = paddingLeft.textTo!double;
+                objectOnDebug.padding.left = paddingLeft.textTo!float;
             }
         };
 
@@ -637,7 +637,7 @@ class SceneView : VBox
         // }
     }
 
-    override void update(double delta)
+    override void update(float delta)
     {
         super.update(delta);
     }

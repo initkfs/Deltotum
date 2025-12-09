@@ -24,15 +24,15 @@ class LinearChart : XYChart
 {
     protected
     {
-        double[] xValues;
-        double[] yValues;
+        float[] xValues;
+        float[] yValues;
     }
 
     RGBA colorChartLine;
 
     bool isThickLine;
 
-    this(double chartAreaWidth = 100, double chartAreaHeight = 100)
+    this(float chartAreaWidth = 100, float chartAreaHeight = 100)
     {
         super(chartAreaWidth, chartAreaHeight);
     }
@@ -47,7 +47,7 @@ class LinearChart : XYChart
         }
     }
 
-    void data(double[] newX, double[] newY)
+    void data(float[] newX, float[] newY)
     {
         if (newX.length != newY.length)
         {
@@ -63,7 +63,7 @@ class LinearChart : XYChart
             import std.algorithm.searching : minElement, maxElement;
             import std.math.traits : isFinite;
 
-            auto valueFilter = (double[] arr) { return arr.filter!isFinite; };
+            auto valueFilter = (float[] arr) { return arr.filter!isFinite; };
 
             minX = valueFilter(newX).minElement;
             maxX = valueFilter(newX).maxElement;

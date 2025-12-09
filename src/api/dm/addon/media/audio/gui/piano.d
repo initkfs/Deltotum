@@ -19,7 +19,7 @@ class PianoKey : Control
 {
     size_t index;
     string name;
-    double freqHz = 0;
+    float freqHz = 0;
 
     bool isBlack;
 
@@ -175,7 +175,7 @@ class Piano : Control
             }
 
             pkey.isBlack = pkey.name.length == 3;
-            pkey.freqHz = cast(double) noteCode;
+            pkey.freqHz = cast(float) noteCode;
 
             pkey.isLayoutManaged = false;
             pkey.width = pianoKeyWidth;
@@ -279,7 +279,7 @@ class Piano : Control
         }
     }
 
-    protected bool isForBlackKey(double x, double y)
+    protected bool isForBlackKey(float x, float y)
     {
         foreach (PianoKey key; pianoKeys)
         {
@@ -304,8 +304,8 @@ class Piano : Control
             return;
         }
 
-        double nextX = keyContainer.x;
-        double nextY = keyContainer.y;
+        float nextX = keyContainer.x;
+        float nextY = keyContainer.y;
         foreach (i, PianoKey key; pianoKeys)
         {
             if (key.isBlack)

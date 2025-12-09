@@ -19,7 +19,7 @@ class ImageFactory : GraphicComponent
         return newImages;
     }
 
-    Image image(string path, double requestWidth = -1, double requestHeight = -1)
+    Image image(string path, float requestWidth = -1, float requestHeight = -1)
     {
         import std.conv : to;
 

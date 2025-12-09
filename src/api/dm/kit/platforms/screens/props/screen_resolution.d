@@ -9,12 +9,12 @@ import std.math.traits: isFinite;
  */
 struct ScreenResolution
 {
-    double width = 0;
-    double height = 0;
+    float width = 0;
+    float height = 0;
 
     ScreenRatio ratio;
 
-    static ScreenResolution fromWidth(double newWidth, ScreenRatio ratio = ratio16on9)
+    static ScreenResolution fromWidth(float newWidth, ScreenRatio ratio = ratio16on9)
     {
         assert(isFinite(newWidth));
         assert(newWidth > 0);
@@ -23,7 +23,7 @@ struct ScreenResolution
         return ScreenResolution(newWidth, newHeight, ratio);
     }
 
-    static ScreenResolution fromHeight(double newHeight, ScreenRatio ratio = ratio16on9)
+    static ScreenResolution fromHeight(float newHeight, ScreenRatio ratio = ratio16on9)
     {
         assert(isFinite(newHeight));
         assert(newHeight > 0);

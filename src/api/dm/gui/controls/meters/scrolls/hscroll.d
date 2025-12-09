@@ -10,7 +10,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
  */
 class HScroll : BaseRegularMonoScroll
 {
-    this(double minValue = 0, double maxValue = 1.0)
+    this(float minValue = 0, float maxValue = 1.0)
     {
         super(minValue, maxValue);
 
@@ -31,12 +31,12 @@ class HScroll : BaseRegularMonoScroll
         }
     }
 
-    override Sprite2d newThumbShape(double w, double h, double angle, GraphicStyle style)
+    override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
     {
         return theme.shape(w, h, angle, style);
     }
 
-    override bool delegate(double, double) newOnThumbDragXY()
+    override bool delegate(float, float) newOnThumbDragXY()
     {
         return (x, y) {
 
@@ -82,7 +82,7 @@ class HScroll : BaseRegularMonoScroll
         };
     }
 
-    protected bool trySetThumbX(double x, bool isAllowClamp = true)
+    protected bool trySetThumbX(float x, bool isAllowClamp = true)
     {
         auto bounds = this.boundsRect;
         const minX = bounds.x;
@@ -110,7 +110,7 @@ class HScroll : BaseRegularMonoScroll
         return true;
     }
 
-    override protected double wheelValue(double wheelDt)
+    override protected float wheelValue(float wheelDt)
     {
         auto newValue = _value;
         if (wheelDt > 0)
@@ -126,7 +126,7 @@ class HScroll : BaseRegularMonoScroll
 
     alias value = BaseRegularMonoScroll.value;
 
-    override bool value(double v, bool isTriggerListeners = true)
+    override bool value(float v, bool isTriggerListeners = true)
     {
         if (!super.value(v, isTriggerListeners) || !thumb)
         {

@@ -15,7 +15,7 @@ import Math = api.math;
 struct BarData
 {
     dstring label;
-    double valueY = 0;
+    float valueY = 0;
     RGBA color = RGBA.darkorchid;
 }
 
@@ -40,7 +40,7 @@ class BarChart : XYChart
         size_t datasetItems;
     }
 
-    this(double chartAreaWidth = 0, double chartAreaHeight = 0)
+    this(float chartAreaWidth = 0, float chartAreaHeight = 0)
     {
         super(chartAreaWidth, chartAreaHeight);
 
@@ -65,7 +65,7 @@ class BarChart : XYChart
         auto startPos = toChartAreaPos(0, 0);
 
         auto dataBlockW = (chartArea.width - datasetSpacing * datasets.length) / datasetItems;
-        double nextX = startPos.x + datasetSpacing;
+        float nextX = startPos.x + datasetSpacing;
 
         drawGrid;
 
@@ -104,8 +104,8 @@ class BarChart : XYChart
         maxX = 0;
         datasetItems = 0;
 
-        double newMaxY = 0;
-        double newMinY = 0;
+        float newMaxY = 0;
+        float newMinY = 0;
 
         foreach (dataset; datasets)
         {

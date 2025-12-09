@@ -17,7 +17,7 @@ class BaseMonoColorBar : BaseColorBar
     void delegate(Sprite2d) onConfiguredBar;
     void delegate(Sprite2d) onCreatedBar;
 
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         this._width = width;
         this._height = height;

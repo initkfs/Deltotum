@@ -18,8 +18,8 @@ class AudioPlayerPanel : Control
 
     void delegate() onPlayPause;
     void delegate() onStop;
-    void delegate(double value) onVolume01;
-    void delegate(double value) onSetPos;
+    void delegate(float value) onVolume01;
+    void delegate(float value) onSetPos;
 
     Text posLabel;
     BaseRegularMonoScroll positionTracker;
@@ -93,13 +93,13 @@ class AudioPlayerPanel : Control
         addCreate(volumeField);
     }
 
-    void setPos(double v01)
+    void setPos(float v01)
     {
         positionTracker.value(v01, isTriggerListeners:
             false);
     }
 
-    void setVolume(double v01)
+    void setVolume(float v01)
     {
         assert(volumeField);
         volumeField.value = v01;
@@ -117,19 +117,19 @@ class AudioPlayerPanel : Control
         playPauseButton.label.text = "▶";
     }
 
-    void setPosTimeText(double ms)
+    void setPosTimeText(float ms)
     {
         assert(posLabel);
         posLabel.text = formatTime(ms);
     }
 
-    void setFullTimeText(double ms)
+    void setFullTimeText(float ms)
     {
         assert(fullTimeLabel);
         fullTimeLabel.text = formatTime(ms);
     }
 
-    string formatTime(double ms)
+    string formatTime(float ms)
     {
         const int fullSecs = cast(int)(ms / 1000);
         const min = fullSecs / 60;

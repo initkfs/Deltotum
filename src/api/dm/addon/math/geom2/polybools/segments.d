@@ -48,18 +48,18 @@ class Segment
         }
     }
 
-    double[] start;
-    double[] end;
+    float[] start;
+    float[] end;
 
     SegmentFill myFill;
     SegmentFill otherFill;
 
-    this(double[] start, double[] end)
+    this(float[] start, float[] end)
     {
         this(start, end, new SegmentFill());
     }
 
-    this(double[] start, double[] end, SegmentFill myFill)
+    this(float[] start, float[] end, SegmentFill myFill)
     {
         this.start = start;
         this.end = end;
@@ -102,16 +102,16 @@ class SegmentChainer
         }
     }
 
-    static double[][][] chain(Segment[] segments, Epsilon eps)
+    static float[][][] chain(Segment[] segments, Epsilon eps)
     {
-        double[][][] chains;
-        double[][][] regions;
+        float[][][] chains;
+        float[][][] regions;
 
         foreach (ii, Segment seg; segments)
         {
 
-            double[] pt1 = seg.start;
-            double[] pt2 = seg.end;
+            float[] pt1 = seg.start;
+            float[] pt2 = seg.end;
             if (eps.pointsSame(pt1, pt2))
             {
                 writeln(
@@ -142,9 +142,9 @@ class SegmentChainer
 
             for (int i = 0; i < chains.length; i++)
             {
-                double[][] chain = chains[i];
-                double[] head = chain[0];
-                double[] tail = chain[$ - 1];
+                float[][] chain = chains[i];
+                float[] head = chain[0];
+                float[] tail = chain[$ - 1];
 
                 if (eps.pointsSame(head, pt1))
                 {
@@ -170,7 +170,7 @@ class SegmentChainer
 
             if (next_match[0] == first_match)
             {
-                double[][] newChain;
+                float[][] newChain;
                 newChain ~= pt1;
                 newChain ~= pt2;
 
@@ -188,14 +188,14 @@ class SegmentChainer
                 // chain into a loop
 
                 int index = first_match.index;
-                double[] pt = first_match.matches_pt1 ? pt2 : pt1; // if we matched pt1, then we add pt2, etc
+                float[] pt = first_match.matches_pt1 ? pt2 : pt1; // if we matched pt1, then we add pt2, etc
                 bool addToHead = first_match.matches_head; // if we matched at head, then add to the head
 
-                double[][] chain = chains[index];
-                double[] grow = addToHead ? chain[0] : chain[$ - 1];
-                double[] grow2 = addToHead ? chain[1] : chain[$ - 2];
-                double[] oppo = addToHead ? chain[$ - 1] : chain[0];
-                double[] oppo2 = addToHead ? chain[$ - 2] : chain[1];
+                float[][] chain = chains[index];
+                float[] grow = addToHead ? chain[0] : chain[$ - 1];
+                float[] grow2 = addToHead ? chain[1] : chain[$ - 2];
+                float[] oppo = addToHead ? chain[$ - 1] : chain[0];
+                float[] oppo2 = addToHead ? chain[$ - 2] : chain[1];
 
                 if (eps.pointsCollinear(grow2, grow, pt))
                 {
@@ -259,12 +259,12 @@ class SegmentChainer
             auto reverseChain = (int index) => (chains[index]).reverse;
             auto appendChain = (int index1, int index2) {
                 // index1 gets index2 appended to it, and index2 is removed
-                double[][] chain1 = chains[index1];
-                double[][] chain2 = chains[index2];
-                double[] tail = chain1[$ - 1];
-                double[] tail2 = chain1[$ - 2];
-                double[] head = chain2[0];
-                double[] head2 = chain2[1];
+                float[][] chain1 = chains[index1];
+                float[][] chain2 = chains[index2];
+                float[] tail = chain1[$ - 1];
+                float[] tail2 = chain1[$ - 2];
+                float[] head = chain2[0];
+                float[] head2 = chain2[1];
 
                 if (eps.pointsCollinear(tail2, tail, head))
                 {
@@ -283,7 +283,7 @@ class SegmentChainer
                     chain2 = chains[index2];
                 }
 
-                double[][] concatenated;
+                float[][] concatenated;
                 concatenated ~= chain1;
                 concatenated ~= chain2;
                 chains[index1] = concatenated;

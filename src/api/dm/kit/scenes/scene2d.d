@@ -39,7 +39,7 @@ class Scene2d : EventKitTarget
     bool isDrawAfterAllSprites;
     Sprite2d drawBeforeSprite;
 
-    void delegate(double dt)[] eternalTasks;
+    void delegate(float dt)[] eternalTasks;
 
     Random* rnd;
     bool isCreateRandom = true;
@@ -312,7 +312,7 @@ class Scene2d : EventKitTarget
         graphic.rendererPresent;
     }
 
-    void update(double delta)
+    void update(float delta)
     {
         if (!startDrawProcess)
         {
@@ -455,7 +455,7 @@ class Scene2d : EventKitTarget
         }
     }
 
-    void rescale(double factorWidth, double factorHeight)
+    void rescale(float factorWidth, float factorHeight)
     {
         foreach (Sprite2d sprite; sprites)
         {

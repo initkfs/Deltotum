@@ -23,7 +23,7 @@ abstract class BaseLabeledScroll : BaseMonoScroll
     void delegate(Text) onConfiguredLabel;
     void delegate(Text) onCreatedLabel;
 
-    this(double minValue = 0, double maxValue = 1.0)
+    this(float minValue = 0, float maxValue = 1.0)
     {
         super(minValue, maxValue);
     }
@@ -102,7 +102,7 @@ abstract class BaseLabeledScroll : BaseMonoScroll
         label.pos = newPos;
     }
 
-    void setLabelValue(double v)
+    void setLabelValue(float v)
     {
         if (!label || !label.isVisible)
         {
@@ -116,7 +116,7 @@ abstract class BaseLabeledScroll : BaseMonoScroll
 
     alias value = BaseMonoScroll.value;
 
-    override bool value(double v, bool isTriggerListeners = true)
+    override bool value(float v, bool isTriggerListeners = true)
     {
         if (!super.value(v, isTriggerListeners))
         {

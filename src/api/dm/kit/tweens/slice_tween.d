@@ -10,7 +10,7 @@ import std.traits : isIntegral, isFloatingPoint;
 /**
  * Authors: initkfs
  */
-class SliceTween(T) : MinMaxTween!double
+class SliceTween(T) : MinMaxTween!float
 {
     T[] range;
 

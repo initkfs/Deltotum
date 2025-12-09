@@ -12,15 +12,15 @@ nothrow:
 
     ComResult create(string path) nothrow;
     ComResult getType(out string type);
-    ComResult getLoopStartTimeMs(out double timeMs);
-    ComResult getLoopEndTimeMs(out double timeMs);
-    ComResult getDurationTimeMs(out double timeMs);
-    ComResult getPosTimeMs(out double timeMs);
+    ComResult getLoopStartTimeMs(out float timeMs);
+    ComResult getLoopEndTimeMs(out float timeMs);
+    ComResult getDurationTimeMs(out float timeMs);
+    ComResult getPosTimeMs(out float timeMs);
     ComResult getTitleTag(out string title);
     ComResult getTitle(out string title);
-    ComResult getVolume(out double value);
-    ComResult setVolume(double value);
-    ComResult setPos(double value);
+    ComResult getVolume(out float value);
+    ComResult setVolume(float value);
+    ComResult setPos(float value);
     ComResult play(int loops);
     ComResult play();
     ComResult stop();

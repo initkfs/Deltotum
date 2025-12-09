@@ -10,15 +10,15 @@ import std.conv : to;
  */
 class AnalogClock : BaseClock!AnalogClockFace
 {
-    double handWidth = 0;
-    double diameter = 0;
+    float handWidth = 0;
+    float diameter = 0;
 
     protected
     {
 
     }
 
-    this(double diameter = 0)
+    this(float diameter = 0)
     {
         this.diameter = diameter;
     }

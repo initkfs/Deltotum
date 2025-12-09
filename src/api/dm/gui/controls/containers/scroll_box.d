@@ -42,10 +42,10 @@ class ScrollBox : Container
     ScrollBarPolicy vScrollPolicy = ScrollBarPolicy.ifneed;
     ScrollBarPolicy hScrollPolicy = ScrollBarPolicy.ifneed;
 
-    double clipErrorDelta = 1;
-    double clipPadding = 0;
+    float clipErrorDelta = 1;
+    float clipPadding = 0;
 
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         this.width = width;
         this.height = height;
@@ -101,7 +101,7 @@ class ScrollBox : Container
             disableScroll(vslider);
         }
 
-        vslider.onValue ~= (double val) {
+        vslider.onValue ~= (float val) {
             import Math = api.dm.math;
 
             if (!contentRoot)
@@ -109,10 +109,10 @@ class ScrollBox : Container
                 return;
             }
 
-            double viewDt = contentRoot.height - content.height;
-            double needContentYOffset = viewDt * val;
-            double yDt = content.y - contentRoot.y;
-            double dtY = needContentYOffset - yDt;
+            float viewDt = contentRoot.height - content.height;
+            float needContentYOffset = viewDt * val;
+            float yDt = content.y - contentRoot.y;
+            float dtY = needContentYOffset - yDt;
             contentRoot.y = contentRoot.y - dtY;
         };
 
@@ -131,24 +131,24 @@ class ScrollBox : Container
             {
                 return;
             }
-            double viewDt = contentRoot.width - content.width;
-            double needContentXOffset = viewDt * val;
-            double xDt = content.x - contentRoot.x;
-            double dtX = needContentXOffset - xDt;
+            float viewDt = contentRoot.width - content.width;
+            float needContentXOffset = viewDt * val;
+            float xDt = content.x - contentRoot.x;
+            float dtX = needContentXOffset - xDt;
             contentRoot.x = contentRoot.x - dtX;
         };
 
         //TODO from layout
-        double spacing = 0;
+        float spacing = 0;
 
         //TODO slider if layout managed = false
-        double contentWidth = width - spacing - padding.width;
+        float contentWidth = width - spacing - padding.width;
         if (hScrollPolicy != ScrollBarPolicy.never)
         {
             contentWidth -= vslider.width;
         }
 
-        double contentHeight = height - padding.height;
+        float contentHeight = height - padding.height;
         if (vScrollPolicy != ScrollBarPolicy.never)
         {
             contentHeight -= hslider.height;
@@ -173,7 +173,7 @@ class ScrollBox : Container
         };
     }
 
-    double contentWidth()
+    float contentWidth()
     {
         if (!content)
         {
@@ -184,7 +184,7 @@ class ScrollBox : Container
 
     protected void checkScrolls()
     {
-        double errorDelta = 1;
+        float errorDelta = 1;
         if (hScrollPolicy == ScrollBarPolicy.ifneed && content)
         {
             assert(content);
@@ -247,7 +247,7 @@ class ScrollBox : Container
         }
     }
 
-    void setContent(Sprite2d root, double newWidth = 0, double newHeight = 0)
+    void setContent(Sprite2d root, float newWidth = 0, float newHeight = 0)
     {
         assert(root);
         assert(content);

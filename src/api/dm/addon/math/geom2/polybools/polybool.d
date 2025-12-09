@@ -15,21 +15,21 @@ import api.dm.addon.math.geom2.polybools.helpers : Epsilon;
 class PolyResult
 {
 
-    double[][][] regions;
+    float[][][] regions;
     bool inverted;
 
-    this(double[][][] regions, bool inverted = false)
+    this(float[][][] regions, bool inverted = false)
     {
         this.regions = regions;
         this.inverted = inverted;
     }
 
-    double[][][] getRegions()
+    float[][][] getRegions()
     {
         return regions;
     }
 
-    void setRegions(double[][][] regions)
+    void setRegions(float[][][] regions)
     {
         this.regions = regions;
     }
@@ -44,7 +44,7 @@ class PolyResult
         this.inverted = inverted;
     }
 
-    bool equal(double[][][] expected, double eps = double.epsilon)
+    bool equal(float[][][] expected, float eps = float.epsilon)
     {
         import std.math.operations : isClose;
 
@@ -91,35 +91,35 @@ Epsilon epsilon()
     return new Epsilon;
 }
 
-Epsilon epsilon(double epsilon, bool experimental = false)
+Epsilon epsilon(float epsilon, bool experimental = false)
 {
     return new Epsilon(epsilon);
 }
 
-double[] point(double x, double y)
+float[] point(float x, float y)
 {
     return [x, y];
 }
 
-double[][] region(double[][] points...)
+float[][] region(float[][] points...)
 {
-    double[][] reg;
-    foreach (double[] p; points)
+    float[][] reg;
+    foreach (float[] p; points)
     {
         reg ~= p;
     }
     return reg;
 }
 
-PolyResult polygon(double[][][] regions...)
+PolyResult polygon(float[][][] regions...)
 {
     return polygon(false, regions);
 }
 
-PolyResult polygon(bool inverted, double[][][] regions...)
+PolyResult polygon(bool inverted, float[][][] regions...)
 {
-    double[][][] reg;
-    foreach (double[][] p; regions)
+    float[][][] reg;
+    foreach (float[][] p; regions)
     {
         reg ~= p;
     }
@@ -158,7 +158,7 @@ Segments segments(Epsilon epsilon, PolyResult polygon)
 {
     SelfIntersecter i = new SelfIntersecter(epsilon);
 
-    foreach (double[][] region; polygon.getRegions())
+    foreach (float[][] region; polygon.getRegions())
     {
         i.addRegion(region);
     }
@@ -303,7 +303,7 @@ unittest
     )
     );
 
-    double[][][] expected = [
+    float[][][] expected = [
         [[50.0, 50], [110.0, 50], [110.0, 110]],
         [[178.0, 80], [130.0, 50], [130.0, 130], [150.0, 150]],
         [[178.0, 80], [190.0, 50], [260.0, 50], [260, 131.25]]
@@ -337,7 +337,7 @@ unittest
 
     PolyResult resultIntersect = intersect(eps, poly1, poly2);
 
-    double[][][] expectedIntersect = [
+    float[][][] expectedIntersect = [
         [
             [72.0, 53.0], [68.0, 53.0], [60.0, 60.0],
             [64.74074074074073, 59.17037037037037]
@@ -349,7 +349,7 @@ unittest
 
     PolyResult resultUnion = unions(eps, poly1, poly2);
 
-    double[][][] expectedUnion = [
+    float[][][] expectedUnion = [
         [
             [100.0, 53.0],
             [52.0, 53.0],
@@ -363,7 +363,7 @@ unittest
 
     PolyResult resultDiff = difference(eps, poly1, poly2);
 
-    double[][][] expectedDiff = [
+    float[][][] expectedDiff = [
         [
             [68.0, 53.0], [52.0, 53.0], [52.0, 70.0],
             [64.740740, 59.170370], [60.0, 60.0]
@@ -375,7 +375,7 @@ unittest
 
     PolyResult resultDiffRev = differenceRev(eps, poly1, poly2);
 
-    double[][][] expectedDiffRef = [
+    float[][][] expectedDiffRef = [
         [[64.740740, 59.170370], [72.0, 53.0], [100.0, 53.0]]
     ];
 
@@ -384,7 +384,7 @@ unittest
 
     PolyResult resultXor = xor(eps, poly1, poly2);
 
-    double[][][] expectedXor = [
+    float[][][] expectedXor = [
         [
             [68.0, 53.0], [52.0, 53.0], [52.0, 70.0],
             [64.740740, 59.170370], [60.0, 60.0]

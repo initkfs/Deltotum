@@ -6,8 +6,8 @@ module api.dm.kit.factories.uda;
 
 struct Load
 {
-    double width = 0;
-    double height = 0;
+    float width = 0;
+    float height = 0;
     string path;
     size_t count = 1;
     bool isAdd;

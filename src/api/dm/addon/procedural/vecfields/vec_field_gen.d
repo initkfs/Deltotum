@@ -25,12 +25,12 @@ class VecFieldGen : Container
     VecField vecField;
     VectorTexture canvas;
 
-    double canvasWidth = 0;
-    double canvasHeight = 0;
+    float canvasWidth = 0;
+    float canvasHeight = 0;
 
     Random rnd;
 
-    this(double canvasWidth = 200, double canvasHeight = 200)
+    this(float canvasWidth = 200, float canvasHeight = 200)
     {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;

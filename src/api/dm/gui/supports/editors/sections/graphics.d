@@ -204,8 +204,8 @@ class Graphics : Control
 
         const bounds = drawContainer.boundsRect;
         
-        double startX = bounds.x;
-        double startY = bounds.y;
+        float startX = bounds.x;
+        float startY = bounds.y;
 
         graphic.line(startX, startY, startX + 100, startY, RGBA.lightblue);
 

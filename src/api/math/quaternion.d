@@ -12,13 +12,13 @@ import api.math.matrices.matrix;
 
 struct Quaternion
 {
-    double w = 0; //Scalar
+    float w = 0; //Scalar
     Vec3f v; // Imaginary
 
     static Quaternion identity() => Quaternion(1);
 
     //ax*ax + ay*ay + az*az = 1
-    static Quaternion fromAngle(double angleDeg, Vec3f axisNormalized)
+    static Quaternion fromAngle(float angleDeg, Vec3f axisNormalized)
     {
         //https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/index.htm
         const realPart = Math.cosDeg(angleDeg / 2);
@@ -27,11 +27,11 @@ struct Quaternion
                 .z));
     }
 
-    bool toAngle(double angleDeg, ref Vec3f axis)
+    bool toAngle(float angleDeg, ref Vec3f axis)
     {
         angleDeg = Math.radToDeg(2 * Math.acos(w));
 
-        double divider = Math.sqrt(1 - w * w);
+        float divider = Math.sqrt(1 - w * w);
 
         if (divider != 0)
         {
@@ -48,19 +48,19 @@ struct Quaternion
         return true;
     }
 
-    static Quaternion fromRotationX(double angleDeg) => Quaternion.fromAngle(angleDeg, Vec3f(1, 0, 0));
-    static Quaternion fromRotationY(double angleDeg) => Quaternion.fromAngle(angleDeg, Vec3f(0, 1, 0));
-    static Quaternion fromRotationZ(double angleDeg) => Quaternion.fromAngle(angleDeg, Vec3f(0, 0, 1));
+    static Quaternion fromRotationX(float angleDeg) => Quaternion.fromAngle(angleDeg, Vec3f(1, 0, 0));
+    static Quaternion fromRotationY(float angleDeg) => Quaternion.fromAngle(angleDeg, Vec3f(0, 1, 0));
+    static Quaternion fromRotationZ(float angleDeg) => Quaternion.fromAngle(angleDeg, Vec3f(0, 0, 1));
 
-    static Quaternion fromEuler(double angleXDeg = 0, double angleYDeg = 0, double angleZDeg = 0)
+    static Quaternion fromEuler(float angleXDeg = 0, float angleYDeg = 0, float angleZDeg = 0)
     {
         //https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-        double cr = Math.cos(Math.degToRad(angleXDeg) * 0.5);
-        double sr = Math.sin(Math.degToRad(angleXDeg) * 0.5);
-        double cp = Math.cos(Math.degToRad(angleYDeg) * 0.5);
-        double sp = Math.sin(Math.degToRad(angleYDeg) * 0.5);
-        double cy = Math.cos(Math.degToRad(angleZDeg) * 0.5);
-        double sy = Math.sin(Math.degToRad(angleZDeg) * 0.5);
+        float cr = Math.cos(Math.degToRad(angleXDeg) * 0.5);
+        float sr = Math.sin(Math.degToRad(angleXDeg) * 0.5);
+        float cp = Math.cos(Math.degToRad(angleYDeg) * 0.5);
+        float sp = Math.sin(Math.degToRad(angleYDeg) * 0.5);
+        float cy = Math.cos(Math.degToRad(angleZDeg) * 0.5);
+        float sy = Math.sin(Math.degToRad(angleZDeg) * 0.5);
 
         Quaternion q;
         q.w = cr * cp * cy + sr * sp * sy;
@@ -74,24 +74,24 @@ struct Quaternion
     Vec3f toEuler()
     {
         // roll (x-axis)
-        double a = 2 * (w * v.x + v.y * v.z);
-        double b = 1 - 2 * (v.x * v.x + v.y * v.y);
+        float a = 2 * (w * v.x + v.y * v.z);
+        float b = 1 - 2 * (v.x * v.x + v.y * v.y);
         auto rollRad = Math.atan2(a, b);
 
         // pitch (y-axis)
-        double c = Math.sqrt(1 + 2 * (w * v.y - v.x * v.z));
-        double d = Math.sqrt(1 - 2 * (w * v.y - v.x * v.z));
+        float c = Math.sqrt(1 + 2 * (w * v.y - v.x * v.z));
+        float d = Math.sqrt(1 - 2 * (w * v.y - v.x * v.z));
         auto pitchRad = 2 * Math.atan2(c, d) - Math.PI / 2;
 
         // yaw (z-axis rotation)
-        double e = 2 * (w * v.z + v.x * v.y);
-        double f = 1 - 2 * (v.y * v.y + v.z * v.z);
+        float e = 2 * (w * v.z + v.x * v.y);
+        float f = 1 - 2 * (v.y * v.y + v.z * v.z);
         auto yawRad = Math.atan2(e, f);
 
         return Vec3f(Math.radToDeg(rollRad), Math.radToDeg(pitchRad), Math.radToDeg(yawRad));
     }
 
-    double length() => Math.sqrt(w * w + v.x * v.x + v.y * v.y + v.z * v.z);
+    float length() => Math.sqrt(w * w + v.x * v.x + v.y * v.y + v.z * v.z);
 
     Quaternion normalize()
     {
@@ -112,16 +112,16 @@ struct Quaternion
     Vec3f rotate(Vec3f v)
     {
         //v' = q * v * q⁻¹
-        double ww = w * w;
-        double xx = v.x * v.x;
-        double yy = v.y * v.y;
-        double zz = v.z * v.z;
-        double wx = w * v.x;
-        double wy = w * v.y;
-        double wz = w * v.z;
-        double xy = v.x * v.y;
-        double xz = v.x * v.z;
-        double yz = v.y * v.z;
+        float ww = w * w;
+        float xx = v.x * v.x;
+        float yy = v.y * v.y;
+        float zz = v.z * v.z;
+        float wx = w * v.x;
+        float wy = w * v.y;
+        float wz = w * v.z;
+        float xy = v.x * v.y;
+        float xz = v.x * v.z;
+        float yz = v.y * v.z;
 
         return Vec3f(
             v.x * (ww + xx - yy - zz) + 2 * (xy * v.y + xz * v.z + wy * v.z - wz * v.y),
@@ -131,12 +131,12 @@ struct Quaternion
     }
 
     // Spherical Linear Interpolation between two quaternions
-    Quaternion slerp(Quaternion from, Quaternion to, double t)
+    Quaternion slerp(Quaternion from, Quaternion to, float t)
     {
         //https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
         Quaternion result;
 
-        double cosHalfTheta = from.w * to.w + from.v.x * to.v.x + from.v.y * to.v.y + from.v.z * to
+        float cosHalfTheta = from.w * to.w + from.v.x * to.v.x + from.v.y * to.v.y + from.v.z * to
             .v.z;
 
         if (Math.abs(cosHalfTheta) >= 1.0)
@@ -148,8 +148,8 @@ struct Quaternion
             return result;
         }
 
-        double halfTheta = Math.acos(cosHalfTheta);
-        double sinHalfTheta = Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
+        float halfTheta = Math.acos(cosHalfTheta);
+        float sinHalfTheta = Math.sqrt(1.0 - cosHalfTheta * cosHalfTheta);
 
         // if theta  180 degrees then result is not fully defined we could rotate around any axis normal to from or to
         if (Math.abs(sinHalfTheta) < 0.001)
@@ -161,8 +161,8 @@ struct Quaternion
             return result;
         }
 
-        double ratioA = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
-        double ratioB = Math.sin(t * halfTheta) / sinHalfTheta;
+        float ratioA = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
+        float ratioB = Math.sin(t * halfTheta) / sinHalfTheta;
 
         result.w = (from.w * ratioA + to.w * ratioB);
         result.v.x = (from.v.x * ratioA + to.v.x * ratioB);
@@ -173,7 +173,7 @@ struct Quaternion
     }
 
     /// Normalized Linear Interpolation (faster approximation)
-    Quaternion nlerp(Quaternion from, Quaternion to, double t)
+    Quaternion nlerp(Quaternion from, Quaternion to, float t)
     {
         Quaternion result = Quaternion(
             from.w * (1 - t) + to.w * t,
@@ -190,15 +190,15 @@ struct Quaternion
         Matrix4x4f mat;
         Quaternion q = normalize();
 
-        double xx = q.v.x * q.v.x;
-        double yy = q.v.y * q.v.y;
-        double zz = q.v.z * q.v.z;
-        double xy = q.v.x * q.v.y;
-        double xz = q.v.x * q.v.z;
-        double yz = q.v.y * q.v.z;
-        double wx = q.w * q.v.x;
-        double wy = q.w * q.v.y;
-        double wz = q.w * q.v.z;
+        float xx = q.v.x * q.v.x;
+        float yy = q.v.y * q.v.y;
+        float zz = q.v.z * q.v.z;
+        float xy = q.v.x * q.v.y;
+        float xz = q.v.x * q.v.z;
+        float yz = q.v.y * q.v.z;
+        float wx = q.w * q.v.x;
+        float wy = q.w * q.v.y;
+        float wz = q.w * q.v.z;
 
         // Для левосторонней системы с инвертированным Z:
         mat[0][0] = 1.0 - 2.0 * (yy + zz);
@@ -230,15 +230,15 @@ struct Quaternion
 
         Quaternion q = normalize;
 
-        double xx = q.v.x * q.v.x;
-        double yy = q.v.y * q.v.y;
-        double zz = q.v.z * q.v.z;
-        double xy = q.v.x * q.v.y;
-        double xz = q.v.x * q.v.z;
-        double yz = q.v.y * q.v.z;
-        double wx = q.w * q.v.x;
-        double wy = q.w * q.v.y;
-        double wz = q.w * q.v.z;
+        float xx = q.v.x * q.v.x;
+        float yy = q.v.y * q.v.y;
+        float zz = q.v.z * q.v.z;
+        float xy = q.v.x * q.v.y;
+        float xz = q.v.x * q.v.z;
+        float yz = q.v.y * q.v.z;
+        float wx = q.w * q.v.x;
+        float wy = q.w * q.v.y;
+        float wz = q.w * q.v.z;
 
         mat[0][0] = 1.0 - 2.0 * (yy + zz);
         mat[0][1] = 2.0 * (xy - wz);
@@ -269,7 +269,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    double eps = 0.00001;
+    float eps = 0.00001;
     Quaternion q1 = Quaternion.fromEuler(90, 120, 270);
     assert(isClose(q1.w, 0.1830127, eps));
     assert(isClose(q1.v.x, -0.6830127, eps));
@@ -281,7 +281,7 @@ unittest
 // {
 //     import std.math.operations : isClose;
 
-//     const double eps = 0.0000001;
+//     const float eps = 0.0000001;
 
 //     Quaternion qt;
 //     auto qtAngle = qt.fromAngle(90, Vec3f(1, 0, 0));

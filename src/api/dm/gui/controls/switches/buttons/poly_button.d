@@ -38,9 +38,9 @@ class PolyButton : BaseRoundButton
     this(
         dstring text,
         size_t sides = 0,
-        double diameter = 0,
+        float diameter = 0,
         string iconName = null,
-        double graphicsGap = 0,
+        float graphicsGap = 0,
     )
     {
         super(text, diameter, iconName, graphicsGap);
@@ -69,7 +69,7 @@ class PolyButton : BaseRoundButton
         initSize(_diameter, _diameter);
     }
 
-    protected override Sprite2d createShape(double w, double h, double angle, GraphicStyle style)
+    protected override Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
     {
         import Math = api.math;
 

@@ -13,7 +13,7 @@ private
     struct BrushState
     {
         Vec2d pos;
-        double angleDeg = 0;
+        float angleDeg = 0;
     }
 }
 
@@ -30,21 +30,21 @@ class Brush
         Vec2d _pos;
         Vec2d _initPos;
 
-        double _angleDeg = 0;
+        float _angleDeg = 0;
 
         SList!BrushState _states;
     }
 
     void delegate(Vec2d, Vec2d) onDrawLineStartEnd;
 
-    this(Vec2d initPos = Vec2d(0, 0), double initAngleDeg = 0) pure @safe
+    this(Vec2d initPos = Vec2d(0, 0), float initAngleDeg = 0) pure @safe
     {
         _initPos = initPos;
         _pos = initPos;
         _angleDeg = initAngleDeg;
     }
 
-    bool moveDraw(double distance)
+    bool moveDraw(float distance)
     {
         const oldPos = _pos;
 
@@ -58,7 +58,7 @@ class Brush
         return true;
     }
 
-    bool move(double distance) @safe
+    bool move(float distance) @safe
     {
         const newPos = _pos + Vec2d.fromPolarDeg(_angleDeg, distance);
 
@@ -72,17 +72,17 @@ class Brush
         return true;
     }
 
-    void rotateRight(double angleDeg) @safe
+    void rotateRight(float angleDeg) @safe
     {
         _angleDeg += angleDeg;
     }
 
-    void rotateLeft(double angleDeg) @safe
+    void rotateLeft(float angleDeg) @safe
     {
         _angleDeg -= angleDeg;
     }
 
-    void pos(double x, double y) @safe
+    void pos(float x, float y) @safe
     {
         _pos = Vec2d(x, y);
     }
@@ -97,17 +97,17 @@ class Brush
         return _pos;
     }
 
-    void angleDeg(double value) @safe
+    void angleDeg(float value) @safe
     {
         _angleDeg = value;
     }
 
-    double angleDeg() @safe
+    float angleDeg() @safe
     {
         return _angleDeg;
     }
 
-    void setState(Vec2d pos, double angleDeg) @safe
+    void setState(Vec2d pos, float angleDeg) @safe
     {
         _pos = pos;
         _angleDeg = angleDeg;

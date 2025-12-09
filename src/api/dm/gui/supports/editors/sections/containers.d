@@ -323,8 +323,8 @@ class Containers : Control
         auto split1 = new VSplitBox;
         root.addCreate(split1);
 
-        const double rectW = 60;
-        const double rectH = 80;
+        const float rectW = 60;
+        const float rectH = 80;
 
         auto content1 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
                 .greenyellow));

@@ -209,7 +209,7 @@ class TabBox : Container
         }
     }
 
-    TabHeader newTabHeader(double tabSpacing = 1) => new TabHeader(tabSpacing);
+    TabHeader newTabHeader(float tabSpacing = 1) => new TabHeader(tabSpacing);
     BaseSeparator newSeparator()
     {
         import api.dm.gui.controls.separators.hseparator : HSeparator;

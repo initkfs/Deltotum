@@ -5,7 +5,7 @@ import api.math.geom2.vec2 : Vec2d;
 
 struct GradientStopPoint
 {
-    double offset = 0;
+    float offset = 0;
     RGBA color;
 }
 
@@ -31,30 +31,30 @@ interface GraphicCanvas
     void beginPath();
     void closePath();
 
-    bool isPointInPath(double x, double y);
+    bool isPointInPath(float x, float y);
 
     void color(RGBA rgba);
     RGBA color();
     void restoreColor();
     void clear(RGBA color);
 
-    void lineWidth(double width);
+    void lineWidth(float width);
 
     void save();
     void restore();
     void reset();
 
-    void translate(double x, double y);
-    void scale(double sx, double sy);
-    void rotateRad(double angleRad);
+    void translate(float x, float y);
+    void scale(float sx, float sy);
+    void rotateRad(float angleRad);
 
     void lineEnd(LineEnd end);
     void lineJoin(LineJoin join);
 
-    void moveTo(double x, double y);
+    void moveTo(float x, float y);
     void moveTo(Vec2d pos);
 
-    void lineTo(double x, double y);
+    void lineTo(float x, float y);
     void lineTo(Vec2d pos);
 
     void stroke();
@@ -64,16 +64,16 @@ interface GraphicCanvas
 
     void clip();
 
-    void rect(double x, double y, double width, double height);
-    void fillRect(double x, double y, double width, double height);
-    void clearRect(double x, double y, double width, double height);
+    void rect(float x, float y, float width, float height);
+    void fillRect(float x, float y, float width, float height);
+    void clearRect(float x, float y, float width, float height);
 
-    void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3);
+    void fillTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
 
-    void arc(double xc, double yc, double radius, double angle1Rad, double angle2Rad);
+    void arc(float xc, float yc, float radius, float angle1Rad, float angle2Rad);
 
-    void bezierCurveTo(double x1, double y1, double x2, double y2, double x3, double y3);
+    void bezierCurveTo(float x1, float y1, float x2, float y2, float x3, float y3);
 
     void linearGradient(Vec2d start, Vec2d end, GradientStopPoint[] stopPoints, void delegate() onPattern);
-    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, double innerRadius, double outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern);
+    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern);
 }

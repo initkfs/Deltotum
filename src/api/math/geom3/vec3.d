@@ -7,9 +7,9 @@ import Math = api.math;
  */
 struct Vec3d
 {
-    double x = 0;
-    double y = 0;
-    double z = 0;
+    float x = 0;
+    float y = 0;
+    float z = 0;
 }
 
 struct Vec3f
@@ -47,7 +47,7 @@ struct Vec3f
 
         Vec3f normalize()
         {
-            const double len = length;
+            const float len = length;
             float normX = 0;
             float normY = 0;
             float normZ = 0;
@@ -273,11 +273,11 @@ struct Vec3f
 
         float dot(Vec3f b) => x * b.x + y * b.y + z * b.z;
 
-        bool isCollinear(Vec3f other, double tolerance = 1e-9)
+        bool isCollinear(Vec3f other, float tolerance = 1e-9)
         {
             import Math = api.dm.math;
 
-            double crossNorm = cross(other).lengthSquared;
+            float crossNorm = cross(other).lengthSquared;
             return crossNorm < tolerance;
         }
 
@@ -294,13 +294,13 @@ struct Vec3f
         {
             import Math = api.dm.math;
 
-            double dotProduct = dot(other);
-            double lenProduct = length * other.length;
+            float dotProduct = dot(other);
+            float lenProduct = length * other.length;
 
             if (lenProduct < 1e-9)
                 return 0.0f;
 
-            double cosine = Math.clamp(dotProduct / lenProduct, -1.0, 1.0);
+            float cosine = Math.clamp(dotProduct / lenProduct, -1.0, 1.0);
             return Math.acos(cosine);
         }
 
@@ -322,7 +322,7 @@ struct Vec3f
             return Math.atan2(y2, x2) - Math.atan2(y1, x1);
         }
 
-        float pitchRad() => Math.atan2(cast(double) y, Math.sqrt(x * x + z * z));
+        float pitchRad() => Math.atan2(cast(float) y, Math.sqrt(x * x + z * z));
         float yawRad() => Math.atan2(x, z);
         float rollRad() => Math.atan2(y, x);
 
@@ -429,7 +429,7 @@ struct Vec3f
         }
     }
 
-    void opIndexAssign(double value, size_t i) @safe
+    void opIndexAssign(float value, size_t i) @safe
     {
         if (i == 0)
             x = value;
@@ -447,7 +447,7 @@ struct Vec3f
         }
     }
 
-    double opIndex(size_t i) const pure @safe
+    float opIndex(size_t i) const pure @safe
     {
         if (i == 0)
             return x;

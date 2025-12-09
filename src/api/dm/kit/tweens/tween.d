@@ -27,14 +27,14 @@ abstract class Tween : GraphicComponent
     void delegate()[] onResume;
     void delegate()[] onEnd;
 
-    double frameRateHz = 0;
+    float frameRateHz = 0;
     bool isThrowInvalidTime;
 
     protected
     {
-        double _timeMs = 0;
+        float _timeMs = 0;
 
-        double currentFrameCount = 0;
+        float currentFrameCount = 0;
         long currentFrame;
         size_t currentCycle;
         bool currentShort;
@@ -54,24 +54,24 @@ abstract class Tween : GraphicComponent
 
         import std.conv : to;
 
-        _timeMs = timeMs.to!double;
+        _timeMs = timeMs.to!float;
     }
 
     abstract void onFrame();
 
-    double frameRate()
+    float frameRate()
     {
-        const double rate = frameRateHz > 0 ? frameRateHz : window.frameRate;
+        const float rate = frameRateHz > 0 ? frameRateHz : window.frameRate;
         return rate;
     }
 
-    double frameCount(double frameRateHz)
+    float frameCount(float frameRateHz)
     {
-        immutable double frames = (_timeMs * frameRateHz) / 1000;
+        immutable float frames = (_timeMs * frameRateHz) / 1000;
         return frames;
     }
 
-    double frameCount()
+    float frameCount()
     {
         return frameCount(frameRate);
     }
@@ -117,7 +117,7 @@ abstract class Tween : GraphicComponent
 
     protected bool initFrameCount()
     {
-        const double rate = frameRate;
+        const float rate = frameRate;
         if (rate <= 0)
         {
             return false;
@@ -170,7 +170,7 @@ abstract class Tween : GraphicComponent
         return state == TweenState.direct || state == TweenState.back;
     }
 
-    void update(double delta)
+    void update(float delta)
     {
         if (!isRunning || !isRunningState)
         {
@@ -237,8 +237,8 @@ abstract class Tween : GraphicComponent
         currentFrame = firstFrame;
     }
 
-    double timeMs() => _timeMs;
-    void timeMs(double v)
+    float timeMs() => _timeMs;
+    void timeMs(float v)
     {
         _timeMs = v;
         initFrameCount;

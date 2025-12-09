@@ -42,7 +42,7 @@ class VectorTexture : Texture2d
     bool isMutable;
     bool isClearOnRecreate = true;
 
-    this(double width, double height)
+    this(float width, float height)
     {
         this.width = width;
         this.height = height;

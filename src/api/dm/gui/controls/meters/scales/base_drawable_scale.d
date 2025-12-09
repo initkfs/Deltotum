@@ -20,7 +20,7 @@ import std.conv : to;
  */
 abstract class BaseDrawableScale : BaseMinMaxScale
 {
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         this._width = width;
         this._height = height;
@@ -41,20 +41,20 @@ abstract class BaseDrawableScale : BaseMinMaxScale
         Line2d axisPos();
 
         Vec2d tickStartPos();
-        double tickOffset();
-        Vec2d tickStep(size_t i, Vec2d pos, double offsetTick);
+        float tickOffset();
+        Vec2d tickStep(size_t i, Vec2d pos, float offsetTick);
 
-        bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick);
+        bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick);
     }
 
-    Vec2d tickXY(Vec2d pos, double tickWidth, double tickHeight, bool isMajorTick)
+    Vec2d tickXY(Vec2d pos, float tickWidth, float tickHeight, bool isMajorTick)
     {
         auto tickX = pos.x - tickWidth / 2;
         auto tickY = pos.y - tickHeight / 2;
         return Vec2d(tickX, tickY);
     }
 
-    bool drawTick(size_t i, Vec2d pos, bool isMajorTick, double offsetTick)
+    bool drawTick(size_t i, Vec2d pos, bool isMajorTick, float offsetTick)
     {
         auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
         auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
@@ -81,13 +81,13 @@ abstract class BaseDrawableScale : BaseMinMaxScale
 
         drawScale(
             (Vec2d start, Vec2d end, RGBA) { drawAxis(start, end, axisColor); },
-            (size_t i, Vec2d pos, bool isMajorTick, double offsetTick) {
+            (size_t i, Vec2d pos, bool isMajorTick, float offsetTick) {
             return drawTick(i, pos, isMajorTick, offsetTick);
         },
-            (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick) {
+            (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) {
             return drawLabel(labelIndex, tickIndex, pos, isMajorTick, offsetTick);
         },
-            (size_t i, Vec2d pos, double offsetTick) {
+            (size_t i, Vec2d pos, float offsetTick) {
             return tickStep(i, pos, offsetTick);
         }
         );
@@ -95,9 +95,9 @@ abstract class BaseDrawableScale : BaseMinMaxScale
 
     void drawScale(
         scope void delegate(Vec2d, Vec2d, RGBA) onDrawAxis,
-        scope bool delegate(size_t i, Vec2d pos, bool isMajorTick, double offsetTick) onDrawTick,
-        scope bool delegate(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick) onDrawLabel,
-        scope Vec2d delegate(size_t i, Vec2d pos, double offsetTick) onTickStep
+        scope bool delegate(size_t i, Vec2d pos, bool isMajorTick, float offsetTick) onDrawTick,
+        scope bool delegate(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) onDrawLabel,
+        scope Vec2d delegate(size_t i, Vec2d pos, float offsetTick) onTickStep
     )
     {
         if (!isCreated)

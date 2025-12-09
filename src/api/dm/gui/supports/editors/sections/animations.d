@@ -23,7 +23,7 @@ class Animations : Control
 {
     private
     {
-        double function(double)[dstring] animationsMap;
+        float function(float)[dstring] animationsMap;
         UniInterpolator interpolator;
 
         LinearMotion2d motionTween;
@@ -54,7 +54,7 @@ class Animations : Control
             {
                 alias func = __traits(getMember, interpolator, m);
                 //TODO best filter
-                static if (__traits(isStaticFunction, func) && is(ReturnType!func : double))
+                static if (__traits(isStaticFunction, func) && is(ReturnType!func : float))
                 {
                     const funcName = __traits(identifier, func).to!dstring;
                     animationsMap[funcName] = &func;

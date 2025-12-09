@@ -15,7 +15,7 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
     protected
     {
         enum msInSec = 1000;
-        enum double doubleErr = -1;
+        enum float floatErr = -1;
     }
 
     ComResult create(string path) nothrow
@@ -47,11 +47,11 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
-    ComResult getLoopStartTimeMs(out double timeMs) nothrow
+    ComResult getLoopStartTimeMs(out float timeMs) nothrow
     {
         assert(ptr);
-        double v = Mix_GetMusicLoopStartTime(ptr);
-        if (v == doubleErr)
+        float v = Mix_GetMusicLoopStartTime(ptr);
+        if (v == floatErr)
         {
             return getErrorRes("Error getting loop start time");
         }
@@ -59,11 +59,11 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
-    ComResult getLoopEndTimeMs(out double timeMs) nothrow
+    ComResult getLoopEndTimeMs(out float timeMs) nothrow
     {
         assert(ptr);
-        double v = Mix_GetMusicLoopEndTime(ptr);
-        if (v == doubleErr)
+        float v = Mix_GetMusicLoopEndTime(ptr);
+        if (v == floatErr)
         {
             return getErrorRes("Error getting loop end time");
         }
@@ -71,11 +71,11 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
-    ComResult getLoopLengthTimeMs(out double timeMs) nothrow
+    ComResult getLoopLengthTimeMs(out float timeMs) nothrow
     {
         assert(ptr);
-        double v = Mix_GetMusicLoopLengthTime(ptr);
-        if (v == doubleErr)
+        float v = Mix_GetMusicLoopLengthTime(ptr);
+        if (v == floatErr)
         {
             return getErrorRes("Error getting loop length time");
         }
@@ -83,11 +83,11 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
-    ComResult getDurationTimeMs(out double timeMs) nothrow
+    ComResult getDurationTimeMs(out float timeMs) nothrow
     {
         assert(ptr);
-        double v = Mix_MusicDuration(ptr);
-        if (v == doubleErr)
+        float v = Mix_MusicDuration(ptr);
+        if (v == floatErr)
         {
             return getErrorRes("Error getting music duration");
         }
@@ -95,11 +95,11 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
-    ComResult getPosTimeMs(out double timeMs) nothrow
+    ComResult getPosTimeMs(out float timeMs) nothrow
     {
         assert(ptr);
-        double v = Mix_GetMusicPosition(ptr);
-        if (v == doubleErr)
+        float v = Mix_GetMusicPosition(ptr);
+        if (v == floatErr)
         {
             return getErrorRes("Error getting music duration");
         }
@@ -123,14 +123,14 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
-    ComResult setVolume(double value) nothrow
+    ComResult setVolume(float value) nothrow
     {
         auto sdlVolume = cast(typeof(MIX_MAX_VOLUME))(value * MIX_MAX_VOLUME);
         Mix_VolumeMusic(sdlVolume);
         return ComResult.success;
     }
 
-    ComResult getVolume(out double value) nothrow
+    ComResult getVolume(out float value) nothrow
     {
         assert(ptr);
         value = Mix_GetMusicVolume(ptr);
@@ -168,9 +168,9 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
-    ComResult setPos(double posMs) nothrow
+    ComResult setPos(float posMs) nothrow
     {
-        double posSec = posMs / 1000.0;
+        float posSec = posMs / 1000.0;
         if (!Mix_SetMusicPosition(posSec))
         {
             return getErrorRes("Error setting music position");

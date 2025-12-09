@@ -23,7 +23,7 @@ class BaseSplitBox : Container
     Sprite2d delegate(Sprite2d) onNewDivider;
     void delegate(Sprite2d) onCreatedDivider;
 
-    double dividerSize = 0;
+    float dividerSize = 0;
 
     protected
     {
@@ -34,9 +34,9 @@ class BaseSplitBox : Container
 
     abstract
     {
-        bool delegate(double, double) newOnSepDragXY(Sprite2d sep);
-        double dividerWidth();
-        double dividerHeight();
+        bool delegate(float, float) newOnSepDragXY(Sprite2d sep);
+        float dividerWidth();
+        float dividerHeight();
     }
 
     override void loadTheme()
@@ -96,7 +96,7 @@ class BaseSplitBox : Container
         return newDividerShape(newSepWidth, newSepHeight, angle, sepStyle);
     }
 
-    Sprite2d newDividerShape(double w, double h, double angle, GraphicStyle style)
+    Sprite2d newDividerShape(float w, float h, float angle, GraphicStyle style)
     {
         auto shape = theme.rectShape(w, h, angle, style);
         return shape; 

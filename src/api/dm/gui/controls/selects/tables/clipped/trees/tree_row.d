@@ -16,7 +16,7 @@ class TreeRowLevelGraphics : Control
     bool isLastLevelRow;
     bool isLastRow;
 
-    double graphicsGap = 0;
+    float graphicsGap = 0;
 
     this()
     {
@@ -56,7 +56,7 @@ class TreeRowLevelGraphics : Control
             graphic.restoreColor;
         }
 
-        double nextX = b.x + graphicsGap;
+        float nextX = b.x + graphicsGap;
         if (level == 0)
         {
             if (!isLastLevelRow)
@@ -162,7 +162,7 @@ class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
     Text delegate(Text) onNewExpandGraphics;
     void delegate(Text) onCreatedExpandGraphics;
 
-    this(TreeItem!T rowItem, bool isExpand = false, size_t treeLevel = 0, double dividerSize = 0)
+    this(TreeItem!T rowItem, bool isExpand = false, size_t treeLevel = 0, float dividerSize = 0)
     {
         super(dividerSize);
 

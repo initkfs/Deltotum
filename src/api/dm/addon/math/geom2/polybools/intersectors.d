@@ -18,14 +18,14 @@ class SelfIntersecter : AbstractIntersecter
         super(true, eps);
     }
 
-    void addRegion(double[][] region)
+    void addRegion(float[][] region)
     {
         // regions are a list of points:
         //  [ [0, 0], [100, 0], [50, 100] ]
         // you can add multiple regions before running calculate
-        double[] pt1;
-        double[] pt2 = region[$ - 1];
-        foreach (double[] pt; region)
+        float[] pt1;
+        float[] pt2 = region[$ - 1];
+        foreach (float[] pt; region)
         {
             pt1 = pt2;
             pt2 = pt;
@@ -83,7 +83,7 @@ abstract class AbstractIntersecter
     protected static class IntersecterContent
     {
         bool isStart;
-        double[] pt;
+        float[] pt;
         Segment seg;
         bool primary;
         LinkedList!IntersecterContent other;
@@ -101,18 +101,18 @@ abstract class AbstractIntersecter
         this.selfIntersection = selfIntersection;
     }
 
-    protected Segment segmentNew(double[] start, double[] end)
+    protected Segment segmentNew(float[] start, float[] end)
     {
         return new Segment(start, end);
     }
 
-    protected Segment segmentCopy(double[] start, double[] end, Segment seg)
+    protected Segment segmentCopy(float[] start, float[] end, Segment seg)
     {
         return new Segment(start, end, new Segment.SegmentFill(seg.myFill));
     }
 
-    private int eventCompare(bool p1_isStart, double[] p1_1, double[] p1_2,
-        bool p2_isStart, double[] p2_1, double[] p2_2)
+    private int eventCompare(bool p1_isStart, float[] p1_1, float[] p1_2,
+        bool p2_isStart, float[] p2_1, float[] p2_2)
     {
 
         // compare the selected points first
@@ -134,7 +134,7 @@ abstract class AbstractIntersecter
         ) ? 1 : -1;
     }
 
-    private void eventAdd(LinkedList!IntersecterContent ev, double[] other_pt)
+    private void eventAdd(LinkedList!IntersecterContent ev, float[] other_pt)
     {
         this.event_root.insertBefore(ev, (here) {
             // should ev be inserted before here?
@@ -182,7 +182,7 @@ abstract class AbstractIntersecter
         return ev_start;
     }
 
-    private void eventUpdateEnd(LinkedList!IntersecterContent ev, double[] end)
+    private void eventUpdateEnd(LinkedList!IntersecterContent ev, float[] end)
     {
         // slides an end backwards
         //   (start)------------(end)    to:
@@ -194,7 +194,7 @@ abstract class AbstractIntersecter
         this.eventAdd(ev.getContent().other, ev.getContent().pt);
     }
 
-    private LinkedList!IntersecterContent eventDivide(LinkedList!IntersecterContent ev, double[] pt)
+    private LinkedList!IntersecterContent eventDivide(LinkedList!IntersecterContent ev, float[] pt)
     {
         Segment ns = this.segmentCopy(pt, ev.getContent().seg.end, ev.getContent().seg);
         this.eventUpdateEnd(ev, pt);
@@ -213,10 +213,10 @@ abstract class AbstractIntersecter
             LinkedList!IntersecterContent).create();
 
         int delegate(LinkedList!IntersecterContent, LinkedList!IntersecterContent) statusCompare = (ev1, ev2) {
-            double[] a1 = ev1.getContent().seg.start;
-            double[] a2 = ev1.getContent().seg.end;
-            double[] b1 = ev2.getContent().seg.start;
-            double[] b2 = ev2.getContent().seg.end;
+            float[] a1 = ev1.getContent().seg.start;
+            float[] a2 = ev1.getContent().seg.end;
+            float[] b1 = ev2.getContent().seg.start;
+            float[] b2 = ev2.getContent().seg.end;
 
             if (this.eps.pointsCollinear(a1, b1, b2))
             {
@@ -242,10 +242,10 @@ abstract class AbstractIntersecter
 
             Segment seg1 = ev1.getContent().seg;
             Segment seg2 = ev2.getContent().seg;
-            double[] a1 = seg1.start;
-            double[] a2 = seg1.end;
-            double[] b1 = seg2.start;
-            double[] b2 = seg2.end;
+            float[] a1 = seg1.start;
+            float[] a2 = seg1.end;
+            float[] b1 = seg2.start;
+            float[] b2 = seg2.end;
 
             Epsilon.EpsilonIntersectionResult i = this.eps.linesIntersect(a1, a2, b1, b2);
 

@@ -52,7 +52,7 @@ void blend(RGBA[][] colors, RGBA maskColor, RGBA[][] buffer, BlendMode mode = Bl
     assert(colors.length > 0);
     assert(colors[0].length > 0);
 
-    // ubyte colorCalc(double value) {
+    // ubyte colorCalc(float value) {
     //     const result = cast(ubyte) Math.clamp(Math.round(value), RGBA.minColor, RGBA
     //             .maxColor);
     //     return result;
@@ -132,7 +132,7 @@ void blend(RGBA[][] colors, RGBA maskColor, RGBA[][] buffer, BlendMode mode = Bl
 
 RGBA blendNormal(RGBA color, RGBA mask)
 {
-    double newAlpha = color.a + mask.a * (1 - color.a);
+    float newAlpha = color.a + mask.a * (1 - color.a);
     if (newAlpha == 0)
     {
         return RGBA(0, 0, 0, 0);
@@ -255,7 +255,7 @@ RGBA blendOverlay(RGBA color, RGBA mask)
 
 private ubyte overlay(ubyte b, ubyte c)
 {
-    const double max = RGBA.maxColor;
+    const float max = RGBA.maxColor;
 
     const bn = b / max, cn = c / max;
     const r = (bn <= 0.5) ? 2 * bn * cn : 1 - 2 * (1 - bn) * (1 - cn);
@@ -274,11 +274,11 @@ RGBA blendSoftLight(RGBA color, RGBA mask)
 
 private ubyte soft(ubyte color, ubyte mask)
 {
-    const double max = RGBA.maxColor;
+    const float max = RGBA.maxColor;
 
-    double b = color / max;
-    double c = mask / max;
-    double r = 0;
+    float b = color / max;
+    float c = mask / max;
+    float r = 0;
     if (c <= 0.5)
     {
         r = 2 * b * c + b * b * (1 - 2 * c);

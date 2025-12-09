@@ -234,7 +234,7 @@ class Asset : LocalResources
         return fontColorBitmap(color, FontSize.small);
     }
 
-    double fontMaxHeight(string name = defaultFontName, uint size = FontSize.medium)
+    float fontMaxHeight(string name = defaultFontName, uint size = FontSize.medium)
     {
         if (!hasFont(size, name))
         {
@@ -259,10 +259,10 @@ class Asset : LocalResources
         {
             return Vec2d(defaultSize, defaultSize);
         }
-        double glyphW = (*bitmapPtr).e0.geometry.width;
-        double glyphH = (*bitmapPtr).e0.geometry.height;
-        double eW = glyphW != 0 ? glyphW : defaultSize;
-        double eH = glyphH != 0 ? glyphH : defaultSize;
+        float glyphW = (*bitmapPtr).e0.geometry.width;
+        float glyphH = (*bitmapPtr).e0.geometry.height;
+        float eW = glyphW != 0 ? glyphW : defaultSize;
+        float eH = glyphH != 0 ? glyphH : defaultSize;
 
         return Vec2d(eW, eH);
     }

@@ -9,14 +9,14 @@ import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 class Cube : Shape3d
 {
-    double depth = 0;
+    float depth = 0;
 
     this()
     {
 
     }
 
-    this(double width, double height, double depth)
+    this(float width, float height, float depth)
     {
         this.initSize(width, height);
         this.depth = depth;

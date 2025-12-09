@@ -23,7 +23,7 @@ class FractalCell : Noise
 {
     size_t stack_octaves = 12;
     size_t seed = 40000;
-    double[] noise_table = [];
+    float[] noise_table = [];
     //256
     enum size_t ns = 10;
     enum size_t nt_size = ns * ns;
@@ -35,7 +35,7 @@ class FractalCell : Noise
 
     Random rnd;
 
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         super(width, height);
         rnd = rands;
@@ -77,7 +77,7 @@ class FractalCell : Noise
         }
     }
 
-    double prime_cycle()
+    float prime_cycle()
     {
         auto result = noise_table[pc_seed % nt_size];
         pc_seed += pc_increment;
@@ -94,21 +94,21 @@ class FractalCell : Noise
         return result;
     }
 
-    double cell_noise_xy(
-        double x,
-        double y,
+    float cell_noise_xy(
+        float x,
+        float y,
         size_t xsize = 256,
         size_t ysize = 256,
-        double density = 4,
+        float density = 4,
         size_t seed = 0,
         size_t octaves = 2,
-        double amplitude_ratio = 1 / 2,
-        double softness = 1,
-        double samples = 4,
-        double bias = 0,
-        double range = 1)
+        float amplitude_ratio = 1 / 2,
+        float softness = 1,
+        float samples = 4,
+        float bias = 0,
+        float range = 1)
     {
-        double surface = 0;
+        float surface = 0;
         for (auto a = 0; a < octaves; a++)
         {
             auto octave_seed = noise_table[seed % nt_size]; // inline prime cycle
@@ -122,7 +122,7 @@ class FractalCell : Noise
         return c_height;
     }
 
-    double pos3int(double x, double y, size_t seed)
+    float pos3int(float x, float y, size_t seed)
     {
         assert(noise_table.length > 0);
         size_t linear = cast(size_t)((x % ns) + (y % ns) * ns + seed);
@@ -130,17 +130,17 @@ class FractalCell : Noise
         return noise_table[linear];
     }
 
-    double curve_stack_2x2_xy(
-        double x,
-        double y,
+    float curve_stack_2x2_xy(
+        float x,
+        float y,
         size_t xsize = 256,
         size_t ysize = 256,
-        double d = 1,
-        double seed = 0,
-        double softness = 1,
-        double samples = 4,
-        double bias = 0,
-        double range = 1)
+        float d = 1,
+        float seed = 0,
+        float softness = 1,
+        float samples = 4,
+        float bias = 0,
+        float range = 1)
     {
 
         x /= xsize;
@@ -150,7 +150,7 @@ class FractalCell : Noise
         size_t ti = 0; // random number table index
         int dm1 = (d - 1).to!int; // for the bitwise & instead of % range trick
 
-        double c_height = 0;
+        float c_height = 0;
 
         // this variant uses a trick to reduce samples
         // sample radius is 1/2 square edge instead of 1, which makes overlap from neighboring cells never more than 1/2 square length. this means we can check which quadrant we're in and only check the three nearest neighbors, instead of all 8 neighbors.
@@ -160,9 +160,9 @@ class FractalCell : Noise
         auto bottom = top + 1;
 
         // this uses every point within the radius. when doing worley noise, we calculate distances for each point, and compare, getting various other parameters per point. instead, we can drop the distance comparisons, and instead get a height per point and run it through a lightweight kernel, and accumulate
-        double px = 0, py = 0, distance_squared = 0, amp = 0;
+        float px = 0, py = 0, distance_squared = 0, amp = 0;
         auto cx = left, cy = top;
-        double sum = 0;
+        float sum = 0;
         while (cy <= bottom)
         {
             cx = left;
@@ -197,7 +197,7 @@ class FractalCell : Noise
         return sum;
     }
 
-    double curve_stack_3x3_xy(double x, double y, double xsize = 256, double ysize = 256, double d = 1, double seed = 0, double softness = 1, double samples = 4, double bias = 0, double range = 1)
+    float curve_stack_3x3_xy(float x, float y, float xsize = 256, float ysize = 256, float d = 1, float seed = 0, float softness = 1, float samples = 4, float bias = 0, float range = 1)
     {
 
         x /= xsize;
@@ -206,7 +206,7 @@ class FractalCell : Noise
         auto iy = Math.floor(y * d);
         size_t ti = 0; // random number table index
 
-        double c_height = 0;
+        float c_height = 0;
 
         // this uses every point within the radius. when doing worley noise, we calculate distances for each point, and compare, getting various other parameters per point. instead, we can drop the distance comparisons, and instead get a height per point and run it through a lightweight kernel, and accumulate
         for (auto oy = -1; oy <= 1; oy++)

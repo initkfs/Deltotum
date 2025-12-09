@@ -21,15 +21,15 @@ class RadialSegmentBar : Control
     GraphicStyle segmentStyleOn;
     GraphicStyle segmentStyleOff;
 
-    double diameter = 0;
-    double minAngleDeg = 0;
-    double maxAngleDeg = 0;
+    float diameter = 0;
+    float minAngleDeg = 0;
+    float maxAngleDeg = 0;
 
-    double angleOffset = -90;
+    float angleOffset = -90;
 
     bool isUseMiddleAngleOffset;
 
-    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 180)
+    this(float diameter = 0, float minAngleDeg = 0, float maxAngleDeg = 180)
     {
         this.diameter = diameter;
 
@@ -186,15 +186,15 @@ class RadialSegmentBar : Control
         return newColor.toRGBA;
     }
 
-    double segmentAngle() => 360.0 / segmentsCount;
-    double segmentAngleMiddleOffset() => segmentAngle / 2;
+    float segmentAngle() => 360.0 / segmentsCount;
+    float segmentAngleMiddleOffset() => segmentAngle / 2;
 
-    void drawSegment(scope bool delegate(size_t i, double startAngleDeg, double endAngleDeg, double angleOffset) onAngleDegIsContinue)
+    void drawSegment(scope bool delegate(size_t i, float startAngleDeg, float endAngleDeg, float angleOffset) onAngleDegIsContinue)
     {
         assert(onAngleDegIsContinue);
 
-        double angleDiff = segmentAngle;
-        double angleMiddleOffset = isUseMiddleAngleOffset ? angleDiff / 2 : 0;
+        float angleDiff = segmentAngle;
+        float angleMiddleOffset = isUseMiddleAngleOffset ? angleDiff / 2 : 0;
 
         foreach (i; 0 .. segmentsCount)
         {
@@ -210,7 +210,7 @@ class RadialSegmentBar : Control
         }
     }
 
-    double radius() => diameter / 2;
+    float radius() => diameter / 2;
 
     override void applyLayout()
     {
@@ -226,7 +226,7 @@ class RadialSegmentBar : Control
 
         const currPos = boundsRect.center;
 
-        drawSegment((size_t i, double startAngleDeg, double endAngleDeg, double angleOffset) {
+        drawSegment((size_t i, float startAngleDeg, float endAngleDeg, float angleOffset) {
             auto segmentOff = _segmentsOff[i];
             auto segmentOn = _segmentsOn[i];
             auto angleMiddle = Math.angleDegMiddle(startAngleDeg, endAngleDeg);

@@ -81,9 +81,9 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
                 break;
         }
 
-        double deltaT = currentFrame / frameCount;
+        float deltaT = currentFrame / frameCount;
         //It’s better to check for isFinite
-        double interpProgress = interpolator.interpolate(deltaT);
+        float interpProgress = interpolator.interpolate(deltaT);
 
         import api.math.numericals.interp : lerp;
 
@@ -114,7 +114,7 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
         }
     }
 
-    override void update(double delta)
+    override void update(float delta)
     {
         if (_minValue == _maxValue)
         {
@@ -192,7 +192,7 @@ unittest
     import std.math.operations : isClose;
 
     enum animationTimeMs = 100;
-    auto tr1 = new MinMaxTween!double(0, 10, animationTimeMs);
+    auto tr1 = new MinMaxTween!float(0, 10, animationTimeMs);
     tr1.frameRateHz = 60;
     tr1.initialize;
     tr1.create;

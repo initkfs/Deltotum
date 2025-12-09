@@ -47,7 +47,7 @@ class RendererCanvas : StateCanvas
 
     }
 
-    void lineTo(double endX, double endY)
+    void lineTo(float endX, float endY)
     {
         graphic.line(x, y, endX, endY);
         moveTo(endX, endY);
@@ -58,7 +58,7 @@ class RendererCanvas : StateCanvas
         lineTo(pos.x, pos.y);
     }
 
-    void lineWidth(double width)
+    void lineWidth(float width)
     {
 
     }
@@ -93,32 +93,32 @@ class RendererCanvas : StateCanvas
 
     }
 
-    void rect(double x, double y, double width, double height)
+    void rect(float x, float y, float width, float height)
     {
         graphic.rect(Vec2d(x, y), width, height);
     }
 
-    void fillRect(double x, double y, double width, double height)
+    void fillRect(float x, float y, float width, float height)
     {
         graphic.fillRect(Vec2d(x, y), width, height);
     }
 
-    void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
+    void fillTriangle(float x1, float y1, float x2, float y2, float x3, float y3)
     {
         graphic.fillTriangle(Vec2d(x1, y1), Vec2d(x2, y2), Vec2d(x3, y3));
     }
 
-    void arc(double xc, double yc, double radius, double angle1, double angle2)
+    void arc(float xc, float yc, float radius, float angle1, float angle2)
     {
 
     }
 
-    void scale(double sx, double sy)
+    void scale(float sx, float sy)
     {
 
     }
 
-    void rotateRad(double angleRad)
+    void rotateRad(float angleRad)
     {
 
     }
@@ -138,7 +138,7 @@ class RendererCanvas : StateCanvas
 
     }
 
-    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, double innerRadius, double outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern)
+    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern)
     {
         
     }

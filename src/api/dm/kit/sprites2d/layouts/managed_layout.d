@@ -180,7 +180,7 @@ class ManagedLayout : Layout2d
 
     void resizeRootWidth(Sprite2d root)
     {
-        double newWidth = childrenWidth(root);
+        float newWidth = childrenWidth(root);
         if (newWidth == 0)
         {
             return;
@@ -223,7 +223,7 @@ class ManagedLayout : Layout2d
 
     void resizeRootHeight(Sprite2d root)
     {
-        double newHeight = childrenHeight(root);
+        float newHeight = childrenHeight(root);
         if (newHeight == 0)
         {
             return;
@@ -262,12 +262,12 @@ class ManagedLayout : Layout2d
         }
     }
 
-    double freeWidth(Sprite2d root, Sprite2d child)
+    float freeWidth(Sprite2d root, Sprite2d child)
     {
         return root.width - child.width - root.padding.width;
     }
 
-    double freeHeight(Sprite2d root, Sprite2d child)
+    float freeHeight(Sprite2d root, Sprite2d child)
     {
         return root.height - child.height - root.padding.height;
     }
@@ -284,7 +284,7 @@ class ManagedLayout : Layout2d
             return;
         }
 
-        double reduceWidth = 0;
+        float reduceWidth = 0;
         if (isDecreaseChildrenWidth)
         {
             auto chWidth = childrenWidth(root);
@@ -300,7 +300,7 @@ class ManagedLayout : Layout2d
             }
         }
 
-        double reduceHeight = 0;
+        float reduceHeight = 0;
         if (isDecreaseChildrenHeight)
         {
             auto chHeight = childrenHeight(root);
@@ -371,9 +371,9 @@ class ManagedLayout : Layout2d
         }
     }
 
-    override double calcChildrenWidth(Sprite2d root)
+    override float calcChildrenWidth(Sprite2d root)
     {
-        double maxW = 0;
+        float maxW = 0;
         foreach (child; childrenForLayout(root))
         {
             const childW = child.width;
@@ -386,9 +386,9 @@ class ManagedLayout : Layout2d
         return maxW;
     }
 
-    override double calcChildrenHeight(Sprite2d root)
+    override float calcChildrenHeight(Sprite2d root)
     {
-        double maxH = 0;
+        float maxH = 0;
         foreach (child; childrenForLayout(root))
         {
             const childH = child.height;

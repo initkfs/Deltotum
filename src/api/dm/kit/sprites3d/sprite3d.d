@@ -19,7 +19,7 @@ class Sprite3d : Sprite2d
     {
         PerspectiveCamera _camera;
 
-        double _z = 0;
+        float _z = 0;
 
         align(16)
         {
@@ -27,8 +27,8 @@ class Sprite3d : Sprite2d
             Matrix4x4f _worldMatrixInverse;
         }
 
-        double _angleX = 0;
-        double _angleY = 0;
+        float _angleX = 0;
+        float _angleY = 0;
     }
 
     bool isCalcInverseWorldMatrix = true;
@@ -44,9 +44,9 @@ class Sprite3d : Sprite2d
 
     bool isPushUniformVertexMatrix;
 
-    void delegate(double, double) onChangeZOldNew;
+    void delegate(float, float) onChangeZOldNew;
 
-    double zChangeThreshold = defaultTrashold;
+    float zChangeThreshold = defaultTrashold;
 
     bool isMatrixRecalc;
 
@@ -267,9 +267,9 @@ class Sprite3d : Sprite2d
         return worldPos;
     }
 
-    override double x() @safe pure nothrow => super.x;
+    override float x() @safe pure nothrow => super.x;
 
-    override bool x(double newX)
+    override bool x(float newX)
     {
         if (super.x(newX))
         {
@@ -280,9 +280,9 @@ class Sprite3d : Sprite2d
         return false;
     }
 
-    override double y() @safe pure nothrow => super.y;
+    override float y() @safe pure nothrow => super.y;
 
-    override bool y(double newY)
+    override bool y(float newY)
     {
         if (super.y(newY))
         {
@@ -292,9 +292,9 @@ class Sprite3d : Sprite2d
         return false;
     }
 
-    double z() @safe pure nothrow => _z;
+    float z() @safe pure nothrow => _z;
 
-    bool z(double newZ)
+    bool z(float newZ)
     {
         if (isRoundEvenZ)
         {
@@ -312,8 +312,8 @@ class Sprite3d : Sprite2d
             {
                 if (auto castchild3d = cast(Sprite3d) child)
                 {
-                    double dz = newZ - _z;
-                    double newChildZ = castchild3d.z + dz;
+                    float dz = newZ - _z;
+                    float newChildZ = castchild3d.z + dz;
                     castchild3d.z = !isRoundEvenChildZ ? newChildZ : Math.roundEven(newChildZ);
                 }
 
@@ -336,7 +336,7 @@ class Sprite3d : Sprite2d
         return true;
     }
 
-    override bool angle(double value)
+    override bool angle(float value)
     {
         if (super.angle(value))
         {
@@ -346,7 +346,7 @@ class Sprite3d : Sprite2d
         return false;
     }
 
-    override double angle() => _angle;
+    override float angle() => _angle;
 
     void uploadStart()
     {
@@ -398,10 +398,10 @@ class Sprite3d : Sprite2d
 
     bool hasCamera() => _camera !is null;
 
-    double angleX() => _angleX;
-    double angleY() => _angleY;
+    float angleX() => _angleX;
+    float angleY() => _angleY;
 
-    bool angleX(double v)
+    bool angleX(float v)
     {
 
         if (_angleX == v)
@@ -414,7 +414,7 @@ class Sprite3d : Sprite2d
         return true;
     }
 
-    bool angleY(double v)
+    bool angleY(float v)
     {
         if (_angleY == v)
         {
@@ -430,7 +430,7 @@ class Sprite3d : Sprite2d
 
     bool pos(Vec3f newPos) => pos(newPos.x, newPos.y, newPos.z);
 
-    bool pos(double newX, double newY, double newZ)
+    bool pos(float newX, float newY, float newZ)
     {
         bool isChangePos;
         isChangePos |= super.pos(newX, newY);

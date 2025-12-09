@@ -5,6 +5,6 @@ module api.dm.addon.dsp.signals.analog_signal;
  */
 struct AnalogSignal
 {
-    double freqHz = 0;
-    double magn = 0;
+    float freqHz = 0;
+    float magn = 0;
 }

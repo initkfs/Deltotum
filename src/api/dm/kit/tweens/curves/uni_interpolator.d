@@ -5,7 +5,7 @@ import math = api.dm.math;
 
 struct UniInterpolatorMethod {
     string name;
-    double function(double) ptr;
+    float function(float) ptr;
 }
 
 /**
@@ -46,7 +46,7 @@ class UniInterpolator : Interpolator
         {
             alias func = __traits(getMember, typeof(this), m);
                 //TODO best filter
-                static if (__traits(isStaticFunction, func) && is(ReturnType!func : double))
+                static if (__traits(isStaticFunction, func) && is(ReturnType!func : float))
                 {
                     const funcName = __traits(identifier, func).to!string;
                     methods ~= UniInterpolatorMethod(funcName, &func);
@@ -63,128 +63,128 @@ class UniInterpolator : Interpolator
         return interp;
     }
 
-    double linear(double value)  nothrow
+    float linear(float value)  nothrow
     {
         return value;
     }
 
-    double flip(double value)  nothrow
+    float flip(float value)  nothrow
     {
         return 1 - value;
     }
 
-    double quadIn(double value)  nothrow
+    float quadIn(float value)  nothrow
     {
         return value * value;
     }
 
-    double quadOut(double value)  nothrow
+    float quadOut(float value)  nothrow
     {
         return -value * (value - 2);
     }
 
-    double quadInOut(double value)  nothrow
+    float quadInOut(float value)  nothrow
     {
         return value <= 0.5 ? value * value * 2 : 1 - (
             --value) * value * 2;
     }
 
-    double cubeIn(double value)  nothrow
+    float cubeIn(float value)  nothrow
     {
         return value * value * value;
     }
 
-    double cubeOut(double value)  nothrow
+    float cubeOut(float value)  nothrow
     {
         return 1 + (--value) * value * value;
     }
 
-    double cubeInOut(double value)  nothrow
+    float cubeInOut(float value)  nothrow
     {
         return value <= 0.5 ? value * value * value * 4 : 1 + (
             --value) * value * value * 4;
     }
 
-    double quartIn(double value)  nothrow
+    float quartIn(float value)  nothrow
     {
         return value * value * value * value;
     }
 
-    double quartOut(double value)  nothrow
+    float quartOut(float value)  nothrow
     {
         return 1 - (value -= 1) * value * value * value;
     }
 
-    double quartInOut(double value)  nothrow
+    float quartInOut(float value)  nothrow
     {
         return value <= 0.5 ? value * value * value * value * 8 : (
             1 - (value = value * 2 - 2) * value * value * value) / 2 + 0.5;
     }
 
-    double quintIn(double value)  nothrow
+    float quintIn(float value)  nothrow
     {
         return value * value * value * value * value;
     }
 
-    double quintOut(double value)  nothrow
+    float quintOut(float value)  nothrow
     {
         return --value * value * value * value * value + 1;
     }
 
-    double quintInOut(double value)  nothrow
+    float quintInOut(float value)  nothrow
     {
         return ((value *= 2) < 1) ? (
             value * value * value * value * value) / 2 : (
             (value -= 2) * value * value * value * value + 2) / 2;
     }
 
-    double smoothStepIn(double value)  nothrow
+    float smoothStepIn(float value)  nothrow
     {
         return 2 * smoothStepInOut(value / 2);
     }
 
-    double smoothStepOut(double value)  nothrow
+    float smoothStepOut(float value)  nothrow
     {
         return 2 * smoothStepInOut(value / 2 + 0.5) - 1;
     }
 
-    double smoothStepInOut(double value)  nothrow
+    float smoothStepInOut(float value)  nothrow
     {
         return value * value * (value * -2 + 3);
     }
 
-    double smootherStepIn(double value)  nothrow
+    float smootherStepIn(float value)  nothrow
     {
         return 2 * smootherStepInOut(value / 2);
     }
 
-    double smootherStepOut(double value)  nothrow
+    float smootherStepOut(float value)  nothrow
     {
         return 2 * smootherStepInOut(value / 2 + 0.5) - 1;
     }
 
-    double smootherStepInOut(double value)  nothrow
+    float smootherStepInOut(float value)  nothrow
     {
         return value * value * value * (
             value * (value * 6 - 15) + 10);
     }
 
-    double sineIn(double value)  nothrow
+    float sineIn(float value)  nothrow
     {
         return -math.cos(PI2 * value) + 1;
     }
 
-    double sineOut(double value)  nothrow
+    float sineOut(float value)  nothrow
     {
         return math.sin(PI2 * value);
     }
 
-    double sineInOut(double value)  nothrow
+    float sineInOut(float value)  nothrow
     {
         return -math.cos(math.PI * value) / 2 + .5;
     }
 
-    double bounceIn(double value)  nothrow
+    float bounceIn(float value)  nothrow
     {
         value = 1 - value;
         if (value < B1)
@@ -205,7 +205,7 @@ class UniInterpolator : Interpolator
         return 1 - (7.5625 * (value - B6) * (value - B6) + 0.984375);
     }
 
-    double bounceOut(double value)  nothrow
+    float bounceOut(float value)  nothrow
     {
         if (value < B1)
         {
@@ -225,7 +225,7 @@ class UniInterpolator : Interpolator
         return 7.5625 * (value - B6) * (value - B6) + 0.984375;
     }
 
-    double bounceInOut(double value)  nothrow
+    float bounceInOut(float value)  nothrow
     {
         if (value < 0.5)
         {
@@ -268,49 +268,49 @@ class UniInterpolator : Interpolator
         return (7.5625 * (value - B6) * (value - B6) + 0.984375) / 2 + 0.5;
     }
 
-    double circIn(double value)  nothrow
+    float circIn(float value)  nothrow
     {
         return -(math.sqrt(1 - value * value) - 1);
     }
 
-    double circOut(double value)  nothrow
+    float circOut(float value)  nothrow
     {
         return math.sqrt(1 - (value - 1) * (value - 1));
     }
 
-    double circInOut(double value)  nothrow
+    float circInOut(float value)  nothrow
     {
         return value <= 0.5 ? (math.sqrt(1 - value * value * 4) - 1) / -2 : (
             math.sqrt(1 - (value * 2 - 2) * (value * 2 - 2)) + 1) / 2;
     }
 
-    double expoIn(double value)  nothrow
+    float expoIn(float value)  nothrow
     {
         return math.pow(2, 10 * (value - 1));
     }
 
-    double expoOut(double value)  nothrow
+    float expoOut(float value)  nothrow
     {
         return -math.pow(2, -10 * value) + 1;
     }
 
-    double expoInOut(double value)  nothrow
+    float expoInOut(float value)  nothrow
     {
         return value < 0.5 ? math.pow(2, 10 * (value * 2 - 1)) / 2 : (
             -math.pow(2, -10 * (value * 2 - 1)) + 2) / 2;
     }
 
-    double backIn(double value)  nothrow
+    float backIn(float value)  nothrow
     {
         return value * value * (2.70158 * value - 1.70158);
     }
 
-    double backOut(double value)  nothrow
+    float backOut(float value)  nothrow
     {
         return 1 - (--value) * (value) * (-2.70158 * value - 1.70158);
     }
 
-    double backInOut(double value)  nothrow
+    float backInOut(float value)  nothrow
     {
         value *= 2;
         if (value < 1)
@@ -322,7 +322,7 @@ class UniInterpolator : Interpolator
         return (1 - (--value) * (value) * (-2.70158 * value - 1.70158)) / 2 + 0.5;
     }
 
-    double elasticIn(double value)  nothrow
+    float elasticIn(float value)  nothrow
     {
         return -(ELASTIC_AMPLITUDE * math.pow(2,
                 10 * (value -= 1)) * math.sin((value - (ELASTIC_PERIOD / (
@@ -330,7 +330,7 @@ class UniInterpolator : Interpolator
                 2 * math.PI) / ELASTIC_PERIOD));
     }
 
-    double elasticOut(double value)  nothrow
+    float elasticOut(float value)  nothrow
     {
         return (ELASTIC_AMPLITUDE * math.pow(2,
                 -10 * value) * math.sin((value - (ELASTIC_PERIOD / (
@@ -339,7 +339,7 @@ class UniInterpolator : Interpolator
                 + 1);
     }
 
-    double elasticInOut(double value)  nothrow
+    float elasticInOut(float value)  nothrow
     {
         if (value < 0.5)
         {

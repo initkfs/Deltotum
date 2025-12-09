@@ -6,7 +6,7 @@ import api.dm.kit.tweens.curves.interpolator : Interpolator;
 /**
  * Authors: initkfs
  */
-class PauseTween : MinMaxTween!double
+class PauseTween : MinMaxTween!float
 {
     this(size_t timeMs = 200, Interpolator interpolator = null)
     {

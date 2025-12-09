@@ -19,7 +19,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
     Container colorValueContainer;
     Sprite2d colorCanvasSample;
 
-    double colorCanvasSize = 0;
+    float colorCanvasSize = 0;
     Sprite2d colorCanvas;
 
     Text colorHexField;
@@ -146,13 +146,13 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         return new HBox;
     }
 
-    Sprite2d newColorValueSample(double newWidth, double newHeight)
+    Sprite2d newColorValueSample(float newWidth, float newHeight)
     {
         import Math = api.math;
 
         size_t probeCount = 6;
-        double probeWSize = Math.round(newWidth / probeCount);
-        double probeHSize = Math.round(newHeight / probeCount);
+        float probeWSize = Math.round(newWidth / probeCount);
+        float probeHSize = Math.round(newHeight / probeCount);
 
         import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
@@ -172,8 +172,8 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         RGBA color1 = RGBA(200, 200, 200);
         RGBA color2 = RGBA.white;
 
-        double nextX = 0;
-        double nextY = 0;
+        float nextX = 0;
+        float nextY = 0;
         foreach (ri; 0 .. probeCount)
         {
             foreach (ci; 0 .. probeCount)

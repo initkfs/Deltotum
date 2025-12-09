@@ -14,17 +14,17 @@ import api.math.angle;
 struct PieData
 {
     dstring name;
-    double value = 0;
+    float value = 0;
 }
 
 class PieTexture : VectorTexture
 {
-    double totalValue = 0;
+    float totalValue = 0;
     PieData[] values;
 
-    void delegate(size_t, RGBA color, double, Vec2d) onColorRadiusAnglesDeg;
+    void delegate(size_t, RGBA color, float, Vec2d) onColorRadiusAnglesDeg;
 
-    this(double width, double height)
+    this(float width, float height)
     {
         super(width, height);
     }
@@ -40,8 +40,8 @@ class PieTexture : VectorTexture
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        double startAngleDeg = 0;
-        double fullAngleDeg = 360;
+        float startAngleDeg = 0;
+        float fullAngleDeg = 360;
 
         import api.math.geom2.vec2 : Vec2d;
 
@@ -64,8 +64,8 @@ class PieTexture : VectorTexture
             startColor.h = (startColor.h + 100) % HSVA.maxHue;
             startColor.v = HSVA.maxValue;
 
-            double v = data.value;
-            double dataAngleDeg = (v * fullAngleDeg) / totalValue;
+            float v = data.value;
+            float dataAngleDeg = (v * fullAngleDeg) / totalValue;
             auto endAngleDeg = startAngleDeg + dataAngleDeg;
 
             if (onColorRadiusAnglesDeg)
@@ -98,9 +98,9 @@ class LabelInfo : Container
     Texture2d colorLabel;
     RGBA color;
 
-    double startAngleDeg = 0;
-    double endAngleDeg = 0;
-    double radius = 0;
+    float startAngleDeg = 0;
+    float endAngleDeg = 0;
+    float radius = 0;
 
     this()
     {
@@ -138,13 +138,13 @@ class PieChart : Container
 
     protected
     {
-        double totalValue = 0;
+        float totalValue = 0;
         PieData[] values;
 
         LabelInfo[] labels;
 
-        double chartAreaWidth;
-        double chartAreaHeight;
+        float chartAreaWidth;
+        float chartAreaHeight;
 
         PieTexture texture;
         bool isCreateTexture = true;
@@ -155,7 +155,7 @@ class PieChart : Container
         size_t labelsCount;
     }
 
-    this(double chartAreaWidth = 100, double chartAreaHeight = 100)
+    this(float chartAreaWidth = 100, float chartAreaHeight = 100)
     {
         this.chartAreaWidth = chartAreaWidth;
         this.chartAreaHeight = chartAreaHeight;
@@ -213,7 +213,7 @@ class PieChart : Container
         }
     }
 
-    PieTexture newTexture(double w, double h)
+    PieTexture newTexture(float w, float h)
     {
         return new PieTexture(w, h);
     }
@@ -237,8 +237,8 @@ class PieChart : Container
             auto outerPos = Vec2d.fromPolarDeg(middleAngleDeg, radius);
             auto outerCenterPos = boundsRect.center.add(outerPos);
 
-            double labelX = outerCenterPos.x;
-            double labelY = outerCenterPos.y;
+            float labelX = outerCenterPos.x;
+            float labelY = outerCenterPos.y;
 
             if (middleAngleDeg >= 0 && middleAngleDeg <= 90)
             {

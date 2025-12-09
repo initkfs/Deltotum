@@ -15,15 +15,15 @@ class VShape : VectorTexture
     //TODO remove from shape
     GraphicStyle style;
 
-    double shapeAngleDeg = 0;
+    float shapeAngleDeg = 0;
 
     bool isClosePath;
     bool isDrawFromCenter;
 
-    double translateX = 0;
-    double translateY = 0;
+    float translateX = 0;
+    float translateY = 0;
 
-    this(double width, double height, GraphicStyle style)
+    this(float width, float height, GraphicStyle style)
     {
         super(width, height);
         this.style = style;

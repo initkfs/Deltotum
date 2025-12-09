@@ -36,9 +36,9 @@ class MultiMedia : SimpleUnit
         return spec;
     }
 
-    AudioChunk!T newHeapChunk(T)(double durationMsec) => newHeapChunk!T(durationMsec, cast(size_t) audioOut.spec.channels);
+    AudioChunk!T newHeapChunk(T)(float durationMsec) => newHeapChunk!T(durationMsec, cast(size_t) audioOut.spec.channels);
 
-    AudioChunk!T newHeapChunk(T)(double durationMsec, size_t channels)
+    AudioChunk!T newHeapChunk(T)(float durationMsec, size_t channels)
     {
         auto freqHz = audioOut.spec.freqHz;
         import api.dm.kit.media.buffers.finite_signal_buffer : FiniteSignalBuffer;

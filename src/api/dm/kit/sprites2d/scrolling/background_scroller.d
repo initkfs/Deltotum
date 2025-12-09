@@ -17,13 +17,13 @@ enum Direction
  */
 class BackgroundScroller : Sprite2d
 {
-    double speed = 10;
+    float speed = 10;
     Direction direction = Direction.left;
     Sprite2d _current;
     Sprite2d _next;
     bool isScroll;
 
-    double seamОffset = 0;
+    float seamОffset = 0;
 
     Rect2d delegate() worldBoundsProvider;
 
@@ -44,7 +44,7 @@ class BackgroundScroller : Sprite2d
         }
     }
 
-    override void update(double delta)
+    override void update(float delta)
     {
         super.update(delta);
 
@@ -53,7 +53,7 @@ class BackgroundScroller : Sprite2d
             return;
         }
 
-        const double offset = speed * delta;
+        const float offset = speed * delta;
 
         final switch (direction)
         {

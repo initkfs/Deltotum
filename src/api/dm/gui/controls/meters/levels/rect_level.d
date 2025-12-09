@@ -28,17 +28,17 @@ class RectLevel : Control
     RGBA[] levelColors;
 
     RGBA startLevelColor;
-    double levelColorPaletteDeltaDeg = 0;
+    float levelColorPaletteDeltaDeg = 0;
 
-    double levelShapeWidth = 0;
-    double levelShapeHeight = 0;
+    float levelShapeWidth = 0;
+    float levelShapeHeight = 0;
 
     dstring delegate(size_t) levelNameProvider;
 
-    double delegate(size_t) levelNumValueProvider;
-    double delegate() levelMaxValueProvider;
+    float delegate(size_t) levelNumValueProvider;
+    float delegate() levelMaxValueProvider;
 
-    this(double delegate(size_t) levelNumValueProvider, double delegate() levelMaxValueProvider)
+    this(float delegate(size_t) levelNumValueProvider, float delegate() levelMaxValueProvider)
     {
         assert(levelNumValueProvider);
         assert(levelMaxValueProvider);
@@ -152,7 +152,7 @@ class RectLevel : Control
                 auto label = labels[levelIndex];
                 auto currentX = label.boundsRect.middleX - halfLevelW;
                 auto levelValue = levelNumValueProvider(levelIndex);
-                double normValue = levelValue / maxValue;
+                float normValue = levelValue / maxValue;
                 if (normValue > 1)
                 {
                     normValue = 1;

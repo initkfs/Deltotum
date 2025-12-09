@@ -13,7 +13,7 @@ import Math = api.math;
    scale-> rotate -> translate
  */
 
-Matrix4x4f rotateMatrixX(double angleDeg)
+Matrix4x4f rotateMatrixX(float angleDeg)
 {
     import Math = api.math;
 
@@ -44,7 +44,7 @@ Matrix4x4f rotateMatrixX(double angleDeg)
     return matrix;
 }
 
-Matrix4x4f rotateMatrixY(double angleDeg)
+Matrix4x4f rotateMatrixY(float angleDeg)
 {
     import Math = api.math;
 
@@ -75,7 +75,7 @@ Matrix4x4f rotateMatrixY(double angleDeg)
     return matrix;
 }
 
-Matrix4x4f rotateMatrixZ(double angleDeg)
+Matrix4x4f rotateMatrixZ(float angleDeg)
 {
     import Math = api.math;
 
@@ -106,10 +106,10 @@ Matrix4x4f rotateMatrixZ(double angleDeg)
     return matrix;
 }
 
-Matrix4x4f rotateMatrix(double angleDeg, Vec3f angles) => rotateMatrix(angleDeg, angles.x, angles.y, angles
+Matrix4x4f rotateMatrix(float angleDeg, Vec3f angles) => rotateMatrix(angleDeg, angles.x, angles.y, angles
         .z);
 
-Matrix4x4f rotateMatrix(double angleDeg, float axisX, float axisY, float axisZ)
+Matrix4x4f rotateMatrix(float angleDeg, float axisX, float axisY, float axisZ)
 {
     //auto rotX = rotateMatrix(45.0f, 1.0f, 0.0f, 0.0f);
     import Math = api.math;

@@ -14,7 +14,7 @@ class IndexableVertex : Vertex
     int x;
     int y;
 
-    double priority = 0;
+    float priority = 0;
 
     this(long id, int x, int y) pure @safe
     {
@@ -53,7 +53,7 @@ class IndexableVertex : Vertex
 
 class PathGraph : Graph
 {
-    double heuristic(IndexableVertex a, IndexableVertex b)
+    float heuristic(IndexableVertex a, IndexableVertex b)
     {
         import api.math.geom2.vec2 : Vec2d;
 
@@ -62,7 +62,7 @@ class PathGraph : Graph
 }
 
 bool astar(PathGraph graph, IndexableVertex start, IndexableVertex target, scope bool delegate(
-        IndexableVertex) onVertexIsContinue, scope double delegate(IndexableVertex a, IndexableVertex b) costCalc)
+        IndexableVertex) onVertexIsContinue, scope float delegate(IndexableVertex a, IndexableVertex b) costCalc)
 {
     import std.container.binaryheap : BinaryHeap;
 
@@ -75,7 +75,7 @@ bool astar(PathGraph graph, IndexableVertex start, IndexableVertex target, scope
     IndexableVertex[] store;
 
     IndexableVertex[IndexableVertex] cameFrom;
-    double[IndexableVertex] costs;
+    float[IndexableVertex] costs;
 
     auto queue = BinaryHeap!(IndexableVertex[], (a, b) => a.priority > b.priority)(store);
 
@@ -103,11 +103,11 @@ bool astar(PathGraph graph, IndexableVertex start, IndexableVertex target, scope
         graph.onEdgesFromVertex(current, (outEdge) {
             auto next = cast(IndexableVertex) outEdge.dest;
             assert(next);
-            double newCost = costs[current] + costCalc(current, next);
+            float newCost = costs[current] + costCalc(current, next);
             if ((next !in costs) || newCost < costs[next])
             {
                 costs[next] = newCost;
-                double priority = newCost + graph.heuristic(next, target);
+                float priority = newCost + graph.heuristic(next, target);
                 next.priority = priority;
                 queue.insert(next);
                 cameFrom[next] = current;

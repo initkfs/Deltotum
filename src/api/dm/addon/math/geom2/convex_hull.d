@@ -40,8 +40,8 @@ Vec2d[] graham(Vec2d[] points)
 
     hullPoints.sort!((Vec2d a, Vec2d b) {
 
-        double thetaA = Math.atan2(a.y - lowest.y, a.x - lowest.x);
-        double thetaB = Math.atan2(b.y - lowest.y, b.x - lowest.x);
+        float thetaA = Math.atan2(a.y - lowest.y, a.x - lowest.x);
+        float thetaB = Math.atan2(b.y - lowest.y, b.x - lowest.x);
 
         if (thetaA < thetaB)
         {
@@ -53,10 +53,10 @@ Vec2d[] graham(Vec2d[] points)
             return false;
         }
 
-        double distA = Math.sqrt(((lowest.x - a.x) * (lowest.x - a.x)) +
+        float distA = Math.sqrt(((lowest.x - a.x) * (lowest.x - a.x)) +
             (
             (lowest.y - a.y) * (lowest.y - a.y)));
-        double distB = Math.sqrt(((lowest.x - b.x) * (lowest.x - b.x)) +
+        float distB = Math.sqrt(((lowest.x - b.x) * (lowest.x - b.x)) +
             (
             (lowest.y - b.y) * (lowest.y - b.y)));
 

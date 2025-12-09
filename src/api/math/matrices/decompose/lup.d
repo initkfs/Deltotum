@@ -7,7 +7,7 @@ import api.math.matrices.dense_matrix : DenseMatrix;
  * Part of the calculations ported from the JAMA library, Public Domain License: https://math.nist.gov/javanumerics/jama
  * 
  */
-struct LUP(T = double, size_t RowDim, size_t ColDim)
+struct LUP(T = float, size_t RowDim, size_t ColDim)
 {
     T[ColDim][RowDim] LU;
     //indexes where permutation matrix has "1"
@@ -17,7 +17,7 @@ struct LUP(T = double, size_t RowDim, size_t ColDim)
 /** 
  * https://en.wikipedia.org/wiki/LU_decomposition
  */
-LUP!(T, RowDim, ColDim) decompose(T = double, size_t RowDim, size_t ColDim)(
+LUP!(T, RowDim, ColDim) decompose(T = float, size_t RowDim, size_t ColDim)(
     ref DenseMatrix!(T, RowDim, ColDim) matrix) if (RowDim == ColDim)
 {
     LUP!(T, RowDim, ColDim) result;
@@ -93,9 +93,9 @@ LUP!(T, RowDim, ColDim) decompose(T = double, size_t RowDim, size_t ColDim)(
  * solution of A*x=b
  * TODO return DenseMatrix, remove memory allocation
  */
-double[] solve(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim) lupResult, double[] b)
+float[] solve(T = float, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim) lupResult, float[] b)
 {
-    double[] x = new double[](b.length);
+    float[] x = new float[](b.length);
     foreach (i; 0 .. RowDim)
     {
         x[i] = b[lupResult.permVec[i]];
@@ -118,7 +118,7 @@ double[] solve(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, Col
     return x;
 }
 
-DenseMatrix!(T, RowDim, ColDim) invert(T = double, size_t RowDim, size_t ColDim)(
+DenseMatrix!(T, RowDim, ColDim) invert(T = float, size_t RowDim, size_t ColDim)(
     ref LUP!(T, RowDim, ColDim) lupResult)
 {
     enum matrixDim = RowDim;
@@ -148,10 +148,10 @@ DenseMatrix!(T, RowDim, ColDim) invert(T = double, size_t RowDim, size_t ColDim)
     return result;
 }
 
-double det(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim) lupResult)
+float det(T = float, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim) lupResult)
 {
     immutable size_t matrixDim = lupResult.LU.length;
-    double detResult = lupResult.LU[0][0];
+    float detResult = lupResult.LU[0][0];
     foreach (i; 1 .. matrixDim)
     {
         detResult *= lupResult.LU[i][i];
@@ -170,13 +170,13 @@ unittest
     import std.math.operations : isClose;
     import api.math.matrices.dense_matrix : DenseMatrix;
 
-    auto m1 = DenseMatrix!(double, 4, 4)([
+    auto m1 = DenseMatrix!(float, 4, 4)([
         [2, 7, 6, 2],
         [9, 5, 1, 3],
         [4, 3, 8, 4],
         [5, 6, 7, 8],
     ]);
-    auto m1Result = decompose!(double, 4, 4)(m1);
+    auto m1Result = decompose!(float, 4, 4)(m1);
 
     auto m1ResultLU = m1Result.LU;
 
@@ -213,7 +213,7 @@ unittest
     //3x +2y + z =360
     //x + 6y +2z = 300
     //4x + y + 5z = 675
-    auto m2 = DenseMatrix!(double, 3, 3)([[3, 2, 1], [1, 6, 2], [4, 1, 5]]);
+    auto m2 = DenseMatrix!(float, 3, 3)([[3, 2, 1], [1, 6, 2], [4, 1, 5]]);
     auto m2lup = decompose(m2);
     auto m2result = solve(m2lup, [360, 300, 675]);
     assert(m2result[0] == 90);
@@ -222,7 +222,7 @@ unittest
 
     //3x - 2y = 6;
     //5x + 4y = 32;
-    auto m3 = DenseMatrix!(double, 2, 2)([[3, 2], [5, 4]]);
+    auto m3 = DenseMatrix!(float, 2, 2)([[3, 2], [5, 4]]);
     auto m3lup = decompose(m3);
     auto m3result = solve(m3lup, [6, 32]);
     assert(isClose(m3result[0], -20));

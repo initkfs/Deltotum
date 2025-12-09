@@ -18,10 +18,10 @@ import std.conv : to;
  */
 class BaseRadialScaleStatic : BaseScaleStatic
 {
-    double minAngleDeg = 0;
-    double maxAngleDeg = 0;
+    float minAngleDeg = 0;
+    float maxAngleDeg = 0;
 
-    double _diameter = 0;
+    float _diameter = 0;
 
     Texture2d scaleShape;
 
@@ -29,17 +29,17 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
     bool isOuterLabel = true;
 
-    dstring delegate(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick) labelTextProvider;
-    double delegate(double angledDeg, double radius) labelPosRadiusProvider;
+    dstring delegate(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) labelTextProvider;
+    float delegate(float angledDeg, float radius) labelPosRadiusProvider;
 
     bool delegate(GraphicCanvas ctx, Rect2d tickBounds, bool isMajorTick) onVTickIsContinue;
 
     protected
     {
-        double radius = 0;
+        float radius = 0;
     }
 
-    this(double diameter, double minAngleDeg = 0, double maxAngleDeg = 360)
+    this(float diameter, float minAngleDeg = 0, float maxAngleDeg = 360)
     {
         this._diameter = diameter;
 
@@ -142,11 +142,11 @@ class BaseRadialScaleStatic : BaseScaleStatic
                     canvas.translate(width / 2, height / 2);
                     canvas.save;
 
-                    double angleDegDiff = tickOffset;
+                    float angleDegDiff = tickOffset;
 
                     drawScale(
                 onDrawAxis : null,
-                        (size_t i, Vec2d pos, bool isMajorTick, double offsetTick) {
+                        (size_t i, Vec2d pos, bool isMajorTick, float offsetTick) {
 
                         auto tickW = tickMinorHeight;
                         auto tickH = tickMinorWidth;
@@ -242,10 +242,10 @@ class BaseRadialScaleStatic : BaseScaleStatic
         onDrawAxis : null,
         onDrawTick:
                 null,
-                (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick) {
+                (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick) {
                 return drawLabel(labelIndex, tickIndex, pos, isMajorTick, offsetTick);
             },
-                (size_t i, Vec2d pos, double offsetTick) {
+                (size_t i, Vec2d pos, float offsetTick) {
                 return tickStep(i, pos, offsetTick);
             });
         }
@@ -267,7 +267,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
         return Vec2d.fromPolarDeg(minAngleDeg, radius).add(bounds.center);
     }
 
-    override double tickOffset()
+    override float tickOffset()
     {
         const angleRange = Math.abs(maxAngleDeg - minAngleDeg);
         const angleDegDiff = angleRange == 360 ? (angleRange / tickCount) : angleRange / (
@@ -275,12 +275,12 @@ class BaseRadialScaleStatic : BaseScaleStatic
         return angleDegDiff;
     }
 
-    override Vec2d tickStep(size_t i, Vec2d pos, double offsetTick)
+    override Vec2d tickStep(size_t i, Vec2d pos, float offsetTick)
     {
         return scaleShape.boundsRect.center.add(Vec2d.fromPolarDeg((i + 1) * (tickOffset), radius));
     }
 
-    override bool drawTick(size_t i, Vec2d pos, bool isMajorTick, double offsetTick)
+    override bool drawTick(size_t i, Vec2d pos, bool isMajorTick, float offsetTick)
     {
         auto proto = isMajorTick ? majorTickProto : minorTickProto;
 
@@ -301,7 +301,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
         return true;
     }
 
-    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick)
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick)
     {
         if (!isMajorTick || !labelProto)
         {
@@ -321,15 +321,15 @@ class BaseRadialScaleStatic : BaseScaleStatic
         const tickBoundsW = majorTickProto ? majorTickProto.boundsRect.height : tickMajorHeight;
         const tickBoundsH = majorTickProto ? majorTickProto.boundsRect.width : tickMajorWidth;
 
-        double angleDeg = tickIndex * offsetTick;
+        float angleDeg = tickIndex * offsetTick;
 
-        double textPosRadius = isOuterLabel ? radius + Math.max(tickMinorHeight, tickMajorHeight) / 2 : radius - Math.max(
+        float textPosRadius = isOuterLabel ? radius + Math.max(tickMinorHeight, tickMajorHeight) / 2 : radius - Math.max(
             tickMinorHeight, tickMajorHeight) * 1.5;
 
         auto textPos = Vec2d.fromPolarDeg(angleDeg, textPosRadius);
 
-        double textX = 0;
-        double textY = 0;
+        float textX = 0;
+        float textY = 0;
 
         auto truncAngle = Math.trunc(angleDeg);
 
@@ -382,7 +382,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
             textY = center.y + textPos.y - labelProto.boundsRect.halfHeight;
         }
 
-        double nextX = textX;
+        float nextX = textX;
 
         labelProto.onFontTexture((fontTexture, const glyphPtr) {
 
@@ -396,6 +396,6 @@ class BaseRadialScaleStatic : BaseScaleStatic
         return true;
     }
 
-    double angleRange() => minAngleDeg < maxAngleDeg ? (maxAngleDeg - minAngleDeg) : (
+    float angleRange() => minAngleDeg < maxAngleDeg ? (maxAngleDeg - minAngleDeg) : (
         minAngleDeg - maxAngleDeg);
 }

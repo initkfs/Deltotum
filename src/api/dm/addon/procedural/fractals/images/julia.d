@@ -13,10 +13,10 @@ import std.complex;
 class Julia : ComplexFractalImage
 {
     private {
-        Complex!double coeffC = Complex!double(-0.7, 0.27015);
+        Complex!float coeffC = Complex!float(-0.7, 0.27015);
     }
 
-    this(double width = 100, double height = 100, double scaleFactor = 2.0, size_t iterations = 200)
+    this(float width = 100, float height = 100, float scaleFactor = 2.0, size_t iterations = 200)
     {
         super(width, height);
         this.scaleFactor = scaleFactor;
@@ -40,10 +40,10 @@ class Julia : ComplexFractalImage
 
         foreach (y; 0 .. h)
         {
-            double zRe = (y - centerY) / (scaleCorrect * scaleFactor * height);
+            float zRe = (y - centerY) / (scaleCorrect * scaleFactor * height);
             foreach (x; 0 .. w)
             {
-                double zIm = 1.5 * (x - centerX) / (scaleCorrect * scaleFactor * width);
+                float zIm = 1.5 * (x - centerX) / (scaleCorrect * scaleFactor * width);
                 
                 RGBA color = calcColor(zRe, zIm);
 
@@ -52,9 +52,9 @@ class Julia : ComplexFractalImage
         }
     }
 
-    override RGBA calcColor(double x, double y)
+    override RGBA calcColor(float x, float y)
     {
-        Complex!double z = Complex!double(x, y);
+        Complex!float z = Complex!float(x, y);
         size_t i;
         for (i = 0; i < iterations; i++)
         {

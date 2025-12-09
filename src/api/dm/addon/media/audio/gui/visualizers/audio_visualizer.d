@@ -16,7 +16,7 @@ import core.sync.mutex : Mutex;
  */
 class AudioVisualizer(SignalType) : Control
 {
-    double sampleFreq = 0;
+    float sampleFreq = 0;
 
     DspProcessor!(SignalType, sampleBufferSize, 2) dspProcessor;
     shared static
@@ -122,7 +122,7 @@ class AudioVisualizer(SignalType) : Control
         return level;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
         dspProcessor.step;

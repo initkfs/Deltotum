@@ -11,17 +11,17 @@ class SpaceableContainer : Container
 {
     private
     {
-        double _spacing = 0;
+        float _spacing = 0;
     }
 
-    this(double spacing = SpaceableLayout.DefaultSpacing)
+    this(float spacing = SpaceableLayout.DefaultSpacing)
     {
         this._spacing = spacing;
     }
 
-    double spacing() => _spacing;
+    float spacing() => _spacing;
 
-    void spacing(double value)
+    void spacing(float value)
     {
         _spacing = value;
 

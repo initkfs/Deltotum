@@ -12,7 +12,7 @@ abstract class MinMaxValueMeter(ValueType) : MinMaxMeter!ValueType
         ValueType _value = 0;
     }
 
-    double lastValueDelta = 0;
+    float lastValueDelta = 0;
 
     void delegate(ValueType, ValueType)[] onChangeOldNew;
 

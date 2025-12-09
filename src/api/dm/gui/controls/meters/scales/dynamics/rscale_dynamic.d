@@ -14,16 +14,16 @@ import Math = api.math;
  */
 class RScaleDynamic : BaseScaleDynamic
 {
-    double minAngleDeg = 0;
-    double maxAngleDeg = 0;
+    float minAngleDeg = 0;
+    float maxAngleDeg = 0;
 
     protected
     {
-        double _diameter = 0;
-        double radius = 0;
+        float _diameter = 0;
+        float radius = 0;
     }
 
-    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 90)
+    this(float diameter = 0, float minAngleDeg = 0, float maxAngleDeg = 90)
     {
         super(diameter, diameter);
 
@@ -72,19 +72,19 @@ class RScaleDynamic : BaseScaleDynamic
         super.createLabelPool;
     }
 
-    override double tickOffset()
+    override float tickOffset()
     {
         const angleRange = Math.abs(maxAngleDeg - minAngleDeg);
         const angleDegDiff = angleRange / (tickCount - 1);
         return angleDegDiff;
     }
 
-    override Vec2d tickStep(size_t i, Vec2d startPos, double tickOffset)
+    override Vec2d tickStep(size_t i, Vec2d startPos, float tickOffset)
     {
         return boundsRect.center.add(Vec2d.fromPolarDeg((i + 1) * (tickOffset), radius));
     }
 
-    override bool drawTick(size_t i, Vec2d pos, bool isMajorTick, double offsetTick)
+    override bool drawTick(size_t i, Vec2d pos, bool isMajorTick, float offsetTick)
     {
         auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
         auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
@@ -99,7 +99,7 @@ class RScaleDynamic : BaseScaleDynamic
         return true;
     }
 
-    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick)
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, float offsetTick)
     {
         if (!isMajorTick || labelIndex >= labels.length)
         {

@@ -9,7 +9,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-RGBA[][] convolution(RGBA[][] colors, double[][] kernel, double offset = 0)
+RGBA[][] convolution(RGBA[][] colors, float[][] kernel, float offset = 0)
 {
     assert(colors.length > 0);
 
@@ -23,7 +23,7 @@ RGBA[][] convolution(RGBA[][] colors, double[][] kernel, double offset = 0)
     return buff;
 }
 
-void convolution(RGBA[][] colors, double[][] kernel, RGBA[][] colorsResult, double offset = 0)
+void convolution(RGBA[][] colors, float[][] kernel, RGBA[][] colorsResult, float offset = 0)
 {
     assert(kernel.length > 0);
     assert(kernel[0].length > 0);
@@ -38,7 +38,7 @@ void convolution(RGBA[][] colors, double[][] kernel, RGBA[][] colorsResult, doub
     {
         foreach (x, ref RGBA c; colorRow)
         {
-            double rSum = 0, gSum = 0, bSum = 0, aSum = 0, kSum = 0;
+            float rSum = 0, gSum = 0, bSum = 0, aSum = 0, kSum = 0;
 
             foreach (kernelY, kernelRow; kernel)
             {

@@ -13,7 +13,7 @@ class BaseRoundButton : BaseButton
 {
     protected
     {
-        double _diameter = 0;
+        float _diameter = 0;
     }
 
     this(dstring text = defaultButtonText)
@@ -32,9 +32,9 @@ class BaseRoundButton : BaseButton
 
     this(
         dstring text,
-        double diameter = 0,
+        float diameter = 0,
         string iconName = null,
-        double graphicsGap = 0,
+        float graphicsGap = 0,
     )
     {
         super(text, diameter, diameter, iconName, graphicsGap, isCreateLayout:
@@ -65,7 +65,7 @@ class BaseRoundButton : BaseButton
         initSize(_diameter, _diameter);
     }
 
-    override bool containsPoint(double x, double y)
+    override bool containsPoint(float x, float y)
     {
         if (hasBackground)
         {
@@ -84,9 +84,9 @@ class BaseRoundButton : BaseButton
         return super.intersectBounds(other);
     }
 
-    double diameter() => _diameter;
+    float diameter() => _diameter;
 
-    bool diameter(double v)
+    bool diameter(float v)
     {
         if (_diameter == v)
         {

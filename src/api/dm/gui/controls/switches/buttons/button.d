@@ -27,10 +27,10 @@ class Button : BaseButton
 
     this(
         dstring text,
-        double width,
-        double height,
+        float width,
+        float height,
         string iconName = null,
-        double graphicsGap = 0,
+        float graphicsGap = 0,
     )
     {
         super(text, width, height, iconName, graphicsGap);

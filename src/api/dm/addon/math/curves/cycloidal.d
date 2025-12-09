@@ -8,12 +8,12 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-void hypotrochoid(scope bool delegate(Vec2d) onPointIsContinue, double radius1, double theta1, double radius2, double theta2, double dots = 500, double scale = 1.0)
+void hypotrochoid(scope bool delegate(Vec2d) onPointIsContinue, float radius1, float theta1, float radius2, float theta2, float dots = 500, float scale = 1.0)
 {
     assert(onPointIsContinue);
 
     auto initTheta = Math.PI * 2 / dots;
-    double theta = 0;
+    float theta = 0;
 
     foreach (i; 0 .. dots)
     {
@@ -31,7 +31,7 @@ void hypotrochoid(scope bool delegate(Vec2d) onPointIsContinue, double radius1, 
     }
 }
 
-void cycloid(scope bool delegate(Vec2d) onPointIsContinue, double radius = 10, size_t dots = 100, double step = 0.5)
+void cycloid(scope bool delegate(Vec2d) onPointIsContinue, float radius = 10, size_t dots = 100, float step = 0.5)
 {
     assert(onPointIsContinue);
 

@@ -28,8 +28,8 @@ RGBA[][] bilinear(RGBA[][] colors, size_t newWidth, size_t newHeight)
     {
         foreach (y; 0 .. newHeight)
         {
-            const double gx = (cast(double) x) / newWidth * (colorWidth - 1);
-            const double gy = (cast(double) y) / newHeight * (colorHeight - 1);
+            const float gx = (cast(float) x) / newWidth * (colorWidth - 1);
+            const float gy = (cast(float) y) / newHeight * (colorHeight - 1);
 
             const int gxi = cast(int) gx;
             const int gyi = cast(int) gy;
@@ -42,7 +42,7 @@ RGBA[][] bilinear(RGBA[][] colors, size_t newWidth, size_t newHeight)
             const ubyte red = cast(ubyte) blerp(c00.r, c10.r, c01.r, c11.r, gx - gxi, gy - gyi, false);
             const ubyte green = cast(ubyte) blerp(c00.g, c10.g, c01.g, c11.g, gx - gxi, gy - gyi, false);
             const ubyte blue = cast(ubyte) blerp(c00.b, c10.b, c01.b, c11.b, gx - gxi, gy - gyi, false);
-            const double alpha = blerp(c00.a, c10.a, c01.a, c11.a, gx - gxi, gy - gyi, false);
+            const float alpha = blerp(c00.a, c10.a, c01.a, c11.a, gx - gxi, gy - gyi, false);
 
             RGBA color = RGBA(red, green, blue, alpha);
 
@@ -82,7 +82,7 @@ RGBA[][] crop(RGBA[][] colors, Rect2d area)
     return buffer;
 }
 
-RGBA[][] rotate(RGBA[][] colors, double angleDegClockwise)
+RGBA[][] rotate(RGBA[][] colors, float angleDegClockwise)
 {
     assert(colors.length > 0);
     assert(colors[0].length > 0);
@@ -96,29 +96,29 @@ RGBA[][] rotate(RGBA[][] colors, double angleDegClockwise)
     //clockwise
     const angleRad = -Math.degToRad(angleDegClockwise);
 
-    //use double
-    const double centerX = colorWidth / 2;
-    const double centerY = colorHeight / 2;
+    //use float
+    const float centerX = colorWidth / 2;
+    const float centerY = colorHeight / 2;
 
     RGBA[][] buffer = new RGBA[][](colorHeight, colorWidth);
 
     //https://math.stackexchange.com/questions/2093314
-    const moveMatrix = DenseMatrix!(double, 3, 3)([
-        [1.0, 0, centerX],
-        [0.0, 1, centerY],
-        [0.0, 0, 1]
+    const moveMatrix = DenseMatrix!(float, 3, 3)([
+        [1.0f, 0, centerX],
+        [0.0f, 1, centerY],
+        [0.0f, 0, 1]
     ]);
 
-    const rotateMatrix = DenseMatrix!(double, 3, 3)([
+    const rotateMatrix = DenseMatrix!(float, 3, 3)([
         [Math.cos(angleRad), -Math.sin(angleRad), 0],
         [Math.sin(angleRad), Math.cos(angleRad), 0],
-        [0.0, 0, 1]
+        [0.0f, 0, 1]
     ]);
 
-    const backMatrix = DenseMatrix!(double, 3, 3)([
-        [1.0, 0, -centerX],
-        [0.0, 1, -centerY],
-        [0.0, 0, 1]
+    const backMatrix = DenseMatrix!(float, 3, 3)([
+        [1.0f, 0, -centerX],
+        [0.0f, 1, -centerY],
+        [0.0f, 0, 1]
     ]);
 
     const resultMatrix = moveMatrix.mul(rotateMatrix).mul(backMatrix);
@@ -130,10 +130,10 @@ RGBA[][] rotate(RGBA[][] colors, double angleDegClockwise)
     {
         foreach (x, ref color; colorRow)
         {
-            const pixelMatrix = DenseMatrix!(double, 3, 1)([
-                [cast(double) x],
-                [cast(double) y],
-                [1.0]
+            const pixelMatrix = DenseMatrix!(float, 3, 1)([
+                [cast(float) x],
+                [cast(float) y],
+                [1.0f]
             ]);
 
             auto pixelPosMatrix = resultMatrix.mul(pixelMatrix);

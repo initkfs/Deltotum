@@ -19,7 +19,7 @@ import api.math.pos2.orientation : Orientation;
         this.voltage = V;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
         p.pin.voltage = voltage;

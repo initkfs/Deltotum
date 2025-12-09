@@ -5,8 +5,8 @@ struct LSystemData
     dstring startAxiom;
     dstring[dchar] rules;
 
-    double step = 2;
-    double angleDeg = 0;
+    float step = 2;
+    float angleDeg = 0;
     size_t generations = 1;
 }
 

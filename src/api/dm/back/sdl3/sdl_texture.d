@@ -24,7 +24,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         SdlRenderer renderer;
 
-        double _opacity = 0;
+        float _opacity = 0;
         bool locked;
         int pitch;
         uint* pixelPtr;
@@ -423,7 +423,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult setBlendModeBlend() nothrow => setBlendMode(ComBlendMode.blend);
     ComResult setBlendModeNone() nothrow => setBlendMode(ComBlendMode.none);
 
-    ComResult getOpacity(out double value) nothrow
+    ComResult getOpacity(out float value) nothrow
     {
         assert(ptr);
 
@@ -437,11 +437,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             return err;
         }
-        value = (cast(double) alphaMod) / ubyte.max;
+        value = (cast(float) alphaMod) / ubyte.max;
         return ComResult.success;
     }
 
-    ComResult setOpacity(double opacity) nothrow
+    ComResult setOpacity(float opacity) nothrow
     {
         if (!ptr)
         {
@@ -702,13 +702,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    bool draw(Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    bool draw(Rect2d srcBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         return draw(this, srcBounds, destBounds, angle, flip);
     }
 
-    bool draw(ComTexture other, Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    bool draw(ComTexture other, Rect2d srcBounds, Rect2d destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         SDL_FRect srcRect;
@@ -726,8 +726,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         destRect.h = cast(float) destBounds.height;
 
         //FIXME some texture sizes can crash when changing the angle
-        //double newW = height * abs(math.sinDeg(angle)) + width * abs(math.cosDeg(angle));
-        //double newH = height * abs(math.cosDeg(angle)) + width * abs(math.sinDeg(angle));
+        //float newW = height * abs(math.sinDeg(angle)) + width * abs(math.cosDeg(angle));
+        //float newH = height * abs(math.cosDeg(angle)) + width * abs(math.sinDeg(angle));
 
         //TODO move to helper
         SDL_FlipMode sdlFlip;
@@ -796,7 +796,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult copyTo(ComTexture toTexture, Rect2d srcRect, Rect2d destRect, double angle = 0, Flip flip = Flip
+    ComResult copyTo(ComTexture toTexture, Rect2d srcRect, Rect2d destRect, float angle = 0, Flip flip = Flip
             .none)
     {
         if (const err = toTexture.setBlendModeBlend)
@@ -822,7 +822,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult copyFrom(ComTexture other, Rect2d srcRect, Rect2d dstRect, double angle = 0, Flip flip = Flip
+    ComResult copyFrom(ComTexture other, Rect2d srcRect, Rect2d dstRect, float angle = 0, Flip flip = Flip
             .none)
     {
         if (const err = setBlendModeBlend)

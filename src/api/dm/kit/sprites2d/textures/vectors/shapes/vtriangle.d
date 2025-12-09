@@ -10,10 +10,10 @@ import Math = api.dm.math;
  */
 class VTriangle : VShape
 {
-    double xCenter = 0;
-    double yCenter = 0;
+    float xCenter = 0;
+    float yCenter = 0;
 
-    this(double width = 50, double height = 50, GraphicStyle style)
+    this(float width = 50, float height = 50, GraphicStyle style)
     {
         super(width, height, style);
     }

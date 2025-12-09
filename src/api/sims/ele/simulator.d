@@ -524,7 +524,7 @@ class Simulator : Container
 
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
 

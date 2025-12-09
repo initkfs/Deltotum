@@ -29,13 +29,13 @@ struct IEDGE
 
 struct XYZ
 {
-    double x, y, z;
+    float x, y, z;
 }
 
 enum TRUE = 1;
 enum FALSE = 0;
 
-enum double EPSILON = 0.000001;
+enum float EPSILON = 0.000001;
 
 /*
    Triangulation subroutine
@@ -73,9 +73,9 @@ Triangle2d[] triangulate(Vec2d[] points)
 
     int inside;
     int i, j, k;
-    double xp = 0, yp = 0, x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, xc = 0, yc = 0, r = 0;
-    double xmin, xmax, ymin, ymax, xmid, ymid;
-    double dx = 0, dy = 0, dmax = 0;
+    float xp = 0, yp = 0, x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, xc = 0, yc = 0, r = 0;
+    float xmin, xmax, ymin, ymax, xmid, ymid;
+    float dx = 0, dy = 0, dmax = 0;
 
     int ntriCount;
     int* ntri = &ntriCount;
@@ -330,14 +330,14 @@ Triangle2d[] triangulate(Vec2d[] points)
    The circumcircle centre is returned in (xc,yc) and the radius r
    NOTE: A point on the edge is inside the circumcircle
 */
-int CircumCircle(double xp, double yp,
-    double x1, double y1, double x2, double y2, double x3, double y3,
-    double* xc, double* yc, double* rsqr)
+int CircumCircle(float xp, float yp,
+    float x1, float y1, float x2, float y2, float x3, float y3,
+    float* xc, float* yc, float* rsqr)
 {
-    double m1 = 0, m2 = 0, mx1 = 0, mx2 = 0, my1 = 0, my2 = 0;
-    double dx = 0, dy = 0, drsqr = 0;
-    double fabsy1y2 = Math.abs(y1 - y2);
-    double fabsy2y3 = Math.abs(y2 - y3);
+    float m1 = 0, m2 = 0, mx1 = 0, mx2 = 0, my1 = 0, my2 = 0;
+    float dx = 0, dy = 0, drsqr = 0;
+    float fabsy1y2 = Math.abs(y1 - y2);
+    float fabsy2y3 = Math.abs(y2 - y3);
 
     /* Check for coincident points */
     if (fabsy1y2 < EPSILON && fabsy2y3 < EPSILON)

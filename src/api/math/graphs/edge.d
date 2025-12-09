@@ -12,7 +12,7 @@ class Edge
 
     bool isVisited;
 
-    double weight = 0;
+    float weight = 0;
 
     this(Vertex src, Vertex dest) pure @safe
     {

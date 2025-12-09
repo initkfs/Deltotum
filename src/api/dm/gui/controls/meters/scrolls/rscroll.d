@@ -16,8 +16,8 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
  */
 class RScroll : BaseRadialMonoScroll
 {
-    double fromAngleDeg = 0;
-    double toAngleDeg = 90;
+    float fromAngleDeg = 0;
+    float toAngleDeg = 90;
 
     RScaleStatic scale;
 
@@ -26,9 +26,9 @@ class RScroll : BaseRadialMonoScroll
     void delegate(RScaleStatic) onConfiguredScale;
     void delegate(RScaleStatic) onCreatedScale;
 
-    double thumbPadding = 10;
+    float thumbPadding = 10;
 
-    this(double minValue = 0, double maxValue = 1.0, double width = 0, double height = 0)
+    this(float minValue = 0, float maxValue = 1.0, float width = 0, float height = 0)
     {
         super(minValue, maxValue);
         this._width = width;
@@ -45,7 +45,7 @@ class RScroll : BaseRadialMonoScroll
     protected
     {
         bool isDragAngle;
-        double lastDragAngle = 0;
+        float lastDragAngle = 0;
     }
 
     override void create()
@@ -87,7 +87,7 @@ class RScroll : BaseRadialMonoScroll
         return new RScaleStatic(rscaleDiameter, fromAngleDeg, toAngleDeg);
     }
 
-    Sprite2d newThumbRadialShape(double diameter, double angle, GraphicStyle style)
+    Sprite2d newThumbRadialShape(float diameter, float angle, GraphicStyle style)
     {
         auto shape = theme.regularPolyShape(diameter, thumbSides, angle, style);
         return shape;
@@ -163,7 +163,7 @@ class RScroll : BaseRadialMonoScroll
         return thumb;
     }
 
-    override bool delegate(double, double) newOnThumbDragXY()
+    override bool delegate(float, float) newOnThumbDragXY()
     {
         return (ddx, ddy) {
 
@@ -171,7 +171,7 @@ class RScroll : BaseRadialMonoScroll
             immutable center = thumbBounds.center;
 
             immutable angleDeg = center.angleDeg360To(input.pointerPos);
-            double da = angleDeg - lastDragAngle;
+            float da = angleDeg - lastDragAngle;
 
             lastDragAngle = angleDeg;
 
@@ -199,7 +199,7 @@ class RScroll : BaseRadialMonoScroll
         };
     }
 
-    override protected double wheelValue(double wheelDt)
+    override protected float wheelValue(float wheelDt)
     {
         auto newValue = _value;
         if (wheelDt > 0)
@@ -213,7 +213,7 @@ class RScroll : BaseRadialMonoScroll
         return newValue;
     }
 
-    override bool value(double v, bool isTriggerListeners = true)
+    override bool value(float v, bool isTriggerListeners = true)
     {
         assert(thumb);
 

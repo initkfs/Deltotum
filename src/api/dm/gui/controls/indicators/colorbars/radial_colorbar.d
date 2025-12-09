@@ -19,12 +19,12 @@ private
 
     class ColorBarShape : VShape
     {
-        double minAngleDeg = 0;
-        double maxAngleDeg = 0;
+        float minAngleDeg = 0;
+        float maxAngleDeg = 0;
 
         ColorBarData[] data;
 
-        this(double width, double height, GraphicStyle style)
+        this(float width, float height, GraphicStyle style)
         {
             super(width, height, style);
         }
@@ -40,13 +40,13 @@ private
             auto xCenter = width / 2;
             auto yCenter = height / 2;
 
-            double sum = 0;
+            float sum = 0;
             foreach (ref colorRange; data)
             {
                 sum += colorRange.value;
             }
 
-            double startAngle = minAngleDeg;
+            float startAngle = minAngleDeg;
 
             auto radius = Math.max(width, height) / 2 - style.lineWidth;
 
@@ -72,10 +72,10 @@ private
 
 class RadialColorBar : BaseMonoColorBar
 {
-    double minAngleDeg = 0;
-    double maxAngleDeg = 0;
+    float minAngleDeg = 0;
+    float maxAngleDeg = 0;
 
-    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 360)
+    this(float diameter = 0, float minAngleDeg = 0, float maxAngleDeg = 360)
     {
         super(diameter, diameter);
 

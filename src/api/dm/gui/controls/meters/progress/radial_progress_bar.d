@@ -8,7 +8,7 @@ import api.dm.gui.controls.meters.progress.base_radial_progress_bar: BaseRadialP
  */
 class RadialProgressBar : BaseRadialProgressBar
 {
-    this(double diameter = 0, double minValue = 0, double maxValue = 1.0, double minAngleDeg = 0, double maxAngleDeg = 180)
+    this(float diameter = 0, float minValue = 0, float maxValue = 1.0, float minAngleDeg = 0, float maxAngleDeg = 180)
     {
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
     }
@@ -40,12 +40,12 @@ class RadialProgressBar : BaseRadialProgressBar
     //     }
     // }
 
-    // override double progress()
+    // override float progress()
     // {
     //     return super.progress;
     // }
 
-    // override bool progress(double v)
+    // override bool progress(float v)
     // {
     //     const isChange = super.progress(v);
     //     if (isChange && label)
@@ -82,7 +82,7 @@ class RadialProgressBar : BaseRadialProgressBar
 //     dstring prefixText;
 //     dstring postfixText;
 
-//     this(double minValue = 0, double maxValue = 1.0, double diameter = 100)
+//     this(float minValue = 0, float maxValue = 1.0, float diameter = 100)
 //     {
 //         super(diameter, minValue, maxValue, 0, 0);
 
@@ -131,12 +131,12 @@ class RadialProgressBar : BaseRadialProgressBar
 //         }
 //     }
 
-//     override double progress()
+//     override float progress()
 //     {
 //         return super.progress;
 //     }
 
-//     override bool progress(double v)
+//     override bool progress(float v)
 //     {
 //         const isChange = super.progress(v);
 //         if (isChange && label)

@@ -83,7 +83,7 @@ abstract class BaseClippedFlatTable(T, TCol:
         return row;
     }
 
-    override protected void resizeColumn(size_t index, double newWidth)
+    override protected void resizeColumn(size_t index, float newWidth)
     {
         foreach (row; rows)
         {

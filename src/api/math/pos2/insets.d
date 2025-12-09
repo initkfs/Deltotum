@@ -5,9 +5,9 @@ module api.math.pos2.insets;
  */
 struct Insets
 {
-    double top = 0, right = 0, bottom = 0, left = 0;
+    float top = 0, right = 0, bottom = 0, left = 0;
 
-    this(double top, double right, double bottom, double left) pure
+    this(float top, float right, float bottom, float left) pure
     {
         assert(top >= 0);
         assert(right >= 0);
@@ -20,22 +20,22 @@ struct Insets
         this.left = left;
     }
 
-    this(double value) pure
+    this(float value) pure
     {
         this(value, value, value, value);
     }
 
-    this(double topAndBottom, double leftAndRight) pure
+    this(float topAndBottom, float leftAndRight) pure
     {
         this(topAndBottom, leftAndRight, topAndBottom, leftAndRight);
     }
 
-    double width()
+    float width()
     {
         return left + right;
     }
 
-    double height()
+    float height()
     {
         return top + bottom;
     }

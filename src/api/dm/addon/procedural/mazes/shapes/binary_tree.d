@@ -20,7 +20,7 @@ import std.random : unpredictableSeed;
  */
 class BinaryTree : Maze
 {
-    this(double width = 100, double height = 100, size_t cellWidth = 10, size_t cellHeight = 10, uint seed = unpredictableSeed)
+    this(float width = 100, float height = 100, size_t cellWidth = 10, size_t cellHeight = 10, uint seed = unpredictableSeed)
     {
         super(width, height, cellWidth, cellHeight, seed);
     }

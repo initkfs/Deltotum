@@ -355,7 +355,7 @@ class Scene3d : Scene2d
         startDrawProcess = false;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
 

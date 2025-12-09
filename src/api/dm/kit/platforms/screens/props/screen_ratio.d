@@ -5,8 +5,8 @@ module api.dm.kit.screens.props.screen_ratio;
  */
 struct ScreenRatio
 {
-    double widthRatio = 0;
-    double heightRatio = 0;
+    float widthRatio = 0;
+    float heightRatio = 0;
 
     invariant
     {
@@ -16,8 +16,8 @@ struct ScreenRatio
 
     const  pure @safe
     {
-        double getHeight(double width) => heightRatio * width / widthRatio;
-        double getWidth(double height) => widthRatio * height / heightRatio;
+        float getHeight(float width) => heightRatio * width / widthRatio;
+        float getWidth(float height) => widthRatio * height / heightRatio;
     }
 }
 

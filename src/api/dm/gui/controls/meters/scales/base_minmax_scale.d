@@ -9,12 +9,12 @@ import Math = api.math;
  */
 abstract class BaseMinMaxScale : BaseScale
 {
-    double minValue = 0;
-    double maxValue = 1;
+    float minValue = 0;
+    float maxValue = 1;
 
-    double valueStep = 0.05;
+    float valueStep = 0.05;
 
-    double range()
+    float range()
     {
         assert(minValue < maxValue);
         return maxValue - minValue;

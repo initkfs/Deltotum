@@ -27,7 +27,7 @@ import api.math.pos2.orientation : Orientation;
         n.isVisible = false;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
         p.pin.currentOut = 0;

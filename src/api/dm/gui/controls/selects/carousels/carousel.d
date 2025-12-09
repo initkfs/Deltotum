@@ -28,11 +28,11 @@ enum CarouselDirection
 class Carousel : BaseSelector!Sprite2d
 {
     size_t itemChangeDuration = 500;
-    MinMaxTween2d!double itemChangeAnimation;
+    MinMaxTween2d!float itemChangeAnimation;
     bool isCreateItemChangeAnimation = true;
-    MinMaxTween2d!double delegate(MinMaxTween2d!double) onNewItemChangeAnimation;
-    void delegate(MinMaxTween2d!double) onConfiguredItemChangeAnimation;
-    void delegate(MinMaxTween2d!double) onCreatedItemChangeAnimation;
+    MinMaxTween2d!float delegate(MinMaxTween2d!float) onNewItemChangeAnimation;
+    void delegate(MinMaxTween2d!float) onConfiguredItemChangeAnimation;
+    void delegate(MinMaxTween2d!float) onCreatedItemChangeAnimation;
 
     Button prevButton;
     bool isCreatePrevButton = true;
@@ -52,8 +52,8 @@ class Carousel : BaseSelector!Sprite2d
     void delegate(Container) onConfiguredItemContainer;
     void delegate(Container) onCreatedItemContainer;
 
-    double itemWidth = 0;
-    double itemHeight = 0;
+    float itemWidth = 0;
+    float itemHeight = 0;
 
     bool isPreciseMove;
 
@@ -92,7 +92,7 @@ class Carousel : BaseSelector!Sprite2d
                 auto itemRoot = itemRootContainer;
 
                 //auto dx = Math.abs(newValue - oldValue) * itemContainer.width;
-                double dx = 0;
+                float dx = 0;
                 if (direction == CarouselDirection.fromRight)
                 {
                     dx = -((current.x - itemRoot.x) * newValue);
@@ -166,8 +166,8 @@ class Carousel : BaseSelector!Sprite2d
 
         if (!itemContainer && isCreateItemContainer)
         {
-            double maxItemWidth = itemWidth;
-            double maxItemHeight = itemHeight;
+            float maxItemWidth = itemWidth;
+            float maxItemHeight = itemHeight;
 
             if (maxItemWidth == 0 || maxItemHeight == 0)
             {
@@ -249,14 +249,14 @@ class Carousel : BaseSelector!Sprite2d
         showItem;
     }
 
-    Container newItemContainer(double maxItemWidth, double maxItemHeight)
+    Container newItemContainer(float maxItemWidth, float maxItemHeight)
     {
         return new Container;
     }
 
-    MinMaxTween2d!double newItemChangeAnimation()
+    MinMaxTween2d!float newItemChangeAnimation()
     {
-        auto animation = new MinMaxTween2d!double(0.0, 1.0, itemChangeDuration);
+        auto animation = new MinMaxTween2d!float(0.0, 1.0, itemChangeDuration);
 
         import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
 
@@ -274,7 +274,7 @@ class Carousel : BaseSelector!Sprite2d
         return NavigateButton.newHNextButton;
     }
 
-    protected bool prepareItems(out double maxWidth, out double maxHeight)
+    protected bool prepareItems(out float maxWidth, out float maxHeight)
     {
         if (_items.length == 0)
         {
@@ -283,8 +283,8 @@ class Carousel : BaseSelector!Sprite2d
             return false;
         }
 
-        double maxItemWidth = 0;
-        double maxItemHeight = 0;
+        float maxItemWidth = 0;
+        float maxItemHeight = 0;
 
         foreach (Sprite2d item; _items)
         {

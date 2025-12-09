@@ -9,12 +9,12 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-RGBA grayscale(RGBA color, double threshold = -1)
+RGBA grayscale(RGBA color, float threshold = -1)
 {
     import std.conv : to;
 
     const coeffLinear = color.rNorm * 0.2126 + color.gNorm * 0.7152 + color.bNorm * 0.0722;
-    double coeffSrgb = 0;
+    float coeffSrgb = 0;
     if (coeffLinear <= 0.0031308)
     {
         coeffSrgb = 12.92 * coeffLinear;
@@ -49,7 +49,7 @@ RGBA negative(RGBA color)
     return newColor;
 }
 
-RGBA solarization(RGBA color, double threshold = 10)
+RGBA solarization(RGBA color, float threshold = 10)
 {
     import Math = api.dm.math;
 
@@ -87,11 +87,11 @@ RGBA sepia(RGBA color)
     return newColor;
 }
 
-RGBA posterize(RGBA color, RGBA[] palette, double minDistance = 10)
+RGBA posterize(RGBA color, RGBA[] palette, float minDistance = 10)
 {
     foreach (ref RGBA paletterColor; palette)
     {
-        double distance = color.distance(paletterColor);
+        float distance = color.distance(paletterColor);
         if (distance <= minDistance)
         {
             return paletterColor;
@@ -101,7 +101,7 @@ RGBA posterize(RGBA color, RGBA[] palette, double minDistance = 10)
     return color;
 }
 
-RGBA[][] highpass(RGBA[][] colors, double offset = 0)
+RGBA[][] highpass(RGBA[][] colors, float offset = 0)
 {
     const div = 4.0;
     return convolution(colors, [
@@ -111,7 +111,7 @@ RGBA[][] highpass(RGBA[][] colors, double offset = 0)
         ], offset);
 }
 
-RGBA[][] lowpass(RGBA[][] colors, double offset = 0)
+RGBA[][] lowpass(RGBA[][] colors, float offset = 0)
 {
     const div = 8.0;
     return convolution(colors, [
@@ -121,7 +121,7 @@ RGBA[][] lowpass(RGBA[][] colors, double offset = 0)
         ], offset);
 }
 
-RGBA[][] sobel(RGBA[][] colors, double offset = 0)
+RGBA[][] sobel(RGBA[][] colors, float offset = 0)
 {
     assert(colors.length > 0);
     assert(colors[0].length > 0);
@@ -131,13 +131,13 @@ RGBA[][] sobel(RGBA[][] colors, double offset = 0)
 
     RGBA[][] buffer = new RGBA[][](colorHeight, colorWidth);
 
-    double[][] sobelX = [
+    float[][] sobelX = [
         [1, 2, 1],
         [0, 0, 0],
         [-1, -2, -1]
     ];
 
-    double[][] sobelY = [
+    float[][] sobelY = [
         [1, 0, -1],
         [2, 0, -2],
         [1, 0, -1]
@@ -167,7 +167,7 @@ RGBA[][] sobel(RGBA[][] colors, double offset = 0)
 
 }
 
-RGBA[][] laplacian(RGBA[][] colors, double offset = 0)
+RGBA[][] laplacian(RGBA[][] colors, float offset = 0)
 {
     return convolution(colors, [
             [0.0, -1, 0],
@@ -176,7 +176,7 @@ RGBA[][] laplacian(RGBA[][] colors, double offset = 0)
         ], offset);
 }
 
-RGBA[][] emboss(RGBA[][] colors, double offset = 0)
+RGBA[][] emboss(RGBA[][] colors, float offset = 0)
 {
     return convolution(colors, [
             [-2.0, -1, 0],
@@ -185,11 +185,11 @@ RGBA[][] emboss(RGBA[][] colors, double offset = 0)
         ], offset);
 }
 
-RGBA[][] boxblur(RGBA[][] colors, size_t size = 10, double divider = 9.0)
+RGBA[][] boxblur(RGBA[][] colors, size_t size = 10, float divider = 9.0)
 {
     //TODO remove allocations
-    const double value = 1 / divider;
-    double[][] matrix = new double[][](size, size);
+    const float value = 1 / divider;
+    float[][] matrix = new float[][](size, size);
     foreach (ref row; matrix)
     {
         row[] = value;
@@ -197,7 +197,7 @@ RGBA[][] boxblur(RGBA[][] colors, size_t size = 10, double divider = 9.0)
     return convolution(colors, matrix);
 }
 
-RGBA[][] gaussian3x3(RGBA[][] colors, double offset = 0)
+RGBA[][] gaussian3x3(RGBA[][] colors, float offset = 0)
 {
     enum div = 16.0;
     return convolution(colors, [
@@ -207,7 +207,7 @@ RGBA[][] gaussian3x3(RGBA[][] colors, double offset = 0)
         ], offset);
 }
 
-RGBA[][] gaussian5x5(RGBA[][] colors, double offset = 0)
+RGBA[][] gaussian5x5(RGBA[][] colors, float offset = 0)
 {
     enum div = 273.0;
     return convolution(colors, [
@@ -219,7 +219,7 @@ RGBA[][] gaussian5x5(RGBA[][] colors, double offset = 0)
         ], offset);
 }
 
-RGBA[][] gaussian7x7(RGBA[][] colors, double offset = 0)
+RGBA[][] gaussian7x7(RGBA[][] colors, float offset = 0)
 {
     enum div = 1003.0;
     return convolution(colors, [
@@ -283,7 +283,7 @@ RGBA[][] histogram(RGBA[][] colors)
     size_t colorWidth = colors[0].length;
 
     int[] histogram = new int[256];
-    double max = 0;
+    float max = 0;
 
     foreach (y, row; colors)
     {
@@ -303,8 +303,8 @@ RGBA[][] histogram(RGBA[][] colors)
 
     foreach (histIndex, histValue; histogram)
     {
-        double scaleX = colorWidth / 255.0;
-        double scaleY = colorHeight / max;
+        float scaleX = colorWidth / 255.0;
+        float scaleY = colorHeight / max;
 
         size_t x = cast(size_t)(histIndex * scaleX);
         size_t maxY = cast(size_t)(histValue * scaleY);

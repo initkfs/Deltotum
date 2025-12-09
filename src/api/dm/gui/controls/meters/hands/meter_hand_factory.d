@@ -15,14 +15,14 @@ private
 
     class VHand : VShape
     {
-        double handWidth = 0;
-        double handHeight = 0;
-        double coneHeight = 0;
-        double coneWidth = 0;
+        float handWidth = 0;
+        float handHeight = 0;
+        float coneHeight = 0;
+        float coneWidth = 0;
 
         Vec2d startPoint;
 
-        this(double textureWidth, double textureHeight, double handWidth, double handHeight, double coneWidth = 0, double coneHeight = 0, GraphicStyle style)
+        this(float textureWidth, float textureHeight, float handWidth, float handHeight, float coneWidth = 0, float coneHeight = 0, GraphicStyle style)
         {
             super(textureWidth, textureHeight, style);
 
@@ -61,12 +61,12 @@ private
 
             ctx.moveTo(centerX - halfWidth, centerY);
 
-            double startConeLeftX = halfConeWidth > 0 ? (centerX - halfConeWidth) : (
+            float startConeLeftX = halfConeWidth > 0 ? (centerX - halfConeWidth) : (
                 centerX - halfWidth);
             ctx.lineTo(startConeLeftX, centerY - handHeight + coneHeight);
             ctx.lineTo(centerX, centerY - handHeight + style.lineWidth);
 
-            double startConeRightX = halfConeWidth > 0 ? (centerX + halfConeWidth) : (
+            float startConeRightX = halfConeWidth > 0 ? (centerX + halfConeWidth) : (
                 centerX + halfWidth);
 
             ctx.lineTo(startConeRightX, centerY - handHeight + coneHeight);
@@ -92,16 +92,16 @@ private
 class MeterHandFactory : Control
 {
     //TODO rename to createHalfHand (from center)
-    Sprite2d createHand(double handWidth = 0, double handHeight = 0, GraphicStyle handStyle = GraphicStyle
-            .simpleFill, double coneWidth = 0, double coneHeight = 0)
+    Sprite2d createHand(float handWidth = 0, float handHeight = 0, GraphicStyle handStyle = GraphicStyle
+            .simpleFill, float coneWidth = 0, float coneHeight = 0)
     {
         assert(handWidth > 0);
         assert(handHeight > 0);
         assert(coneWidth >= 0);
         assert(coneHeight >= 0);
 
-        double width = handWidth;
-        double height = handHeight;
+        float width = handWidth;
+        float height = handHeight;
 
         auto maxWidth = Math.max(handWidth, coneWidth);
         auto coneWdt = width - maxWidth;

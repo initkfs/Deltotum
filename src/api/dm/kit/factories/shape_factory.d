@@ -13,14 +13,14 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
  */
 class ShapeFactory : GraphicComponent
 {
-    Circle circle(double radius, GraphicStyle style)
+    Circle circle(float radius, GraphicStyle style)
     {
         auto shape = new Circle(radius, style);
         buildInitCreate(shape);
         return shape;
     }
 
-    Rectangle rectangle(double width, double height, GraphicStyle style)
+    Rectangle rectangle(float width, float height, GraphicStyle style)
     {
         auto shape = new Rectangle(width, height, style);
         buildInitCreate(shape);

@@ -32,22 +32,22 @@ class RegulateTextField : Control
 
     size_t valueFieldPrefGlyphs = 6;
 
-    void delegate(double) onValue;
+    void delegate(float) onValue;
 
     protected
     {
         dstring labelText;
-        double minValue = 0;
-        double maxValue = 0;
-        void delegate(double) onScroll;
+        float minValue = 0;
+        float maxValue = 0;
+        void delegate(float) onScroll;
 
-        double lastValue = 0;
+        float lastValue = 0;
     }
 
     import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 
-    this(dstring labelText, double minValue = 0, double maxValue = 1.0, void delegate(
-            double) onScroll = null, double fieldSpacing = SpaceableLayout.DefaultSpacing)
+    this(dstring labelText, float minValue = 0, float maxValue = 1.0, void delegate(
+            float) onScroll = null, float fieldSpacing = SpaceableLayout.DefaultSpacing)
     {
         this(fieldSpacing);
         this.labelText = labelText;
@@ -56,7 +56,7 @@ class RegulateTextField : Control
         this.onScroll = onScroll;
     }
 
-    this(double fieldSpacing = SpaceableLayout.DefaultSpacing)
+    this(float fieldSpacing = SpaceableLayout.DefaultSpacing)
     {
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
@@ -133,7 +133,7 @@ class RegulateTextField : Control
 
                 try
                 {
-                    auto v = valueField.text.to!double;
+                    auto v = valueField.text.to!float;
                     updateValue(v, isTriggerListeners:
                         true);
                     scrollField.value(v, isTriggerListeners:
@@ -184,9 +184,9 @@ class RegulateTextField : Control
         return new HScroll;
     }
 
-    double value() => lastValue;
+    float value() => lastValue;
 
-    protected bool updateValue(double v, bool isTriggerListeners = true)
+    protected bool updateValue(float v, bool isTriggerListeners = true)
     {
         lastValue = v;
 
@@ -198,7 +198,7 @@ class RegulateTextField : Control
         return true;
     }
 
-    protected bool updateScrollField(double v, bool isTriggerListeners = true)
+    protected bool updateScrollField(float v, bool isTriggerListeners = true)
     {
         if (!scrollField)
         {
@@ -209,7 +209,7 @@ class RegulateTextField : Control
         return true;
     }
 
-    protected bool updateValueField(double v, bool isTriggerListeners = true)
+    protected bool updateValueField(float v, bool isTriggerListeners = true)
     {
         if (!valueField)
         {
@@ -227,7 +227,7 @@ class RegulateTextField : Control
         return true;
     }
 
-    bool value(double v, bool isTriggerListeners = true)
+    bool value(float v, bool isTriggerListeners = true)
     {
         if (lastValue == v)
         {

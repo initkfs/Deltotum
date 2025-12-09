@@ -7,7 +7,7 @@ import api.dm.gui.controls.labeled : Labeled;
  */
 class Label : Labeled
 {
-    this(dstring text = "Label", string iconName = null, double graphicsGap = 0)
+    this(dstring text = "Label", string iconName = null, float graphicsGap = 0)
     {
         super(text, iconName, graphicsGap, isCreateLayout : true);
 

@@ -12,10 +12,10 @@ import Math = api.math;
  */
 abstract class BaseRadialMonoScroll : BaseLabeledScroll
 {
-    double thumbDiameter = 0;
+    float thumbDiameter = 0;
     size_t thumbSides = 10;
 
-    this(double minValue = 0, double maxValue = 1.0)
+    this(float minValue = 0, float maxValue = 1.0)
     {
         super(minValue, maxValue);
     }

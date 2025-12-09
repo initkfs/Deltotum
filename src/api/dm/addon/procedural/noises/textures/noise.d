@@ -11,7 +11,7 @@ abstract class Noise : Texture2d
 {
     HSVA noiseColor;
 
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         super(width, height);
     }

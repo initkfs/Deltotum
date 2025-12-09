@@ -53,7 +53,7 @@ class Physics : Control
         };
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
 

@@ -7,7 +7,7 @@ import api.dm.kit.apps.loops.loop : Loop, FrameRate;
  */
 class InterruptedLoop : IntegratedLoop
 {
-    this(double frameRate = FrameRate.high)
+    this(float frameRate = FrameRate.high)
     {
         super(frameRate);
     }

@@ -108,7 +108,7 @@ class Planet : GuiScene
 
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);       
     }

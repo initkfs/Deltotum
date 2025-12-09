@@ -60,14 +60,14 @@ class TableHeader : HSplitBox
 
     import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-    override Sprite2d newDividerShape(double w, double h, double angle, GraphicStyle style)
+    override Sprite2d newDividerShape(float w, float h, float angle, GraphicStyle style)
     {
         auto newW = w * 5;
         auto shape = theme.convexPolyShape(newW, h, angle, newW / 2, style);
         return shape;
     }
 
-    override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
+    override Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
     {
         return theme.rectShape(w, h, angle, style);
     }
@@ -78,12 +78,12 @@ class TableHeader : HSplitBox
         return labels[colIndex];
     }
 
-    void columnLabelWidth(size_t colIndex, double newWidth)
+    void columnLabelWidth(size_t colIndex, float newWidth)
     {
         columnLabel(colIndex).width = newWidth;
     }
 
-    double columnLabelWidth(size_t colIndex)
+    float columnLabelWidth(size_t colIndex)
     {
         return columnLabel(colIndex).width;
     }
@@ -123,7 +123,7 @@ class BaseTable(T, TCol:
         size_t columnCount;
     }
 
-    double dividerSize = 0;
+    float dividerSize = 0;
 
     this(size_t columnCount)
     {
@@ -222,7 +222,7 @@ class BaseTable(T, TCol:
         }
     }
 
-    protected void resizeColumn(size_t index, double newWidth)
+    protected void resizeColumn(size_t index, float newWidth)
     {
 
     }
@@ -239,13 +239,13 @@ class BaseTable(T, TCol:
         }
     }
 
-    protected double columnWidth(size_t index)
+    protected float columnWidth(size_t index)
     {
         assert(columnCount > 0);
         return width / columnCount;
     }
 
-    override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
+    override Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
     {
         return theme.rectShape(w, h, angle, style);
     }
@@ -267,7 +267,7 @@ class BaseTable(T, TCol:
     {
         return new class Container
         {
-            override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
+            override Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }

@@ -10,18 +10,18 @@ import Math = api.dm.math;
 
 //FIXME default argument expected for `onNextStepIsContinue`
 void onPointStep(scope bool delegate(
-        double) onNextStepIsContinue, double points = 100, double step = 0.001, bool isReverse = false)
+        float) onNextStepIsContinue, float points = 100, float step = 0.001, bool isReverse = false)
 {
     return onPointStep(step, 0, points, onNextStepIsContinue, isReverse);
 }
 
-void onPointStep(double step, double minValueInclusive, double maxValueInclusive, scope bool delegate(
-        double) onNextStepIsContinue, bool isReverse = false)
+void onPointStep(float step, float minValueInclusive, float maxValueInclusive, scope bool delegate(
+        float) onNextStepIsContinue, bool isReverse = false)
 {
     assert(minValueInclusive < maxValueInclusive);
     assert(step > 0 && step < maxValueInclusive);
 
-    for (double i = minValueInclusive; i <= maxValueInclusive; i += step)
+    for (float i = minValueInclusive; i <= maxValueInclusive; i += step)
     {
         const resultDt = isReverse ? -(i) : i;
         if (!onNextStepIsContinue(resultDt))
@@ -31,7 +31,7 @@ void onPointStep(double step, double minValueInclusive, double maxValueInclusive
     }
 }
 
-void witchOfAgnesi(scope bool delegate(Vec2d) onPointIsContinue, double radius = 50, double step = 0.01)
+void witchOfAgnesi(scope bool delegate(Vec2d) onPointIsContinue, float radius = 50, float step = 0.01)
 {
     assert(onPointIsContinue);
 
@@ -42,7 +42,7 @@ void witchOfAgnesi(scope bool delegate(Vec2d) onPointIsContinue, double radius =
     });
 }
 
-void bicorn(scope bool delegate(Vec2d) onPointIsContinue, double radius = 50, double thetaRad = 0.01, size_t dots = 500, double step = 1.0)
+void bicorn(scope bool delegate(Vec2d) onPointIsContinue, float radius = 50, float thetaRad = 0.01, size_t dots = 500, float step = 1.0)
 {
     assert(onPointIsContinue);
 
@@ -58,7 +58,7 @@ void bicorn(scope bool delegate(Vec2d) onPointIsContinue, double radius = 50, do
     });
 }
 
-void cardioid(scope bool delegate(Vec2d) onPointIsContinue, double radius = 10, double step = 0.01)
+void cardioid(scope bool delegate(Vec2d) onPointIsContinue, float radius = 10, float step = 0.01)
 {
     assert(onPointIsContinue);
 
@@ -71,7 +71,7 @@ void cardioid(scope bool delegate(Vec2d) onPointIsContinue, double radius = 10, 
     });
 }
 
-void lemniscateBernoulli(scope bool delegate(Vec2d) onPointIsContinue, double distance = 10, double step = 0.01)
+void lemniscateBernoulli(scope bool delegate(Vec2d) onPointIsContinue, float distance = 10, float step = 0.01)
 {
     assert(onPointIsContinue);
 
@@ -88,7 +88,7 @@ void lemniscateBernoulli(scope bool delegate(Vec2d) onPointIsContinue, double di
     });
 }
 
-void strophoid(scope bool delegate(Vec2d) onPointIsContinue, double phi, double step = 0.01, double scale = 1.0)
+void strophoid(scope bool delegate(Vec2d) onPointIsContinue, float phi, float step = 0.01, float scale = 1.0)
 {
     assert(onPointIsContinue);
 
@@ -98,7 +98,7 @@ void strophoid(scope bool delegate(Vec2d) onPointIsContinue, double phi, double 
     });
 }
 
-void foliumOfDescartes(scope bool delegate(Vec2d) onPointIsContinue, double phi, double step = 0.01, double scale = 1.0)
+void foliumOfDescartes(scope bool delegate(Vec2d) onPointIsContinue, float phi, float step = 0.01, float scale = 1.0)
 {
     assert(onPointIsContinue);
 
@@ -109,7 +109,7 @@ void foliumOfDescartes(scope bool delegate(Vec2d) onPointIsContinue, double phi,
     });
 }
 
-void tractrix(scope bool delegate(Vec2d) onPointIsContinue, double length, double step = 0.01)
+void tractrix(scope bool delegate(Vec2d) onPointIsContinue, float length, float step = 0.01)
 {
     assert(onPointIsContinue);
 
@@ -124,7 +124,7 @@ void tractrix(scope bool delegate(Vec2d) onPointIsContinue, double length, doubl
     });
 }
 
-void trisectrixMaclaurin(scope bool delegate(Vec2d) onPointIsContinue, double radius = 10, double step = 0.1)
+void trisectrixMaclaurin(scope bool delegate(Vec2d) onPointIsContinue, float radius = 10, float step = 0.1)
 {
     assert(onPointIsContinue);
 
@@ -134,12 +134,12 @@ void trisectrixMaclaurin(scope bool delegate(Vec2d) onPointIsContinue, double ra
     });
 }
 
-void lissajous(scope bool delegate(Vec2d) onPointIsContinue, double amplitudeX = 50, double freqX = 1, double amplitudeY = 50, double freqY = 2, double phaseShift = (
-        Math.PI / 2), double dots = 2000, double step = 0.01)
+void lissajous(scope bool delegate(Vec2d) onPointIsContinue, float amplitudeX = 50, float freqX = 1, float amplitudeY = 50, float freqY = 2, float phaseShift = (
+        Math.PI / 2), float dots = 2000, float step = 0.01)
 {
     assert(onPointIsContinue);
 
-    double dt = 0;
+    float dt = 0;
     foreach (i; 0 .. dots)
     {
         dt += step;
@@ -152,7 +152,7 @@ void lissajous(scope bool delegate(Vec2d) onPointIsContinue, double amplitudeX =
     }
 }
 
-void rose(scope bool delegate(Vec2d) onPointIsContinue, double roseSize, double n, double d, size_t curlsCount = 1, double step = 0.01)
+void rose(scope bool delegate(Vec2d) onPointIsContinue, float roseSize, float n, float d, size_t curlsCount = 1, float step = 0.01)
 {
     assert(onPointIsContinue);
 

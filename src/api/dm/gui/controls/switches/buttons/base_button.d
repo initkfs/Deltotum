@@ -40,10 +40,10 @@ class BaseButton : BaseBiswitch
 
     this(
         dstring text,
-        double width = 0,
-        double height = 0,
+        float width = 0,
+        float height = 0,
         string iconName = null,
-        double graphicsGap = 0,
+        float graphicsGap = 0,
         bool isCreateLayout = true
     )
     {

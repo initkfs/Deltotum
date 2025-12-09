@@ -25,13 +25,13 @@ abstract class BaseScaleDynamic : BaseDrawableScale
         Text[] labelPool;
         Text[] labels;
 
-        double prefLabelWidth = 0;
+        float prefLabelWidth = 0;
 
-        double maxLabelWidth = 0;
-        double maxLabelHeight = 0;
+        float maxLabelWidth = 0;
+        float maxLabelHeight = 0;
     }
 
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         super(width, height);
 
@@ -53,7 +53,7 @@ abstract class BaseScaleDynamic : BaseDrawableScale
         return true;
     }
 
-    void rescaleMax(double value, bool isRecreate = true)
+    void rescaleMax(float value, bool isRecreate = true)
     {
         maxValue = value;
         if (isRecreate)
@@ -106,8 +106,8 @@ abstract class BaseScaleDynamic : BaseDrawableScale
         // writefln("min:%s, max:%s, c: %s, mc: %s, labels: %s", minValue, maxValue, tickCount, majorTickCount, labels.length);
 
         //TODO one loop
-        double maxW = 0;
-        double maxH = 0;
+        float maxW = 0;
+        float maxH = 0;
         foreach (i, label; labels)
         {
             //TODO cache

@@ -1135,7 +1135,7 @@ class SdlApp : GuiApp
         }
     }
 
-    void updateRender(double accumMsRest)
+    void updateRender(float accumMsRest)
     {
         const startStateTime = SDL_GetTicks();
         windowing.onWindows((window) {
@@ -1157,7 +1157,7 @@ class SdlApp : GuiApp
         }
     }
 
-    void updateFreqLoopDelta(double delta)
+    void updateFreqLoopDelta(float delta)
     {
         const startStateTime = SDL_GetTicks();
         windowing.onWindows((window) {

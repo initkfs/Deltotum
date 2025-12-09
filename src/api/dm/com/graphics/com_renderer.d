@@ -90,5 +90,5 @@ nothrow:
 
     // ComResult drawTexture(ComTexture texture);
     // ComResult drawTexture(ComTexture texture, Rect2d srcRect, Rect2d dstRect);
-    // ComResult drawTextureEx(ComTexture texture, Rect2d srcRect, Rect2d dstRect, double angle, Vec2d center, Flip flip);
+    // ComResult drawTextureEx(ComTexture texture, Rect2d srcRect, Rect2d dstRect, float angle, Vec2d center, Flip flip);
 }

@@ -13,7 +13,7 @@ enum NeighborhoodType : uint
 struct CellConfig
 {
     NeighborhoodType neighborhood = NeighborhoodType.Moore;
-    double initialDensity = 0.3;
+    float initialDensity = 0.3;
     size_t width = 200;
     size_t height = 200;
     size_t cellSize = 3;
@@ -66,7 +66,7 @@ class CellularAutomaton : Sprite2d
         render;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
         updateState;

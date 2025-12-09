@@ -16,10 +16,10 @@ import Math = api.math;
  */
 class XYChart : Container
 {
-    double minX = 0;
-    double maxX = 1;
-    double minY = 0;
-    double maxY = 1;
+    float minX = 0;
+    float maxX = 1;
+    float minY = 0;
+    float maxY = 1;
 
     bool isAutoScale = true;
 
@@ -35,8 +35,8 @@ class XYChart : Container
     void delegate(VScaleDynamic) onConfiguredYScale1;
     void delegate(VScaleDynamic) onCreatedYScale1;
 
-    double chartAreaWidth = 0;
-    double chartAreaHeight = 0;
+    float chartAreaWidth = 0;
+    float chartAreaHeight = 0;
 
     Container chartArea;
     bool isCreateChartArea = true;
@@ -47,11 +47,11 @@ class XYChart : Container
     bool isScalable = true;
     bool isDraggableChart = true;
 
-    double scaleX = 1;
-    double scaleY = 1;
+    float scaleX = 1;
+    float scaleY = 1;
 
-    double offsetX = 0;
-    double offsetY = 0;
+    float offsetX = 0;
+    float offsetY = 0;
 
     bool isShowXScale = true;
     bool isShowYScale = true;
@@ -79,7 +79,7 @@ class XYChart : Container
         bool isStartTrackPointer;
     }
 
-    this(double chartAreaWidth = 0, double chartAreaHeight = 0)
+    this(float chartAreaWidth = 0, float chartAreaHeight = 0)
     {
         this.chartAreaWidth = chartAreaWidth;
         this.chartAreaHeight = chartAreaHeight;
@@ -224,7 +224,7 @@ class XYChart : Container
         if (isScalable)
         {
             onPointerWheel ~= (ref e) {
-                double scaleFactor = 1.5;
+                float scaleFactor = 1.5;
                 //up e.y = 1, down e.y = -1
                 if (e.y < 0)
                 {
@@ -283,7 +283,7 @@ class XYChart : Container
                 auto tresholdY = tresholdX;
 
                 //move to right x > 0 
-                double speedFactor = 100;
+                float speedFactor = 100;
                 auto speedXFactor = scaleX == 1 ? speedFactor : speedFactor * scaleX;
                 auto speedYFactor = scaleY == 1 ? speedFactor : speedFactor * scaleY;
                 auto speedX = rangeX / speedXFactor;
@@ -331,10 +331,10 @@ class XYChart : Container
         }
     }
 
-    double rangeX() => maxX - minX;
-    double rangeY() => maxY - minY;
+    float rangeX() => maxX - minX;
+    float rangeY() => maxY - minY;
 
-    protected double rangeXToWidth(double x, bool isUseOffsets = true, bool isUseScale = true)
+    protected float rangeXToWidth(float x, bool isUseOffsets = true, bool isUseScale = true)
     {
         assert(chartArea);
 
@@ -363,7 +363,7 @@ class XYChart : Container
         return wX;
     }
 
-    protected double rangeYToHeight(double y, bool isUseOffsets = true, bool isUseScale = true)
+    protected float rangeYToHeight(float y, bool isUseOffsets = true, bool isUseScale = true)
     {
         assert(chartArea);
         if (y < 0)
@@ -390,7 +390,7 @@ class XYChart : Container
         return hY;
     }
 
-    double widthToX(double w)
+    float widthToX(float w)
     {
         if (w < 0 || w > chartAreaWidth)
         {
@@ -400,7 +400,7 @@ class XYChart : Container
         return xScale1.minValue + (w * xScale1.range / chartAreaWidth);
     }
 
-    double heightToY(double h)
+    float heightToY(float h)
     {
         if (h < 0 || h > chartAreaHeight)
         {
@@ -410,7 +410,7 @@ class XYChart : Container
         return yScale1.maxValue - (h * yScale1.range / chartAreaHeight);
     }
 
-    protected Vec2d toChartAreaPos(double posX, double posY, bool isUseOffsets = true, bool isUseScale = true)
+    protected Vec2d toChartAreaPos(float posX, float posY, bool isUseOffsets = true, bool isUseScale = true)
     {
         assert(chartArea);
 
@@ -418,8 +418,8 @@ class XYChart : Container
         auto wX = rangeXToWidth(posX, isUseOffsets, isUseScale);
         auto hY = rangeYToHeight(posY, isUseOffsets, isUseScale);
 
-        double newX = 0;
-        double newY = 0;
+        float newX = 0;
+        float newY = 0;
 
         //TODO reference point
         if (posX >= 0)
@@ -485,9 +485,9 @@ class XYChart : Container
         auto yTicks = yScale1.tickCount;
 
         auto tickXDiff = chartAreaWidth / (xTicks - 1);
-        double startX = 0;
+        float startX = 0;
         //TODO major;
-        double tickW = xScale1.tickMinorWidth / 2.0;
+        float tickW = xScale1.tickMinorWidth / 2.0;
         foreach (x; 0 .. xTicks)
         {
             auto tickPos = chartArea.x + startX - tickW;
@@ -496,11 +496,11 @@ class XYChart : Container
         }
 
         auto tickYDiff = chartAreaHeight / (yTicks - 1);
-        double startY = 0;
-        double tickH = yScale1.tickMinorHeight / 2.0;
+        float startY = 0;
+        float tickH = yScale1.tickMinorHeight / 2.0;
         foreach (y; 0 .. yTicks)
         {
-            double tickPos = chartArea.y + startY - tickH;
+            float tickPos = chartArea.y + startY - tickH;
             graphic.line(chartArea.x, tickPos, chartArea.boundsRect.right, tickPos, gridColor);
             startY += tickYDiff;
         }
@@ -547,12 +547,12 @@ class XYChart : Container
         return new Container;
     }
 
-    HScaleDynamic newXScale1(double w, double h)
+    HScaleDynamic newXScale1(float w, float h)
     {
         return new HScaleDynamic(w, h);
     }
 
-    VScaleDynamic newYScale1(double w, double h)
+    VScaleDynamic newYScale1(float w, float h)
     {
         return new VScaleDynamic(w, h);
     }

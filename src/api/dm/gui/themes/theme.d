@@ -53,13 +53,13 @@ class Theme
     RGBA colorContainerBackground = RGBA.black;
 
     @ConfigKey
-    double opacityContainers = 1;
+    float opacityContainers = 1;
     @ConfigKey
-    double opacityControls = 1;
+    float opacityControls = 1;
     @ConfigKey
-    double opacityBackground = 0.85;
+    float opacityBackground = 0.85;
     @ConfigKey
-    double opacityHover = 1;
+    float opacityHover = 1;
 
     @ConfigKey
     size_t iconSize = 24;
@@ -68,32 +68,32 @@ class Theme
     int lineThickness = 3;
     
     Insets controlPadding = Insets(5, 5, 5, 5);
-    double controlSpacing = 5;
-    double controlCornersBevel = 8;
+    float controlSpacing = 5;
+    float controlCornersBevel = 8;
     GraphicStyle controlStyle = GraphicStyle.simple;
 
     @ConfigKey
-    double controlDefaultWidth = 100;
+    float controlDefaultWidth = 100;
     @ConfigKey
-    double controlDefaultHeight = 80;
+    float controlDefaultHeight = 80;
     @ConfigKey
-    double controlGraphicsGap = 5;
+    float controlGraphicsGap = 5;
 
     @ConfigKey
-    double layoutIndent = 0;
+    float layoutIndent = 0;
 
     @ConfigKey
-    double buttonWidth = 80;
+    float buttonWidth = 80;
     @ConfigKey
-    double buttonHeight = 30;
+    float buttonHeight = 30;
     @ConfigKey
-    double roundShapeDiameter = 20;
+    float roundShapeDiameter = 20;
     @ConfigKey
-    double regularPolyDiameter = 80;
+    float regularPolyDiameter = 80;
     @ConfigKey
     size_t regularPolySides = 8;
     @ConfigKey
-    double parallelogramShapeAngleDeg = 15;
+    float parallelogramShapeAngleDeg = 15;
 
     bool isUseVectorGraphics;
 
@@ -105,41 +105,41 @@ class Theme
     size_t popupDelayMs;
 
     @ConfigKey
-    double checkMarkerWidth = 30;
+    float checkMarkerWidth = 30;
     @ConfigKey
-    double checkMarkerHeight = 30;
+    float checkMarkerHeight = 30;
 
     @ConfigKey
-    double toggleSwitchMarkerWidth = 30;
+    float toggleSwitchMarkerWidth = 30;
     @ConfigKey
-    double toggleSwitchMarkerHeight = 30;
+    float toggleSwitchMarkerHeight = 30;
 
     @ConfigKey
-    double separatorHeight = 5;
+    float separatorHeight = 5;
 
     @ConfigKey
-    double meterThumbWidth = 30;
+    float meterThumbWidth = 30;
     @ConfigKey
-    double meterThumbHeight = 30;
+    float meterThumbHeight = 30;
     @ConfigKey
-    double meterThumbDiameter = 60;
+    float meterThumbDiameter = 60;
 
     @ConfigKey
-    double meterTickMinorWidth = 2;
+    float meterTickMinorWidth = 2;
     @ConfigKey
-    double meterTickMinorHeight = 3;
+    float meterTickMinorHeight = 3;
     @ConfigKey
-    double meterTickMajorWidth = 2;
+    float meterTickMajorWidth = 2;
     @ConfigKey
-    double meterTickMajorHeight = 5;
+    float meterTickMajorHeight = 5;
     @ConfigKey
-    double meterHandWidth = 5;
+    float meterHandWidth = 5;
 
     @ConfigKey
-    double loaderSize = 50;
+    float loaderSize = 50;
 
     @ConfigKey
-    double dividerSize = 2;
+    float dividerSize = 2;
 
     this(IconPack iconPack = null)
     {
@@ -189,7 +189,7 @@ class Theme
     }
 
     //TODO @safe
-    Sprite2d background(double width, double height, double angle, scope GraphicStyle* parentStyle = null)
+    Sprite2d background(float width, float height, float angle, scope GraphicStyle* parentStyle = null)
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -217,12 +217,12 @@ class Theme
         return newBackground;
     }
 
-    Sprite2d shape(double width, double height, double angle, GraphicStyle style)
+    Sprite2d shape(float width, float height, float angle, GraphicStyle style)
     {
         return convexPolyShape(width, height, angle, controlCornersBevel, style);
     }
 
-    Sprite2d convexPolyShape(double width, double height, double angle, double cornerBevel, GraphicStyle style)
+    Sprite2d convexPolyShape(float width, float height, float angle, float cornerBevel, GraphicStyle style)
     {
         Sprite2d newShape;
         if (isUseVectorGraphics)
@@ -242,7 +242,7 @@ class Theme
         return newShape;
     }
 
-    Sprite2d rectShape(double width, double height, double angle, GraphicStyle style)
+    Sprite2d rectShape(float width, float height, float angle, GraphicStyle style)
     {
         Sprite2d shape;
         if (isUseVectorGraphics)
@@ -261,9 +261,9 @@ class Theme
 
     Sprite2d circleShape(GraphicStyle style) => circleShape(roundShapeDiameter, style);
 
-    Sprite2d circleShape(double diameter, GraphicStyle style)
+    Sprite2d circleShape(float diameter, GraphicStyle style)
     {
-        double radius = diameter / 2;
+        float radius = diameter / 2;
 
         Sprite2d shape;
         if (isUseVectorGraphics)
@@ -281,10 +281,10 @@ class Theme
         return shape;
     }
 
-    Sprite2d regularPolyShape(double angle, GraphicStyle style) => regularPolyShape(
+    Sprite2d regularPolyShape(float angle, GraphicStyle style) => regularPolyShape(
         regularPolyDiameter, regularPolySides, angle, style);
 
-    Sprite2d regularPolyShape(double size, size_t sides, double angle, GraphicStyle style)
+    Sprite2d regularPolyShape(float size, size_t sides, float angle, GraphicStyle style)
     {
         Sprite2d shape;
 
@@ -308,7 +308,7 @@ class Theme
         return shape;
     }
 
-    Sprite2d triangleShape(double width, double height, double angleDeg, GraphicStyle style)
+    Sprite2d triangleShape(float width, float height, float angleDeg, GraphicStyle style)
     {
 
         Sprite2d shape;

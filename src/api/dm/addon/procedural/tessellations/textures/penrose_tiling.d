@@ -19,24 +19,24 @@ class PenroseTiling : VShape
     * The algorithm has been ported from https://habr.com/ru/articles/359244/, by Юрий (@yurixi)
     * TODO Improved refactoring
     */
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         super(width, height, GraphicStyle.simple);
     }
 
-    private enum double sqrt5Value = Math.sqrt(5.0);
-    enum double fi = (sqrt5Value - 1) / 2;
-    enum double fb = (sqrt5Value + 1) / 2;
-    enum double f3 = Math.sqrt(3 + fi);
-    enum double f2 = Math.sqrt(2 - fi);
+    private enum float sqrt5Value = Math.sqrt(5.0);
+    enum float fi = (sqrt5Value - 1) / 2;
+    enum float fb = (sqrt5Value + 1) / 2;
+    enum float f3 = Math.sqrt(3 + fi);
+    enum float f2 = Math.sqrt(2 - fi);
 
-    immutable double[][] baseVectorsCoords = [
+    immutable float[][] baseVectorsCoords = [
         [2, 0, 0, 0], [1, 1, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0],
         [-1, -1, 0, 1], [-2, 0, 0, 0], [-1, -1, 0, -1], [0, -1, -1, 0],
         [0, 1, -1, 0],
         [1, 1, 0, -1]
     ];
-    immutable double[] constants = [1.0 / 2, fi / 2, f3 / 2, f2 / 2];
+    immutable float[] constants = [1.0 / 2, fi / 2, f3 / 2, f2 / 2];
 
     RGBA[6] colors = [
         RGBA.web("#f1c40f"), RGBA.web("#f39c12"), RGBA.web("#95a5a6"),
@@ -45,27 +45,27 @@ class PenroseTiling : VShape
     ];
     RGBA lineColor = RGBA.red;
 
-    double centerX = 0;
-    double centerY = 0;
+    float centerX = 0;
+    float centerY = 0;
 
     size_t mode = 2;
     size_t levels = 4;
-    double levelPower = 0.1 * 10;
-    double lineWidth = 8 * 6 * fi * fi;
+    float levelPower = 0.1 * 10;
+    float lineWidth = 8 * 6 * fi * fi;
 
     override void createTextureContent()
     {
         centerX = width / 2;
         centerY = height / 2;
 
-        Tuple!(double, double[], double)[] tf;
-        tf ~= tuple(0.0, [0.0, 0, 0, 0], 0.0);
-        tf ~= tuple(1.0, [0.0, 0, 0, 0], 0.0);
-        tf ~= tuple(2.0, [0.0, 0, 0, 0], 3.0);
-        tf ~= tuple(3.0, [0.0, 0, 0, 0], 3.0);
-        tf ~= tuple(2.0, [0.0, 0, 0, 0], 7.0);
-        tf ~= tuple(3.0, [0.0, 0, 0, 0], 7.0);
-        Tuple!(double, double[], double)[][] f = [tf];
+        Tuple!(float, float[], float)[] tf;
+        tf ~= tuple(0.0f, [0.0f, 0, 0, 0], 0.0f);
+        tf ~= tuple(1.0f, [0.0f, 0, 0, 0], 0.0f);
+        tf ~= tuple(2.0f, [0.0f, 0, 0, 0], 3.0f);
+        tf ~= tuple(3.0f, [0.0f, 0, 0, 0], 3.0f);
+        tf ~= tuple(2.0f, [0.0f, 0, 0, 0], 7.0f);
+        tf ~= tuple(3.0f, [0.0f, 0, 0, 0], 7.0f);
+        Tuple!(float, float[], float)[][] f = [tf];
 
         auto cr = cairoContext.getObject;
         cairo_set_source_rgb(cr, style.fillColor.rNorm, style
@@ -78,7 +78,7 @@ class PenroseTiling : VShape
         {
             m = n + 1;
             //f[m] = [];
-            f ~= [tuple(0.0, [0.0, 0.0, 0.0, 0.0], 0.0)];
+            f ~= [tuple(0.0f, [0.0f, 0.0f, 0.0f, 0.0f], 0.0f)];
             for (auto k = 0; k < f[n].length; k++)
             {
                 f[m] = zd(f[n][k], f[m]);
@@ -111,7 +111,7 @@ class PenroseTiling : VShape
         }
     }
 
-    Tuple!(double, double[], double)[] zd(Tuple!(double, double[], double) a, Tuple!(double, double[], double)[] f)
+    Tuple!(float, float[], float)[] zd(Tuple!(float, float[], float) a, Tuple!(float, float[], float)[] f)
     {
         size_t t = cast(size_t) a[0]; // shape type
 
@@ -119,10 +119,10 @@ class PenroseTiling : VShape
             t = t - 4; // shape types 4 and 5 are treated as 0 and 1
 
         //direction of the first step depending on the type of figure, in the form of a direction shift
-        immutable double[] sht = [1, -1, 2, -2];
-        double shift = sht[t];
+        immutable float[] sht = [1, -1, 2, -2];
+        float shift = sht[t];
 
-        double t1 = 0, t2 = 0, t3 = 0;
+        float t1 = 0, t2 = 0, t3 = 0;
 
         if (t == 0)
         {
@@ -193,9 +193,9 @@ class PenroseTiling : VShape
         [[0, 0, 0, 1], [0, 0, 1, -1], [-1, -2, 0, 0], [-2, 1, 0, 0]]
     ];
 
-    double[] mul(const double[] v1, const double[] v2) pure
+    float[] mul(const float[] v1, const float[] v2) pure
     {
-        auto v3 = [0.0, 0, 0, 0];
+        auto v3 = [0.0f, 0, 0, 0];
         for (auto i = 0; i < 4; i++)
             for (auto j = 0; j < 4; j++)
                 for (auto k = 0; k < 4; k++)
@@ -207,9 +207,9 @@ class PenroseTiling : VShape
         return v3;
     }
 
-    double[] add(const double[] v1, const double[] v2)
+    float[] add(const float[] v1, const float[] v2)
     {
-        auto v3 = [0.0, 0, 0, 0];
+        auto v3 = [0.0f, 0, 0, 0];
         for (auto i = 0; i < 4; i++)
             v3[i] = v3[i] + v1[i];
         for (auto i = 0; i < 4; i++)
@@ -217,13 +217,13 @@ class PenroseTiling : VShape
         return v3;
     }
 
-    double[] mean(double[] p1, double[] p2, double d)
+    float[] mean(float[] p1, float[] p2, float d)
     {
         auto p3 = [(p2[0] - p1[0]) * d + p1[0], (p2[1] - p1[1]) * d + p1[1]];
         return p3;
     }
 
-    void paint(Tuple!(double, double[], double) a, double mode, double level = 0)
+    void paint(Tuple!(float, float[], float) a, float mode, float level = 0)
     {
         auto pr = levelPower;
         auto st = lineWidth;
@@ -272,7 +272,7 @@ class PenroseTiling : VShape
         st = st * koe; // shapes scaling
 
         // coordinates of the beginning of the line
-        auto p0 = [
+        float[] p0 = [
             kop * (p[0] * constants[0] + p[1] * constants[1]),
             kop * (p[2] * constants[2] + p[3] * constants[3])
         ];
@@ -515,12 +515,12 @@ class PenroseTiling : VShape
         _gContext.beginPath();
     }
 
-    void from(double[] p)
+    void from(float[] p)
     {
         _gContext.moveTo(centerX - p[0], centerY - p[1]);
     }
 
-    void to(double[] p)
+    void to(float[] p)
     {
         _gContext.lineTo(centerX - p[0], centerY - p[1]);
     }

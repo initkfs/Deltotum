@@ -23,7 +23,7 @@ class Demo1 : GuiScene
         super.create;
     }
 
-    override void update(double delta)
+    override void update(float delta)
     {
         super.update(delta);
     }

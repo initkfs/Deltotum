@@ -16,19 +16,19 @@ class Mandelbrot : ComplexFractalImage
     RGBA backgroundColor = RGBA.black;
     RGBA foregroundColor = RGBA.white;
 
-    this(double width = 100, double height = 100, double scaleFactor = 0.03, size_t iterations = 500)
+    this(float width = 100, float height = 100, float scaleFactor = 0.03, size_t iterations = 500)
     {
         super(width, height);
         this.scaleFactor = scaleFactor;
         this.iterations = iterations;
     }
 
-    override RGBA calcColor(double x, double y)
+    override RGBA calcColor(float x, float y)
     {
-        Complex!double c = Complex!double(x, y);
+        Complex!float c = Complex!float(x, y);
 
         size_t iterationCount = 0;
-        Complex!double z = 0;
+        Complex!float z = 0;
         do
         {
             z = z * z + c;

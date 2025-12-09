@@ -21,7 +21,7 @@ class Labeled : Control
         string _iconName;
         dstring _labelText;
 
-        double _graphicsGap = 0;
+        float _graphicsGap = 0;
     }
 
     bool isSetNullGapFromTheme = true;
@@ -36,7 +36,7 @@ class Labeled : Control
     void delegate() onPreTextCreate;
     void delegate() onPostTextCreated;
 
-    this(dstring labelText = null, string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring labelText = null, string iconName = null, float graphicsGap = 0, bool isCreateLayout = true)
     {
         this._iconName = iconName;
         this._labelText = labelText;
@@ -261,9 +261,9 @@ class Labeled : Control
         return true;
     }
 
-    double graphicsGap() => _graphicsGap;
+    float graphicsGap() => _graphicsGap;
 
-    bool graphicsGap(double value)
+    bool graphicsGap(float value)
     {
         _graphicsGap = value;
         if (layout)

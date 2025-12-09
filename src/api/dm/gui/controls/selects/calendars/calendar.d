@@ -183,7 +183,7 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
                     assert(dateChangeContainer);
                     dateChangeContainer.addCreate(monthLabel);
 
-                    double labelWidth = getMaxMonthNameWidth(monthLabel);
+                    float labelWidth = getMaxMonthNameWidth(monthLabel);
                     if (labelWidth > monthLabel.width)
                     {
                         monthLabel.width = labelWidth;
@@ -479,11 +479,11 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
         return date.day.to!dstring;
     }
 
-    protected double getMaxMonthNameWidth(TextView label)
+    protected float getMaxMonthNameWidth(TextView label)
     {
         import std.traits : EnumMembers;
 
-        double maxW = 0;
+        float maxW = 0;
         foreach (Month m; EnumMembers!Month)
         {
             auto nameLen = label.calcTextWidth(getMonthName(m));

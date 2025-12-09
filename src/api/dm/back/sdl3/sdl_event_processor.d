@@ -155,10 +155,10 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         }
 
         auto type = PointerEvent.Event.none;
-        double x = 0;
-        double y = 0;
-        double movementX = 0;
-        double movementY = 0;
+        float x = 0;
+        float y = 0;
+        float movementX = 0;
+        float movementY = 0;
         int button;
 
         switch (event.type)

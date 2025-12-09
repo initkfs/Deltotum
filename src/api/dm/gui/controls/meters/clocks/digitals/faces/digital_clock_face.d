@@ -14,8 +14,8 @@ class DigitalClockFace : Control
     void delegate(Sprite2d) onConfiguredMinHourSeparator;
     void delegate(Sprite2d) onCreatedMinHourSeparator;
 
-    double minHourSeparatorWidth = 0;
-    double minHourSeparatorHeight = 0;
+    float minHourSeparatorWidth = 0;
+    float minHourSeparatorHeight = 0;
 
     SevenSegment hour1;
     SevenSegment delegate(SevenSegment) onNewHour1Segment;
@@ -27,8 +27,8 @@ class DigitalClockFace : Control
     void delegate(SevenSegment) onConfiguredHour2Segment;
     void delegate(SevenSegment) onCreatedHour2Segment;
 
-    double hourSegmentWidth = 0;
-    double hourSegmentHeight = 0;
+    float hourSegmentWidth = 0;
+    float hourSegmentHeight = 0;
 
     SevenSegment min1;
     SevenSegment delegate(SevenSegment) onNewMin1Segment;
@@ -40,8 +40,8 @@ class DigitalClockFace : Control
     void delegate(SevenSegment) onConfiguredMin2Segment;
     void delegate(SevenSegment) onCreatedMin2Segment;
 
-    double minSegmentWidth = 0;
-    double minSegmentHeight = 0;
+    float minSegmentWidth = 0;
+    float minSegmentHeight = 0;
 
     SevenSegment sec1;
     SevenSegment delegate(SevenSegment) onNewSec1Segment;
@@ -53,14 +53,14 @@ class DigitalClockFace : Control
     void delegate(SevenSegment) onConfiguredSec2Segment;
     void delegate(SevenSegment) onCreatedSec2Segment;
 
-    double secSegmentWidth = 0;
-    double secSegmentHeight = 0;
+    float secSegmentWidth = 0;
+    float secSegmentHeight = 0;
 
     SevenSegment delegate(SevenSegment) onNewSecSegment;
     void delegate(SevenSegment) onConfiguredSecSegment;
     void delegate(SevenSegment) onCreatedSecSegment;
 
-    this(double width = 0, double height = 0)
+    this(float width = 0, float height = 0)
     {
         initSize(width, height);
 
@@ -248,11 +248,11 @@ class DigitalClockFace : Control
         }
     }
 
-    SevenSegment newHourSegment(double w, double h) => new SevenSegment(w, h);
-    SevenSegment newMinSegment(double w, double h) => new SevenSegment(w, h);
-    SevenSegment newSecSegment(double w, double h) => new SevenSegment(w, h);
+    SevenSegment newHourSegment(float w, float h) => new SevenSegment(w, h);
+    SevenSegment newMinSegment(float w, float h) => new SevenSegment(w, h);
+    SevenSegment newSecSegment(float w, float h) => new SevenSegment(w, h);
 
-    Sprite2d newMinHourSeparator(double w, double h)
+    Sprite2d newMinHourSeparator(float w, float h)
     {
         import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
         import api.math.geom2.vec2 : Vec2d;
@@ -300,7 +300,7 @@ class DigitalClockFace : Control
                 override void createTextureContent()
                 {
                     auto ctx = canvas;
-                    double startAngleDeg = 0, endAngleDeg = 360;
+                    float startAngleDeg = 0, endAngleDeg = 360;
                     ctx.color = theme.colorAccent;
                     ctx.arc(dot1Center.x, dot1Center.y, dotRadius, startAngleDeg, endAngleDeg);
                     ctx.fill;

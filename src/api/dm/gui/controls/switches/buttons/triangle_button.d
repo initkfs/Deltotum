@@ -36,10 +36,10 @@ class TriangleButton : BaseButton
 
     this(
         dstring text,
-        double width = 0,
-        double height = 0,
+        float width = 0,
+        float height = 0,
         string iconName = null,
-        double graphicsGap = 0
+        float graphicsGap = 0
     )
     {
         super(text, width, height, iconName, graphicsGap);
@@ -53,7 +53,7 @@ class TriangleButton : BaseButton
 
     alias createShape = Control.createShape;
 
-    protected override Sprite2d createShape(double width, double height, double angle, GraphicStyle style)
+    protected override Sprite2d createShape(float width, float height, float angle, GraphicStyle style)
     {
         Sprite2d shape = theme.triangleShape(width, height, angle, style);
         return shape;

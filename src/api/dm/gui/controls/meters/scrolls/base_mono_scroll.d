@@ -14,17 +14,17 @@ abstract class BaseMonoScroll : BaseScroll
 {
     protected
     {
-        double _value = 0;
+        float _value = 0;
     }
 
-    double valueDelta = 0;
-    double valueStep = 0;
+    float valueDelta = 0;
+    float valueStep = 0;
 
-    double delegate(double) onNewWheelDY;
-    double delegate(double) onNewThumbX;
-    double delegate(double) onNewThumbY;
+    float delegate(float) onNewWheelDY;
+    float delegate(float) onNewThumbX;
+    float delegate(float) onNewThumbY;
 
-    void delegate(double)[] onValue;
+    void delegate(float)[] onValue;
 
     bool isCreateThumb = true;
     Sprite2d delegate(Sprite2d) onNewThumb;
@@ -35,7 +35,7 @@ abstract class BaseMonoScroll : BaseScroll
 
     Sprite2d thumb;
 
-    this(double minValue = 0, double maxValue = 1.0)
+    this(float minValue = 0, float maxValue = 1.0)
     {
         super(minValue, maxValue);
 
@@ -57,7 +57,7 @@ abstract class BaseMonoScroll : BaseScroll
         }
 
         onPointerWheel ~= (ref e) {
-            double dy = !onNewWheelDY ? e.y : onNewWheelDY(e.y);
+            float dy = !onNewWheelDY ? e.y : onNewWheelDY(e.y);
             auto newValue = wheelValue(dy);
             value(newValue);
         };
@@ -65,7 +65,7 @@ abstract class BaseMonoScroll : BaseScroll
 
     abstract Sprite2d newThumb();
 
-    protected double wheelValue(double wheelDt) => _value;
+    protected float wheelValue(float wheelDt) => _value;
 
     override void create()
     {
@@ -96,22 +96,22 @@ abstract class BaseMonoScroll : BaseScroll
             {
                 thumb.isDraggable = true;
                 thumb.onDragXY = (x, y) {
-                    double newX = !onNewThumbX ? x : onNewThumbX(x);
-                    double newY = !onNewThumbY ? y : onNewThumbY(y);
+                    float newX = !onNewThumbX ? x : onNewThumbX(x);
+                    float newY = !onNewThumbY ? y : onNewThumbY(y);
                     return dragListener(newX, newY);
                 };
             }
         }
     }
 
-    bool delegate(double, double) newOnThumbDragXY()
+    bool delegate(float, float) newOnThumbDragXY()
     {
         return (x, y) { return false; };
     }
 
-    double value() => _value;
+    float value() => _value;
 
-    bool value(double v, bool isTriggerListeners = true)
+    bool value(float v, bool isTriggerListeners = true)
     {
         if (!trySetValue(v))
         {
@@ -126,7 +126,7 @@ abstract class BaseMonoScroll : BaseScroll
         return true;
     }
 
-    protected void triggerListeners(double v)
+    protected void triggerListeners(float v)
     {
         foreach (dg; onValue)
         {
@@ -134,7 +134,7 @@ abstract class BaseMonoScroll : BaseScroll
         }
     }
 
-    bool trySetValue(double v)
+    bool trySetValue(float v)
     {
         import Math = api.math;
 
@@ -184,7 +184,7 @@ abstract class BaseMonoScroll : BaseScroll
 
     import api.core.utils.arrays : drop;
 
-    bool removeOnValue(void delegate(double) dg)
+    bool removeOnValue(void delegate(float) dg)
     {
         return drop(onValue, dg);
     }

@@ -158,7 +158,7 @@ class Shape3d : Sprite3d
         drawIndexed;
     }
 
-    override void update(double dt)
+    override void update(float dt)
     {
         super.update(dt);
     }

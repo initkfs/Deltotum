@@ -3,7 +3,7 @@ module api.math.matrices.dense_matrix;
 /**
  * Authors: initkfs
  */
-struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
+struct DenseMatrix(T = float, size_t RowDim = 1, size_t ColDim = 1)
         if (RowDim >= 1 && ColDim >= 1)
 {
     //TODO make private
@@ -229,14 +229,14 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     }
 
     //maximum row sum.
-    double opnormInf() const pure @safe
+    float opnormInf() const pure @safe
     {
         import Math = api.dm.math;
 
-        double f = 0;
+        float f = 0;
         foreach (i; 0 .. RowDim)
         {
-            double s = 0;
+            float s = 0;
             foreach (j; 0 .. ColDim)
             {
                 s += Math.abs(matrix[i][j]);
@@ -247,11 +247,11 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     }
 
     //sqrt of sum squares elements.
-    double normFrobenius() const pure @safe
+    float normFrobenius() const pure @safe
     {
         import Math = api.dm.math;
 
-        double f = 0;
+        float f = 0;
         foreach (i; 0 .. RowDim)
         {
             foreach (j; 0 .. ColDim)
@@ -263,11 +263,11 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     }
 
     //sum of the diagonal elements.
-    double trace() const pure @safe
+    float trace() const pure @safe
     {
         import Math = api.dm.math;
 
-        double t = 0;
+        float t = 0;
         foreach (i; 0 .. Math.min(RowDim, ColDim))
         {
             t += matrix[i][i];
@@ -382,7 +382,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         }
     }
 
-    double det() const pure @safe
+    float det() const pure @safe
     {
         if (!isSquare)
         {
@@ -395,7 +395,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         }
 
         byte sign = 1;
-        double result = 0;
+        float result = 0;
         foreach (i; 0 .. rowDimension)
         {
             result += sign * matrix[0][i] * minor(0, i).det;
@@ -405,14 +405,14 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return result;
     }
 
-    double permanent() const pure @safe
+    float permanent() const pure @safe
     {
         if (rowDimension == 1)
         {
             return matrix[0][0];
         }
 
-        double sum = 0;
+        float sum = 0;
         foreach (i; 0 .. rowDimension)
         {
             sum += matrix[0][i] * minor(0, i).permanent;
@@ -582,18 +582,18 @@ unittest
         [0, 0, 0, 1]
     ]);
 
-    immutable m0 = DenseMatrix!(double, 1, 1)([[0]]);
+    immutable m0 = DenseMatrix!(float, 1, 1)([[0]]);
     assert(m0.transpose.toArrayCopy == [[0]]);
     assert(m0.mainDiagonal == [0]);
     assert(m0.sideDiagonal == [0]);
     assert(m0.add(m0).toArrayCopy == [[0]]);
     assert(m0.mul(m0).toArrayCopy == [[0]]);
 
-    double[][] m1Data = [
+    float[][] m1Data = [
         [1, 2, 3],
         [4, 5, 6]
     ];
-    immutable m1 = DenseMatrix!(double, 2, 3)(m1Data);
+    immutable m1 = DenseMatrix!(float, 2, 3)(m1Data);
 
     assert(m1.rowDimension == 2);
     assert(m1.columnDimension == 3);
@@ -607,14 +607,14 @@ unittest
     auto m1Sub = m1.sub(m1);
     assert(m1Sub.toArrayCopy == [[0, 0, 0], [0, 0, 0]]);
 
-    immutable m2 = DenseMatrix!(double, 3, 3)([
+    immutable m2 = DenseMatrix!(float, 3, 3)([
         [1, 2, 3], [4, 5, 6], [6, 7, 8]
     ]);
 
     auto m1m2Multiply = m1.mul(m2);
     assert(m1m2Multiply.toArrayCopy == [[27, 33, 39], [60, 75, 90]]);
 
-    immutable m3 = DenseMatrix!(double, 3, 4)([
+    immutable m3 = DenseMatrix!(float, 3, 4)([
         [1, 2, 3, 4],
         [5, 6, 7, 8],
         [9, 10, 11, 12]
@@ -623,7 +623,7 @@ unittest
     assert(m3.mainDiagonal == [1, 6, 11]);
     assert(m3.sideDiagonal == [9, 6, 3]);
 
-    immutable m4 = DenseMatrix!(double, 3, 3)([
+    immutable m4 = DenseMatrix!(float, 3, 3)([
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9]
@@ -632,7 +632,7 @@ unittest
     assert(m4.mainDiagonal == [1, 5, 9]);
     assert(m4.sideDiagonal == [7, 5, 3]);
 
-    immutable mat22 = DenseMatrix!(double, 2, 2)([
+    immutable mat22 = DenseMatrix!(float, 2, 2)([
         [1, 2],
         [3, 4],
     ]);
@@ -642,7 +642,7 @@ unittest
     auto minor11Mat22 = mat22.minor(1, 1);
     assert(minor11Mat22.toArrayCopy == [[1]]);
 
-    immutable mmin = DenseMatrix!(double, 4, 4)([
+    immutable mmin = DenseMatrix!(float, 4, 4)([
         [1, 2, 3, 4],
         [5, 6, 7, 8],
         [9, 10, 11, 12],
@@ -664,14 +664,14 @@ unittest
     assert(minor33[1] == [5, 6, 7]);
     assert(minor33[2] == [9, 10, 11]);
 
-    auto dd1 = DenseMatrix!(double, 2, 2)([
+    auto dd1 = DenseMatrix!(float, 2, 2)([
         [1, 2],
         [3, 4]
     ]);
     auto dd1Det = dd1.det;
     assert(dd1Det == -2);
 
-    auto dd2 = DenseMatrix!(double, 4, 4)([
+    auto dd2 = DenseMatrix!(float, 4, 4)([
         [11, 21, 32, 4],
         [15, 56, 32, 12],
         [23, 22, 11, 10],

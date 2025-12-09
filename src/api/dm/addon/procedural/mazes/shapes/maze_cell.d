@@ -29,7 +29,7 @@ class MazeCell : Sprite2d
 
     bool isVisited;
 
-    this(double width = 100, double height = 100, bool isWall = false)
+    this(float width = 100, float height = 100, bool isWall = false)
     {
         //super(width, height);
         topWall = isWall;

@@ -7,12 +7,12 @@ import api.math.geom2.vec2 : Vec2d;
  */
 struct Ellipse2d
 {
-    double x = 0;
-    double y = 0;
-    double width = 0;
-    double height = 0;
+    float x = 0;
+    float y = 0;
+    float width = 0;
+    float height = 0;
 
-    bool contains(double x1, double y1) const  nothrow pure @safe
+    bool contains(float x1, float y1) const  nothrow pure @safe
     {
         //https://math.stackexchange.com/questions/2114895/point-ellipse-collision-test
         immutable dx = x1 - x;
@@ -25,24 +25,24 @@ struct Ellipse2d
         return contains(p.x, p.y);
     }
 
-    double circumference() const  nothrow pure @safe
+    float circumference() const  nothrow pure @safe
     {
         import math = api.dm.math;
 
         return math.PI * (semiMajorAxis + semiMinorAxis);
     }
 
-    double semiMajorAxis() const  nothrow pure @safe
+    float semiMajorAxis() const  nothrow pure @safe
     {
         return width / 2;
     }
 
-    double semiMinorAxis() const  nothrow pure @safe
+    float semiMinorAxis() const  nothrow pure @safe
     {
         return height / 2;
     }
 
-    double area() const  nothrow pure @safe
+    float area() const  nothrow pure @safe
     {
         import math = api.dm.math;
 

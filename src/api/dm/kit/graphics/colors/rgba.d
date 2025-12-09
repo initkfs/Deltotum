@@ -34,7 +34,7 @@ struct RGBA
     ubyte r;
     ubyte g;
     ubyte b;
-    double a = 1;
+    float a = 1;
 
     enum : ubyte
     {
@@ -42,13 +42,13 @@ struct RGBA
         maxColor = 255,
     }
 
-    enum : double
+    enum : float
     {
         minAlpha = 0,
         maxAlpha = 1
     }
 
-    static RGBA web(string colorString, double a = maxAlpha) pure @safe
+    static RGBA web(string colorString, float a = maxAlpha) pure @safe
     {
         if (colorString.length == 0)
         {
@@ -127,13 +127,13 @@ struct RGBA
 
     import api.math.random : Random, rands;
 
-    static RGBA random(double alpha = maxAlpha)
+    static RGBA random(float alpha = maxAlpha)
     {
         auto rnd = rands;
         return random(rnd, alpha);
     }
 
-    static RGBA random(Random rnd, double alpha = maxAlpha)
+    static RGBA random(Random rnd, float alpha = maxAlpha)
     {
         const min = RGBA.minColor;
         const max = RGBA.maxColor;
@@ -151,7 +151,7 @@ struct RGBA
         return RGBA(maxColor - r, maxColor - g, maxColor - b, a);
     }
 
-    RGBA interpolate(RGBA start, RGBA end, double factor = 0.5) pure @safe
+    RGBA interpolate(RGBA start, RGBA end, float factor = 0.5) pure @safe
     {
         if (factor <= 0)
         {
@@ -235,17 +235,17 @@ struct RGBA
         return rgba;
     }
 
-    double colorNorm(double colorValue) const pure @safe
+    float colorNorm(float colorValue) const pure @safe
     {
         return colorValue / maxColor;
     }
 
-    double rNorm() const pure @safe => colorNorm(r);
-    double gNorm() const pure @safe => colorNorm(g);
-    double bNorm() const pure @safe => colorNorm(b);
+    float rNorm() const pure @safe => colorNorm(r);
+    float gNorm() const pure @safe => colorNorm(g);
+    float bNorm() const pure @safe => colorNorm(b);
     ubyte aByte() const pure @safe => to!ubyte(a * maxColor);
 
-    static double fromAByte(ubyte value) pure @safe => (cast(double) value) / maxColor;
+    static float fromAByte(ubyte value) pure @safe => (cast(float) value) / maxColor;
 
     bool isMin() const pure @safe
     {
@@ -262,13 +262,13 @@ struct RGBA
         return r + g + b;
     }
 
-    double brightness() const pure @safe
+    float brightness() const pure @safe
     {
-        double result = (r + b + g) / 3.0;
+        float result = (r + b + g) / 3.0;
         return result;
     }
 
-    void brightness(double factor) pure @safe
+    void brightness(float factor) pure @safe
     {
         //or convert to HSVA, and scale V.
         assert(factor > 0);
@@ -286,17 +286,17 @@ struct RGBA
         b = calc(b);
     }
 
-    void contrast(double factor) pure @safe
+    void contrast(float factor) pure @safe
     {
         import std.conv : to;
 
         import Math = api.dm.math;
 
-        double maxCoeffFactor = 259.0;
-        double maxColor = maxColor;
-        double halfColor = (maxColor + 1) / 2;
+        float maxCoeffFactor = 259.0;
+        float maxColor = maxColor;
+        float halfColor = (maxColor + 1) / 2;
 
-        const double correctFactor = (maxCoeffFactor * (factor + maxColor)) / (
+        const float correctFactor = (maxCoeffFactor * (factor + maxColor)) / (
             maxColor * (maxCoeffFactor - factor));
 
         pure @safe ubyte calc(ubyte color)
@@ -310,7 +310,7 @@ struct RGBA
         b = calc(b);
     }
 
-    void gamma(double value) pure @safe
+    void gamma(float value) pure @safe
     {
         assert(value >= 0);
         import std.conv : to;
@@ -318,9 +318,9 @@ struct RGBA
         import Math = api.dm.math;
 
         enum maxColor = RGBA.maxColor;
-        double correctFactor = 1.0 / value;
+        float correctFactor = 1.0 / value;
 
-        pure @safe ubyte calc(double colorNorm)
+        pure @safe ubyte calc(float colorNorm)
         {
             const newValue = maxColor * (colorNorm ^^ correctFactor);
             return cast(ubyte) Math.min(newValue, maxColor);
@@ -331,43 +331,43 @@ struct RGBA
         b = calc(bNorm);
     }
 
-    double distance(ref RGBA other) const pure @safe
+    float distance(ref RGBA other) const pure @safe
     {
         import Math = api.dm.math;
 
-        double distanceSum = ((r - other.r) ^^ 2) + (
+        float distanceSum = ((r - other.r) ^^ 2) + (
             (g - other.g) ^^ 2) + ((b - other.b) ^^ 2);
-        double distance = Math.sqrt(distanceSum);
+        float distance = Math.sqrt(distanceSum);
         return distance;
     }
 
     ubyte setMaxR() => r = maxColor;
     ubyte setMaxG() => g = maxColor;
     ubyte setMaxB() => b = maxColor;
-    double setMaxA() => a = maxAlpha;
+    float setMaxA() => a = maxAlpha;
 
     ubyte setMinR() => r = minColor;
     ubyte setMinG() => g = minColor;
     ubyte setMinB() => b = minColor;
-    double setMinA() => a = minAlpha;
+    float setMinA() => a = minAlpha;
 
     HSVA toHSVA() const @safe
     {
-        const double newR = colorNorm(r);
-        const double newG = colorNorm(g);
-        const double newB = colorNorm(b);
+        const float newR = colorNorm(r);
+        const float newG = colorNorm(g);
+        const float newB = colorNorm(b);
 
         import std.math.operations : isClose;
         import std.algorithm.comparison : min, max;
         import std.math.remainder : fmod;
 
-        const double cmax = max(newR, max(newG, newB));
-        const double cmin = min(newR, min(newG, newB));
-        const double delta = cmax - cmin;
+        const float cmax = max(newR, max(newG, newB));
+        const float cmin = min(newR, min(newG, newB));
+        const float delta = cmax - cmin;
 
         enum hueStartAngle = 60;
 
-        double hue = -1;
+        float hue = -1;
 
         if (isClose(cmax, cmin))
         {
@@ -391,9 +391,9 @@ struct RGBA
             //TODO exception?
         }
 
-        const double saturation = isClose(cmax, 0) ? 0 : (
+        const float saturation = isClose(cmax, 0) ? 0 : (
             delta / cmax) * HSVA.maxSaturation;
-        const double value = cmax * HSVA.maxValue;
+        const float value = cmax * HSVA.maxValue;
 
         return HSVA(hue, saturation, value, a);
     }
@@ -405,16 +405,16 @@ struct RGBA
     {
         import Math = api.math;
 
-        double rn = rNorm;
-        double rg = gNorm;
-        double rb = bNorm;
+        float rn = rNorm;
+        float rg = gNorm;
+        float rb = bNorm;
 
-        const double max = Math.max(rn, rg, rb);
-        const double min = Math.min(rn, rg, rb);
+        const float max = Math.max(rn, rg, rb);
+        const float min = Math.min(rn, rg, rb);
 
-        double h = 0;
-        double s = 0;
-        double l = (max + min) / 2.0;
+        float h = 0;
+        float s = 0;
+        float l = (max + min) / 2.0;
 
         if (max == min)
         {
@@ -424,7 +424,7 @@ struct RGBA
             return HSLA(h, s, l, a);
         }
 
-        const double dist = max - min;
+        const float dist = max - min;
 
         s = l > 0.5 ? (dist / (2 - max - min)) : (dist / (max + min));
 

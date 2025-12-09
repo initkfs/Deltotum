@@ -48,7 +48,7 @@ struct Random
     }
 
     T betweenType(T)() pure @safe if (isNumeric!T) => between!T(T.min, T.max);
-    double between0to1() pure @safe => between!double(0, 1);
+    float between0to1() pure @safe => between!float(0, 1);
     Vec2d betweenVec(Vec2d min, Vec2d max) pure @safe => Vec2d(between(min.x, max.x), between(min.y, max
             .y));
 
@@ -91,7 +91,7 @@ struct Random
 
     bool chanceHalf() pure @safe => chance(0.5);
 
-    bool chance(double chance0to1) pure @safe
+    bool chance(float chance0to1) pure @safe
     {
         if (chance0to1 < 0 || chance0to1 > 1)
         {
@@ -104,17 +104,17 @@ struct Random
 
     struct ChanceDg
     {
-        double chance = 0;
+        float chance = 0;
         void delegate() dg;
     }
 
-    double chanceAll(ChanceDg[] chanceDelegates)
+    float chanceAll(ChanceDg[] chanceDelegates)
     {
-        const double random0to1 = between0to1;
-        double accumulator = 0;
+        const float random0to1 = between0to1;
+        float accumulator = 0;
         foreach (chanceDg; chanceDelegates)
         {
-            const double chance = chanceDg.chance;
+            const float chance = chanceDg.chance;
             accumulator += chance;
             if (random0to1 <= accumulator)
             {

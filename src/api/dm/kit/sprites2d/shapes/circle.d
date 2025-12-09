@@ -11,9 +11,9 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
  */
 class Circle : Shape2d
 {
-    const double radius;
+    const float radius;
 
-    this(double radius = 25, GraphicStyle style = GraphicStyle.simple)
+    this(float radius = 25, GraphicStyle style = GraphicStyle.simple)
     {
         super(radius * 2, radius * 2, style);
         this.radius = radius;
@@ -22,9 +22,9 @@ class Circle : Shape2d
     override void drawContent()
     {
         super.drawContent;
-        double currentRadius = width / 2;
-        double centerX = x + width / 2;
-        double centerY = y + height / 2;
+        float currentRadius = width / 2;
+        float centerX = x + width / 2;
+        float centerY = y + height / 2;
         graphic.circle(centerX, centerY, currentRadius, style.lineColor, style.isFill);
     }
 

@@ -7,6 +7,6 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
  */
 struct ColorBarData
 {
-    double value = 0;
+    float value = 0;
     RGBA color;
 }

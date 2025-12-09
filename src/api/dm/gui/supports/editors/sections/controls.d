@@ -711,11 +711,11 @@ class Controls : Control
         import std.algorithm.iteration : map;
         import std.math.trigonometry : sin;
 
-        //double[] x = iota(1, 10, 0.01).array;
-        //double[] y = x.map!sin.array;
+        //float[] x = iota(1, 10, 0.01).array;
+        //float[] y = x.map!sin.array;
 
-        double[] x = [0, 1, 2, 3, 7];
-        double[] y = [0, 1, 2, 3, 7];
+        float[] x = [0, 1, 2, 3, 7];
+        float[] y = [0, 1, 2, 3, 7];
 
         linearChart.data(x, y);
 

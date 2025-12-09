@@ -9,15 +9,15 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class IntegratedLoop : Loop
 {
-    double deltaTimeAccumLimitMs = 100;
+    float deltaTimeAccumLimitMs = 100;
 
     protected
     {
-        double deltaTimeAccumulatorMs = 0;
-        double lastUpdateTimeMs = 0;
+        float deltaTimeAccumulatorMs = 0;
+        float lastUpdateTimeMs = 0;
     }
 
-    this(double frameRate = FrameRate.high)
+    this(float frameRate = FrameRate.high)
     {
         super(frameRate);
     }
@@ -29,8 +29,8 @@ class IntegratedLoop : Loop
     in (onRender)
     {
         //TODO SDL_GetPerformanceCounter
-        //(double)((now - start)*1000) / SDL_GetPerformanceFrequency()
-        double deltaTimeMs = startMs - lastUpdateTimeMs;
+        //(float)((now - start)*1000) / SDL_GetPerformanceFrequency()
+        float deltaTimeMs = startMs - lastUpdateTimeMs;
         lastUpdateTimeMs = startMs;
         deltaTimeAccumulatorMs += deltaTimeMs;
 
@@ -50,7 +50,7 @@ class IntegratedLoop : Loop
             //updatesThisFrame++;
         }
 
-        immutable double accumRest = deltaTimeAccumulatorMs / frameTimeMs;
+        immutable float accumRest = deltaTimeAccumulatorMs / frameTimeMs;
 
         onRender(accumRest);
 

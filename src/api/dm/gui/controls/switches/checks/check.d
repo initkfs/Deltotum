@@ -26,12 +26,12 @@ class Check : BaseBiswitch
     void delegate(Sprite2d) onConfiguredIndeterminate;
     void delegate(Sprite2d) onCreatedIndeterminate;
 
-    double markerWidth = 0;
-    double markerHeight = 0;
+    float markerWidth = 0;
+    float markerHeight = 0;
 
     bool isCreateMarkerListeners = true;
 
-    this(dstring text = "Check", double width, double height, string iconName = null, double graphicsGap = 5)
+    this(dstring text = "Check", float width, float height, string iconName = null, float graphicsGap = 5)
     {
         super(text, iconName, graphicsGap, isCreateLayout:
             true);
@@ -42,7 +42,7 @@ class Check : BaseBiswitch
         isCreateMarker = true;
     }
 
-    this(dstring text = "Check", string iconName = null, double graphicsGap = 5)
+    this(dstring text = "Check", string iconName = null, float graphicsGap = 5)
     {
         this(text, 0, 0, iconName, graphicsGap);
     }

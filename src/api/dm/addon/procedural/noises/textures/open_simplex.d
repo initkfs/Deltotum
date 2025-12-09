@@ -16,7 +16,7 @@ import Math = api.dm.math;
  */
 class OpenSimplex : Noise
 {
-    this(double width = 100, double height = 100)
+    this(float width = 100, float height = 100)
     {
         super(width, height);
     }
@@ -28,13 +28,13 @@ class OpenSimplex : Noise
     enum long HASH_MULTIPLIER = 0x53A3F72DEEC546F5L;
     enum long SEED_FLIP_3D = -0x52D547B2E96ED629L;
 
-    enum double ROOT2OVER2 = 0.7071067811865476;
-    enum double SKEW_2D = 0.366025403784439;
-    enum double UNSKEW_2D = -0.21132486540518713;
+    enum float ROOT2OVER2 = 0.7071067811865476;
+    enum float SKEW_2D = 0.366025403784439;
+    enum float UNSKEW_2D = -0.21132486540518713;
 
-    enum double ROOT3OVER3 = 0.577350269189626;
-    enum double FALLBACK_ROTATE3 = 2.0 / 3.0;
-    enum double ROTATE3_ORTHOGONALIZER = UNSKEW_2D;
+    enum float ROOT3OVER3 = 0.577350269189626;
+    enum float FALLBACK_ROTATE3 = 2.0 / 3.0;
+    enum float ROTATE3_ORTHOGONALIZER = UNSKEW_2D;
 
     enum float SKEW_4D = 0.309016994374947f;
     enum float UNSKEW_4D = -0.138196601125011f;
@@ -46,16 +46,16 @@ class OpenSimplex : Noise
     enum int N_GRADS_3D = 1 << N_GRADS_3D_EXPONENT;
     enum int N_GRADS_4D = 1 << N_GRADS_4D_EXPONENT;
 
-    enum double NORMALIZER_2D = 0.05481866495625118;
-    enum double NORMALIZER_3D = 0.2781926117527186;
-    enum double NORMALIZER_4D = 0.11127401889945551;
+    enum float NORMALIZER_2D = 0.05481866495625118;
+    enum float NORMALIZER_3D = 0.2781926117527186;
+    enum float NORMALIZER_4D = 0.11127401889945551;
 
     enum float RSQUARED_2D = 2.0f / 3.0f;
     enum float RSQUARED_3D = 3.0f / 4.0f;
     enum float RSQUARED_4D = 4.0f / 5.0f;
 
     long SEED = 0;
-    double FREQUENCY = 1.0 / 24.0;
+    float FREQUENCY = 1.0 / 24.0;
 
     private static float[] GRADIENTS_2D;
     private static float[] GRADIENTS_3D;
@@ -1446,7 +1446,7 @@ class OpenSimplex : Noise
     {
         import api.dm.kit.graphics.colors.hsva: HSVA;
 
-        double value = noise3_ImproveXY(SEED, x * FREQUENCY, y * FREQUENCY, 0.0);
+        float value = noise3_ImproveXY(SEED, x * FREQUENCY, y * FREQUENCY, 0.0);
         auto newColor = noiseColor;
         newColor.v = Math.clamp(value, HSVA.minValue, HSVA.maxValue);
         return newColor.toRGBA;
@@ -1458,12 +1458,12 @@ class OpenSimplex : Noise
         // }
     }
 
-    public static float noise2(long seed, double x, double y)
+    public static float noise2(long seed, float x, float y)
     {
 
         // Get points for A2* lattice
-        double s = SKEW_2D * (x + y);
-        double xs = x + s, ys = y + s;
+        float s = SKEW_2D * (x + y);
+        float xs = x + s, ys = y + s;
 
         return noise2_UnskewedBase(seed, xs, ys);
     }
@@ -1475,12 +1475,12 @@ class OpenSimplex : Noise
      * unless your map is center around an equator. It's a slight
      * difference, but the option is here to make it easy.
      */
-    public static float noise2_ImproveX(long seed, double x, double y)
+    public static float noise2_ImproveX(long seed, float x, float y)
     {
 
         // Skew transform and rotation baked into one.
-        double xx = x * ROOT2OVER2;
-        double yy = y * (ROOT2OVER2 * (1 + 2 * SKEW_2D));
+        float xx = x * ROOT2OVER2;
+        float yy = y * (ROOT2OVER2 * (1 + 2 * SKEW_2D));
 
         return noise2_UnskewedBase(seed, yy + xx, yy - xx);
     }
@@ -1488,7 +1488,7 @@ class OpenSimplex : Noise
     /**
      * 2D  OpenSimplex2S/SuperSimplex noise base.
      */
-    private static float noise2_UnskewedBase(long seed, double xs, double ys)
+    private static float noise2_UnskewedBase(long seed, float xs, float ys)
     {
 
         // Get base points and offsets.
@@ -1616,18 +1616,18 @@ class OpenSimplex : Noise
      * If Z is vertical in world coordinates, call noise3_ImproveXZ(x, y, Z).
      * For a time varied animation, call noise3_ImproveXY(x, y, T).
      */
-    public static float noise3_ImproveXY(long seed, double x, double y, double z)
+    public static float noise3_ImproveXY(long seed, float x, float y, float z)
     {
 
         // Re-orient the cubic lattices without skewing, so Z points up the main lattice diagonal,
         // and the planes formed by XY are moved far out of alignment with the cube faces.
         // Orthonormal rotation. Not a skew transform.
-        double xy = x + y;
-        double s2 = xy * ROTATE3_ORTHOGONALIZER;
-        double zz = z * ROOT3OVER3;
-        double xr = x + s2 + zz;
-        double yr = y + s2 + zz;
-        double zr = xy * -ROOT3OVER3 + zz;
+        float xy = x + y;
+        float s2 = xy * ROTATE3_ORTHOGONALIZER;
+        float zz = z * ROOT3OVER3;
+        float xr = x + s2 + zz;
+        float yr = y + s2 + zz;
+        float zr = xy * -ROOT3OVER3 + zz;
 
         // Evaluate both lattices to form a BCC lattice.
         return noise3_UnrotatedBase(seed, xr, yr, zr);
@@ -1641,18 +1641,18 @@ class OpenSimplex : Noise
      * If Z is vertical in world coordinates, call noise3_ImproveXZ(x, Z, y) or use noise3_ImproveXY.
      * For a time varied animation, call noise3_ImproveXZ(x, T, y) or use noise3_ImproveXY.
      */
-    public static float noise3_ImproveXZ(long seed, double x, double y, double z)
+    public static float noise3_ImproveXZ(long seed, float x, float y, float z)
     {
 
         // Re-orient the cubic lattices without skewing, so Y points up the main lattice diagonal,
         // and the planes formed by XZ are moved far out of alignment with the cube faces.
         // Orthonormal rotation. Not a skew transform.
-        double xz = x + z;
-        double s2 = xz * -0.211324865405187;
-        double yy = y * ROOT3OVER3;
-        double xr = x + s2 + yy;
-        double zr = z + s2 + yy;
-        double yr = xz * -ROOT3OVER3 + yy;
+        float xz = x + z;
+        float s2 = xz * -0.211324865405187;
+        float yy = y * ROOT3OVER3;
+        float xr = x + s2 + yy;
+        float zr = z + s2 + yy;
+        float yr = xz * -ROOT3OVER3 + yy;
 
         // Evaluate both lattices to form a BCC lattice.
         return noise3_UnrotatedBase(seed, xr, yr, zr);
@@ -1663,13 +1663,13 @@ class OpenSimplex : Noise
      * Use noise3_ImproveXY or noise3_ImproveXZ instead, wherever appropriate.
      * They have less diagonal bias. This function's best use is as a fallback.
      */
-    public static float noise3_Fallback(long seed, double x, double y, double z)
+    public static float noise3_Fallback(long seed, float x, float y, float z)
     {
 
         // Re-orient the cubic lattices via rotation, to produce a familiar look.
         // Orthonormal rotation. Not a skew transform.
-        double r = FALLBACK_ROTATE3 * (x + y + z);
-        double xr = r - x, yr = r - y, zr = r - z;
+        float r = FALLBACK_ROTATE3 * (x + y + z);
+        float xr = r - x, yr = r - y, zr = r - z;
 
         // Evaluate both lattices to form a BCC lattice.
         return noise3_UnrotatedBase(seed, xr, yr, zr);
@@ -1681,7 +1681,7 @@ class OpenSimplex : Noise
      * It was actually faster to narrow down the points in the loop itself,
      * than to build up the index with enough info to isolate 8 points.
      */
-    private static float noise3_UnrotatedBase(long seed, double xr, double yr, double zr)
+    private static float noise3_UnrotatedBase(long seed, float xr, float yr, float zr)
     {
 
         // Get base points and offsets.
@@ -1897,7 +1897,7 @@ class OpenSimplex : Noise
             GRADIENTS_4D[gi | 2] * dz + GRADIENTS_4D[gi | 3] * dw);
     }
 
-    private static int fastFloor(double x)
+    private static int fastFloor(float x)
     {
         int xi = cast(int) x;
         return x < xi ? xi - 1 : xi;

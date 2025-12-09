@@ -13,7 +13,7 @@ class TabHeader : Control
     Tab[] tabs;
     //}
 
-    this(double tabSpacing = 1)
+    this(float tabSpacing = 1)
     {
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 

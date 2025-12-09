@@ -13,11 +13,11 @@ class LinearProgressBar : BaseLabeledProgressBar
     RGBA barColor;
 
     Container barContainer;
-    double barSize = 0;
+    float barSize = 0;
 
     Orientation orientation;
 
-    this(double minValue = 0, double maxValue = 1.0, Orientation orientation = Orientation
+    this(float minValue = 0, float maxValue = 1.0, Orientation orientation = Orientation
             .horizontal)
     {
         super(minValue, maxValue);
@@ -121,7 +121,7 @@ class LinearProgressBar : BaseLabeledProgressBar
 
     }
 
-    override protected void setProgressData(double oldV, double newV)
+    override protected void setProgressData(float oldV, float newV)
     {
         super.setProgressData(oldV, newV);
     }

@@ -8,24 +8,24 @@ import Math = api.math;
 /**
  * Authors: initkfs
  */
-abstract class BaseProgressBar : MinMaxMeter!double
+abstract class BaseProgressBar : MinMaxMeter!float
 {
     protected
     {
-        double _value = 0;
+        float _value = 0;
     }
 
-    double progressStep = 0.1;
+    float progressStep = 0.1;
 
-    void delegate(double oldV, double newV)[] onOldNewValue;
+    void delegate(float oldV, float newV)[] onOldNewValue;
 
-    this(double minValue = 0, double maxValue = 1.0)
+    this(float minValue = 0, float maxValue = 1.0)
     {
         super(minValue, maxValue);
         _value = minValue;
     }
 
-    void triggerListeners(double oldV, double newV)
+    void triggerListeners(float oldV, float newV)
     {
         if (onOldNewValue.length > 0)
         {
@@ -37,17 +37,17 @@ abstract class BaseProgressBar : MinMaxMeter!double
         }
     }
 
-    abstract protected void setProgressData(double oldV, double newV);
+    abstract protected void setProgressData(float oldV, float newV);
 
-    double value() => _value;
+    float value() => _value;
 
-    bool value(double newValue, bool isTriggerListeners = true)
+    bool value(float newValue, bool isTriggerListeners = true)
     {
         if (_value == newValue)
         {
             return false;
         }
-        double oldValue = _value;
+        float oldValue = _value;
         _value = Math.clamp(newValue, minValue, maxValue);
         if (isTriggerListeners)
         {

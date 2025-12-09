@@ -11,7 +11,7 @@ import Math = api.dm.math;
 struct Parallelogram2d
 {
 
-    void draw(double width, double height, double angleDeg, bool isInverted, scope bool delegate(size_t, Vec2d) onVertexIsContinue)
+    void draw(float width, float height, float angleDeg, bool isInverted, scope bool delegate(size_t, Vec2d) onVertexIsContinue)
     {
         size_t vertexIndex;
         //h = a * sin(angle)

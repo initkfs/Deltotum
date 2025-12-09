@@ -34,8 +34,8 @@ class BaseToggle : BaseBiswitch
     void delegate(Sprite2d) onCongifuredThumbContainer;
     void delegate(Sprite2d) onCreatedThumbContainer;
 
-    double thumbWidth = 0;
-    double thumbHeight = 0;
+    float thumbWidth = 0;
+    float thumbHeight = 0;
 
     Sprite2d thumb;
     bool isCreateThumb = true;
@@ -48,13 +48,13 @@ class BaseToggle : BaseBiswitch
 
     bool isCreatePointerListeners = true;
 
-    this(dstring label, double width, double height, string iconName = null, double graphicsGap = 5, bool isCreateLayout = true)
+    this(dstring label, float width, float height, string iconName = null, float graphicsGap = 5, bool isCreateLayout = true)
     {
         super(label, iconName, graphicsGap, isCreateLayout);
         initSize(width, height);
     }
 
-    this(dstring label = "Toggle", string iconName = null, double graphicsGap = 5)
+    this(dstring label = "Toggle", string iconName = null, float graphicsGap = 5)
     {
         this(label, 0, 0, iconName, graphicsGap);
     }
@@ -129,7 +129,7 @@ class BaseToggle : BaseBiswitch
         }
 
         invalidateListeners ~= () { setThumbEffectAnimation; };
-        window.showingTasks ~= (double dt) {
+        window.showingTasks ~= (float dt) {
             setThumbEffectAnimation;
             switchContentState(isOn, isOn);
         };
@@ -170,7 +170,7 @@ class BaseToggle : BaseBiswitch
 
     Vec2d thumbContainerSize() => Vec2d(thumbWidth * 2, thumbHeight);
 
-    Sprite2d newThumbEffect(double w, double h)
+    Sprite2d newThumbEffect(float w, float h)
     {
         auto currStyle = createStyle;
         if (!currStyle.isNested)

@@ -55,8 +55,8 @@ class Slider : Container
         import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        double handleWidth = 30;
-        double handleHeight = 10;
+        float handleWidth = 30;
+        float handleHeight = 10;
         if (position == SliderPos.left || position == SliderPos.right)
         {
             import std.algorithm.mutation : swap;
@@ -193,7 +193,7 @@ class Slider : Container
 
     protected Vec2d checkSceneBoundsExceed()
     {
-        double dx = 0, dy = 0;
+        float dx = 0, dy = 0;
         const sceneBounds = graphic.renderBounds;
         if (sliderWidth > sceneBounds.width)
         {
@@ -206,12 +206,12 @@ class Slider : Container
         return Vec2d(dx, dy);
     }
 
-    protected double sliderWidth()
+    protected float sliderWidth()
     {
         return Math.max(_content.width, width);
     }
 
-    protected double sliderHeight()
+    protected float sliderHeight()
     {
         return Math.max(_content.height, height);
     }
@@ -226,7 +226,7 @@ class Slider : Container
     {
         import api.math.geom2.rect2 : Rect2d;
 
-        double newX = 0, newY = 0;
+        float newX = 0, newY = 0;
         const Rect2d sceneBounds = graphic.renderBounds;
 
         final switch (position) with (SliderPos)

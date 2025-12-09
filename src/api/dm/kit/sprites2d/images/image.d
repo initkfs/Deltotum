@@ -24,16 +24,16 @@ class Image : Texture2d
     bool isKeepOriginalColorBuffer;
     RGBA[][] originalBuffer;
 
-    double dwidth = 0;
-    double dheight = 0;
-    double dsizeDelta = 15;
+    float dwidth = 0;
+    float dheight = 0;
+    float dsizeDelta = 15;
 
     this()
     {
         super();
     }
 
-    this(double width, double height)
+    this(float width, float height)
     {
         forceWidth = width;
         forceHeight = height;
@@ -294,7 +294,7 @@ class Image : Texture2d
     alias width = Texture2d.width;
     alias height = Texture2d.height;
 
-    override bool width(double v)
+    override bool width(float v)
     {
         if (!canChangeWidth(v))
         {
@@ -308,7 +308,7 @@ class Image : Texture2d
 
         import std.conv : to;
 
-        double dw = Math.abs(width - v);
+        float dw = Math.abs(width - v);
         dwidth += dw;
 
         bool isResized = tryWidth(v);
@@ -332,7 +332,7 @@ class Image : Texture2d
         return isResized;
     }
 
-    override bool height(double v)
+    override bool height(float v)
     {
         if (!canChangeHeight(v))
         {
@@ -346,7 +346,7 @@ class Image : Texture2d
 
         import std.conv : to;
 
-        double dh = Math.abs(height - v);
+        float dh = Math.abs(height - v);
         dheight += dh;
 
         bool isResized = tryHeight(v);

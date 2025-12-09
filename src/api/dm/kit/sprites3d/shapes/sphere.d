@@ -15,9 +15,9 @@ import Math = api.math;
 
 class Sphere : Shape3d
 {
-    double radius = 0;
+    float radius = 0;
 
-    this(double radius)
+    this(float radius)
     {
         this.initSize(radius / 2, radius / 2);
         this.radius = radius;

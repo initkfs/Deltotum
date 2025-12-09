@@ -7,17 +7,17 @@ import Math = api.dm.math;
  */
 abstract class Interpolator
 {
-    double function(double) interpolateMethod;
+    float function(float) interpolateMethod;
 
     invariant
     {
         assert(interpolateMethod, "Interpolate method must not be null");
     }
 
-    double interpolate(double progress0to1)
+    float interpolate(float progress0to1)
     {
-        const double progress = Math.clamp01(progress0to1);
-        const double interpProgress = interpolateMethod(progress);
+        const float progress = Math.clamp01(progress0to1);
+        const float interpProgress = interpolateMethod(progress);
         return interpProgress;
     }
 }

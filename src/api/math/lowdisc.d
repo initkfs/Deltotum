@@ -28,16 +28,16 @@ protected
     enum a2 = 0.5698402909980532;
 }
 
-protected double seqValue(double v, size_t nn, double seed = 0.5) => (seed + v * nn) % 1;
+protected float seqValue(float v, size_t nn, float seed = 0.5) => (seed + v * nn) % 1;
 
-Vec2d lds2d(size_t n, double seed = 0.5)
+Vec2d lds2d(size_t n, float seed = 0.5)
 {
     const x = seqValue(a1, n, seed);
     const y = seqValue(a2, n, seed);
     return Vec2d(x, y);
 }
 
-Vec3d lds3d(size_t n, double seed = 0.5)
+Vec3d lds3d(size_t n, float seed = 0.5)
 {
     enum ratio = 1.22074408460575947536;
     const x = seqValue(1.0 / ratio, n, seed);

@@ -27,7 +27,7 @@ class VectorTextureMut : Texture2d
     Vec2d center;
     Vec2d prevPoint;
 
-    this(double width, double height)
+    this(float width, float height)
     {
         this.width = width;
         this.height = height;
