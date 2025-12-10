@@ -47,7 +47,7 @@ class MainController
         import api.demo.demo1.scenes.about : About;
         import api.demo.demo1.scenes.help : Help;
 
-        auto startScene = new Planet;
+        auto startScene = new About;
 
         import api.dm.kit.windows.window : Window;
 

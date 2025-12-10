@@ -1,11 +1,11 @@
 module api.demo.demo1.scenes.about;
 
-import api.dm.gui.supports.editors.guieditor : GuiEditor;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 
 /**
  * Authors: initkfs
  */
-class About : GuiEditor
+class About : GuiScene
 {
     this()
     {
