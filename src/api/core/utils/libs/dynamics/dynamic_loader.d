@@ -267,6 +267,12 @@ class DynamicLoader
                     onLoadErrors(err);
                 }
             }
+            else
+            {
+                import std.conv : text;
+
+                throw new Exception(text("Library loading error: ", errors));
+            }
             return;
         }
 

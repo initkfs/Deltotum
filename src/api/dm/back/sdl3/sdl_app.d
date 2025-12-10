@@ -292,28 +292,6 @@ class SdlApp : GuiApp
             cairoLibForLoad.load;
         }
 
-        //Physics
-        // auto physLibForLoad = new ChipmLib;
-
-        // physLibForLoad.onLoad = () {
-        //     chipmLib = physLibForLoad;
-        //     _cap.isPhysics = true;
-        //     uservices.logger.trace("Load Chipmunk library.");
-        // };
-
-        // physLibForLoad.onNoLibrary = () => uservices.logger.error("Chipmunk library loading error.");
-        // physLibForLoad.onBadLibrary = () => uservices.logger.error("Chipmunk bad library.");
-        // physLibForLoad.onErrorWithMessage = (err, msg) {
-        //     import std.string : fromStringz;
-
-        //     uservices.logger.errorf("Chipmunk loading error. %s: %s\n", err.fromStringz.idup, msg
-        //             .fromStringz.idup);
-        //     physLibForLoad.unload;
-        //     physLibForLoad = null;
-        // };
-
-        // physLibForLoad.load;
-
         if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
         {
             uservices.logger.errorf("Error screensaver: " ~ err.toString);
