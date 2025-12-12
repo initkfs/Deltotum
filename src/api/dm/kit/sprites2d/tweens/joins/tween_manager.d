@@ -1,15 +1,15 @@
-module api.dm.kit.tweens.joins.tween_manager;
+module api.dm.kit.sprites2d.tweens.joins.tween_manager;
 
-import api.dm.kit.tweens.tween : Tween;
+import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 
 /**
  * Authors: initkfs
  */
-class TweenManager : Tween
+class TweenManager : Tween2d
 {
     protected
     {
-        Tween[] tweens;
+        Tween2d[] tweens;
     }
 
     override void onFrame()
@@ -17,11 +17,11 @@ class TweenManager : Tween
 
     }
 
-    bool addTween(Tween tr)
+    bool addTween(Tween2d tr)
     {
         // if (!tr)
         // {
-        //     throw new Exception("Tween must not be null");
+        //     throw new Exception("Tween2d must not be null");
         // }
 
         // foreach (oldTr; tweens)
@@ -46,11 +46,11 @@ class TweenManager : Tween
         return true;
     }
 
-    bool removeTween(Tween tr)
+    bool removeTween(Tween2d tr)
     {
         if (!tr)
         {
-            throw new Exception("Tween must not be null");
+            throw new Exception("Tween2d must not be null");
         }
 
         import api.core.utils.arrays : drop;
@@ -58,7 +58,7 @@ class TweenManager : Tween
         return drop(tweens, tr);
     }
 
-    bool hasTween(Tween tr)
+    bool hasTween(Tween2d tr)
     {
         foreach (t; tweens)
         {

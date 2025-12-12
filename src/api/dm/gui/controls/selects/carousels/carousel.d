@@ -9,7 +9,7 @@ import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites2d.tweens.min_max_tween : MinMaxTween;
 import api.math.geom2.vec2 : Vec2f;
 
 import std.conv : to;
@@ -28,11 +28,11 @@ enum CarouselDirection
 class Carousel : BaseSelector!Sprite2d
 {
     size_t itemChangeDuration = 500;
-    MinMaxTween2d!float itemChangeAnimation;
+    MinMaxTween!float itemChangeAnimation;
     bool isCreateItemChangeAnimation = true;
-    MinMaxTween2d!float delegate(MinMaxTween2d!float) onNewItemChangeAnimation;
-    void delegate(MinMaxTween2d!float) onConfiguredItemChangeAnimation;
-    void delegate(MinMaxTween2d!float) onCreatedItemChangeAnimation;
+    MinMaxTween!float delegate(MinMaxTween!float) onNewItemChangeAnimation;
+    void delegate(MinMaxTween!float) onConfiguredItemChangeAnimation;
+    void delegate(MinMaxTween!float) onCreatedItemChangeAnimation;
 
     Button prevButton;
     bool isCreatePrevButton = true;
@@ -254,11 +254,11 @@ class Carousel : BaseSelector!Sprite2d
         return new Container;
     }
 
-    MinMaxTween2d!float newItemChangeAnimation()
+    MinMaxTween!float newItemChangeAnimation()
     {
-        auto animation = new MinMaxTween2d!float(0.0, 1.0, itemChangeDuration);
+        auto animation = new MinMaxTween!float(0.0, 1.0, itemChangeDuration);
 
-        import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 
         animation.interpolator.interpolateMethod = &UniInterpolator.circIn;
         return animation;

@@ -126,12 +126,12 @@ class Controls : Control
 
         import api.dm.gui.controls.switches.buttons.poly_button : PolyButton;
 
-        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 
         auto regBtn = new PolyButton("Btn");
         btnRoot3.addCreate(regBtn);
 
-        auto recreateTween = new PauseTween2d(100);
+        auto recreateTween = new PauseTween(100);
         regBtn.addCreate(recreateTween);
 
         size_t sides = 3;
@@ -574,13 +574,13 @@ class Controls : Control
         root.addCreate(linProgressV);
         linProgressV.value = 0.5;
 
-        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 
         BaseProgressBar[3] progBars = [
             linProgressH, linProgressV, rProgress
         ];
 
-        auto pTween = new PauseTween2d(200);
+        auto pTween = new PauseTween(200);
         progressContainer.addCreate(pTween);
         pTween.cycleCount = 11;
         pTween.onEnd ~= () {
@@ -806,7 +806,7 @@ class Controls : Control
         dm1.fromIntMatrix(matrix);
 
         import api.dm.gui.controls.indicators.leds.led : Led;
-        import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto ledContainer = new VBox;
         ledContainer.isAlignX = true;
@@ -1013,22 +1013,22 @@ class Controls : Control
         auto bottomGauge = new RadialGauge(gaugeDiameter, 0, 180);
         root.addCreate(bottomGauge);
 
-        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 
-        auto gaugeAnim1 = new PauseTween2d(850);
+        auto gaugeAnim1 = new PauseTween(850);
         gaugeAnim1.isInfinite = true;
-        auto gaugeAnim2 = new PauseTween2d(750);
+        auto gaugeAnim2 = new PauseTween(750);
         gaugeAnim2.isInfinite = true;
-        auto gaugeAnim3 = new PauseTween2d(820);
+        auto gaugeAnim3 = new PauseTween(820);
         gaugeAnim3.isInfinite = true;
-        auto gaugeAnim4 = new PauseTween2d(910);
+        auto gaugeAnim4 = new PauseTween(910);
         gaugeAnim4.isInfinite = true;
 
         import api.math.random : Random;
 
         auto rnd = new Random;
 
-        import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 
         leftGauge.handTween.interpolator.interpolateMethod = &UniInterpolator.backOut;
         topGauge.handTween.interpolator.interpolateMethod = &UniInterpolator.elasticOut;

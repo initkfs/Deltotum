@@ -1,8 +1,8 @@
-module api.dm.kit.tweens.min_max_tween;
+module api.dm.kit.sprites2d.tweens.min_max_tween;
 
-import api.dm.kit.tweens.tween : Tween, TweenState;
-import api.dm.kit.tweens.curves.interpolator : Interpolator;
-import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
+import api.dm.kit.sprites2d.tweens.tween2d : Tween2d, TweenState;
+import api.dm.kit.sprites2d.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 import api.math.geom2.vec2 : Vec2f;
 import math = api.dm.math;
 
@@ -13,7 +13,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2f)) : Tween
+class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2f)) : Tween2d
 {
     Interpolator interpolator;
 

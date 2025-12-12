@@ -3,7 +3,7 @@ module api.dm.gui.controls.containers.expanders.expander;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.center_box : CenterBox;
-import api.dm.kit.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites2d.tweens.min_max_tween : MinMaxTween;
 
 enum ExpanderPosition
 {
@@ -30,7 +30,7 @@ class Expander : Control
     {
         Control expandBar;
         Sprite2d expandLabel;
-        MinMaxTween2d!float clipTween;
+        MinMaxTween!float clipTween;
         ExpanderState state = ExpanderState.opened;
         float labelAngleDt = 0;
     }
@@ -178,7 +178,7 @@ class Expander : Control
                 break;
         }
 
-        clipTween = new MinMaxTween2d!float(0, 1, 250);
+        clipTween = new MinMaxTween!float(0, 1, 250);
         addCreate(clipTween);
 
         clipTween.onOldNewValue ~= (oldValue, newValue) {

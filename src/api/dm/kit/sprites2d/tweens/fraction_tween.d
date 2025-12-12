@@ -1,7 +1,7 @@
-module api.dm.kit.tweens.fraction_tween;
+module api.dm.kit.sprites2d.tweens.fraction_tween;
 
-import api.dm.kit.tweens.min_max_tween : MinMaxTween;
-import api.dm.kit.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites2d.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites2d.tweens.curves.interpolator : Interpolator;
 
 /**
  * Authors: initkfs

@@ -2,7 +2,7 @@ module api.dm.addon.media.audio.gui.players.audio_player;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.addon.media.audio.gui.players.audio_player_panel : AudioPlayerPanel;
-import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 
 import api.dm.com.audio.com_audio_clip : ComAudioClip;
 
@@ -33,7 +33,7 @@ class AudioPlayer : Control
 
         float audioFullTime = 0;
 
-        PauseTween2d checkPosTween;
+        PauseTween checkPosTween;
     }
 
     float volume = 0;
@@ -89,7 +89,7 @@ class AudioPlayer : Control
             }
         };
 
-        checkPosTween = new PauseTween2d(1100);
+        checkPosTween = new PauseTween(1100);
         addCreate(checkPosTween);
         checkPosTween.isInfinite = true;
         checkPosTween.onEnd ~= () {

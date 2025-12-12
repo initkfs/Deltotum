@@ -35,9 +35,9 @@ class WindowMagnifier : BaseMagnifier
 
         buffer = graphic.comSurfaceProvider.getNew();
 
-        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 
-        auto pause = new PauseTween2d(1000);
+        auto pause = new PauseTween(1000);
         addCreate(pause);
         pause.onEnd ~= () {
 

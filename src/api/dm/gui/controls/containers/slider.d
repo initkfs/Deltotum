@@ -5,7 +5,7 @@ import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
+import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion : LinearMotion;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
@@ -29,7 +29,7 @@ class Slider : Container
         SliderPos position;
         Sprite2d _handle;
         CenterBox _content;
-        LinearMotion2d motionAnimation;
+        LinearMotion motionAnimation;
         bool _expanded;
     }
 
@@ -70,7 +70,7 @@ class Slider : Container
         _content = new CenterBox;
         addCreate(_content);
 
-        motionAnimation = new LinearMotion2d(Vec2f(0, 0), Vec2f(0, 0));
+        motionAnimation = new LinearMotion(Vec2f(0, 0), Vec2f(0, 0));
         addCreate(motionAnimation);
         motionAnimation.addTarget(this);
 

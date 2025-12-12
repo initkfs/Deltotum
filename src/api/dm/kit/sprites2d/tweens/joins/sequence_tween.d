@@ -1,18 +1,18 @@
-module api.dm.kit.tweens.joins.sequence_tween;
+module api.dm.kit.sprites2d.tweens.joins.sequence_tween;
 
-import api.dm.kit.tweens.joins.tween_manager : TweenManager;
-import api.dm.kit.tweens.tween : Tween;
+import api.dm.kit.sprites2d.tweens.joins.tween_manager : TweenManager;
+import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 
 /**
  * Authors: initkfs
  */
 class SequenceTween : TweenManager
 {
-    Tween first;
+    Tween2d first;
 
     protected
     {
-        Tween _last;
+        Tween2d _last;
     }
 
     this()
@@ -56,7 +56,7 @@ class SequenceTween : TweenManager
         }
     }
 
-    override bool addTween(Tween tr)
+    override bool addTween(Tween2d tr)
     {
         if (!super.addTween(tr))
         {
@@ -103,7 +103,7 @@ class SequenceTween : TweenManager
         }
     }
 
-    Tween last()
+    Tween2d last()
     {
         assert(_last);
         return _last;

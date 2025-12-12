@@ -7,14 +7,14 @@ import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.kit.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites2d.tweens.min_max_tween : MinMaxTween;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
-import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
+import api.dm.kit.sprites2d.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites2d.tweens.targets.target_tween2d : TargetTween2d;
+import api.dm.kit.sprites2d.tweens.targets.target_tween : TargetTween;
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.labeled : Labeled;
@@ -43,7 +43,7 @@ class BaseToggle : BaseBiswitch
     Sprite2d thumbEffect;
     bool isCreateThumbEffect = true;
 
-    MinMaxTween2d!Vec2f thumbEffectAnimation;
+    MinMaxTween!Vec2f thumbEffectAnimation;
     bool isCreateThumbEffectAnimation = true;
 
     bool isCreatePointerListeners = true;
@@ -184,14 +184,14 @@ class BaseToggle : BaseBiswitch
         return shape;
     }
 
-    MinMaxTween2d!Vec2f newThumbEffectAnimation()
+    MinMaxTween!Vec2f newThumbEffectAnimation()
     {
-        import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
-        import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion : LinearMotion;
+        import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto uniInterp = new UniInterpolator;
         uniInterp.interpolateMethod = &uniInterp.quadInOut;
-        auto animation = new LinearMotion2d(Vec2f.zero, Vec2f.zero, 200, uniInterp);
+        auto animation = new LinearMotion(Vec2f.zero, Vec2f.zero, 200, uniInterp);
         animation.addTarget(thumb);
         animation.onEnd ~= newOnEndThumbEffectAnimation;
         return animation;

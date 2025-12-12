@@ -1,14 +1,14 @@
-module api.dm.kit.sprites2d.tweens.targets.motions.circular_motion2d;
+module api.dm.kit.sprites2d.tweens.targets.motions.circular_motion;
 
-import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
-import api.dm.kit.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites2d.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites2d.tweens.curves.interpolator : Interpolator;
 import api.math.geom2.vec2 : Vec2f;
 import math = api.dm.math;
 
 /**
  * Authors: initkfs
  */
-class CircularMotion2d : ValueTween2d
+class CircularMotion : ValueTween
 {
     Vec2f center;
     float radius = 0;

@@ -6,8 +6,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.rect2 : Rect2f;
-import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
-import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
+import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 
 class Popup : VBox
@@ -18,7 +18,7 @@ class Popup : VBox
 
     Tween2d showAnimation;
     Tween2d hideAnimation;
-    PauseTween2d hideDelayAnimation;
+    PauseTween hideDelayAnimation;
 
     bool isAutoClose;
 
@@ -44,7 +44,7 @@ class Popup : VBox
     {
         super.create;
 
-        auto newShowAnimation = new OpacityTween2d(800);
+        auto newShowAnimation = new OpacityTween(800);
         newShowAnimation.addTarget(this);
         addCreate(newShowAnimation);
         showAnimation = newShowAnimation;
@@ -56,7 +56,7 @@ class Popup : VBox
             }
         };
 
-        auto newHideAnimation = new OpacityTween2d(800, isReverse:
+        auto newHideAnimation = new OpacityTween(800, isReverse:
             true);
         newHideAnimation.addTarget(this);
         addCreate(newHideAnimation);
@@ -65,7 +65,7 @@ class Popup : VBox
 
         //lazy
         assert(_autoCloseDelayMS > 0);
-        hideDelayAnimation = new PauseTween2d(_autoCloseDelayMS);
+        hideDelayAnimation = new PauseTween(_autoCloseDelayMS);
         addCreate(hideDelayAnimation);
 
         hideDelayAnimation.onEnd ~= () { close; };

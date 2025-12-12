@@ -1,6 +1,6 @@
-module api.dm.kit.tweens.joins.parallel_tween;
+module api.dm.kit.sprites2d.tweens.joins.parallel_tween;
 
-import api.dm.kit.tweens.joins.tween_manager: TweenManager;
+import api.dm.kit.sprites2d.tweens.joins.tween_manager: TweenManager;
 
 /**
  * Authors: initkfs

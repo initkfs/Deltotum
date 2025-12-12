@@ -1,12 +1,12 @@
-module api.dm.kit.sprites2d.tweens.targets.props.angle_tween2d;
+module api.dm.kit.sprites2d.tweens.targets.props.angle_tween;
 
-import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
-import api.dm.kit.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites2d.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites2d.tweens.curves.interpolator : Interpolator;
 
 /**
  * Authors: initkfs
  */
-class AngleTween2d : ValueTween2d
+class AngleTween : ValueTween
 {
     this(int timeMs, Interpolator interpolator = null)
     {

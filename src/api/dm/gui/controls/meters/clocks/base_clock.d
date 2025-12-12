@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.clocks.base_clock;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 
 import std.datetime.systime : Clock, SysTime;
@@ -68,7 +68,7 @@ class BaseClock(ClockFace) : Control
 
         if (!clockAnimation)
         {
-            clockAnimation = new PauseTween2d(1000);
+            clockAnimation = new PauseTween(1000);
             clockAnimation.isInfinite = true;
             clockAnimation.onEnd ~= () { setCurrentTime; };
             addCreate(clockAnimation);
@@ -115,6 +115,6 @@ class BaseClock(ClockFace) : Control
 
     Tween2d newClockAnimation()
     {
-        return new PauseTween2d(1000);
+        return new PauseTween(1000);
     }
 }

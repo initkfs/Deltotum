@@ -8,7 +8,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
+import api.dm.kit.sprites2d.tweens.targets.value_tween : ValueTween;
 
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.rect2 : Rect2f;
@@ -39,11 +39,11 @@ class RadialGauge : BaseRadialGauge
     void delegate(Sprite2d) onConfiguredHandHolder;
     void delegate(Sprite2d) onCreatedHandHolder;
 
-    ValueTween2d handTween;
+    ValueTween handTween;
     bool isCreateHandTween = true;
-    ValueTween2d delegate(ValueTween2d) onNewHandTween;
-    void delegate(ValueTween2d) onConfiguredHandTween;
-    void delegate(ValueTween2d) onCreatedHandTween;
+    ValueTween delegate(ValueTween) onNewHandTween;
+    void delegate(ValueTween) onConfiguredHandTween;
+    void delegate(ValueTween) onCreatedHandTween;
 
     Text label;
 
@@ -105,9 +105,9 @@ class RadialGauge : BaseRadialGauge
         return holder;
     }
 
-    ValueTween2d newHandTween()
+    ValueTween newHandTween()
     {
-        return new ValueTween2d(0, 0, 350);
+        return new ValueTween(0, 0, 350);
     }
 
     Text newLabel()

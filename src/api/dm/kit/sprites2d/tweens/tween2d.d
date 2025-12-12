@@ -1,133 +1,291 @@
 module api.dm.kit.sprites2d.tweens.tween2d;
 
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.tweens.tween : Tween, TweenState;
-import api.dm.kit.tweens.curves.interpolator : Interpolator;
+
+import std.container.dlist : DList;
+
+enum TweenState
+{
+    none,
+    pause,
+    direct,
+    back,
+    end
+}
 
 /**
  * Authors: initkfs
  */
 abstract class Tween2d : Sprite2d
 {
+    bool isReverse;
+    bool isInfinite;
+    bool isOneShort;
+
+    size_t cycleCount;
+
+    void delegate()[] onResume;
+    void delegate()[] onEnd;
+
+    float frameRateHz = 0;
+    bool isThrowInvalidTime;
+
     protected
     {
-        Tween tween;
+        float _timeMs = 0;
+
+        float currentFrameCount = 0;
+        long currentFrame;
+        size_t currentCycle;
+        bool currentShort;
+
+        TweenState state = TweenState.none;
+        TweenState prevState;
+
+        enum firstFrame = 1;
+
+        DList!Tween2d prevs;
+        DList!Tween2d nexts;
     }
 
-    bool isReverse() => tween.isReverse;
-    bool isReverse(bool v) => tween.isReverse = v;
-
-    bool isInfinite() => tween.isInfinite;
-    bool isInfinite(bool v) => tween.isInfinite = v;
-
-    bool isOneShort() => tween.isOneShort;
-    bool isOneShort(bool v) => tween.isOneShort = v;
-
-    bool isDirect() => tween.isDirect;
-    bool isBack() => tween.isBack;
-
-    size_t cycleCount() => tween.cycleCount;
-    void cycleCount(size_t v){
-        tween.cycleCount = v;
-    };
-
-    alias onResume = Sprite2d.onResume;
-
-    ref void delegate()[] onRun() => tween.onRun;
-    ref void delegate()[] onStop() => tween.onStop;
-    ref void delegate()[] onPause() => tween.onPause;
-    ref void delegate()[] onResume() => tween.onResume;
-    ref void delegate()[] onEnd() => tween.onEnd;
-
-    float frameRateHz() => tween.frameRateHz;
-    void frameRateHz(float v)
-    {
-        tween.frameRateHz = v;
-    }
-
-    float timeMs() => tween.timeMs;
-    void timeMs(float v)
-    {
-        tween.timeMs = v;
-    }
-
-    bool isThrowInvalidTime() => tween.isThrowInvalidTime;
-    bool isThrowInvalidTime(bool v) => tween.isThrowInvalidTime = v;
-
-    this(Tween tween)
+    this(size_t timeMs = 200)
     {
         super();
 
-        assert(tween);
-        this.tween = tween;
+        import std.conv : to;
 
-        tween.onStop ~= (){
-            if(isRunning){
-                stop;
-            }
-        };
+        _timeMs = timeMs.to!float;
 
         isManaged = true;
-        //isVisible = false;
         isLayoutManaged = false;
         isManagedByScene = true;
     }
 
-    float frameRate() => tween.frameRate;
-    float frameCount(float frameRateHz) => tween.frameCount(frameRateHz);
-    float frameCount() => tween.frameCount;
+    abstract void onFrame();
 
-    override void initialize(){
-        super.initialize;
-
-        buildInit(tween);
+    float frameRate()
+    {
+        const float rate = frameRateHz > 0 ? frameRateHz : window.frameRate;
+        return rate;
     }
 
-    override void create(){
-        super.create;
-        tween.create;
+    float frameCount(float frameRateHz)
+    {
+        immutable float frames = (_timeMs * frameRateHz) / 1000;
+        return frames;
+    }
+
+    float frameCount()
+    {
+        return frameCount(frameRate);
+    }
+
+    protected bool requestStop()
+    {
+        return true;
     }
 
     override void run()
     {
+        if (isThrowInvalidTime && _timeMs == 0)
+        {
+            throw new Exception("Animation duration is zero.");
+        }
+
+        if (isPausing)
+        {
+            state = prevState;
+            if (isReverse && state == TweenState.direct)
+            {
+                state = TweenState.back;
+            }
+
+            if (onResume.length > 0)
+            {
+                foreach (dg; onResume)
+                {
+                    dg();
+                }
+            }
+            super.run;
+            return;
+        }
+
         super.run;
-        tween.run;
+
+        initFrameCount;
+        currentFrame = firstFrame;
+
+        state = !isReverse ? TweenState.direct : TweenState.back;
+    }
+
+    protected bool initFrameCount()
+    {
+        const float rate = frameRate;
+        if (rate <= 0)
+        {
+            return false;
+        }
+
+        currentFrameCount = frameCount(rate);
+        return true;
     }
 
     override void pause()
     {
         super.pause;
-        tween.pause;
+
+        prevState = state;
+        state = TweenState.pause;
+    }
+
+    bool isPause()
+    {
+        return state == TweenState.pause;
     }
 
     override void stop()
-    {
-        super.stop;
-        if(tween.isRunning){
-            tween.stop;
-        }
-    }
-
-    override void update(float delta)
     {
         if (!isRunning)
         {
             return;
         }
 
-        super.update(delta);
+        super.stop;
 
-        tween.update(delta);
+        state = TweenState.end;
+
+        currentFrameCount = 0;
+        currentFrame = 0;
+        currentCycle = 0;
+        currentShort = false;
+
+        if (!nexts.empty)
+        {
+            foreach (next; nexts)
+            {
+                assert(next, "Next animation must not be null");
+                if (next.isRunning)
+                {
+                    next.stop;
+                }
+                next.run;
+            }
+        }
     }
+
+    protected bool isRunningState()
+    {
+        return state == TweenState.direct || state == TweenState.back;
+    }
+
+    override void update(float delta)
+    {
+        if (!isRunning || !isRunningState)
+        {
+            return;
+        }
+
+        if (currentFrame > currentFrameCount)
+        {
+            if (onEnd.length > 0)
+            {
+                foreach (dg; onEnd)
+                {
+                    dg();
+                }
+            }
+
+            if (!isInfinite)
+            {
+                if ((cycleCount == 0 && !isOneShort) || currentShort)
+                {
+                    if (requestStop)
+                    {
+                        stop;
+                    }
+                    return;
+                }
+
+                if ((cycleCount > 0 && (currentCycle == (cycleCount - 1))) || currentCycle == currentCycle
+                    .max)
+                {
+                    if (requestStop)
+                    {
+                        stop;
+                    }
+                    return;
+                }
+
+                currentCycle++;
+
+                if (isOneShort && !currentShort)
+                {
+                    reverse;
+                    currentShort = true;
+                }
+            }
+            else
+            {
+                if (isReverse)
+                {
+                    reverse;
+                }
+            }
+
+            setFirstFrame;
+        }
+
+        onFrame;
+
+        currentFrame++;
+    }
+
+    void setFirstFrame()
+    {
+        currentFrame = firstFrame;
+    }
+
+    float timeMs() => _timeMs;
+    void timeMs(float v)
+    {
+        _timeMs = v;
+        initFrameCount;
+    }
+
+    bool isDirect() => state == TweenState.direct;
+    bool isBack() => state == TweenState.back;
 
     void reverse()
     {
-        tween.reverse;
+        if (state == TweenState.direct)
+        {
+            state = TweenState.back;
+        }
+        else if (state == TweenState.back)
+        {
+            state = TweenState.direct;
+        }
     }
 
     void prev(Tween2d newPrev)
     {
-        tween.prev = newPrev.tween;
+        if (!newPrev)
+        {
+            throw new Exception("Previous tween must not be null");
+        }
+
+        //TODO remove and clear prevs
+        newPrev.onStop ~= () {
+            if (!isStopping)
+            {
+                stop;
+            }
+            run;
+        };
+
+        prevs ~= newPrev;
     }
 
     void prev(Tween2d[] newPrevs...)
@@ -140,7 +298,11 @@ abstract class Tween2d : Sprite2d
 
     void next(Tween2d newNext)
     {
-        tween.next = newNext.tween;
+        if (!newNext)
+        {
+            throw new Exception("Next tween must not be null");
+        }
+        nexts ~= newNext;
     }
 
     void next(Tween2d[] newNexts...)
@@ -151,8 +313,10 @@ abstract class Tween2d : Sprite2d
         }
     }
 
-    bool removeOnResume(void delegate() dg) => tween.removeOnResume(dg);
-    bool removeOnEnd(void delegate() dg) =>tween.removeOnEnd(dg);
+    import api.core.utils.arrays : drop;
+
+    bool removeOnResume(void delegate() dg) => drop(onResume, dg);
+    bool removeOnEnd(void delegate() dg) => drop(onEnd, dg);
 
     override void dispose()
     {
@@ -161,10 +325,12 @@ abstract class Tween2d : Sprite2d
             stop;
         }
 
-        tween.dispose;
-
         super.dispose;
 
-    }
+        prevs.clear;
+        nexts.clear;
 
+        onResume = null;
+        onEnd = null;
+    }
 }

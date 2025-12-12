@@ -10,7 +10,7 @@ import api.math.geom2.rect2 : Rect2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 import api.math.random : Random, rands;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
@@ -107,9 +107,9 @@ class Procedural : Control
         auto penroseRoot = createInfo("Penrose tiling", t1);
         root.addCreate(penroseRoot);
 
-        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 
-        auto tween = new PauseTween2d(600);
+        auto tween = new PauseTween(600);
         tween.isInfinite = true;
         penroseRoot.addCreate(tween);
         tween.onEnd ~= () { randomTiling(t1); t1.recreate; };
