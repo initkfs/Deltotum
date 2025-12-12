@@ -99,7 +99,10 @@ class Window : GraphicComponent
             throw new Exception(err.toString);
         }
 
-        logger.tracef("Create window '%s' with id %d", title, id);
+        version (EnableTrace)
+        {
+            logger.tracef("Create window '%s' with id %d", title, id);
+        }
 
         if (onCreate.length > 0)
         {
@@ -294,7 +297,10 @@ class Window : GraphicComponent
         //TODO from config
         focusRequest;
 
-        logger.tracef("Show window '%s' with id %d", title, id);
+        version (EnableTrace)
+        {
+            logger.tracef("Show window '%s' with id %d", title, id);
+        }
         return true;
     }
 
@@ -334,7 +340,10 @@ class Window : GraphicComponent
         assert(!isDisposed);
 
         const windowId = id;
-        logger.tracef("Start dispose window '%s' with id %d", title, windowId);
+        version (EnableTrace)
+        {
+            logger.tracef("Start dispose window '%s' with id %d", title, windowId);
+        }
 
         //TODO close child windows
         if (onBeforeDestroy.length > 0)
@@ -373,14 +382,20 @@ class Window : GraphicComponent
                     }
 
                     scene.dispose;
-                    logger.trace("Dispose created scene in window with name: ", sceneName);
+                    version (EnableTrace)
+                    {
+                        logger.trace("Dispose created scene in window with name: ", sceneName);
+                    }
                 }
             }
         }
 
         //after window
         comWindow.dispose;
-        logger.trace("Dispose native window with id: ", windowId);
+        version (EnableTrace)
+        {
+            logger.trace("Dispose native window with id: ", windowId);
+        }
 
         //TODO all fields
         // onCreate = null;
@@ -453,7 +468,10 @@ class Window : GraphicComponent
 
         isShowing = false;
 
-        logger.tracef("Hide window '%s' with id %d", title, id);
+        version (EnableTrace)
+        {
+            logger.tracef("Hide window '%s' with id %d", title, id);
+        }
         return true;
     }
 
@@ -467,9 +485,10 @@ class Window : GraphicComponent
 
         isClosing = true;
         isShowing = false;
-
-        logger.tracef("Close window '%s' with id %d", title, id);
-
+        version (EnableTrace)
+        {
+            logger.tracef("Close window '%s' with id %d", title, id);
+        }
         dispose;
         return true;
     }
@@ -706,7 +725,7 @@ class Window : GraphicComponent
         int x, y;
         if (const err = comWindow.getPos(x, y))
         {
-            logger.trace(err.toString);
+            logger.error(err.toString);
         }
         return Vec2f(x, y);
     }

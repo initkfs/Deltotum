@@ -44,7 +44,11 @@ class GuiWindow : Window
             {
                 throw new Exception(err.toString);
             }
-            logger.trace("Release window from GPU device");
+
+            version (EnableTrace)
+            {
+                logger.trace("Release window from GPU device");
+            }
         }
 
         super.dispose;

@@ -45,7 +45,10 @@ abstract class GuiApp : LoopApp
             newIconPack.load(iconPath);
             iconPack = newIconPack;
             gservices.platform.cap.isIconPack = true;
-            uservices.logger.trace("Load icon pack: ", iconPath);
+            version (EnableTrace)
+            {
+                uservices.logger.trace("Load icon pack: ", iconPath);
+            }
         }
 
         theme = createTheme(uservices.logging, uservices.config, uservices

@@ -57,7 +57,10 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
     {
         try
         {
-            logger.trace("Run audio decoder");
+            version (EnableTrace)
+            {
+                logger.trace("Run audio decoder");
+            }
 
             AVCodecContext* ctx = avcodec_alloc_context3(context.codec);
             if (!ctx)
@@ -96,7 +99,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
             bool isPlanar = av_sample_fmt_is_planar(cast(AVSampleFormat) context.codecParams.format) == 1;
 
-            logger.tracef("Audio decoder for stream, codec: %s. src:%s(planar:%s), dst%s", audioParams(
+            logger.infof("Audio decoder for stream, codec: %s. src:%s(planar:%s), dst%s", audioParams(
                     context.codecParams), srcSpec, isPlanar, context.audioOutSpec);
 
             SwrContext* audioConvertContext;
@@ -143,7 +146,10 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 }
             }
 
-            logger.trace("Start audio decoder loop");
+            version (EnableTrace)
+            {
+                logger.trace("Start audio decoder loop");
+            }
 
             AVFrame* frame = av_frame_alloc();
             if (!frame)
@@ -151,8 +157,10 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 logger.error("Error allocation audio frame");
                 return;
             }
-
-            logger.trace("Start audiodecoder loop");
+            version (EnableTrace)
+            {
+                logger.trace("Start audiodecoder loop");
+            }
 
             while (true)
             {
@@ -317,8 +325,10 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
             }
 
             av_frame_free(&frame);
-
-            logger.trace("Audio decoder finished work");
+            version (EnableTrace)
+            {
+                logger.trace("Audio decoder finished work");
+            }
         }
         catch (Exception e)
         {

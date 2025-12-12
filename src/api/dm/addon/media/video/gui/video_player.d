@@ -219,7 +219,7 @@ class VideoPlayer(
             }
         }
 
-        logger.tracef("Open media file, video %s, audio %s, target w:%s,h:%s", foundVideo, foundAudio, windowWidth, windowHeight);
+        logger.infof("Open media file, video %s, audio %s, target w:%s,h:%s", foundVideo, foundAudio, windowWidth, windowHeight);
 
         demuxer = new typeof(demuxer)(
             logger,
@@ -406,7 +406,7 @@ class VideoPlayer(
                     additional_amount = newAmount;
                 }
 
-                void updateClock()  nothrow
+                void updateClock() nothrow
                 {
                     audioSamplesCount += additional_amount / (2 * float.sizeof);
 
@@ -486,19 +486,28 @@ class VideoPlayer(
         if (demuxer && demuxer.isRunning)
         {
             demuxer.stop;
-            logger.trace("Try stop demuxer");
+            version (EnableTrace)
+            {
+                logger.trace("Try stop demuxer");
+            }
         }
 
         if (videoDecoder && videoDecoder.isRunning)
         {
             videoDecoder.stop;
-            logger.trace("Try stop video decoder");
+            version (EnableTrace)
+            {
+                logger.trace("Try stop video decoder");
+            }
         }
 
         if (audioDecoder && audioDecoder.isRunning)
         {
             audioDecoder.stop;
-            logger.trace("Try stop audio decoder");
+            version (EnableTrace)
+            {
+                logger.trace("Try stop audio decoder");
+            }
         }
     }
 

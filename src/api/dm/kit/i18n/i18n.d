@@ -43,7 +43,7 @@ class I18n : LoggableUnit
             }
         }
 
-        logger.tracef("Not found i18n key '%s' for language '%s'", key, lang);
+        logger.errorf("Not found i18n key '%s' for language '%s'", key, lang);
         return defaultMessage;
     }
 }

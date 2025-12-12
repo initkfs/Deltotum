@@ -77,7 +77,10 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
     {
         try
         {
-            logger.tracef("Run demuxer");
+            version (EnableTrace)
+            {
+                logger.tracef("Run demuxer");
+            }
 
             //data_size + AV_INPUT_BUFFER_PADDING_SIZE
             AVPacket* packet = av_packet_alloc();
@@ -94,7 +97,10 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
             size_t droppedAudioPackets = 0;
             size_t droppedVideoPackets = 0;
 
-            logger.trace("Start demuxer loop");
+            version (EnableTrace)
+            {
+                logger.trace("Start demuxer loop");
+            }
 
             while (true)
             {
@@ -107,7 +113,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
 
                 if (packetRet == codeEOF)
                 {
-                    logger.trace("Received EOF for media demuxer, break");
+                    logger.infof("Received EOF for media demuxer, break");
                     break;
                 }
 
@@ -163,6 +169,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                         av_packet_unref(packet);
 
                         import std;
+
                         debug writeln("Discard video packet");
                     }
                     else
@@ -214,7 +221,10 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
 
             av_packet_free(&packet);
 
-            logger.trace("Demuxer finished work");
+            version (EnableTrace)
+            {
+                logger.trace("Demuxer finished work");
+            }
         }
         catch (Exception e)
         {

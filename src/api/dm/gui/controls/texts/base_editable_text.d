@@ -270,7 +270,10 @@ class BaseEditableText : BaseMonoText
                                 }
                                 else
                                 {
-                                    logger.trace("Copy text to clipboard: ", text);
+                                    version (EnableTrace)
+                                    {
+                                        logger.trace("Copy text to clipboard: ", text);
+                                    }
                                 }
 
                                 return;
@@ -306,7 +309,10 @@ class BaseEditableText : BaseMonoText
                                 {
                                     updateRows;
 
-                                    logger.trace("Paste text to clipboard: ", text);
+                                    version (EnableTrace)
+                                    {
+                                        logger.trace("Paste text to clipboard: ", text);
+                                    }
 
                                     auto offset = newText.length;
                                     size_t newIndex = cursorPos.glyphIndexAbs + offset;
@@ -338,7 +344,10 @@ class BaseEditableText : BaseMonoText
                         }
                         else
                         {
-                            logger.trace("Remove selection on backspace");
+                            version (EnableTrace)
+                            {
+                                logger.trace("Remove selection on backspace");
+                            }
 
                             if (!cursor.isVisible)
                             {
@@ -902,7 +911,11 @@ class BaseEditableText : BaseMonoText
             return false;
         }
 
-        logger.trace("Remove selection on text input");
+        version (EnableTrace)
+        {
+            logger.trace("Remove selection on text input");
+        }
+        
         cursor.isVisible = true;
         cursorPos = selection.startPos;
         if (cursorPos.glyphIndexAbs == 0)

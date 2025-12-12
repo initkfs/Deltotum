@@ -120,7 +120,10 @@ class Windowing : LoggableUnit
         }
 
         windows ~= window;
-        logger.tracef("Add window '%s' with id %d", window.title, window.id);
+        version (EnableTrace)
+        {
+            logger.tracef("Add window '%s' with id %d", window.title, window.id);
+        }
         return true;
     }
 
@@ -128,8 +131,11 @@ class Windowing : LoggableUnit
     {
         if (windows.length == 0)
         {
-            logger.tracef("Skip window removal '%s' with id %d due to missing windows", window.title, window
-                    .id);
+            version (EnableTrace)
+            {
+                logger.tracef("Skip window removal '%s' with id %d due to missing windows", window.title, window
+                        .id);
+            }
             return false;
         }
 
@@ -140,12 +146,17 @@ class Windowing : LoggableUnit
         if (removePos != -1)
         {
             windows = windows.remove(removePos);
-            logger.tracef("Remove window '%s' with id %d", window.title, window.id);
+            version (EnableTrace)
+            {
+                logger.tracef("Remove window '%s' with id %d", window.title, window.id);
+            }
             return true;
         }
-
-        logger.tracef("Skip window removal '%s' with id %d: window not found in window list", window.title, window
-                .id);
+        version (EnableTrace)
+        {
+            logger.tracef("Skip window removal '%s' with id %d: window not found in window list", window.title, window
+                    .id);
+        }
 
         return false;
     }
@@ -171,13 +182,19 @@ class Windowing : LoggableUnit
         assert(window);
         if (window.isDisposed)
         {
-            logger.tracef("Window already disposed");
+            version (EnableTrace)
+            {
+                logger.tracef("Window already disposed");
+            }
             return;
         }
         auto winId = window.id;
 
         auto isRemoved = remove(window);
-        logger.tracef("Remove window with id '%s': %s", winId, isRemoved);
+        version (EnableTrace)
+        {
+            logger.tracef("Remove window with id '%s': %s", winId, isRemoved);
+        }
 
         if (window.isRunning)
         {

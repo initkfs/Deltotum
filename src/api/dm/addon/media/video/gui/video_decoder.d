@@ -117,7 +117,8 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
     AVFilter* colorbalance;
     AVFilterContext* colorbalanceCtx;
 
-    void setColor(float r, float g, float b){
+    void setColor(float r, float g, float b)
+    {
         assert(colorbalanceCtx, "Color balance is null");
         const isSet = av_opt_set_double(colorbalanceCtx, "rm", r, AV_OPT_SEARCH_CHILDREN);
         assert(isSet >= 0, errorText(isSet));
@@ -239,7 +240,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             }
 
             const isOutFormatSet = av_opt_set(sinkFilter, "pixel_formats", av_get_pix_fmt_name(
-                            destFormat).fromStringz.ptr,
+                    destFormat).fromStringz.ptr,
                 AV_OPT_SEARCH_CHILDREN);
             if (isOutFormatSet < 0)
             {
@@ -544,7 +545,10 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             //     }
             // }
 
-            logger.trace("Video decoder finished work");
+            version (EnableTrace)
+            {
+                logger.trace("Video decoder finished work");
+            }
         }
 
         catch (Exception e)

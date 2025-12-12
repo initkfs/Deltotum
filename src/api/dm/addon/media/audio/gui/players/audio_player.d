@@ -169,7 +169,10 @@ class AudioPlayer : Control
                     panel.setFullTimeText(audioFullTime);
                 }
 
-                logger.trace("Create new audio: ", _path);
+                version (EnableTrace)
+                {
+                    logger.trace("Create new audio: ", _path);
+                }
             }
             catch (Exception e)
             {
@@ -188,10 +191,14 @@ class AudioPlayer : Control
         _state = AudioPlayerState.play;
         panel.setPause;
         checkPosTween.run;
-        if(onPlay){
+        if (onPlay)
+        {
             onPlay();
         }
-        logger.trace("Play audio, state ", _state, " ", _path);
+        version (EnableTrace)
+        {
+            logger.trace("Play audio, state ", _state, " ", _path);
+        }
     }
 
     void resume()
@@ -204,10 +211,14 @@ class AudioPlayer : Control
         _state = AudioPlayerState.play;
         panel.setPause;
         checkPosTween.run;
-        if(onResume){
+        if (onResume)
+        {
             onResume();
         }
-        logger.trace("Resume audio, state ", _state, " ", _path);
+        version (EnableTrace)
+        {
+            logger.trace("Resume audio, state ", _state, " ", _path);
+        }
     }
 
     override void pause()
@@ -231,10 +242,14 @@ class AudioPlayer : Control
         _state = AudioPlayerState.pause;
         panel.setPlay;
         checkPosTween.pause;
-        if(onPause){
+        if (onPause)
+        {
             onPause();
         }
-        logger.trace("Pause playing, state: ", _state);
+        version (EnableTrace)
+        {
+            logger.trace("Pause playing, state: ", _state);
+        }
     }
 
     override void stop()
@@ -260,10 +275,14 @@ class AudioPlayer : Control
         checkPosTween.pause;
         panel.setPos = 0;
         panel.setPosTimeText(0);
-        if(onStop){
+        if (onStop)
+        {
             onStop();
         }
-        logger.trace("Stop playing, state: ", _state);
+        version (EnableTrace)
+        {
+            logger.trace("Stop playing, state: ", _state);
+        }
     }
 
     override void dispose()

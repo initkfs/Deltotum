@@ -162,11 +162,15 @@ class CalendarDialog : Control
                             return;
                         }
                         selected = selected.remove(pos);
-                        logger.trace("Remove day container from selected: ", dayContainer);
+                        version (EnableTrace)
+                        {
+                            logger.trace("Remove day container from selected: ", dayContainer);
+                        }
                         return;
                     }
 
-                    if (isMultiSelected && isShift && startSelected && (startSelected !is dayContainer))
+                    if (isMultiSelected && isShift && startSelected && (
+                            startSelected !is dayContainer))
                     {
                         Date startDate;
                         Date endDate;
@@ -181,7 +185,10 @@ class CalendarDialog : Control
                             endDate = startSelected.dayDate;
                         }
 
-                        logger.tracef("Found dates for selected, start %s, end %s", startDate, endDate);
+                        version (EnableTrace)
+                        {
+                            logger.tracef("Found dates for selected, start %s, end %s", startDate, endDate);
+                        }
 
                         //TODO best selection
                         foreach (week; weekContainers)
@@ -206,10 +213,12 @@ class CalendarDialog : Control
 
                     }
 
-                    if(!isMultiSelected){
+                    if (!isMultiSelected)
+                    {
                         foreach (dc; selected)
                         {
-                            if(dayContainer is dc){
+                            if (dayContainer is dc)
+                            {
                                 return;
                             }
                             dc.unmark(isTriggerListeners : false);
@@ -379,15 +388,21 @@ class CalendarDialog : Control
         assert(container);
         if (selected.canFind(container))
         {
-            logger.trace("Day container already added: ", container);
+            version (EnableTrace)
+            {
+                logger.trace("Day container already added: ", container);
+            }
             return false;
         }
-
-        logger.trace("Add day container to selected: ", container);
+        version (EnableTrace)
+        {
+            logger.trace("Add day container to selected: ", container);
+        }
         startSelected = container;
         selected ~= container;
 
-        if(onSelectedDay){
+        if (onSelectedDay)
+        {
             onSelectedDay(container);
         }
 

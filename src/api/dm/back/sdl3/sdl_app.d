@@ -132,7 +132,7 @@ class SdlApp : GuiApp
             import std.process : environment;
 
             environment["SDL_VIDEODRIVER"] = "dummy";
-            uservices.logger.trace("Headless mode enabled");
+            uservices.logger.infof("Headless mode enabled");
         }
 
         uint flags = 0;
@@ -143,7 +143,10 @@ class SdlApp : GuiApp
         {
             flags |= SDL_INIT_AUDIO;
             gservices.platform.cap.isAudio = true;
-            uservices.logger.trace("Audio enabled");
+            version (EnableTrace)
+            {
+                uservices.logger.trace("Audio enabled");
+            }
         }
 
         if (isJoystickEnabled)
@@ -151,7 +154,10 @@ class SdlApp : GuiApp
             flags |= SDL_INIT_JOYSTICK;
             gservices.platform.cap.isJoystick = true;
 
-            uservices.logger.trace("Joystick enabled");
+            version (EnableTrace)
+            {
+                uservices.logger.trace("Joystick enabled");
+            }
         }
 
         if (onCreatedInitFlags)
@@ -194,11 +200,17 @@ class SdlApp : GuiApp
             }
             else
             {
-                uservices.logger.trace("Create GPU device: ", gpuName);
+                version (EnableTrace)
+                {
+                    uservices.logger.trace("Create GPU device: ", gpuName);
+                }
             }
         }
 
-        uservices.logger.trace("SDL systems initialized");
+        version (EnableTrace)
+        {
+            uservices.logger.trace("SDL systems initialized");
+        }
 
         if (onInitializedSystems)
         {
@@ -282,7 +294,10 @@ class SdlApp : GuiApp
             cairoLibForLoad.onLoad = () {
                 cairoLib = cairoLibForLoad;
                 theme.isUseVectorGraphics = gservices.platform.cap.isVectorGraphics;
-                uservices.logger.trace("Load Cairo library.");
+                version (EnableTrace)
+                {
+                    uservices.logger.trace("Load Cairo library.");
+                }
             };
 
             cairoLibForLoad.onLoadErrors = (err) {
@@ -300,7 +315,10 @@ class SdlApp : GuiApp
 
         imgProcLib.onLoad = () {
             vipsLib = imgProcLib;
-            uservices.logger.trace("Load libvips.");
+            version (EnableTrace)
+            {
+                uservices.logger.trace("Load libvips.");
+            }
 
             import api.dm.lib.vips.native.v8.binddynamic : vips_init, vips_shutdown, vips_error_buffer_copy;
             import std.string : toStringz, fromStringz;
@@ -308,7 +326,8 @@ class SdlApp : GuiApp
             //TODO args[0] keep ref?
             if (vips_init(args[0].toStringz))
             {
-                uservices.logger.error("Vips init error: ", vips_error_buffer_copy().fromStringz.idup);
+                uservices.logger.error("Vips init error: ", vips_error_buffer_copy()
+                        .fromStringz.idup);
                 vipsLib.unload;
                 vipsLib = null;
             }
@@ -437,8 +456,11 @@ class SdlApp : GuiApp
                     windowing.onWindowsById(e.ownerId, (win) {
                         win.isFocus = true;
                         e.isConsumed = true;
-                        uservices.logger.tracef("Window focus on window '%s' with id %d", win.title, win
-                            .id);
+                        version (EnableTrace)
+                        {
+                            uservices.logger.tracef("Window focus on window '%s' with id %d", win.title, win
+                                .id);
+                        }
                         return true;
                     });
                     break;
@@ -446,8 +468,11 @@ class SdlApp : GuiApp
                     windowing.onWindowsById(e.ownerId, (win) {
                         win.isFocus = false;
                         e.isConsumed = true;
-                        uservices.logger.tracef("Window focus out on window '%s' with id %d", win.title, win
-                            .id);
+                        version (EnableTrace)
+                        {
+                            uservices.logger.tracef("Window focus out on window '%s' with id %d", win.title, win
+                                .id);
+                        }
                         return true;
                     });
                     break;
@@ -466,8 +491,11 @@ class SdlApp : GuiApp
                         {
                             win.run;
                         }
-                        uservices.logger.tracef("Show window '%s' with id %d, state: %s", win.title, win.id, win
-                            .state);
+                        version (EnableTrace)
+                        {
+                            uservices.logger.tracef("Show window '%s' with id %d, state: %s", win.title, win.id, win
+                                .state);
+                        }
                         return true;
                     });
                     break;
@@ -485,8 +513,11 @@ class SdlApp : GuiApp
                         {
                             win.pause;
                         }
-                        uservices.logger.tracef("Hide window '%s' with id %d, state: %s", win.title, win.id, win
-                            .state);
+                        version (EnableTrace)
+                        {
+                            uservices.logger.tracef("Hide window '%s' with id %d, state: %s", win.title, win.id, win
+                                .state);
+                        }
                         return true;
                     });
                     break;
@@ -506,8 +537,11 @@ class SdlApp : GuiApp
                                 dg();
                             }
                         }
-                        uservices.logger.tracef("Minimize window '%s' with id %d", win.title, win
-                            .id);
+                        version (EnableTrace)
+                        {
+                            uservices.logger.tracef("Minimize window '%s' with id %d", win.title, win
+                                .id);
+                        }
                         return true;
                     });
                     break;
@@ -520,8 +554,11 @@ class SdlApp : GuiApp
                                 dg();
                             }
                         }
-                        uservices.logger.tracef("Maximize window '%s' with id %d", win.title, win
-                            .id);
+                        version (EnableTrace)
+                        {
+                            uservices.logger.tracef("Maximize window '%s' with id %d", win.title, win
+                                .id);
+                        }
                         return true;
                     });
                     break;
@@ -542,7 +579,10 @@ class SdlApp : GuiApp
                     {
                         if (windowing.count == 0 && isQuitOnCloseAllWindows)
                         {
-                            uservices.logger.tracef("All windows are closed, exit request");
+                            version (EnableTrace)
+                            {
+                                uservices.logger.tracef("All windows are closed, exit request");
+                            }
                             requestExit;
                         }
                     }
@@ -622,7 +662,7 @@ class SdlApp : GuiApp
                     }
                     else
                     {
-                        uservices.logger.trace("Set joystick classic interface");
+                        uservices.logger.infof("Set joystick classic interface");
                     }
                 }
             }
@@ -632,7 +672,7 @@ class SdlApp : GuiApp
         {
             throw new Exception(err.toString);
         }
-        uservices.logger.trace("SDL ", sdlLib.linkedVersionString);
+        uservices.logger.infof("SDL ", sdlLib.linkedVersionString);
 
         //TODO move to hal layer
         SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
@@ -680,7 +720,7 @@ class SdlApp : GuiApp
                 }
 
                 string mixerVersion = mixer.versionString;
-                uservices.logger.tracef("Init SDL mixer %s, audio: %s, decoders: %s", mixerVersion, spec, chunkDecoders);
+                uservices.logger.infof("Init SDL mixer %s, audio: %s, decoders: %s", mixerVersion, spec, chunkDecoders);
             }
         }
 
@@ -719,7 +759,7 @@ class SdlApp : GuiApp
 
                 if (!defaultJoystick)
                 {
-                    uservices.logger.trace("Not found default joystick");
+                    uservices.logger.info("Not found default joystick");
                     gservices.platform.cap.isJoystick = false;
                 }
                 else
@@ -730,8 +770,11 @@ class SdlApp : GuiApp
 
                     bool isConnected = defaultJoystick.isConnected;
                     string gname = defaultJoystick.getNameNew;
-                    uservices.logger.tracef("Found joystick '%s', connected: %s, path: %s", gname, isConnected, defaultJoystick
-                            .getPathNew);
+                    version (EnableTrace)
+                    {
+                        uservices.logger.tracef("Found joystick '%s', connected: %s, path: %s", gname, isConnected, defaultJoystick
+                                .getPathNew);
+                    }
                 }
             }
 
@@ -764,8 +807,11 @@ class SdlApp : GuiApp
 
         loop.isAutoStart = isAutoStart;
         loop.setUp;
-        uservices.logger.tracef("Init loop, autostart: %s, running: %s, fps: %s, udt: %s", loop.isAutoStart, loop
-                .isRunning, loop.frameRate, loop.updateDelta);
+        version (EnableTrace)
+        {
+            uservices.logger.tracef("Init loop, autostart: %s, running: %s, fps: %s, udt: %s", loop.isAutoStart, loop
+                    .isRunning, loop.frameRate, loop.updateDelta);
+        }
     }
 
     override ComPlatform newComPlatform()
@@ -886,9 +932,12 @@ class SdlApp : GuiApp
 
         window.screen = _platform.screen.single(screenId);
         const screenMode = window.screen.mode;
-        uservices.logger.tracef("Screen id %s, %sx%s, rate %s, density %s, driver %s for window id %s, title '%s'", window.screen.id, screenMode.width, screenMode
-                .height, screenMode.rateHz, screenMode.density, _screening.driverName, window.id, window
-                .title);
+        version (EnableTrace)
+        {
+            uservices.logger.tracef("Screen id %s, %sx%s, rate %s, density %s, driver %s for window id %s, title '%s'", window.screen.id, screenMode.width, screenMode
+                    .height, screenMode.rateHz, screenMode.density, _screening.driverName, window.id, window
+                    .title);
+        }
 
         window.setNormalWindow;
 
@@ -907,12 +956,18 @@ class SdlApp : GuiApp
         });
         assert(asset);
         asset.initialize;
-        uservices.logger.trace("Build assets for window: ", window.id);
+        version (EnableTrace)
+        {
+            uservices.logger.trace("Build assets for window: ", window.id);
+        }
 
         windowBuilder.asset = asset;
 
         theme.defaultMediumFont = asset.font;
-        uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.getFontPath);
+        version (EnableTrace)
+        {
+            uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.getFontPath);
+        }
 
         window.theme = theme;
         window.interact = interact;
@@ -1083,7 +1138,10 @@ class SdlApp : GuiApp
         if (gpuDevice)
         {
             gpuDevice.dispose;
-            uservices.logger.trace("Dispose GPU device");
+            version (EnableTrace)
+            {
+                uservices.logger.trace("Dispose GPU device");
+            }
             gpuDevice = null;
         }
 
