@@ -91,7 +91,9 @@ class Scene3d : Scene2d
                 }
                 else
                 {
-                    logger.errorf("Texture format %s not supported with sample count: %s", format, aliasingSampleCount);
+                    int tformat = format;
+                    int sampleCount = aliasingSampleCount;
+                    logger.errorf("Texture format %d not supported with sample count: %d", tformat, sampleCount);
                     isAntiAliasing = false;
                 }
             }

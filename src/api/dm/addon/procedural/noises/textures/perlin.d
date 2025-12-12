@@ -10,8 +10,6 @@ import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import Math = api.dm.math;
 import api.math.geom2.vec2 : Vec2f;
 
-import std;
-
 /**
  * Authors: initkfs
  * See https://en.wikipedia.org/wiki/Perlin_noise

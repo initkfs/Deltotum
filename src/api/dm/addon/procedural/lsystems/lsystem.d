@@ -48,8 +48,6 @@ dstring applyRules(const dstring axiom, const dstring[dchar] rules, size_t gener
 
 unittest
 {
-    import std;
-
     enum generations1 = 7;
 
     size_t ruleCount;

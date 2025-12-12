@@ -250,9 +250,9 @@ class CliApp : SimpleUnit
 
         auto app = newAppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
         auto platform = newPlatformContext;
-        
+
         auto locator = newServiceLocator;
-        
+
         auto context = newContext(app, platform, locator);
         return context;
     }
@@ -263,8 +263,8 @@ class CliApp : SimpleUnit
     }
 
     PlatformContext newPlatformContext() => new PlatformContext;
-    
-    LocatorContext newServiceLocator() =>  new LocatorContext;
+
+    LocatorContext newServiceLocator() => new LocatorContext;
 
     Context newContext(AppContext app, PlatformContext platform, LocatorContext locator)
     {
@@ -451,15 +451,19 @@ class CliApp : SimpleUnit
 
                 override protected void logMsgPart(scope const(char)[] msg)
                 {
-                    if(CoreConfigKeys.loggerIsShowMemory){
+                    if (CoreConfigKeys.loggerIsShowMemory)
+                    {
                         import Mem = api.core.utils.mem;
+
                         auto memSize = Mem.memBytes;
-                        if(memSize > 0){
-                            import std.format: format;
+                        if (memSize > 0)
+                        {
+                            import std.format : format;
+
                             msg ~= format("[%s]", Mem.formatBytes(memSize));
                         }
                     }
-                    
+
                     super.logMsgPart(msg);
                 }
             };
@@ -708,9 +712,10 @@ class CliApp : SimpleUnit
 
     void uservices(UniComponent services) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(services !is null, "Services must not be null");
+        if (!services)
+        {
+            throw new Exception("Services must not be null");
+        }
         _uniServices = services;
     }
 }

@@ -5,9 +5,8 @@ import std.algorithm.iteration : splitter;
 import std.algorithm.searching : startsWith;
 import std.algorithm : filter;
 import std.array : array;
+import std.string: strip;
 import std.conv : to;
-
-import std;
 
 /**
  * Authors: initkfs
@@ -72,7 +71,7 @@ class ObjLoader
     const(char)[] extractLine(string command, const(char)[] line)
     {
 
-        import std.string : lastIndexOf;
+        import std.string : strip, lastIndexOf;
 
         auto newLine = line[command.length .. $].strip;
 

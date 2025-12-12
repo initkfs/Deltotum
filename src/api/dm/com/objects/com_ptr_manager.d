@@ -22,9 +22,10 @@ mixin template ComPtrManager(T)
 
     this(T* ptr) pure @safe
     {
-        import std.exception : enforce;
+        if(!ptr){
+            throw new Exception("Common native object pointer must not be null");
+        }
 
-        enforce(ptr !is null, "Common native object pointer must not be null");
         this.ptr = ptr;
     }
 

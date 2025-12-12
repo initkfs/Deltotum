@@ -20,10 +20,16 @@ class ApplicationUnit : LoggableUnit
     this(Logging logging, Config config, Context context) pure @safe
     {
         super(logging);
-        import std.exception : enforce;
 
-        enforce(config, "Config must not be null");
-        enforce(context, "Context must not be null");
+        if (!config)
+        {
+            throw new Exception("Config must not be null");
+        }
+
+        if (!context)
+        {
+            throw new Exception("Context must not be null");
+        }
 
         this._config = config;
         this._context = context;
@@ -32,10 +38,16 @@ class ApplicationUnit : LoggableUnit
     this(const Logging logging, const Config config, const Context context) const pure @safe
     {
         super(logging);
-        import std.exception : enforce;
 
-        enforce(config, "Config for constant object must not be null");
-        enforce(context, "Context for constant object must not be null");
+        if (!config)
+        {
+            throw new Exception("Config must not be null");
+        }
+
+        if (!context)
+        {
+            throw new Exception("Context must not be null");
+        }
 
         this._config = config;
         this._context = context;
@@ -44,10 +56,16 @@ class ApplicationUnit : LoggableUnit
     this(immutable Logging logging, immutable Config config, immutable Context context) immutable pure @safe
     {
         super(logging);
-        import std.exception : enforce;
 
-        enforce(config, "Config for immutable object must not be null");
-        enforce(context, "Context for immutable object must not be null");
+        if (!config)
+        {
+            throw new Exception("Config must not be null");
+        }
+
+        if (!context)
+        {
+            throw new Exception("Context must not be null");
+        }
 
         this._config = config;
         this._context = context;

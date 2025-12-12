@@ -272,10 +272,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     {
         auto vertexShader = newVertexSPIRV(vertexPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures);
 
-        import std;
-
-        debug writeln("\n", fragmentPath, " ", numFragStorageBuffers);
-
         auto fragmentShader = newFragmentSPIRV(fragmentPath, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
 
         auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState, targetInfo, name);

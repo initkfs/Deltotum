@@ -4,7 +4,7 @@ import api.core.components.units.simple_unit : SimpleUnit;
 
 import api.core.loggers.logging : Logging;
 
-import std.logger: Logger;
+import std.logger : Logger;
 
 /**
  * Authors: initkfs
@@ -18,27 +18,30 @@ class LoggableUnit : SimpleUnit
 
     this(Logging logging) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(logging, "Logging must not be null");
+        if (!logging)
+        {
+            throw new Exception("Logging must not be null");
+        }
 
         this._logging = logging;
     }
 
     this(const Logging logging) const pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(logging, "Logging for constant object must not be null");
+        if (!logging)
+        {
+            throw new Exception("Logging must not be null");
+        }
 
         this._logging = logging;
     }
 
     this(immutable Logging logging) immutable pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(logging, "Logging for immutable object must not be null");
+        if (!logging)
+        {
+            throw new Exception("Logging must not be null");
+        }
 
         this._logging = logging;
     }
@@ -49,7 +52,7 @@ class LoggableUnit : SimpleUnit
 
 unittest
 {
-    import api.core.loggers.logging: Logging;
+    import api.core.loggers.logging : Logging;
     import std.logger : NullLogger, LogLevel;
     import std.traits : isMutable;
     import std.conv : to;

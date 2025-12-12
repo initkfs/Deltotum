@@ -237,10 +237,6 @@ class BaseButton : BaseBiswitch
 
     protected void switchNonFixedContentState(bool oldState, bool newState)
     {
-        if(id == "first_button"){
-            import std;
-            writeln("STATE: ", oldState," ", newState);
-        }
         super.switchContentState(oldState, newState);
 
         if (newState)

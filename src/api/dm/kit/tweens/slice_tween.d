@@ -95,8 +95,6 @@ class SliceTween(T) : MinMaxTween!float
     {
         super.stop;
 
-        import std;
-
         if (range.length > 0 && rangePositionEnd < range.length)
         {
             auto rest = range[rangePositionEnd .. $];

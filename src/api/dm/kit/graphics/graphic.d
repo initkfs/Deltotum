@@ -52,10 +52,7 @@ class Graphic : LoggableUnit
     {
         super(logging);
 
-        import std.exception : enforce;
-
         //TODO opengl
-        // enforce(renderer !is null, "Renderer must not be null");
         this.renderer = renderer;
     }
 

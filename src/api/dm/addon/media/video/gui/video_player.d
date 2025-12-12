@@ -463,10 +463,12 @@ class VideoPlayer(
 
                 if (isRead != ContainerResult.success)
                 {
-                    import std;
-
-                    debug writefln("Read %s bytes for audiodevice: %s. Size: %s, ri: %s, wi: %s", additional_amount, isRead, audioBuffer
+                    debug {
+                        import std.stdio: writefln;
+                        
+                        writefln("Read %s bytes for audiodevice: %s. Size: %s, ri: %s, wi: %s", additional_amount, isRead, audioBuffer
                             .size, audioBuffer.readIndex, audioBuffer.writeIndex);
+                    }
                 }
             }
         }

@@ -316,11 +316,12 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
                 if (isWrite != ContainerResult.success)
                 {
-                    import std;
-
-                    debug writefln(
+                    debug {
+                        import std.stdio: writefln;
+                        writefln(
                         "Write to audio buffer %s bytes: %s, cap %s, source bytes %s, full %s, packet queue: %s", writeBytes, isWrite, buffer
                             .capacity, audioBuffSize, buffer.isFull, packetQueue.size);
+                    }
                 }
             }
 

@@ -12,8 +12,6 @@ import Math = api.dm.math;
 import api.math.geom2.vec2 : Vec2f;
 import std.conv : to;
 
-import std;
-
 /**
  * Authors: initkfs
  * Port from https://github.com/lorenSchmidt/fractal_cell_noise

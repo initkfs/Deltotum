@@ -70,7 +70,6 @@ class VecFieldGen : Container
                 foreach (newX; vecField.gridBounds.x .. vecField.gridBounds.right)
                 {
                     points ~= Vec2f(newX, vecField.gridBounds.bottom);
-                    import std;
                 }
 
                 vecField.drawFlows(points, (p) {

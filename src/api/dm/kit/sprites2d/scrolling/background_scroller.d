@@ -89,39 +89,43 @@ class BackgroundScroller : Sprite2d
         }
     }
 
-    Sprite2d current()  nothrow
+    Sprite2d current() nothrow
     {
         return _current;
     }
 
     void current(Sprite2d current)
     {
-        import std.exception : enforce;
+        if (!current)
+        {
+            throw new Exception("Current sprite must not be null");
+        }
 
-        current.isLayoutManaged = false;
-
-        enforce(current !is null, "Current sprite must not be null");
         _current = current;
         addCreate(current);
         setCurrentPos(_current);
+
+        current.isLayoutManaged = false;
     }
 
-    Sprite2d next()  nothrow
+    Sprite2d next() nothrow
     {
         return _next;
     }
 
     void next(Sprite2d next)
     {
-        import std.exception : enforce;
+        if (!next)
+        {
+            throw new Exception("Next sprite must not be null");
+        }
 
-        next.isLayoutManaged = false;
-
-        enforce(next !is null, "Next sprite must not be null");
         _next = next;
 
         addCreate(next);
         setNextPos(next);
+
+        next.isLayoutManaged = false;
     }
 
     protected void setCurrentPos(Sprite2d curr)

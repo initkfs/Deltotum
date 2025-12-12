@@ -11,9 +11,6 @@ class FlowBox : Container
 {
     this(float hgap = 5, float vgap = 0)
     {
-        import std.exception : enforce;
-        import std.conv : text;
-
         layout = new FlowLayout(hgap, vgap);
         layout.isAutoResize = false;
     }

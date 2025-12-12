@@ -211,10 +211,14 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 return;
             }
 
-            import std.format : format;
             import std.string : toStringz, fromStringz;
+            
+            import core.stdc.stdio: snprintf;
+            import std.format: format;
 
-            auto args = format("video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d", context.windowWidth, context.windowHeight, destFormat, context
+            //video_size=200x200:pix_fmt=0:time_base=1/90000:pixel_aspect=1/1
+            int destFormatInt = cast(int) destFormat;
+            auto args = format("video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d", context.windowWidth, context.windowHeight, destFormatInt, context
                     .videoTimeBase.num, context.videoTimeBase.den, ctx.sample_aspect_ratio.num, ctx
                     .sample_aspect_ratio.den).toStringz;
 

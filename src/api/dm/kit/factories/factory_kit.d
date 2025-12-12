@@ -21,11 +21,20 @@ class FactoryKit : GraphicComponent
 
     this(ImageFactory images, ShapeFactory shapes, TextureFactory textures)
     {
-        import std.exception : enforce;
+        if (!images)
+        {
+            throw new Exception("Image factory must not be null");
+        }
 
-        enforce(images, "Image factory must not be null");
-        enforce(shapes, "Shape2d factory must not be null");
-        enforce(textures, "Texture2d factory must not be null");
+        if (!shapes)
+        {
+            throw new Exception("Shape2d factory must not be null");
+        }
+
+        if (!textures)
+        {
+            throw new Exception("Texture2d factory must not be null");
+        }
 
         this.images = images;
         this.shapes = shapes;

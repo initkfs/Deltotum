@@ -35,13 +35,14 @@ class StateManager(T)
     {
         import std.traits : isPointer, isAssociativeArray;
 
-        static if (__traits(compiles, state !is null))
+        static if (__traits(compiles, state is null))
         {
-            import std.exception : enforce;
             import std.format : format;
 
-            enforce(state !is null, format("State of type %s must not be null", typeof(state)
+            if(state is null){
+                throw new Exception(format("State of type %s must not be null", typeof(state)
                     .stringof));
+            }
         }
 
         const isInsert = states.insertBack(state);

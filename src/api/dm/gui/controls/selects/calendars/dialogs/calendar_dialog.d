@@ -431,7 +431,9 @@ class CalendarDialog : Control
 
     private auto datesInMonth(Date date) pure
     {
-        import std;
+        import std.range: recurrence;
+        import std.algorithm.searching: until;
+        import core.time: days;
 
         auto endDate = date.endOfMonth;
         return Date(date.year, date.month, 1)
@@ -441,7 +443,7 @@ class CalendarDialog : Control
 
     auto datesByWeek(Range)(Range dates, DayOfWeek startDay, DayOfWeek endDay)
     {
-        import std;
+        import std.algorithm.searching: until, OpenRight;
 
         static struct DatesByWeek
         {

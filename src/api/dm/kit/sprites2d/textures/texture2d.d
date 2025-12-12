@@ -230,9 +230,7 @@ class Texture2d : Sprite2d
 
     void color(RGBA color)
     {
-        import std.exception : enforce;
-
-        enforce(texture, "Texture2d not created");
+        assert(texture, "Texture2d not created");
         if (const err = texture.setColor(color.r, color.g, color.b, color.aByte))
         {
             throw new Exception(err.toString);
@@ -241,9 +239,8 @@ class Texture2d : Sprite2d
 
     RGBA color()
     {
-        import std.exception : enforce;
+        assert(texture, "Texture2d not created");
 
-        enforce(texture, "Texture2d not created");
         ubyte r, g, b, a;
         if (const err = texture.getColor(r, g, b, a))
         {

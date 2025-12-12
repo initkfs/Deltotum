@@ -198,8 +198,6 @@ unittest
     tr1.create;
     tr1.run;
 
-    import std;
-
     auto fc = tr1.frameCount(tr1.frameRateHz);
     enum frameCount = 6;
     assert(fc.to!int == frameCount);

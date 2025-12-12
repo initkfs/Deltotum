@@ -49,8 +49,6 @@ class Newton : ComplexFractalImage
             {
                 if (abs(z - root) <= 0.001)
                 {
-                    import std;
-
                     RGBA color = HSVA(i * 15 % HSVA.maxHue, HSVA.maxSaturation, HSVA.maxValue * (
                             (i < iterations) ? 1 : 0)).toRGBA;
                     return color;

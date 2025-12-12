@@ -41,9 +41,10 @@ class Asset : LocalResources
     this(Logging logging, string assetsDir, ComFont delegate() comFontProvider) pure @safe
     {
         super(logging, assetsDir);
-        import std.exception : enforce;
 
-        enforce(comFontProvider, "Font provider must not be null");
+        if(!comFontProvider){
+            throw new Exception("Font provider must not be null");
+        }
         this.comFontProvider = comFontProvider;
 
         this.fontCaches[defaultFontName] = new FontCache(defaultFontName);

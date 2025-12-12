@@ -3,7 +3,7 @@ module api.core.utils.factories;
 /**
  * Authors: initkfs
  */
- 
+
 struct ProviderFactory(T)
 {
     T delegate() getNew;
@@ -11,9 +11,16 @@ struct ProviderFactory(T)
 
     this(T delegate() getNewProvider, void delegate(scope void delegate(T)) getNewScopeProvider) pure @safe
     {
-        import std.exception : enforce;
+        if (!getNewProvider)
+        {
+            throw new Exception("ProviderFactory must not be null");
+        }
 
-        this.getNew = enforce(getNewProvider, "ProviderFactory must not be null");
-        this.getNewScoped = enforce(getNewScopeProvider, "Scope provider must not be null");
+        if (!getNewScopeProvider)
+        {
+            throw new Exception("Scope provider must not be null");
+        }
+        this.getNew = getNewProvider;
+        this.getNewScoped = getNewScopeProvider;
     }
 }

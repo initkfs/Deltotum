@@ -57,9 +57,10 @@ class GuiComponent : Sprite2d
 
     void theme(Theme newTheme) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(newTheme, "Theme must not be null");
+        if (!newTheme)
+        {
+            throw new Exception("Theme must not be null");
+        }
         _theme = newTheme;
     }
 
@@ -76,9 +77,11 @@ class GuiComponent : Sprite2d
 
     void interact(Interact interact) pure @safe
     {
-        import std.exception : enforce;
+        if (!interact)
+        {
+            throw new Exception("Interaction must not be null");
+        }
 
-        enforce(interact !is null, "Interaction must not be null");
         _interact = interact;
     }
 

@@ -112,7 +112,5 @@ class Animations : Control
         // };
 
         motionTween.run;
-
-        import std;
     }
 }

@@ -488,9 +488,10 @@ class Scene2d : EventKitTarget
 
     final void factory(FactoryKit newFactory) @safe pure
     {
-        import std.exception : enforce;
-
-        enforce(newFactory !is null, "Engine factory must not be null");
+        if (!newFactory)
+        {
+            throw new Exception("Engine factory must not be null");
+        }
         _factory = newFactory;
     }
 

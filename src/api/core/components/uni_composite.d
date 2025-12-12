@@ -2,8 +2,6 @@ module api.core.components.uni_composite;
 
 import api.core.components.uni_component : UniComponent;
 
-import std.exception : enforce;
-
 /**
  * Authors: initkfs
  */
@@ -42,9 +40,10 @@ class UniComposite(C : UniComponent) : C
 
     bool addUnit(C unit)
     {
-        import std.exception : enforce;
-
-        enforce(unit, "Unit must not be null");
+        if (!unit)
+        {
+            throw new Exception("nit must not be null");
+        }
 
         if (hasUnit(unit))
         {
@@ -56,9 +55,10 @@ class UniComposite(C : UniComponent) : C
 
     bool hasUnit(C unit) const
     {
-        import std.exception : enforce;
-
-        enforce(unit, "Unit must not be null");
+        if (!unit)
+        {
+            throw new Exception("Unit must not be null");
+        }
 
         import std.algorithm.searching : canFind;
 
@@ -67,9 +67,10 @@ class UniComposite(C : UniComponent) : C
 
     bool removeUnit(C unit)
     {
-        import std.exception : enforce;
-
-        enforce(unit, "Unit must not be null");
+        if (!unit)
+        {
+            throw new Exception("Unit must not be null");
+        }
 
         import std.algorithm.mutation : remove;
         import std.algorithm.searching : countUntil;

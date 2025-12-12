@@ -617,9 +617,10 @@ abstract class GraphicApp : CliApp
 
     void gservices(GraphicComponent services) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(services !is null, "Graphic services must not be null");
+        if (!services)
+        {
+            throw new Exception("Graphic services must not be null");
+        }
         _graphicServices = services;
     }
 

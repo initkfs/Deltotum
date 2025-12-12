@@ -168,9 +168,9 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                         droppedVideoPackets++;
                         av_packet_unref(packet);
 
-                        import std;
+                        //import std;
 
-                        debug writeln("Discard video packet");
+                        //debug writeln("Discard video packet");
                     }
                     else
                     {

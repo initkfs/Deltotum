@@ -59,6 +59,8 @@ enum Octave : float
     F0s = 23.1247, // F#0/Gb0
     G0 = 24.4997,
     G0s = 25.9565, // G#0/Ab0
+
+    //Piano start
     A0 = 27.5000,
     A0s = 29.1352, // A#0/Bb0
     B0 = 30.8677,
@@ -163,6 +165,7 @@ enum Octave : float
 
     //Octave 5
     C8 = 4186.01,
+    //Piano end
     C8s = 4434.92,
     D8 = 4698.64,
     D8s = 4978.03,

@@ -221,9 +221,10 @@ class UniComponent : SimpleUnit
 
     void context(Context context) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(context, "Context must not be null");
+        if (!context)
+        {
+            throw new Exception("Context must not be null");
+        }
         _context = context;
     }
 
@@ -238,9 +239,10 @@ class UniComponent : SimpleUnit
 
     void logging(Logging newLoggers) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(newLoggers !is null, "Logging must not be null");
+        if (!newLoggers)
+        {
+            throw new Exception("Logging must not be null");
+        }
         _logging = newLoggers;
 
     }
@@ -256,9 +258,10 @@ class UniComponent : SimpleUnit
 
     void configs(Configuration newConfigs) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(newConfigs !is null, "Configuration must not be null");
+        if (!newConfigs)
+        {
+            throw new Exception("Configuration must not be null");
+        }
         _configs = newConfigs;
     }
 
@@ -273,9 +276,10 @@ class UniComponent : SimpleUnit
 
     void memory(Memory newMemory) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(newMemory !is null, "Service memory must not be null");
+        if (!newMemory)
+        {
+            throw new Exception("Service memory must not be null");
+        }
         _memory = newMemory;
     }
 
@@ -289,9 +293,10 @@ class UniComponent : SimpleUnit
 
     void cli(Cli cli) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(cli !is null, "CLI must not be null");
+        if (!cli)
+        {
+            throw new Exception("CLI must not be null");
+        }
         _cli = cli;
     }
 
@@ -305,9 +310,10 @@ class UniComponent : SimpleUnit
 
     void support(Support support) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(support !is null, "Support must not be null");
+        if (!support)
+        {
+            throw new Exception("Support must not be null");
+        }
         _support = support;
     }
 
@@ -322,9 +328,10 @@ class UniComponent : SimpleUnit
 
     void resources(Resourcing resources) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(resources !is null, "Resourcing must not be null");
+        if (!resources)
+        {
+            throw new Exception("Resourcing must not be null");
+        }
         _resources = resources;
     }
 }

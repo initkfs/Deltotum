@@ -19,9 +19,10 @@ class Graph
 
     bool addVertex(Vertex vertex) @safe
     {
-        import std.exception : enforce;
-
-        enforce(vertex, "Vertex must not be null");
+        if (!vertex)
+        {
+            throw new Exception("Vertex must not be null");
+        }
 
         if (hasVertexUnsafe(vertex))
         {
@@ -37,16 +38,18 @@ class Graph
         return true;
     }
 
-    protected DList!Edge** hasVertexUnsafe(Vertex vertex) nothrow  @safe
+    protected DList!Edge** hasVertexUnsafe(Vertex vertex) nothrow @safe
     {
         return (vertex in graph);
     }
 
     bool hasVertex(Vertex vertex) @safe
     {
-        import std.exception : enforce;
+        if (!vertex)
+        {
+            throw new Exception("Vertex must not be null");
+        }
 
-        enforce(vertex, "Vertex must not be null");
         return hasVertexUnsafe(vertex) !is null;
     }
 
@@ -157,11 +160,20 @@ class Graph
 
     bool addEdge(Edge edge)
     {
-        import std.exception : enforce;
+        if (!edge)
+        {
+            throw new Exception("Edge must not be null");
+        }
 
-        enforce(edge, "Edge must not be null");
-        enforce(edge.src, "Edge source vertex must not be null");
-        enforce(edge.dest, "Edge destination vertex must not be null");
+        if (!edge.src)
+        {
+            throw new Exception("Edge source vertex must not be null");
+        }
+
+        if (!edge.dest)
+        {
+            throw new Exception("Edge destination vertex must not be null");
+        }
 
         Vertex fromVertex = edge.src;
         if (!hasVertexUnsafe(fromVertex))
@@ -212,8 +224,8 @@ class Graph
         return false;
     }
 
-    size_t countVertices() nothrow  pure @safe => graph.length;
-    size_t countEdges() nothrow  pure @safe => edgeCounter;
+    size_t countVertices() nothrow pure @safe => graph.length;
+    size_t countEdges() nothrow pure @safe => edgeCounter;
 
     bool removeEdge(Edge edge)
     {

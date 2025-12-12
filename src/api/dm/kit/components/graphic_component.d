@@ -72,9 +72,10 @@ class GraphicComponent : UniComponent
 
     void graphic(Graphic graphic) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(graphic, "Graphic must not be null");
+        if (!graphic)
+        {
+            throw new Exception("Graphic must not be null");
+        }
         _graphic = graphic;
     }
 
@@ -91,9 +92,10 @@ class GraphicComponent : UniComponent
 
     void gpu(GPUGraphic graphic) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(graphic, "GPU Graphic must not be null");
+        if (!graphic)
+        {
+            throw new Exception("GPU Graphic must not be null");
+        }
         _gpu = graphic;
     }
 
@@ -110,9 +112,10 @@ class GraphicComponent : UniComponent
 
     void input(Input input) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(input, "Input must not be null");
+        if (!input)
+        {
+            throw new Exception("Input must not be null");
+        }
         _input = input;
     }
 
@@ -129,9 +132,10 @@ class GraphicComponent : UniComponent
 
     void platform(Platform p) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(p, "Platform must not be null");
+        if (!p)
+        {
+            throw new Exception("Platform must not be null");
+        }
         _platform = p;
     }
 
@@ -148,9 +152,10 @@ class GraphicComponent : UniComponent
 
     void asset(Asset assetManager) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(assetManager, "Asset manager must not be null");
+        if (!assetManager)
+        {
+            throw new Exception("Asset manager must not be null");
+        }
         _asset = assetManager;
     }
 
@@ -167,9 +172,10 @@ class GraphicComponent : UniComponent
 
     void i18n(I18n service) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(service, "I18n must not be null");
+        if (!service)
+        {
+            throw new Exception("I18n must not be null");
+        }
         _i18n = service;
     }
 
@@ -186,9 +192,10 @@ class GraphicComponent : UniComponent
 
     void windowing(Windowing windows) pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(windows, "Windowing must not be null");
+        if (!windows)
+        {
+            throw new Exception("Windowing must not be null");
+        }
         _windowing = windows;
     }
 
@@ -216,9 +223,11 @@ class GraphicComponent : UniComponent
 
     void media(MultiMedia newMedia) pure @safe
     {
-        import std.exception : enforce;
+        if (!newMedia)
+        {
+            throw new Exception("Multimedia system must not be null");
+        }
 
-        enforce(newMedia, "Multimedia system must not be null");
         _media = newMedia;
     }
 }

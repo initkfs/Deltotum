@@ -74,7 +74,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize, size_t SignalChannels = 
             const writeRes = dspBuffer.writeIfNoBlockSync(streamSlice);
             if (!writeRes)
             {
-                debug stderr.writefln("Warn, dsp buffer data loss: %s, reason: %s", len, writeRes);
+                //debug stderr.writefln("Warn, dsp buffer data loss: %s, reason: %s", len, writeRes);
             }
             else
             {

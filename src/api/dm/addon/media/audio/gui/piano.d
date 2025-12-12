@@ -89,6 +89,10 @@ class Piano : Control
 
     void delegate(PianoKey, ref PointerEvent) onPianoKey;
 
+    //foreach (noteIndex, noteCode; EnumMembers!Octave) replace with simple arrays for up ct
+    static immutable string[] pianoNoteNames = ["A0","A0s","B0","C1","C1s","D1","D1s","E1","F1","F1s","G1","G1s","A1","A1s","B1","C2","C2s","D2","D2s","E2","F2","F2s","G2","G2s","A2","A2s","B2","C3","C3s","D3","D3s","E3","F3","F3s","G3","G3s","A3","A3s","B3","C4","C4s","D4","D4s","E4","F4","F4s","G4","G4s","A4","A4s","B4","C5","C5s","D5","D5s","E5","F5","F5s","G5","G5s","A5","A5s","B5","C6","C6s","D6","D6s","E6","F6","F6s","G6","G6s","A6","A6s","B6","C7","C7S","D7","D7S","E7","F7","F7S","G7","G7S","A7","A7S","B7","C8",];
+    static immutable float[] pianoNoteFreq = [27.5000f,29.1352f,30.8677f,32.7032f,34.6478f,36.7081f,38.8909f,41.2034f,43.6535f,46.2493f,48.9994f,51.9131f,55.0000f,58.2705f,61.7354f,65.4064f,69.2957f,73.4162f,77.7817f,82.4069f,87.3071f,92.4986f,97.9989f,103.8260f,110.0000f,116.5410f,123.4710f,130.8130f,138.5910f,146.8320f,155.5630f,164.8140f,174.6140f,184.9970f,195.9980f,207.6520f,220.0000f,233.0820f,246.9420f,261.6260f,277.1830f,293.6650f,311.1270f,329.6280f,349.2280f,369.9940f,391.9950f,415.3050f,440.0000f,466.1640f,493.8830f,523.2510f,554.3650f,587.3300f,622.2540f,659.2550f,698.4560f,739.9890f,783.9910f,830.6090f,880.0000f,932.3280f,987.7670f,1046.5000f,1108.7300f,1174.6600f,1244.5100f,1318.5100f,1396.9100f,1479.9800f,1567.9800f,1661.2200f,1760.0000f,1864.6600f,1975.5300f,2093.0000f,2217.4600f,2349.3201f,2489.0200f,2637.0200f,2793.8301f,2959.9600f,3135.9600f,3322.4399f,3520.0000f,3729.3101f,3951.0701f,4186.0098f];
+
     this()
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
@@ -146,36 +150,19 @@ class Piano : Control
         PianoKey[whiteKeysCount] whiteKeysCountArr;
         size_t whiteKeysCountIndex;
 
-        import std.traits : EnumMembers;
         import std.conv : to;
 
-        foreach (noteIndex, noteCode; EnumMembers!Octave)
+        assert(pianoNoteNames.length == pianoNoteFreq.length);
+
+        foreach (noteIndex, noteName; pianoNoteNames)
         {
             auto pkey = new PianoKey;
 
             pkey.index = noteIndex;
-            pkey.name = noteCode.to!string;
-
-            auto octaveNum = pkey.name[1];
-            auto keyNum = pkey.name[0];
-            if (octaveNum == '0')
-            {
-                if (keyNum != 'A' && keyNum != 'B')
-                {
-                    continue;
-                }
-            }
-            else if (octaveNum == '8')
-            {
-                if (pkey.name != "C8")
-                {
-                    //TODO break
-                    continue;
-                }
-            }
+            pkey.name = noteName;
 
             pkey.isBlack = pkey.name.length == 3;
-            pkey.freqHz = cast(float) noteCode;
+            pkey.freqHz = pianoNoteFreq[noteIndex];
 
             pkey.isLayoutManaged = false;
             pkey.width = pianoKeyWidth;

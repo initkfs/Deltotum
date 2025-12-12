@@ -16,8 +16,6 @@ import api.dm.gui.controls.containers.border_box : BorderBox;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.checks.check : Check;
 
-import std;
-
 /**
  * Authors: initkfs
  */

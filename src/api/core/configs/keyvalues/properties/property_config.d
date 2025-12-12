@@ -49,7 +49,6 @@ class PropertyConfig : Config
 
     override bool load()
     {
-        import std.exception : enforce;
         import std.file : exists, isFile;
 
         if (_configPath.length == 0)
@@ -143,9 +142,10 @@ class PropertyConfig : Config
 
     protected inout(Line**) containsLinePtr(string key) inout
     {
-        import std.exception : enforce;
-
-        enforce(key && key.length > 0, "Config key must not be empty");
+        if (key.length == 0)
+        {
+            throw new Exception("Config key must not be empty");
+        }
 
         auto keyPtr = key in keyIndex;
         assert(keyPtr);

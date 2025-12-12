@@ -84,9 +84,10 @@ class Window : GraphicComponent
 
     this(ComWindow window)
     {
-        import std.exception : enforce;
-
-        enforce(window, "Window must not be null");
+        if (!window)
+        {
+            throw new Exception("Window must not be null");
+        }
         this.comWindow = window;
     }
 
@@ -121,9 +122,10 @@ class Window : GraphicComponent
 
     void currentScene(Scene2d scene) @safe pure
     {
-        import std.exception : enforce;
-
-        enforce(scene, "Scene must not be null");
+        if (!scene)
+        {
+            throw new Exception("Scene must not be null");
+        }
 
         foreach (currScene; _scenes)
         {
@@ -151,9 +153,10 @@ class Window : GraphicComponent
 
     void create(Scene2d scene)
     {
-        import std.exception : enforce;
-
-        enforce(scene, "Scene must not be null");
+        if (!scene)
+        {
+            throw new Exception("Scene must not be null");
+        }
 
         if (!scene.isBuilt)
         {
@@ -194,9 +197,10 @@ class Window : GraphicComponent
 
     bool add(Scene2d scene)
     {
-        import std.exception : enforce;
-
-        enforce(scene !is null, "Scene must not be null");
+        if (!scene)
+        {
+            throw new Exception("Scene must not be null");
+        }
 
         foreach (sc; _scenes)
         {

@@ -31,9 +31,10 @@ class LocatorContext
 
     inout(LocatorItem*) hasVarPtr(string key) inout pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(key.length > 0, "Key must not be empty");
+        if (key.length == 0)
+        {
+            throw new Exception("Key must not be empty");
+        }
         return (key in variants);
     }
 
@@ -72,7 +73,7 @@ class LocatorContext
     inout(T) getVarTo(T)(string key) inout
     {
         auto item = getVar(key);
-        
+
         if (item.type != typeid(T*))
         {
             import std.format : format;
@@ -87,9 +88,10 @@ class LocatorContext
 
     inout(Object*) hasObjectPtr(string key) inout pure @safe
     {
-        import std.exception : enforce;
-
-        enforce(key.length > 0, "Key must not be empty");
+        if (key.length == 0)
+        {
+            throw new Exception("Key must not be empty");
+        }
         return (key in objects);
     }
 
