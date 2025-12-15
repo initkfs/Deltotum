@@ -188,7 +188,7 @@ class DynamicLoader
 
     bool isLoad() => lib.isLoad;
 
-    void load()
+    bool load()
     {
         if (onBeforeLoad)
         {
@@ -273,7 +273,8 @@ class DynamicLoader
 
                 throw new Exception(text("Library loading error: ", errors));
             }
-            return;
+            
+            return isLoad;
         }
 
         if (onLoad)
@@ -281,6 +282,7 @@ class DynamicLoader
             onLoad();
         }
 
+        return isLoad;
     }
 
     bool loadFromPath(const(char)[] libPath, bool isCheckError = false)

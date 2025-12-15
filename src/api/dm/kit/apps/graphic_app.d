@@ -45,6 +45,8 @@ import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.windows.windowing : Windowing;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
+import api.dm.lib.libxml.native : LibxmlLib;
+
 /**
  * Authors: initkfs
  */
@@ -56,6 +58,8 @@ abstract class GraphicApp : CliApp
     bool isHeadless;
 
     bool isQuitOnCloseAllWindows = true;
+
+    LibxmlLib xmlLib;
 
     protected
     {
@@ -102,6 +106,27 @@ abstract class GraphicApp : CliApp
         loadSettings;
 
         _i18n = createI18n(uservices.logging, uservices.config, uservices.context);
+
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        if (!xmlLib && uservices.config.hasKey(KitConfigKeys.engineIsXML) && uservices.config.getBool(
+                KitConfigKeys.engineIsXML))
+        {
+            xmlLib = new LibxmlLib;
+            xmlLib.onLoad = () {
+                uservices.logger.info("Load libxml: ", xmlLib.libVersionStr);
+            };
+            xmlLib.onLoadErrors = (err) {
+                uservices.logger.error(err);
+                xmlLib = null;
+            };
+
+            if (!xmlLib.load)
+            {
+                xmlLib.unload;
+                xmlLib = null;
+            }
+        }
 
         return true;
     }

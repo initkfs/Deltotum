@@ -32,4 +32,5 @@ string fontSizeLarge = "fontSizeLarge";
 string fontSizeSmall = "fontSizeSmall";
 
 string engineFrameRate = "engineFrameRate";
+string engineIsXML = "engineIsXML";
 
