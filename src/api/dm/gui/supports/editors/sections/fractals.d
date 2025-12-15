@@ -3,7 +3,7 @@ module api.dm.gui.supports.editors.sections.fractals;
 import api.dm.gui.controls.containers.container;
 
 // dfmt off
-version(DmAddon):
+version(EnableAddon):
 // dfmt on
 
 import api.dm.gui.controls.control : Control;

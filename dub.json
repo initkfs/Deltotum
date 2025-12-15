@@ -26,7 +26,7 @@
             "name": "app-dev-addon",
             "versions": [
                 "dev",
-                "DmAddon"
+                "EnableAddon"
             ],
             "targetType": "executable",
             "targetName": "dm",
@@ -37,7 +37,7 @@
         {
             "name": "app-dist",
             "versions": [
-                "DmAddon"
+                "EnableAddon"
             ],
             "targetType": "executable",
             "targetName": "dm-dist",
@@ -49,7 +49,7 @@
             "name": "app-trace",
             "versions": [
                 "dev",
-                "DmAddon"
+                "EnableAddon"
             ],
             "targetType": "executable",
             "targetName": "dm",

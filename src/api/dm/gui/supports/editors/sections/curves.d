@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.curves;
 
 // dfmt off
-version(DmAddon):
+version(EnableAddon):
 // dfmt on
 
 import api.dm.gui.controls.control : Control;

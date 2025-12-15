@@ -43,7 +43,7 @@ class GuiEditor : GuiScene
         graphicsTab.content = new Graphics;
         root.addCreate(graphicsTab);
 
-        version (DmAddon)
+        version (EnableAddon)
         {
             import api.dm.gui.supports.editors.sections.media : Media;
 
@@ -76,7 +76,7 @@ class GuiEditor : GuiScene
         imagesTab.content = new Images;
         root.addCreate(imagesTab);
 
-        version (DmAddon)
+        version (EnableAddon)
         {
             import api.dm.gui.supports.editors.sections.procedural : Procedural;
 

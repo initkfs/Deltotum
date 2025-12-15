@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.media;
 
 // dfmt off
-version(DmAddon):
+version(EnableAddon):
 // dfmt on
 
 import api.dm.com.audio.com_audio_mixer;

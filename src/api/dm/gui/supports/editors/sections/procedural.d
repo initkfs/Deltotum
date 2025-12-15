@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.procedural;
 
 // dfmt off
-version(DmAddon):
+version(EnableAddon):
 // dfmt on
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
