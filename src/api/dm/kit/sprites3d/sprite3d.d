@@ -233,7 +233,17 @@ class Sprite3d : Sprite2d
                 return true;
             });
 
-            _worldMatrixInverse = inverse(_worldMatrixInverse);
+            bool isResult;
+
+            Matrix4x4 result = inverse(_worldMatrixInverse, isResult);
+            if (isResult)
+            {
+                _worldMatrixInverse = result;
+            }
+            else
+            {
+                logger.error("Inverse fail on matrix: ", _worldMatrixInverse.toString);
+            }
         }
 
         isMatrixRecalc = false;

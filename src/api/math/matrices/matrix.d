@@ -62,7 +62,7 @@ T[] newInitVector(T, I)(size_t colDim, I initValue) pure nothrow
     return result;
 }
 
-Matrix4x4 inverse(ref Matrix4x4 m)
+Matrix4x4 inverse(ref Matrix4x4 m, out bool isSuccess)
 {
     typeof(return) result;
 
@@ -85,6 +85,7 @@ Matrix4x4 inverse(ref Matrix4x4 m)
     if (det == 0)
     {
         //singular
+        isSuccess = false;
         return result;
     }
 
@@ -110,6 +111,8 @@ Matrix4x4 inverse(ref Matrix4x4 m)
     result[3, 2] = (-m[3, 0] * s3 + m[3, 1] * s1 - m[3, 2] * s0) * invdet;
     result[3, 3] = (m[2, 0] * s3 - m[2, 1] * s1 + m[2, 2] * s0) * invdet;
 
+    isSuccess = true;
+
     return result;
 }
 
@@ -125,7 +128,9 @@ unittest
         [5, 6, 7, 8],
     ]);
 
-    auto invResult = inverse(m1);
+    bool isResult;
+    auto invResult = inverse(m1, isResult);
+    assert(isResult);
 
     assert(equal!isClose(invResult[0], [
         -0.0625, 0.125, 0.1041666666, -0.0833333333
