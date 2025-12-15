@@ -216,11 +216,11 @@ class Sprite3d : Sprite2d
         if (isCalcInverseWorldMatrix)
         {
             //left right block for row-order matrix
-            import api.math.matrices.decompose.lup : decompose, invert;
+            import api.math.matrices.matrix : inverse;
 
             _worldMatrixInverse = Matrix4x4.onesDiag;
 
-            //TODO more optimal
+            //TODO more optimal, cache
             _worldMatrixInverse.eachRowRef((ri, ref scope float[4] row) {
 
                 if (ri >= 3)
@@ -233,8 +233,7 @@ class Sprite3d : Sprite2d
                 return true;
             });
 
-            auto decomposeModel = decompose!(_worldMatrix.Type, 4, 4)(_worldMatrix);
-            _worldMatrixInverse = invert(decomposeModel);
+            _worldMatrixInverse = inverse(_worldMatrixInverse);
         }
 
         isMatrixRecalc = false;
