@@ -74,6 +74,7 @@ interface GraphicCanvas
     alias fillStyle = color;
     alias strokeStyle = color;
 
+    //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
     final GStopBuilder createLinearGradient(float x0, float y0, float x1, float y1)
     {
         return GStopBuilder(2, Vec2f(x0, y0), 0, Vec2f(x1, y1), 0);
@@ -83,7 +84,8 @@ interface GraphicCanvas
     {
         linearGradient(builder.start, builder.end, builder.stops, onPattern);
     }
-
+    
+    //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createRadialGradient
     final GStopBuilder createRadialGradient(float innerCenterX, float innerCenterY, float innerRadius, float outerCenterX, float outerCenterY, float outerRadius)
     {
         return GStopBuilder(2, Vec2f(innerCenterX, innerCenterY), innerRadius, Vec2f(outerCenterX, outerCenterY), outerRadius);
