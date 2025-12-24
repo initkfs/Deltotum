@@ -29,9 +29,9 @@ class PieTexture : VectorTexture
         super(width, height);
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
-        super.createTextureContent;
+        super.createContent;
 
         if (totalValue == 0 || values.length == 0)
         {

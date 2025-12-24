@@ -106,7 +106,7 @@ class VPointsShape : VShape
         cairo_stroke(ctx);
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
         if (length < 2)
         {

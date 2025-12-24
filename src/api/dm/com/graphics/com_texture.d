@@ -53,8 +53,8 @@ nothrow:
     ComResult getFormat(out uint format);
     ComResult getPixelRowLenBytes(out int pitch);
 
-    ComResult setRendererTarget();
-    ComResult restoreRendererTarget();
+    ComResult setRenderTarget();
+    ComResult restoreRenderTarget();
 
     ComResult getSize(out int width, out int height);
     ComResult setSize(int newWidth, int newHeight);

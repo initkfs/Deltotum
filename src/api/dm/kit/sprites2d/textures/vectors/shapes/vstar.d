@@ -63,7 +63,7 @@ class VStar : VShape
         canvas.stroke;
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
         drawPolygon(width, width / 2, height / 2);
     }

@@ -133,10 +133,10 @@ class MinSecChooser : BaseCircularTimeChooser
 
             buildInitCreate(proto);
 
-            newLabelBox.setRendererTarget;
+            newLabelBox.setRenderTarget;
             scope (exit)
             {
-                newLabelBox.restoreRendererTarget;
+                newLabelBox.restoreRenderTarget;
             }
 
             graphic.clearTransparent;

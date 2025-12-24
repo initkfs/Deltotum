@@ -95,7 +95,7 @@ class RadialSegmentBar : Control
                     super(textureWidth, textureHeight, segmentStyleOff);
                 }
 
-                override void createTextureContent()
+                override void createContent()
                 {
                     auto ctx = canvas;
                     ctx.lineWidth = style.lineWidth;

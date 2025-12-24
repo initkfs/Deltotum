@@ -104,10 +104,10 @@ class BaseRadialScaleStatic : BaseScaleStatic
             scaleShape.createTargetRGBA32;
             scaleShape.blendModeBlend;
 
-            scaleShape.setRendererTarget;
+            scaleShape.setRenderTarget;
             scope (exit)
             {
-                scaleShape.restoreRendererTarget;
+                scaleShape.restoreRenderTarget;
             }
 
             graphic.clearTransparent;
@@ -134,7 +134,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
                     super(centerShapeW, centerShapeH);
                 }
 
-                override void createTextureContent()
+                override void createContent()
                 {
                     auto currAngleDeg = minAngleDeg;
 
@@ -229,10 +229,10 @@ class BaseRadialScaleStatic : BaseScaleStatic
             scaleShape.createTargetRGBA32;
             scaleShape.blendModeBlend;
 
-            scaleShape.setRendererTarget;
+            scaleShape.setRenderTarget;
             scope (exit)
             {
-                scaleShape.restoreRendererTarget;
+                scaleShape.restoreRenderTarget;
             }
 
             graphic.clearTransparent;

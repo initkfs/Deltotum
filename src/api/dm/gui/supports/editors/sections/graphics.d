@@ -83,7 +83,7 @@ class Graphics : Control
                 super(50, 50);
             }
 
-            override void createTextureContent()
+            override void createContent()
             {
                 this.graphic.fillRect(0, 0, 25, 25, RGBA.red);
                 this.graphic.fillRect(25, 0, 25, 25, RGBA.yellow);

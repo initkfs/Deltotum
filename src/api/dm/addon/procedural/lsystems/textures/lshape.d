@@ -65,9 +65,9 @@ class LShape : VShape
         drawer.draw;
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
-        super.createTextureContent;
+        super.createContent;
 
         parse;
 

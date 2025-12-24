@@ -2258,10 +2258,10 @@ class Sprite2d : EventKitTarget
     {
         assert(dest);
 
-        dest.setRendererTarget;
+        dest.setRenderTarget;
         scope (exit)
         {
-            dest.restoreRendererTarget;
+            dest.restoreRenderTarget;
         }
 
         graphic.clearTransparent;

@@ -19,7 +19,7 @@ abstract class RgbaTexture : Texture2d
         this.id = "rgba_texture";
     }
 
-    abstract void createTextureContent();
+    abstract void createContent();
 
     override void create()
     {
@@ -34,12 +34,12 @@ abstract class RgbaTexture : Texture2d
             return;
         }
 
-        if (const err = texture.setRendererTarget)
+        if (const err = texture.setRenderTarget)
         {
             throw new Exception(err.toString);
         }
         onRenderer();
-        if (const err = texture.restoreRendererTarget)
+        if (const err = texture.restoreRenderTarget)
         {
             throw new Exception(err.toString);
         }
@@ -70,7 +70,7 @@ abstract class RgbaTexture : Texture2d
                 graphic.clear(RGBA.transparent);
             }
 
-            createTextureContent;
+            createContent;
         });
 
         return true;

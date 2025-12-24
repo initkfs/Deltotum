@@ -53,7 +53,7 @@ class PenroseTiling : VShape
     float levelPower = 0.1 * 10;
     float lineWidth = 8 * 6 * fi * fi;
 
-    override void createTextureContent()
+    override void createContent()
     {
         centerX = width / 2;
         centerY = height / 2;

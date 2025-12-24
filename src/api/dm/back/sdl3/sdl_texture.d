@@ -260,7 +260,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult setRendererTarget() nothrow
+    ComResult setRenderTarget() nothrow
     {
         assert(ptr);
         assert(renderer);
@@ -282,7 +282,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult restoreRendererTarget() nothrow
+    ComResult restoreRenderTarget() nothrow
     {
         assert(renderer);
 
@@ -361,12 +361,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             SDL_DestroySurface(tempDst);
         }
 
-        if (const err = setRendererTarget)
+        if (const err = setRenderTarget)
         {
             return err;
         }
 
-        if (const err = restoreRendererTarget)
+        if (const err = restoreRenderTarget)
         {
             return err;
         }
@@ -804,7 +804,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = toTexture.setRendererTarget)
+        if (const err = toTexture.setRenderTarget)
         {
             return err;
         }
@@ -814,7 +814,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return ComResult.error("Error texture drawing: " ~ getLastErrorNew);
         }
 
-        if (const err = restoreRendererTarget)
+        if (const err = restoreRenderTarget)
         {
             return err;
         }
@@ -830,7 +830,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = setRendererTarget)
+        if (const err = setRenderTarget)
         {
             return err;
         }
@@ -840,7 +840,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return ComResult.error("Error texture drawing");
         }
 
-        if (const err = restoreRendererTarget)
+        if (const err = restoreRenderTarget)
         {
             return err;
         }

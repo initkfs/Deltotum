@@ -27,7 +27,7 @@ class VArc : VShape
         this.radius = radius;
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
         auto ctx = canvas;
 

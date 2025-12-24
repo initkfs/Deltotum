@@ -29,7 +29,7 @@ private
             super(width, height, style);
         }
 
-        override void createTextureContent()
+        override void createContent()
         {
             auto ctx = canvas;
             style.lineWidth *= 2;

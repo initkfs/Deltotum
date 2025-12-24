@@ -57,9 +57,9 @@ class VecFieldGen : Container
                 super(canvasWidth, canvasHeight);
             }
 
-            override void createTextureContent()
+            override void createContent()
             {
-                super.createTextureContent;
+                super.createContent;
 
                 auto ctx = canvas;
                 //ctx.translate(canvasWidth / 2, canvasHeight / 2);

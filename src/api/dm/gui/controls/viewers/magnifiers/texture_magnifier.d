@@ -30,10 +30,10 @@ class TextureMagnifier : BaseMagnifier
         Rect2f textureBounds = Rect2f(originalXRel, originalYRel, magnifier.width, magnifier
                 .height);
 
-        magnifier.setRendererTarget;
+        magnifier.setRenderTarget;
         scope (exit)
         {
-            magnifier.restoreRendererTarget;
+            magnifier.restoreRenderTarget;
         }
 
         auto destBounds = Rect2f(0, 0, magnifier.width, magnifier.height);

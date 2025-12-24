@@ -24,7 +24,7 @@ class Julia : ComplexFractalImage
     }
 
     //TODO remove duplication with parent class
-    override void createTextureContent()
+    override void createContent()
     {
         lock;
         scope(exit){

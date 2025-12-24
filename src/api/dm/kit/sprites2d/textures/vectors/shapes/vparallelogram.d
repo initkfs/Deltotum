@@ -26,7 +26,7 @@ class VParallelogram : VShape
         this.isInverted = isInverted;
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
         import Math = api.dm.math;
 

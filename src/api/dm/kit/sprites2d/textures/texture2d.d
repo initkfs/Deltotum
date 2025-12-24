@@ -154,7 +154,7 @@ class Texture2d : Sprite2d
         blendMode(ComBlendMode.none);
     }
 
-    ComTextureScaleMode textureScaleMode()
+    ComTextureScaleMode scaleMode()
     {
         assert(texture);
         ComTextureScaleMode mode;
@@ -165,7 +165,7 @@ class Texture2d : Sprite2d
         return mode;
     }
 
-    void textureScaleMode(ComTextureScaleMode mode)
+    void scaleMode(ComTextureScaleMode mode)
     {
         assert(texture);
         if (const err = texture.setScaleMode(mode))
@@ -176,7 +176,7 @@ class Texture2d : Sprite2d
 
     void bestScaleMode()
     {
-        textureScaleMode(ComTextureScaleMode.quality);
+        scaleMode(ComTextureScaleMode.quality);
     }
 
     override void drawContent()
@@ -357,10 +357,10 @@ class Texture2d : Sprite2d
         buildInitCreate(newTexture);
 
         newTexture.createTargetRGBA32;
-        newTexture.setRendererTarget;
+        newTexture.setRenderTarget;
         scope (exit)
         {
-            newTexture.restoreRendererTarget;
+            newTexture.restoreRenderTarget;
         }
         graphic.clearTransparent;
 
@@ -587,19 +587,19 @@ class Texture2d : Sprite2d
         return isSet;
     }
 
-    void setRendererTarget()
+    void setRenderTarget()
     {
         assert(texture);
-        if (const err = texture.setRendererTarget)
+        if (const err = texture.setRenderTarget)
         {
             logger.error(err.toString);
         }
     }
 
-    void restoreRendererTarget()
+    void restoreRenderTarget()
     {
         assert(texture);
-        if (const err = texture.restoreRendererTarget)
+        if (const err = texture.restoreRenderTarget)
         {
             logger.error(err.toString);
         }

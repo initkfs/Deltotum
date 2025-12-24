@@ -130,10 +130,10 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
         buildInitCreate(newTexture);
         newTexture.createTargetRGBA32;
         newTexture.blendModeBlend;
-        newTexture.setRendererTarget;
+        newTexture.setRenderTarget;
         scope (exit)
         {
-            newTexture.restoreRendererTarget;
+            newTexture.restoreRenderTarget;
         }
         graphic.clearTransparent;
 

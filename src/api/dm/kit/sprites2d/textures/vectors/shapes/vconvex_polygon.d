@@ -19,7 +19,7 @@ class VConvexPolygon : VShape
         this.cornerPadding = cornerPadding;
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
         if (style.isFill)
         {

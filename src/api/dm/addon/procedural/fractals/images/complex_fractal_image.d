@@ -25,7 +25,7 @@ abstract class ComplexFractalImage : Texture2d
         return RGBA.white;
     }
 
-    void createTextureContent()
+    void createContent()
     {
         lock;
         scope (exit)
@@ -61,7 +61,7 @@ abstract class ComplexFractalImage : Texture2d
         super.create;
 
         createMutRGBA32;
-        createTextureContent;
+        createContent;
     }
 
 }

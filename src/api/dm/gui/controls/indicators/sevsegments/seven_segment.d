@@ -269,7 +269,7 @@ class SevenSegment : Control
                 super(box.width, box.height, segmentStyle);
             }
 
-            override void createTextureContent()
+            override void createContent()
             {
                 auto ctx = canvas;
                 auto thisStyle = segmentStyle;
@@ -318,7 +318,7 @@ class SevenSegment : Control
                 super(box.width, box.height, segmentStyle);
             }
 
-            override void createTextureContent()
+            override void createContent()
             {
                 auto ctx = canvas;
                 auto thisStyle = segmentStyle;

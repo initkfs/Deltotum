@@ -260,10 +260,10 @@ class DigitalClockFace : Control
         auto sepTexture = new Texture2d(w, h);
         buildInitCreate(sepTexture);
         sepTexture.createTargetRGBA32;
-        sepTexture.setRendererTarget;
+        sepTexture.setRenderTarget;
         scope (exit)
         {
-            sepTexture.restoreRendererTarget;
+            sepTexture.restoreRenderTarget;
         }
         graphic.clearTransparent;
 
@@ -297,7 +297,7 @@ class DigitalClockFace : Control
                     super(w, h);
                 }
 
-                override void createTextureContent()
+                override void createContent()
                 {
                     auto ctx = canvas;
                     float startAngleDeg = 0, endAngleDeg = 360;

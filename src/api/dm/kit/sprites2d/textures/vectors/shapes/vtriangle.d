@@ -18,7 +18,7 @@ class VTriangle : VShape
         super(width, height, style);
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
         import Math = api.dm.math;
 

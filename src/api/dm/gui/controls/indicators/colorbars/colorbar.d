@@ -52,10 +52,10 @@ class ColorBar : BaseMonoColorBar
         {
             texture.createTargetRGBA32;
 
-            texture.setRendererTarget;
+            texture.setRenderTarget;
             scope (exit)
             {
-                texture.restoreRendererTarget;
+                texture.restoreRenderTarget;
             }
 
             graphic.clearTransparent;

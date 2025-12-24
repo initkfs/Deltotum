@@ -62,7 +62,7 @@ class MazeCell : Sprite2d
                 super(w, h);
             }
 
-            override void createTextureContent()
+            override void createContent()
             {
                 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 

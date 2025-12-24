@@ -52,12 +52,12 @@ class VectorTexture : Texture2d
         this.id = "vector_texture";
     }
 
-    void createTextureContent(GraphicCanvas ctx)
+    void createContent(GraphicCanvas ctx)
     {
 
     }
 
-    void createTextureContent()
+    void createContent()
     {
 
     }
@@ -84,7 +84,7 @@ class VectorTexture : Texture2d
 
         auto ctx = new VectorCanvas(svgContext);
 
-        createTextureContent(ctx);
+        createContent(ctx);
 
         svgCairoSurface.flush;
         svgCairoSurface.finish;
@@ -109,7 +109,7 @@ class VectorTexture : Texture2d
         }
     }
 
-    private void tryCreateCairoContext()
+    private void tryCreateDrawContext()
     {
         import api.dm.lib.cairo : cairo_format_t;
 
@@ -156,7 +156,7 @@ class VectorTexture : Texture2d
     private void createStaticTexture()
     {
         tryCreateTempSurface;
-        tryCreateCairoContext;
+        tryCreateDrawContext;
 
         //There may be graphical artifacts when reloading textures
         scope (exit)
@@ -164,8 +164,8 @@ class VectorTexture : Texture2d
             disposeContext;
         }
 
-        createTextureContent;
-        createTextureContent(canvas);
+        createContent;
+        createContent(canvas);
 
         if (onSurfaceIsContinue)
         {
@@ -198,10 +198,10 @@ class VectorTexture : Texture2d
     private void createMutTexture()
     {
         tryCreateTempSurface;
-        tryCreateCairoContext;
+        tryCreateDrawContext;
 
-        createTextureContent;
-        createTextureContent(canvas);
+        createContent;
+        createContent(canvas);
 
         if (onSurfaceIsContinue)
         {
@@ -326,8 +326,8 @@ class VectorTexture : Texture2d
         }
 
         canvas.clear(RGBA.transparent);
-        createTextureContent;
-        createTextureContent(canvas);
+        createContent;
+        createContent(canvas);
 
         if (onSurfaceIsContinue)
         {

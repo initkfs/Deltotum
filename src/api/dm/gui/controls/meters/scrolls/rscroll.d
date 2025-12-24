@@ -127,7 +127,7 @@ class RScroll : BaseRadialMonoScroll
             shapeTexture.blendModeBlend;
         }
 
-        thumb.setRendererTarget;
+        thumb.setRenderTarget;
 
         graphic.clear(RGBA.transparent);
 
@@ -149,7 +149,7 @@ class RScroll : BaseRadialMonoScroll
 
         graphic.fillTriangle(rightVert, leftTopVert, leftBottomVert, theme.colorAccent);
 
-        thumb.restoreRendererTarget;
+        thumb.restoreRenderTarget;
 
         thumb.initialize;
         assert(thumb.isInitializing);

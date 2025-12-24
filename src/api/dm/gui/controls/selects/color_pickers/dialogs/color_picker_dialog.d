@@ -281,7 +281,7 @@ class ColorPickerDialog : Control
                 super(colorBarW, colorBarH);
             }
 
-            override void createTextureContent()
+            override void createContent()
             {
                 auto ctx = canvas;
 
@@ -392,7 +392,7 @@ class ColorPickerDialog : Control
                 super(colorTextureW, colorTextureH);
             }
 
-            override void createTextureContent()
+            override void createContent()
             {
                 float nextX = 0;
                 float nextY = 0;
@@ -566,10 +566,10 @@ class ColorPickerDialog : Control
         auto palTabColor = new Texture2d(colorSize, colorSize);
         buildInitCreate(palTabColor);
         palTabColor.createTargetRGBA32;
-        palTabColor.setRendererTarget;
+        palTabColor.setRenderTarget;
         scope (exit)
         {
-            palTabColor.restoreRendererTarget;
+            palTabColor.restoreRenderTarget;
         }
 
         graphic.clearTransparent;

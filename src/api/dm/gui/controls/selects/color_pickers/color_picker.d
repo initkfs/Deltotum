@@ -161,10 +161,10 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         texture.isResizedByParent = false;
         texture.createTargetRGBA32;
 
-        texture.setRendererTarget;
+        texture.setRenderTarget;
         scope (exit)
         {
-            texture.restoreRendererTarget;
+            texture.restoreRenderTarget;
         }
 
         graphic.clearTransparent;

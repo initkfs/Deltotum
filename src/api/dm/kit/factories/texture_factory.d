@@ -21,7 +21,7 @@ class TextureFactory : GraphicComponent
                 super(newWidth, newHeight);
             }
 
-            override void createTextureContent()
+            override void createContent()
             {
                 if (contentDrawer)
                 {

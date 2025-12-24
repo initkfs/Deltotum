@@ -42,12 +42,12 @@ private
             super.create;
             import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 
-            textureScaleMode = ComTextureScaleMode.quality;
+            scaleMode = ComTextureScaleMode.quality;
         }
 
-        override void createTextureContent()
+        override void createContent()
         {
-            super.createTextureContent;
+            super.createContent;
             auto ctx = canvas;
 
             ctx.lineWidth(style.lineWidth);
@@ -142,10 +142,10 @@ class MeterHandFactory : Control
             newHand.blendModeBlend;
             newHand.bestScaleMode;
 
-            newHand.setRendererTarget;
+            newHand.setRenderTarget;
             scope (exit)
             {
-                newHand.restoreRendererTarget;
+                newHand.restoreRenderTarget;
             }
 
             const center = newHand.boundsRect.center;

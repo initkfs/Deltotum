@@ -29,7 +29,7 @@ class VShape : VectorTexture
         this.style = style;
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
         auto ctx = canvas;
 

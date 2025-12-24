@@ -29,9 +29,9 @@ class VPointShape : VShape
         this.isDrawFromCenter = isDrawFromCenter;
     }
 
-    override void createTextureContent()
+    override void createContent()
     {
-        super.createTextureContent;
+        super.createContent;
 
         if (points.length < 3)
         {

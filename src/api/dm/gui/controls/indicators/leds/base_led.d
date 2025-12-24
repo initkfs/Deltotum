@@ -146,10 +146,10 @@ class BaseLed : Control
 
         texture.createTargetRGBA32;
         texture.blendModeBlend;
-        texture.setRendererTarget;
+        texture.setRenderTarget;
         scope (exit)
         {
-            texture.restoreRendererTarget;
+            texture.restoreRenderTarget;
         }
 
         graphic.clearTransparent;
