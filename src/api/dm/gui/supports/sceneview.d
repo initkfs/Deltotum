@@ -112,8 +112,8 @@ class SceneView : VBox
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         // userStyle = theme.newDefaultStyle;
-        // userStyle.lineColor = RGBA.web("#DDCC66");
-        // userStyle.fillColor = RGBA.web("#ffb641");
+        // userStyle.lineColor = RGBA.hex("#DDCC66");
+        // userStyle.fillColor = RGBA.hex("#ffb641");
         // userStyle.isFill = false;
 
         auto infoContainer = new HBox;

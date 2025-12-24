@@ -285,13 +285,13 @@ class ColorPickerDialog : Control
             {
                 auto ctx = canvas;
 
-                import api.dm.kit.graphics.canvases.graphic_canvas : GradientStopPoint;
+                import api.dm.kit.graphics.canvases.graphic_canvas : GStop;
                 import api.math.geom2.vec2 : Vec2f;
 
                 enum pointsCount = 10;
                 float offsetDelta = 1.0 / pointsCount;
 
-                GradientStopPoint[pointsCount] points;
+                GStop[pointsCount] points;
 
                 HSLA currentColor = HSLA(0, 1, 0.5, 1);
                 float currentOffset = 0;
@@ -301,7 +301,7 @@ class ColorPickerDialog : Control
 
                 foreach (pi, ref p; points)
                 {
-                    p = GradientStopPoint(currentOffset, currentColor.toRGBA);
+                    p = GStop(currentOffset, currentColor.toRGBA);
                     currentOffset += offsetDelta;
                     currentColor.h += hueDelta;
                 }
@@ -400,7 +400,7 @@ class ColorPickerDialog : Control
                 auto oldColor = graphic.color;
 
                 MaterialPalette.onColor((color, i) {
-                    graphic.color(RGBA.web(color));
+                    graphic.color(RGBA.hex(color));
                     graphic.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
                     colorPixels[i] = ColorInfo(Rect2f(nextX, nextY, paletteColorSize, paletteColorSize), graphic
@@ -423,7 +423,7 @@ class ColorPickerDialog : Control
                 // {
                 //     static if (is(typeof(__traits(getMember, MaterialPalette, color)) : string))
                 //     {
-                //         graphic.color(RGBA.web(__traits(getMember, MaterialPalette, color)));
+                //         graphic.color(RGBA.hex(__traits(getMember, MaterialPalette, color)));
                 //         graphic.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
                 //         colorPixels[pixelCounter] = ColorInfo(Rect2f(nextX, nextY, paletteColorSize, paletteColorSize), graphic
@@ -574,7 +574,7 @@ class ColorPickerDialog : Control
 
         graphic.clearTransparent;
 
-        graphic.fillRect(0, 0, colorSize, colorSize, RGBA.web("#CC00FF"));
+        graphic.fillRect(0, 0, colorSize, colorSize, RGBA.hex("#CC00FF"));
         tab.addCreate(palTabColor);
         return tab;
     }

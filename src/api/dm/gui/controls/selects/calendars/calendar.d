@@ -90,7 +90,7 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
         {
             import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
-            holidayColor = RGBA.web(MaterialPalette.redA200);
+            holidayColor = RGBA.hex(MaterialPalette.redA200);
         }
     }
 

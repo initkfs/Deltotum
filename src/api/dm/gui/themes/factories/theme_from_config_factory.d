@@ -80,7 +80,7 @@ class ThemeFromConfigFactory : ApplicationUnit
 
                     static if (is(fieldType : RGBA))
                     {
-                        __traits(getMember, newTheme, fieldName) = RGBA.web(value);
+                        __traits(getMember, newTheme, fieldName) = RGBA.hex(value);
                     }
                     else static if (is(fieldType == ulong))
                     {
@@ -112,7 +112,7 @@ class ThemeFromConfigFactory : ApplicationUnit
 
     private RGBA fromStringColor(string color)
     {
-        return RGBA.web(color);
+        return RGBA.hex(color);
     }
 
 }

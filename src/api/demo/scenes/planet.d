@@ -95,7 +95,7 @@ class Planet : GuiScene
         env.addCreate(shape);
 
         // lamp = new PointLight;
-        // lamp.diffuse = RGBA.web("#2EDCA3").toVec3Norm;
+        // lamp.diffuse = RGBA.hex("#2EDCA3").toVec3Norm;
         // lamp.ambient = Vec3f(0.3, 0.3, 0.3);
         // env.lights.addCreate(lamp);
         // lamp.pos = Vec3f(0, 2, 0);

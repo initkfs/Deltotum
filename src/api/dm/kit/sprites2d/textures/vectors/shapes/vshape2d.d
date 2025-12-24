@@ -23,7 +23,7 @@ class VShape : VectorTexture
     float translateX = 0;
     float translateY = 0;
 
-    this(float width, float height, GraphicStyle style)
+    this(float width, float height, GraphicStyle style = GraphicStyle.simple)
     {
         super(width, height);
         this.style = style;

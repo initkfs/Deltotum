@@ -106,6 +106,11 @@ extern (C)  nothrow
         double blue0to1,
         double alpha0to1) cairo_pattern_add_color_stop_rgba;
     void function(cairo_t* cr, cairo_pattern_t* source) cairo_set_source;
+
+    void function(cairo_t *cr, double size) cairo_set_font_size;
+    void function(cairo_t *cr, const char *family, cairo_font_slant_t slant, cairo_font_weight_t weight) cairo_select_font_face;
+    void function(cairo_t *cr, const char *utf8) cairo_text_path;
+
 }
 
 class CairoLib : DynamicLoader
@@ -169,6 +174,10 @@ class CairoLib : DynamicLoader
         bind(&cairo_pattern_create_radial, "cairo_pattern_create_radial");
         bind(&cairo_pattern_add_color_stop_rgba, "cairo_pattern_add_color_stop_rgba");
         bind(&cairo_set_source, "cairo_set_source");
+
+        bind(&cairo_set_font_size, "cairo_set_font_size");
+        bind(&cairo_select_font_face, "cairo_select_font_face");
+        bind(&cairo_text_path, "cairo_text_path");
     }
 
     version (Windows)

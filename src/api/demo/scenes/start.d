@@ -136,7 +136,7 @@ class Start : GuiScene
         env.addCreate(shape);
 
         lamp = new PointLight;
-        lamp.diffuse = RGBA.web("#2EDCA3").toVec3Norm;
+        lamp.diffuse = RGBA.hex("#2EDCA3").toVec3Norm;
         lamp.ambient = Vec3f(0.3, 0.3, 0.3);
         env.lights.addCreate(lamp);
         lamp.pos = Vec3f(0, 2, 0);
@@ -148,7 +148,7 @@ class Start : GuiScene
 
         lamp2 = new PointLight;
 
-        lamp2.diffuse = RGBA.web("#00909C").toVec3Norm;
+        lamp2.diffuse = RGBA.hex("#00909C").toVec3Norm;
         lamp2.isManaged = false;
         env.lights.addCreate(lamp2);
         lamp2.mesh.isVisible = false;

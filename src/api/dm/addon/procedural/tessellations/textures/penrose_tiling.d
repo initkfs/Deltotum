@@ -39,9 +39,9 @@ class PenroseTiling : VShape
     immutable float[] constants = [1.0 / 2, fi / 2, f3 / 2, f2 / 2];
 
     RGBA[6] colors = [
-        RGBA.web("#f1c40f"), RGBA.web("#f39c12"), RGBA.web("#95a5a6"),
-        RGBA.web("#7f8c8d"), RGBA.web("#ecf0f1"),
-        RGBA.web("#bdc3c7")
+        RGBA.hex("#f1c40f"), RGBA.hex("#f39c12"), RGBA.hex("#95a5a6"),
+        RGBA.hex("#7f8c8d"), RGBA.hex("#ecf0f1"),
+        RGBA.hex("#bdc3c7")
     ];
     RGBA lineColor = RGBA.red;
 

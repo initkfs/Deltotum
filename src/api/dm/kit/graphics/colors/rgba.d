@@ -48,7 +48,7 @@ struct RGBA
         maxAlpha = 1
     }
 
-    static RGBA web(string colorString, float a = maxAlpha) pure @safe
+    static RGBA hex(string colorString, float a = maxAlpha) pure @safe
     {
         if (colorString.length == 0)
         {
@@ -637,34 +637,34 @@ unittest
 
 unittest
 {
-    immutable colorWeb6Upper = RGBA.web("#FFFFFF", 0.5);
+    immutable colorWeb6Upper = RGBA.hex("#FFFFFF", 0.5);
     assert(colorWeb6Upper.r == 255);
     assert(colorWeb6Upper.g == 255);
     assert(colorWeb6Upper.b == 255);
     assert(colorWeb6Upper.a == 0.5);
 
-    immutable colorWeb6 = RGBA.web("#ffffff", 0.5);
+    immutable colorWeb6 = RGBA.hex("#ffffff", 0.5);
     assert(colorWeb6.r == 255);
     assert(colorWeb6.g == 255);
     assert(colorWeb6.b == 255);
     assert(colorWeb6.a == 0.5);
 
-    immutable colorWeb3 = RGBA.web("#ABC");
+    immutable colorWeb3 = RGBA.hex("#ABC");
     assert(colorWeb3.r == 170);
     assert(colorWeb3.g == 187);
     assert(colorWeb3.b == 204);
 
-    immutable colorAqua = RGBA.web("#00ffff");
+    immutable colorAqua = RGBA.hex("#00ffff");
     assert(colorAqua.r == 0);
     assert(colorAqua.g == 255);
     assert(colorAqua.b == 255);
 
-    // const colorAqua2 = RGBA.web("aqua");
+    // const colorAqua2 = RGBA.hex("aqua");
     // assert(colorAqua2.r == 0);
     // assert(colorAqua2.g == 255);
     // assert(colorAqua2.b == 255);
 
-    // shared white = RGBA.web("white");
+    // shared white = RGBA.hex("white");
     // assert(white.r == 255);
     // assert(white.g == 255);
     // assert(white.b == 255);
@@ -673,9 +673,9 @@ unittest
 unittest
 {
     RGBA r = RGBA.red;
-    assert(r == RGBA.web("#ff0000"));
+    assert(r == RGBA.hex("#ff0000"));
     RGBA g = RGBA.green;
-    assert(g == RGBA.web("#008000"));
+    assert(g == RGBA.hex("#008000"));
 }
 
 unittest

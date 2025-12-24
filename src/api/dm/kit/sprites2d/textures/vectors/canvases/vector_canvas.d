@@ -1,6 +1,6 @@
 module api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas;
 
-import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GradientStopPoint;
+import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GStop;
 import api.dm.lib.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
@@ -180,6 +180,12 @@ class VectorCanvas : GraphicCanvas
         fill;
     }
 
+    void strokeRect(float x, float y, float width, float height)
+    {
+        rect(x, y, width, height);
+        stroke;
+    }
+
     void clearRect(float x, float y, float width, float height)
     {
         color(RGBA.transparent);
@@ -220,7 +226,8 @@ class VectorCanvas : GraphicCanvas
         cairo_close_path(cr);
     }
 
-    void clip(){
+    void clip()
+    {
         cairo_clip(cr);
     }
 
@@ -229,46 +236,93 @@ class VectorCanvas : GraphicCanvas
         cairo_arc(cr, xc, yc, radius, angle1Rad, angle2Rad);
     }
 
-    void bezierCurveTo(float x1, float y1, float x2, float y2, float x3, float y3){
+    void bezierCurveTo(float x1, float y1, float x2, float y2, float x3, float y3)
+    {
         cairo_curve_to(cr, x1, y1, x2, y2, x3, y3);
     }
 
-    void linearGradient(Vec2f start, Vec2f end, GradientStopPoint[] stopPoints, void delegate() onPattern){
-        cairo_pattern_t * pattern = cairo_pattern_create_linear(start.x, start.y, end.x, end.y);
-        
+    void linearGradient(float x0, float y0, float x1, float y1, GStop[] stopPoints, void delegate() onPattern)
+    {
+        linearGradient(Vec2f(x0, y0), Vec2f(x1, y1), stopPoints, onPattern);
+    }
+
+    void linearGradient(Vec2f start, Vec2f end, GStop[] stopPoints, void delegate() onPattern)
+    {
+        cairo_pattern_t* pattern = cairo_pattern_create_linear(start.x, start.y, end.x, end.y);
+
         foreach (stopPoint; stopPoints)
         {
             auto color = stopPoint.color;
-            cairo_pattern_add_color_stop_rgba(pattern, stopPoint.offset, color.rNorm, color.gNorm, color.bNorm, color.a);
+            cairo_pattern_add_color_stop_rgba(pattern, stopPoint.offset, color.rNorm, color.gNorm, color.bNorm, color
+                    .a);
         }
 
         cairo_set_source(cr, pattern);
 
         assert(onPattern);
         onPattern();
-        
-        scope(exit){
+
+        scope (exit)
+        {
             cairo_pattern_destroy(pattern);
         }
     }
 
-    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern){
-        
-        cairo_pattern_t * pattern = cairo_pattern_create_radial(innerCenter.x, innerCenter.y, innerRadius, outerCenter.x, outerCenter.y, outerRadius);
-        
+    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GStop[] stopPoints, void delegate() onPattern)
+    {
+
+        cairo_pattern_t* pattern = cairo_pattern_create_radial(innerCenter.x, innerCenter.y, innerRadius, outerCenter
+                .x, outerCenter.y, outerRadius);
+
         foreach (stopPoint; stopPoints)
         {
             auto color = stopPoint.color;
-            cairo_pattern_add_color_stop_rgba(pattern, stopPoint.offset, color.rNorm, color.gNorm, color.bNorm, color.a);
+            cairo_pattern_add_color_stop_rgba(pattern, stopPoint.offset, color.rNorm, color.gNorm, color.bNorm, color
+                    .a);
         }
 
         cairo_set_source(cr, pattern);
 
         assert(onPattern);
         onPattern();
-        
-        scope(exit){
+
+        scope (exit)
+        {
             cairo_pattern_destroy(pattern);
         }
+    }
+
+    void text(string text)
+    {
+        import std.utf : toUTFz;
+
+        cairo_text_path(cr, text.toUTFz!(const(char)*));
+    }
+
+    void strokeText(string str, float x, float y)
+    {
+        moveTo(x, y);
+        text(str);
+        stroke;
+    }
+
+    void fillText(string str, float x, float y)
+    {
+        moveTo(x, y);
+        text(str);
+        fill;
+    }
+
+    void fontFace(string name)
+    {
+        import std.string : toStringz;
+
+        cairo_select_font_face(cr, name.toStringz, cairo_font_slant_t.CAIRO_FONT_SLANT_NORMAL, cairo_font_weight_t
+                .CAIRO_FONT_WEIGHT_NORMAL);
+    }
+
+    void fontSize(double size)
+    {
+        cairo_set_font_size(cr, size);
     }
 }

@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.canvases.renderer_canvas;
 
 import api.dm.kit.graphics.canvases.state_canvas : StateCanvas;
-import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GradientStopPoint;
+import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GStop;
 import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
@@ -103,6 +103,12 @@ class RendererCanvas : StateCanvas
         graphic.fillRect(Vec2f(x, y), width, height);
     }
 
+    void strokeRect(float x, float y, float width, float height)
+    {
+        rect(x, y, width, height);
+        stroke;
+    }
+
     void fillTriangle(float x1, float y1, float x2, float y2, float x3, float y3)
     {
         graphic.fillTriangle(Vec2f(x1, y1), Vec2f(x2, y2), Vec2f(x3, y3));
@@ -133,12 +139,42 @@ class RendererCanvas : StateCanvas
 
     }
 
-    void linearGradient(Vec2f start, Vec2f end, GradientStopPoint[] stopPoints, void delegate() onPattern)
+    void linearGradient(float x0, float y0, float x1, float y1, GStop[] stopPoints, void delegate() onPattern)
     {
 
     }
 
-    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern)
+    void linearGradient(Vec2f start, Vec2f end, GStop[] stopPoints, void delegate() onPattern)
+    {
+
+    }
+
+    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GStop[] stopPoints, void delegate() onPattern)
+    {
+
+    }
+
+    void text(string text)
+    {
+      
+    }
+
+    void strokeText(string text, float x, float y)
+    {
+        
+    }
+
+    void fillText(string text, float x, float y)
+    {
+        
+    }
+
+    void fontFace(string name)
+    {
+        
+    }
+
+    void fontSize(double size)
     {
         
     }
