@@ -149,7 +149,7 @@ class RendererCanvas : StateCanvas
 
     }
 
-    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GStop[] stopPoints, void delegate() onPattern)
+    void radialGradient(Vec2f innerCenter, float innerRadius, Vec2f outerCenter, float outerRadius, GStop[] stopPoints, void delegate() onPattern)
     {
 
     }

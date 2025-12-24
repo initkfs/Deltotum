@@ -268,7 +268,7 @@ class VectorCanvas : GraphicCanvas
         }
     }
 
-    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GStop[] stopPoints, void delegate() onPattern)
+    void radialGradient(Vec2f innerCenter, float innerRadius, Vec2f outerCenter, float outerRadius, GStop[] stopPoints, void delegate() onPattern)
     {
 
         cairo_pattern_t* pattern = cairo_pattern_create_radial(innerCenter.x, innerCenter.y, innerRadius, outerCenter

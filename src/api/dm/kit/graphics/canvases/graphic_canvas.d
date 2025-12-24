@@ -91,7 +91,7 @@ interface GraphicCanvas
 
     final void radialGradient(GStopBuilder builder, void delegate() onPattern)
     {
-        radialGradient(builder.start, builder.end, builder.innerRadius, builder.outerRadius, builder.stops, onPattern);
+        radialGradient(builder.start, builder.innerRadius, builder.end, builder.outerRadius, builder.stops, onPattern);
     }
     
     void beginPath();
@@ -149,7 +149,7 @@ interface GraphicCanvas
 
     void linearGradient(float x0, float y0, float x1, float y1, GStop[] stopPoints, void delegate() onPattern);
     void linearGradient(Vec2f start, Vec2f end, GStop[] stopPoints, void delegate() onPattern);
-    void radialGradient(Vec2f innerCenter, Vec2f outerCenter, float innerRadius, float outerRadius, GStop[] stopPoints, void delegate() onPattern);
+    void radialGradient(Vec2f innerCenter, float innerRadius, Vec2f outerCenter, float outerRadius, GStop[] stopPoints, void delegate() onPattern);
 
     void text(string text);
     void strokeText(string text, float x, float y);
