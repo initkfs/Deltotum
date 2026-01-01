@@ -963,6 +963,34 @@ class SdlApp : GuiApp
         SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer.get);
         window.renderer = sdlRenderer;
 
+        if (uservices.config.hasKey(KitConfigKeys.backendCheckRendererScale) && uservices.config.getBool(
+                KitConfigKeys.backendCheckRendererScale))
+        {
+            int rw, rh;
+            if (const err = sdlRenderer.getOutputSize(rw, rh))
+            {
+                uservices.logger.error("Unable to detect output renderer size: ", sdlRenderer
+                        .getError);
+            }
+            else
+            {
+                int windowWidth = cast(int) window.width;
+                if (windowWidth > 0 && rw != windowWidth)
+                {
+                    float wScale = rw / window.width;
+                    float hScale = rh / window.height;
+
+                    uservices.logger.infof("Renderer output w:%dx%d, win %fx%f, set scale %fx%f", rw, rh, window.width, window
+                            .height, wScale, hScale);
+
+                    if (const err = sdlRenderer.setScale(wScale, hScale))
+                    {
+                        throw new Exception("Unable to set renderer scale: ", sdlRenderer.getError);
+                    }
+                }
+            }
+        }
+
         window.title = title;
 
         auto asset = createAsset(uservices.logging, uservices.config, uservices.context, () {

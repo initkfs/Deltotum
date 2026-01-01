@@ -18,6 +18,8 @@ string backendIsGPU = "backendIsGPU";
 string backendJoystickIndex = "backendJoystickIndex";
 string backendJoystickIsClassic = "backendJoystickIsClassic";
 
+string backendCheckRendererScale = "backendCheckRendererScale";
+
 string graphicsUseVector = "graphicsUseVector";
 string graphicsIsIconPack = "graphicsIsIconPack";
 
