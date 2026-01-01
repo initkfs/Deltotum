@@ -10,6 +10,8 @@ alias xmlReallocFunc = void* function(void* mem, size_t size);
 alias xmlFreeFunc = void function(void* mem);
 alias xmlStrdupFunc = char* function(const char* str);
 
+alias xmlExternalEntityLoader = xmlParserInput* function(const char *URL, const char *publicId, xmlParserCtxt *context);
+
 alias xmlChar = ubyte;
 
 struct xmlNs;
@@ -18,6 +20,8 @@ struct xmlDict;
 struct xmlID;
 struct xmlBuffer;
 
+struct xmlParserInput;
+struct xmlParserCtxt;
 struct xmlSaveCtxt;
 
 struct xmlNode
@@ -175,5 +179,6 @@ enum xmlSaveOption
 enum xmlParserOption
 {
     XML_PARSE_NOERROR = 1 << 5,
-    XML_PARSE_NOWARNING = 1 << 6
+    XML_PARSE_NOWARNING = 1 << 6,
+    XML_PARSE_NO_XXE    = 1<<23
 }

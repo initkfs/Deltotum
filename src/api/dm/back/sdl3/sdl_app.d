@@ -217,6 +217,12 @@ class SdlApp : GuiApp
             onInitializedSystems();
         }
 
+        if (!setMetadata(appname, appver, appid))
+        {
+            assert(sdlLib);
+            uservices.logger.error("Error setting app metadata: ", sdlLib.getError);
+        }
+
         assert(mainLoop);
         initLoop(mainLoop);
 
@@ -812,6 +818,14 @@ class SdlApp : GuiApp
             uservices.logger.tracef("Init loop, autostart: %s, running: %s, fps: %s, udt: %s", loop.isAutoStart, loop
                     .isRunning, loop.frameRate, loop.updateDelta);
         }
+    }
+
+    bool setMetadata(string appname, string appversion, string appid)
+    {
+        import std.string : toStringz;
+
+        //appid - com.example.myapp
+        return SDL_SetAppMetadata(appname.toStringz, appversion.toStringz, appid.toStringz);
     }
 
     override ComPlatform newComPlatform()

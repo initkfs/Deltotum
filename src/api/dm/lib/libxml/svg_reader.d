@@ -16,7 +16,7 @@ class SvgReader : LibXmlObject
     {
         xmlDoc* docPtr = xmlReadMemory(text.toStringz, cast(int) text.length, null, null, xmlParserOption
                 .XML_PARSE_NOERROR | xmlParserOption
-                .XML_PARSE_NOWARNING);
+                .XML_PARSE_NOWARNING | xmlParserOption.XML_PARSE_NO_XXE);
 
         if (!docPtr)
         {

@@ -33,6 +33,10 @@ import std.getopt : GetoptResult;
  */
 class CliApp : SimpleUnit
 {
+    string appname = "app";
+    string appver = "0.1";
+    string appid = "app.app";
+
     bool isStopMainController = true;
 
     string defaultDataDir = "data";

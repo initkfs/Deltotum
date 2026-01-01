@@ -8,6 +8,11 @@ import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 
 import core.stdc.stdlib : free;
 
+static extern (C) xmlParserInput* emptyXmlExternalEntityLoader(const char* URL, const char* publicId, xmlParserCtxt* context)
+{
+    return null;
+}
+
 xmlFreeFunc _xmlFree;
 
 extern (C) nothrow
@@ -78,6 +83,8 @@ extern (C) nothrow
 
     xmlDoc* function(const xmlChar* URI, const xmlChar* publicId) htmlNewDocNoDtD;
 
+    void function(xmlExternalEntityLoader f) xmlSetExternalEntityLoader;
+
     xmlBuffer* function() xmlBufferCreate;
     void function(xmlBuffer*) xmlBufferFree;
     xmlChar* function(xmlBuffer* buf) xmlBufferContent;
@@ -92,6 +99,8 @@ extern (C) nothrow
 
 class LibxmlLib : DynamicLoader
 {
+    bool isDisableExternLoading = true;
+
     override void bindAll()
     {
         bind(cast(void*)&xmlParserVersion, "xmlParserVersion");
@@ -143,6 +152,8 @@ class LibxmlLib : DynamicLoader
         bind(&xmlBufferFree, "xmlBufferFree");
         bind(&xmlNodeDump, "xmlNodeDump");
 
+        bind(&xmlSetExternalEntityLoader, "xmlSetExternalEntityLoader");
+
         xmlInitParser();
         xmlInitMemory();
 
@@ -163,6 +174,11 @@ class LibxmlLib : DynamicLoader
         if (!_xmlFree)
         {
             throw new Exception("Libxml free function is null");
+        }
+
+        if (isDisableExternLoading)
+        {
+            xmlSetExternalEntityLoader(&emptyXmlExternalEntityLoader);
         }
     }
 
