@@ -23,6 +23,11 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 {
+    protected
+    {
+        SDL_GPURenderState* _state;
+    }
+
     this(SDL_Renderer* ptr)
     {
         super(ptr);
@@ -196,7 +201,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     }
 
     bool drawFillRect(SDL_FRect* rect) nothrow => SDL_RenderFillRect(ptr, rect);
-    bool drawFillRects(SDL_FRect[] rects) nothrow => SDL_RenderFillRects(ptr, rects.ptr, cast(int) rects.length);
+    bool drawFillRects(SDL_FRect[] rects) nothrow => SDL_RenderFillRects(ptr, rects.ptr, cast(int) rects
+            .length);
     bool drawFillRects(Rect2f[] rects) nothrow => drawFillRects(cast(SDL_FRect[]) rects);
 
     ComResult getOutputSize(out int width, out int height) nothrow
@@ -490,10 +496,81 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
+    void setFragmentUniforms(uint slotIndex, const void* data, uint length)
+    {
+        assert(_state);
+        assert(ptr);
+        if (!SDL_SetGPURenderStateFragmentUniforms(_state, slotIndex, data, length))
+        {
+            throw new Exception(getLastErrorNew);
+        }
+    }
+
+    SDL_GPURenderState* newState(SDL_GPUShader* fragShader, SDL_GPUTextureSamplerBinding* samplerBindings = null, int numSamplerBindings = 0, SDL_GPUBuffer** storageBuffers = null, int numStorageBuffers = 0, SDL_GPUTexture** storageTextures = null, int numStorageTextures = 0)
+    {
+        assert(ptr);
+        SDL_GPURenderStateCreateInfo info;
+        info.fragment_shader = fragShader;
+        info.num_sampler_bindings = numSamplerBindings;
+        info.sampler_bindings = samplerBindings;
+
+        info.num_storage_textures = numStorageTextures;
+        info.storage_textures = storageTextures;
+
+        info.num_storage_buffers = numStorageBuffers;
+        info.storage_buffers = storageBuffers;
+
+        SDL_GPURenderState* newState = SDL_CreateGPURenderState(ptr, &info);
+        if (!newState)
+        {
+            throw new Exception(getLastErrorNew);
+        }
+        return newState;
+    }
+
+    SDL_GPURenderState* state() => _state;
+
+    ComResult state(SDL_GPURenderState* newState, bool isDisposePrevious = true)
+    {
+        if (!ptr)
+        {
+            return ComResult.error("Renderer not created");
+        }
+
+        if (_state && isDisposePrevious)
+        {
+            if (!disposeState)
+            {
+                return ComResult.error("Previous state not disposed");
+            }
+            assert(!_state);
+        }
+
+        if (!SDL_SetGPURenderState(ptr, newState))
+        {
+            return getErrorRes("Unable to set renderer state");
+        }
+        return ComResult.success;
+    }
+
     string getLastErrorNew() => getError;
+
+    bool disposeState() nothrow
+    {
+        if (!_state)
+        {
+            return false;
+        }
+
+        SDL_DestroyGPURenderState(_state);
+        _state = null;
+        return true;
+    }
 
     override protected bool disposePtr()
     {
+        disposeState;
+
         if (ptr)
         {
             SDL_DestroyRenderer(ptr);
