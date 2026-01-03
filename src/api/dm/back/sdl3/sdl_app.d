@@ -813,11 +813,8 @@ class SdlApp : GuiApp
 
         loop.isAutoStart = isAutoStart;
         loop.setUp;
-        version (EnableTrace)
-        {
-            uservices.logger.tracef("Init loop, autostart: %s, running: %s, fps: %s, udt: %s", loop.isAutoStart, loop
-                    .isRunning, loop.frameRate, loop.updateDelta);
-        }
+        uservices.logger.infof("Init loop, autostart: %s, running: %s, fps: %s, udt: %s", loop.isAutoStart, loop
+                .isRunning, loop.frameRate, loop.updateDelta);
     }
 
     bool setMetadata(string appname, string appversion, string appid)

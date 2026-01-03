@@ -131,8 +131,8 @@ class XYChart : Container
 
         auto chartContentContainer = new HBox(0);
         //chartContentContainer.isDrawBounds = true;
-        chartContentContainer.isResizeChildren = false;
-        chartContentContainer.layout.isResizeChildren = false;
+        chartContentContainer.isResizeChild = false;
+        chartContentContainer.layout.isResizeChild = false;
         addCreate(chartContentContainer);
 
         if (!yScale1 && isCreateYScale1)

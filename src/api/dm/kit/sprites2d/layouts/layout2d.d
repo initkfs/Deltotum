@@ -135,12 +135,12 @@ abstract class Layout2d
         return isDecreaseChildrenWidth || isDecreaseChildrenHeight;
     }
 
-    bool isResizeChildren() const pure nothrow @safe
+    bool isResizeChild() const pure nothrow @safe
     {
         return isIncreaseChildrenSize || isDecreaseChildrenSize;
     }
 
-    void isResizeChildren(bool value) pure nothrow @safe
+    void isResizeChild(bool value) pure nothrow @safe
     {
         isIncreaseChildrenWidth = value;
         isIncreaseChildrenHeight = value;
@@ -149,7 +149,7 @@ abstract class Layout2d
     void isAutoResize(bool isResize) pure @safe
     {
         isIncreaseRootSize = isResize;
-        isResizeChildren = isResize;
+        isResizeChild = isResize;
     }
 
     void isAlignOneChild(bool isAlign) pure @safe

@@ -87,10 +87,10 @@ class HSplitBox : BaseSplitBox
 
             sep.x = x;
 
-            prev.isResizeChildren = true;
-            prev.isResizeChildrenAlways = true;
-            next.isResizeChildren = true;
-            next.isResizeChildrenAlways = true;
+            prev.isResizeChild = true;
+            prev.isResizeChildAlways = true;
+            next.isResizeChild = true;
+            next.isResizeChildAlways = true;
 
             if (dx > 0)
             {
@@ -98,13 +98,13 @@ class HSplitBox : BaseSplitBox
                 if (prev.layout)
                 {
                     prev.layout.isIncreaseRootSize = false;
-                    prev.layout.isResizeChildren = false;
+                    prev.layout.isResizeChild = false;
                 }
 
                 if (next.layout)
                 {
                     next.layout.isIncreaseRootSize = true;
-                    next.layout.isResizeChildren = true;
+                    next.layout.isResizeChild = true;
                 }
             }
             else
@@ -113,13 +113,13 @@ class HSplitBox : BaseSplitBox
                 if (next.layout)
                 {
                     next.layout.isIncreaseRootSize = false;
-                    next.layout.isResizeChildren = false;
+                    next.layout.isResizeChild = false;
                 }
 
                 if (prev.layout)
                 {
                     prev.layout.isIncreaseRootSize = true;
-                    prev.layout.isResizeChildren = true;
+                    prev.layout.isResizeChild = true;
                 }
             }
 

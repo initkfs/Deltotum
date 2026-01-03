@@ -65,14 +65,14 @@ class BaseRoundButton : BaseButton
         initSize(_diameter, _diameter);
     }
 
-    override bool containsPoint(float x, float y)
+    override bool contains(float x, float y)
     {
         if (hasBackground)
         {
-            return background.get.containsPoint(x, y);
+            return background.get.contains(x, y);
         }
 
-        return super.containsPoint(x, y);
+        return super.contains(x, y);
     }
 
     override bool intersectBounds(Sprite2d other)

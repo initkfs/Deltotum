@@ -86,7 +86,7 @@ class Container : Control
         {
             return false;
         }
-        return layout.isResizeChildren;
+        return layout.isResizeChild;
     }
 
     bool isLayoutResizeChildren(bool value)
@@ -96,7 +96,7 @@ class Container : Control
             return false;
         }
 
-        layout.isResizeChildren = value;
+        layout.isResizeChild = value;
         setInvalid;
         return true;
     }

@@ -167,7 +167,7 @@ class ManagedLayout : Layout2d
             resizeRootHeight(root);
         }
 
-        if (isResizeChildren || root.isResizeChildren)
+        if (isResizeChild || root.isResizeChild)
         {
             resizeChildren(root);
         }

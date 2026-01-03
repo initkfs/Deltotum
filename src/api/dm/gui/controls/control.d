@@ -140,7 +140,7 @@ class Control : GuiComponent
         isLayoutManaged = true;
 
         isResizable = true;
-        isResizeChildren = true;
+        isResizeChild = true;
         isScalable = true;
     }
 
@@ -1249,7 +1249,7 @@ class Control : GuiComponent
             return;
         }
 
-        if (isConsumeEventIfBackground && (isBackground || hasBackground) && containsPoint(
+        if (isConsumeEventIfBackground && (isBackground || hasBackground) && contains(
                 e.x, e.y))
         {
             //TODO focus discharge

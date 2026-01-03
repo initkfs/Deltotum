@@ -76,8 +76,8 @@ class VSplitBox : BaseSplitBox
 
             sep.y = y;
 
-            prev.isResizeChildren = true;
-            next.isResizeChildren = true;
+            prev.isResizeChild = true;
+            next.isResizeChild = true;
 
             if (dy > 0)
             {
@@ -85,13 +85,13 @@ class VSplitBox : BaseSplitBox
                 if (prev.layout)
                 {
                     prev.layout.isIncreaseRootSize = false;
-                    prev.layout.isResizeChildren = false;
+                    prev.layout.isResizeChild = false;
                 }
 
                 if (next.layout)
                 {
                     next.layout.isIncreaseRootSize = true;
-                    next.layout.isResizeChildren = true;
+                    next.layout.isResizeChild = true;
                 }
             }
             else
@@ -100,13 +100,13 @@ class VSplitBox : BaseSplitBox
                 if (next.layout)
                 {
                     next.layout.isIncreaseRootSize = false;
-                    next.layout.isResizeChildren = false;
+                    next.layout.isResizeChild = false;
                 }
 
                 if (prev.layout)
                 {
                     prev.layout.isIncreaseRootSize = true;
-                    prev.layout.isResizeChildren = true;
+                    prev.layout.isResizeChild = true;
                 }
             }
 

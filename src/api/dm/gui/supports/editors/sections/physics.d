@@ -49,7 +49,7 @@ class Physics : Control
         material.onPointerPress ~= (ref e) {
             material.velocity.x = 10;
             material.velocity.y = 10;
-            material.isPhysicsEnabled = true;
+            material.isPhysics = true;
         };
     }
 

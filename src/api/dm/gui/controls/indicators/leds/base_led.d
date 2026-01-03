@@ -29,7 +29,7 @@ class BaseLed : Control
         import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         layout = new CenterLayout;
-        isOpacityForChildren = true;
+        isOpacityForChild = true;
     }
 
     override void loadTheme()

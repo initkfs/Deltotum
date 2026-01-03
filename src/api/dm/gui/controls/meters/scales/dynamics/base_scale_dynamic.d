@@ -35,7 +35,7 @@ abstract class BaseScaleDynamic : BaseDrawableScale
     {
         super(width, height);
 
-        isResizeChildrenIfNoLayout = false;
+        isResizeChildIfNoLayout = false;
         isResizedByParent = false;
     }
 

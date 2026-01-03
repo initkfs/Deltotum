@@ -184,8 +184,8 @@ class Carousel : BaseSelector!Sprite2d
             auto newContainer = newItemContainer(maxItemWidth, maxItemHeight);
             itemContainer = !onNewItemContainer ? newContainer : onNewItemContainer(newContainer);
 
-            itemContainer.isResizeChildrenIfNoLayout = false;
-            itemContainer.isResizeChildrenIfNotLManaged = false;
+            itemContainer.isResizeChildIfNoLayout = false;
+            itemContainer.isResizeChildIfNotManaged = false;
             if (itemContainer.width != maxItemWidth)
             {
                 auto isResize = (itemContainer.width = maxItemWidth);

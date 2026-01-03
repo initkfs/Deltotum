@@ -60,7 +60,7 @@ class Sprite2d : EventKitTarget
         float _angle = 0;
     }
 
-    bool isAngleForChildren = true;
+    bool isAngleForChild = true;
 
     float scale = 1;
     float mass = 1;
@@ -68,15 +68,15 @@ class Sprite2d : EventKitTarget
 
     float _opacity = 1;
     float maxOpacity = float.max;
-    bool isOpacityForChildren;
+    bool isOpacityForChild;
 
-    bool isPhysicsEnabled;
+    bool isPhysics;
 
     Vec2f velocity;
     Vec2f acceleration;
 
     Sprite2d isCollisionProcess;
-    Sprite2d[] targetsForCollisions;
+    Sprite2d[] collisionTargets;
 
     bool delegate(Sprite2d, Sprite2d) onCollision;
 
@@ -98,22 +98,22 @@ class Sprite2d : EventKitTarget
     bool isUpdatable = true;
     bool isResizable;
     bool isKeepAspectRatio;
-    bool isForwardEventsToChildren = true;
+    bool isForwardEventsToChild = true;
 
     Layout2d layout;
     bool _layoutManaged = true;
     bool _layoutMovable = true;
 
-    bool isLayoutForChildren;
+    bool isLayoutForChild;
 
     bool isLayoutOnInvalid;
-    bool isLayoutOnInvalidForChildren = true;
+    bool isLayoutOnInvalidForChild = true;
 
-    bool isResizeChildren;
-    bool isResizeChildrenIfNoLayout = true;
-    bool isResizeChildrenIfNotLManaged = true;
-    bool isResizeChildrenIfNotResizable;
-    bool isResizeChildrenAlways;
+    bool isResizeChild;
+    bool isResizeChildIfNoLayout = true;
+    bool isResizeChildIfNotManaged = true;
+    bool isResizeChildIfNotResizable;
+    bool isResizeChildAlways;
 
     bool isResizedWidthByParent;
     bool isResizedHeightByParent;
@@ -141,6 +141,7 @@ class Sprite2d : EventKitTarget
     bool isDrawBounds;
     bool isDrawCenterBounds;
     bool isDrawInvalidBounds;
+
     RGBA boundsColor = RGBA.red;
     RGBA boundsCenterColor = RGBA.yellow;
     RGBA boundsInvalidColor = RGBA.blue;
@@ -149,8 +150,8 @@ class Sprite2d : EventKitTarget
     bool isVisibilityForChildren;
 
     bool isReceiveEvents = true;
-    bool isEventsFirstProcessChildren;
-    bool isDispatchChildrenFromLast;
+    bool isEventsFirstProcessChild;
+    bool isDispatchChildFromLast;
 
     //protected
     //{
@@ -208,7 +209,7 @@ class Sprite2d : EventKitTarget
     void delegate(float, float) onChangeYOldNew;
 
     bool isInvalidationProcess;
-    bool isValidatableChildren = true;
+    bool isValidatableChild = true;
 
     bool isValid = true;
 
@@ -347,17 +348,14 @@ class Sprite2d : EventKitTarget
         return new RendererCanvas(this.graphic);
     }
 
-    bool hasGraphicsContext()
-    {
-        return _gContext !is null;
-    }
+    bool hasGraphicsContext() => _gContext !is null;
 
-    void createGraphicsContext()
+    void createGraphicsContext(bool isThrowIfExists = false)
     {
-        // if (_gContext)
-        // {
-        //     throw new Exception("Graphic context already exists");
-        // }
+        if (isThrowIfExists && _gContext)
+        {
+            throw new Exception("Graphic context already exists");
+        }
         _gContext = newGraphicsContext;
         assert(_gContext);
     }
@@ -375,7 +373,7 @@ class Sprite2d : EventKitTarget
 
         import api.dm.kit.events.event_kit_target : EventKitPhase;
 
-        if (isEventsFirstProcessChildren)
+        if (isEventsFirstProcessChild)
         {
             dispatchEventToChildren(e);
         }
@@ -395,7 +393,7 @@ class Sprite2d : EventKitTarget
         {
             bool inCurClipBounds = inClipBounds(e.x, e.y);
 
-            if (inCurClipBounds && containsPoint(e.x, e.y))
+            if (inCurClipBounds && contains(e.x, e.y))
             {
                 if (onPointerInBounds.length > 0)
                 {
@@ -516,7 +514,7 @@ class Sprite2d : EventKitTarget
                     if (onPointerWheel.length > 0)
                     {
                         auto pointerPos = input.pointerPos;
-                        if (containsPoint(pointerPos.x, pointerPos.y))
+                        if (contains(pointerPos.x, pointerPos.y))
                         {
                             runEventHandlers(e);
                         }
@@ -533,7 +531,7 @@ class Sprite2d : EventKitTarget
         {
             if (!e.isSynthetic)
             {
-                if (inClipBounds(e.x, e.y) && containsPoint(e.x, e.y))
+                if (inClipBounds(e.x, e.y) && contains(e.x, e.y))
                 {
                     if (!isFocus && e.event == FocusEvent.Event.focusIn)
                     {
@@ -571,7 +569,7 @@ class Sprite2d : EventKitTarget
             }
         }
 
-        if (!isEventsFirstProcessChildren)
+        if (!isEventsFirstProcessChild)
         {
             dispatchEventToChildren(e);
         }
@@ -581,11 +579,11 @@ class Sprite2d : EventKitTarget
 
     void dispatchEventToChildren(E)(ref E e)
     {
-        if (isForwardEventsToChildren && children.length > 0)
+        if (isForwardEventsToChild && children.length > 0)
         {
             onEventPhase(e, EventKitPhase.preDispatchChildren);
 
-            if (!isDispatchChildrenFromLast)
+            if (!isDispatchChildFromLast)
             {
                 foreach (Sprite2d child; children)
                 {
@@ -793,12 +791,12 @@ class Sprite2d : EventKitTarget
             isSet |= true;
         }
 
-        if (isLayoutOnInvalidForChildren)
+        if (isLayoutOnInvalidForChild)
         {
             sprite.isLayoutOnInvalid = isLayoutOnInvalid;
         }
 
-        if (layout && isLayoutForChildren)
+        if (layout && isLayoutForChild)
         {
             sprite.layout = layout;
         }
@@ -1129,7 +1127,7 @@ class Sprite2d : EventKitTarget
 
     void unvalidate()
     {
-        if (isValidatableChildren)
+        if (isValidatableChild)
         {
             foreach (ch; children)
             {
@@ -1144,7 +1142,7 @@ class Sprite2d : EventKitTarget
     void validate(scope void delegate(Sprite2d) onInvalid = null)
     {
         bool isChildInvalid;
-        if (isValidatableChildren)
+        if (isValidatableChild)
         {
             foreach (ch; children)
             {
@@ -1200,14 +1198,11 @@ class Sprite2d : EventKitTarget
         applyLayout;
     }
 
-    void update(float delta)
+    void updatePhys(out float dx, out float dy, float delta)
     {
-        float dx = 0;
-        float dy = 0;
-
         checkCollisions;
 
-        if (isUpdatable && isPhysicsEnabled)
+        if (isUpdatable && isPhysics)
         {
             //TODO check velocity is 0 || acceleration is 0
             const float accelerationDx = acceleration.x * invMass * delta;
@@ -1253,6 +1248,14 @@ class Sprite2d : EventKitTarget
             velocity.x = newVelocityX;
             velocity.y = newVelocityY;
         }
+    }
+
+    void update(float delta)
+    {
+        float dx;
+        float dy;
+
+        updatePhys(dx, dy, delta);
 
         foreach (Sprite2d child; children)
         {
@@ -1285,10 +1288,7 @@ class Sprite2d : EventKitTarget
 
     bool isClipSet() => clip.width > 0 || clip.height > 0;
 
-    bool containsPoint(float x, float y)
-    {
-        return boundsRect.contains(x, y);
-    }
+    bool contains(float x, float y) => boundsRect.contains(x, y);
 
     bool intersectBounds(Sprite2d other)
     {
@@ -1312,9 +1312,9 @@ class Sprite2d : EventKitTarget
             return;
         }
 
-        foreach (i, firstSprite; targetsForCollisions)
+        foreach (i, firstSprite; collisionTargets)
         {
-            foreach (secondSprite; targetsForCollisions[i + 1 .. $])
+            foreach (secondSprite; collisionTargets[i + 1 .. $])
             {
                 if (firstSprite is secondSprite)
                 {
@@ -1506,10 +1506,7 @@ class Sprite2d : EventKitTarget
         return isChangePos;
     }
 
-    Vec2f center()
-    {
-        return Vec2f(x + (width / 2.0), y + (height / 2.0));
-    }
+    Vec2f center() => Vec2f(x + (width / 2.0), y + (height / 2.0));
 
     void centering(Sprite2d child)
     {
@@ -1530,10 +1527,7 @@ class Sprite2d : EventKitTarget
         return isChangeXY;
     }
 
-    float x() @safe pure nothrow
-    {
-        return _x;
-    }
+    float x() @safe pure nothrow => _x;
 
     bool x(float newX)
     {
@@ -1582,10 +1576,7 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
-    float y() @safe pure nothrow
-    {
-        return _y;
-    }
+    float y() @safe pure nothrow => _y;
 
     bool y(float newY)
     {
@@ -1692,12 +1683,11 @@ class Sprite2d : EventKitTarget
         initHeightForce(newHeight);
     }
 
-    float width() @safe pure nothrow
-    {
-        return _width;
-    }
+    alias w = width;
+    alias halfW = halfWidth;
 
-    float halfWidth() @safe pure nothrow => width / 2;
+    float width() @safe pure nothrow => _width;
+    float halfWidth() @safe pure nothrow => _width / 2;
 
     bool canChangeWidth(float value)
     {
@@ -1774,14 +1764,14 @@ class Sprite2d : EventKitTarget
             }
         }
 
-        if (isResizeChildren && children.length > 0)
+        if (isResizeChild && children.length > 0)
         {
             immutable float dw = _width - oldWidth;
 
             //Branch expanded for easier debugging
             foreach (child; children)
             {
-                if (isResizeChildrenAlways)
+                if (isResizeChildAlways)
                 {
                     incChildWidth(child, dw);
                     continue;
@@ -1789,7 +1779,7 @@ class Sprite2d : EventKitTarget
 
                 if (!child.isResizedWidthByParent)
                 {
-                    if (isResizeChildrenIfNotResizable)
+                    if (isResizeChildIfNotResizable)
                     {
                         incChildWidth(child, dw);
                     }
@@ -1797,7 +1787,7 @@ class Sprite2d : EventKitTarget
                     continue;
                 }
 
-                if ((isResizeChildrenIfNoLayout && !layout) || (isResizeChildrenIfNotLManaged && !child
+                if ((isResizeChildIfNoLayout && !layout) || (isResizeChildIfNotManaged && !child
                         .isLayoutManaged))
                 {
                     incChildWidth(child, dw);
@@ -1808,10 +1798,7 @@ class Sprite2d : EventKitTarget
         return isResized;
     }
 
-    bool width(float value)
-    {
-        return tryWidth(value);
-    }
+    bool width(float value) => tryWidth(value);
 
     protected void incChildWidth(Sprite2d child, float dw)
     {
@@ -1825,12 +1812,11 @@ class Sprite2d : EventKitTarget
         child.height = newHeight;
     }
 
-    float height() @safe pure nothrow
-    {
-        return _height;
-    }
+    alias h = height;
+    alias halfH = halfHeight;
 
-    float halfHeight() @safe pure nothrow => height / 2;
+    float height() @safe pure nothrow => _height;
+    float halfHeight() @safe pure nothrow => _height / 2;
 
     bool canChangeHeight(float value)
     {
@@ -1897,12 +1883,12 @@ class Sprite2d : EventKitTarget
         }
 
         //!isProcessLayout && !isProcessParentLayout && 
-        if (isResizeChildren && children.length > 0)
+        if (isResizeChild && children.length > 0)
         {
             const dh = _height - oldHeight;
             foreach (child; children)
             {
-                if (isResizeChildrenAlways)
+                if (isResizeChildAlways)
                 {
                     incChildHeight(child, dh);
                     continue;
@@ -1910,7 +1896,7 @@ class Sprite2d : EventKitTarget
 
                 if (!child.isResizedHeightByParent)
                 {
-                    if (isResizeChildrenIfNotResizable)
+                    if (isResizeChildIfNotResizable)
                     {
                         incChildHeight(child, dh);
                     }
@@ -1918,7 +1904,7 @@ class Sprite2d : EventKitTarget
                     continue;
                 }
 
-                if ((isResizeChildrenIfNoLayout && !layout) || (isResizeChildrenIfNotLManaged && !child
+                if ((isResizeChildIfNoLayout && !layout) || (isResizeChildIfNotManaged && !child
                         .isLayoutManaged))
                 {
                     incChildHeight(child, dh);
@@ -1929,10 +1915,7 @@ class Sprite2d : EventKitTarget
         return isResized;
     }
 
-    bool height(float value)
-    {
-        return tryHeight(value);
-    }
+    bool height(float value) => tryHeight(value);
 
     bool resize(float newWidth, float newHeight, bool isForce = false)
     {
@@ -2336,10 +2319,7 @@ class Sprite2d : EventKitTarget
         padding(0);
     }
 
-    ref Insets padding()
-    {
-        return _padding;
-    }
+    ref Insets padding() => _padding;
 
     void padding(Insets value)
     {
@@ -2376,10 +2356,7 @@ class Sprite2d : EventKitTarget
         _padding.bottom = value;
     }
 
-    ref Insets margin()
-    {
-        return _margin;
-    }
+    ref Insets margin() => _margin;
 
     void margin(Insets value)
     {
@@ -2415,8 +2392,7 @@ class Sprite2d : EventKitTarget
             pause;
         }
 
-        onAllChildren((child) { child.onScenePause; }, isForRoot:
-            false);
+        onAllChildren((child) { child.onScenePause; }, false);
     }
 
     void onSceneResume()
@@ -2426,8 +2402,7 @@ class Sprite2d : EventKitTarget
             run;
         }
 
-        onAllChildren((child) { child.onSceneResume; }, isForRoot:
-            false);
+        onAllChildren((child) { child.onSceneResume; }, false);
     }
 
     void setUserData(T)(string key, T data)
@@ -2651,7 +2626,7 @@ class Sprite2d : EventKitTarget
 
         _opacity = value;
 
-        if (isOpacityForChildren)
+        if (isOpacityForChild)
         {
             onChildrenRec((child) {
                 if (child is this)
@@ -2732,7 +2707,7 @@ class Sprite2d : EventKitTarget
 
         _angle = value;
 
-        if (isAngleForChildren)
+        if (isAngleForChild)
         {
             foreach (ch; children)
             {

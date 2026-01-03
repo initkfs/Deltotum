@@ -33,7 +33,7 @@ class Popup : VBox
     {
         isBackground = true;
         isBorder = true;
-        isOpacityForChildren = true;
+        isOpacityForChild = true;
         isLayoutManaged = false;
 
         //_width = 200;
