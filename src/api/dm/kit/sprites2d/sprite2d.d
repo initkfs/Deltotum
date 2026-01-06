@@ -1202,60 +1202,60 @@ class Sprite2d : EventKitTarget
     {
         checkCollisions;
 
-        if (isUpdatable && isPhysics)
+        //TODO check velocity is 0 || acceleration is 0
+        const float accelerationDx = acceleration.x * invMass * delta;
+        const float accelerationDy = acceleration.y * invMass * delta;
+
+        float newVelocityX = velocity.x + accelerationDx;
+        float newVelocityY = velocity.y + accelerationDy;
+
+        dx = newVelocityX * delta;
+        dy = newVelocityY * delta;
+
+        if (inScreenBounds)
         {
-            //TODO check velocity is 0 || acceleration is 0
-            const float accelerationDx = acceleration.x * invMass * delta;
-            const float accelerationDy = acceleration.y * invMass * delta;
+            auto thisBounds = boundsRect;
+            thisBounds.x = _x + dx;
+            thisBounds.y = _y + dy;
 
-            float newVelocityX = velocity.x + accelerationDx;
-            float newVelocityY = velocity.y + accelerationDy;
-
-            dx = newVelocityX * delta;
-            dy = newVelocityY * delta;
-
-            if (inScreenBounds)
+            const screen = graphic.renderBounds;
+            if (!screen.contains(thisBounds))
             {
-                auto thisBounds = boundsRect;
-                thisBounds.x = _x + dx;
-                thisBounds.y = _y + dy;
-
-                const screen = graphic.renderBounds;
-                if (!screen.contains(thisBounds))
+                if (!onScreenBoundsIsStop || onScreenBoundsIsStop())
                 {
-                    if (!onScreenBoundsIsStop || onScreenBoundsIsStop())
-                    {
-                        newVelocityX = 0;
-                        newVelocityY = 0;
+                    newVelocityX = 0;
+                    newVelocityY = 0;
 
-                        acceleration.x = 0;
-                        acceleration.y = 0;
-                    }
-                    else
-                    {
-                        newVelocityX = velocity.x;
-                        newVelocityY = velocity.y;
-                    }
-
-                    dx = 0;
-                    dy = 0;
+                    acceleration.x = 0;
+                    acceleration.y = 0;
                 }
+                else
+                {
+                    newVelocityX = velocity.x;
+                    newVelocityY = velocity.y;
+                }
+
+                dx = 0;
+                dy = 0;
             }
-
-            _x += dx;
-            _y += dy;
-
-            velocity.x = newVelocityX;
-            velocity.y = newVelocityY;
         }
+
+        _x += dx;
+        _y += dy;
+
+        velocity.x = newVelocityX;
+        velocity.y = newVelocityY;
     }
 
     void update(float delta)
     {
-        float dx;
-        float dy;
+        float dx = 0;
+        float dy = 0;
 
-        updatePhys(dx, dy, delta);
+        if (isPhysics)
+        {
+            updatePhys(dx, dy, delta);
+        }
 
         foreach (Sprite2d child; children)
         {
