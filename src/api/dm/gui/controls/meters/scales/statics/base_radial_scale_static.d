@@ -145,7 +145,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
                     float angleDegDiff = tickOffset;
 
                     drawScale(
-                onDrawAxis : null,
+onDrawAxis : null,
                         (size_t i, Vec2f pos, bool isMajorTick, float offsetTick) {
 
                         auto tickW = tickMinorHeight;

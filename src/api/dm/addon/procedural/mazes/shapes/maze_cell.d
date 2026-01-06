@@ -50,8 +50,8 @@ class MazeCell : Sprite2d
         assert(width > 0);
         assert(height > 0);
 
-        auto w = width;
-        auto h = height;
+        auto nw = width;
+        auto nh = height;
 
         import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
@@ -59,7 +59,7 @@ class MazeCell : Sprite2d
         {
             this()
             {
-                super(w, h);
+                super(nw, nh);
             }
 
             override void createContent()

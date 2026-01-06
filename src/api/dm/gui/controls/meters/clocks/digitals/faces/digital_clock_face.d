@@ -252,12 +252,12 @@ class DigitalClockFace : Control
     SevenSegment newMinSegment(float w, float h) => new SevenSegment(w, h);
     SevenSegment newSecSegment(float w, float h) => new SevenSegment(w, h);
 
-    Sprite2d newMinHourSeparator(float w, float h)
+    Sprite2d newMinHourSeparator(float nw, float nh)
     {
         import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
         import api.math.geom2.vec2 : Vec2f;
 
-        auto sepTexture = new Texture2d(w, h);
+        auto sepTexture = new Texture2d(nw, nh);
         buildInitCreate(sepTexture);
         sepTexture.createTargetRGBA32;
         sepTexture.setRenderTarget;
@@ -267,11 +267,11 @@ class DigitalClockFace : Control
         }
         graphic.clearTransparent;
 
-        auto dotRadius = w / 3;
+        auto dotRadius = nw / 3;
 
-        auto hOffset = h / 3;
+        auto hOffset = nh / 3;
 
-        auto dot1Center = Vec2f(w / 2, 1.5 * hOffset);
+        auto dot1Center = Vec2f(nw / 2, 1.5 * hOffset);
         auto dot2Center = dot1Center;
         dot2Center.y += hOffset;
 
@@ -294,7 +294,7 @@ class DigitalClockFace : Control
             {
                 this()
                 {
-                    super(w, h);
+                    super(nw, nh);
                 }
 
                 override void createContent()

@@ -267,9 +267,9 @@ class BaseTable(T, TCol:
     {
         return new class Container
         {
-            override Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
+            override Sprite2d newBackground(float nw, float nh, float angle, GraphicStyle style)
             {
-                return theme.rectShape(w, h, angle, style);
+                return theme.rectShape(nw, nh, angle, style);
             }
         };
     }
