@@ -9,6 +9,9 @@ import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_window : ComWindowId, ComWindow, ComWindowProgressState;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.geom2.vec2 : Vec2f, Vec2i;
+import api.dm.kit.apps.loops.counters.fps_update_counter : FpsUpdateCounter;
+import api.dm.kit.apps.loops.counters.fps_render_counter : FpsRenderCounter;
+import api.dm.kit.apps.loops.counters.fps_phys_counter : FpsPhysCounter;
 
 //TODO extract COM interfaces
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
@@ -47,6 +50,10 @@ class Window : GraphicComponent
 
         size_t lastShowingTick = 0;
     }
+
+    FpsRenderCounter renderCounter;
+    FpsUpdateCounter updateCounter;
+    FpsPhysCounter physCounter;
 
     Window parent;
     SingleScreen screen;
@@ -89,6 +96,11 @@ class Window : GraphicComponent
             throw new Exception("Window must not be null");
         }
         this.comWindow = window;
+
+        //TODO di
+        renderCounter = new FpsRenderCounter;
+        updateCounter = new FpsUpdateCounter;
+        physCounter = new FpsPhysCounter;
     }
 
     override void create()
@@ -792,19 +804,26 @@ class Window : GraphicComponent
         return id;
     }
 
-    void updateFixed(float delta)
+    void updateEndFrame(float startMs, float deltaMs, float physUpdate)
+    {
+        renderCounter.update(deltaMs);
+        physCounter.update(deltaMs, cast(int) physUpdate);
+        updateCounter.update(deltaMs);
+    }
+
+    void updateFixed(float startMs, float deltaMs, float deltaSec)
     {
         if (_currentScene)
         {
-            _currentScene.updateFixed(delta);
+            _currentScene.updateFixed(deltaSec);
         }
     }
 
-    void update(float delta)
+    void update(float startMs, float deltaMs, float deltaSec)
     {
         if (_currentScene)
         {
-            _currentScene.update(delta);
+            _currentScene.update(deltaSec);
         }
 
         if (isShowing && showingTasks.length > 0)
@@ -815,7 +834,7 @@ class Window : GraphicComponent
                 lastShowingTick = 0;
                 foreach (task; showingTasks)
                 {
-                    task(delta);
+                    task(deltaSec);
                 }
                 showingTasks = null;
             }

@@ -807,12 +807,23 @@ class SdlApp : GuiApp
         loop.timestampMsProvider = () => ticksMs;
         loop.onDelay = () => sdlLib.delayMs(10);
         loop.onDelayTimeRestMs = (restMs) => sdlLib.delayMs(cast(uint) restMs);
-        loop.onRender = (accumMsRest) => updateRender(accumMsRest);
-        loop.onFreqLoopUpdateDelta = (timestamp, delta){
-            updateLoopMs(timestamp);
-            updateFreqLoopDelta(delta);
+        loop.onRender = (float startMs, float deltaMs, float renderRestRatio) => updateRender(renderRestRatio);
+
+        loop.onFrameEnd = (startMs, deltaMs, physUpdate)
+        {
+            auto currWindow = windowing.currentOrNull;
+            if (currWindow)
+            {
+                currWindow.updateEndFrame(startMs, deltaMs, physUpdate);
+            }
         };
-        loop.onFreqLoopUpdateDeltaFixed = (delta) => updateFreqLoopDeltaFixed(delta);
+
+        loop.onFreqLoopUpdateDelta = (startMs, deltaMs, deltaSec)
+        {
+            updateLoopMs(startMs);
+            updateFreqLoopDelta(startMs, deltaMs, deltaSec);
+        };
+        loop.onFreqLoopUpdateDeltaFixed = (startMs, deltaMs, deltaFixedSec) => updateFreqLoopDeltaFixed(startMs, deltaMs, deltaFixedSec);
 
         loop.isAutoStart = isAutoStart;
         loop.setUp;
@@ -1251,25 +1262,25 @@ class SdlApp : GuiApp
         }
     }
 
-    void updateFreqLoopDeltaFixed(float delta)
+    void updateFreqLoopDeltaFixed(float startMs, float deltaMs, float deltaSec)
     {
         windowing.onWindows((window) {
             if (window.isShowing)
             {
-                window.updateFixed(delta);
+                window.updateFixed(startMs, deltaMs, deltaSec);
             }
             return true;
         });
     }
 
-    void updateFreqLoopDelta(float delta)
+    void updateFreqLoopDelta(float startMs, float deltaMs, float deltaSec)
     {
         const startStateTime = SDL_GetTicks();
         windowing.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
             {
-                window.update(delta);
+                window.update(startMs, deltaMs, deltaSec);
             }
             return true;
         });

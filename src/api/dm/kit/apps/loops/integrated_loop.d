@@ -48,7 +48,7 @@ class IntegratedLoop : Loop
 
         while (deltaTimeAccumulatorMs >= physFrameMs && physicsUpdatesThisFrame < MAX_PHYSICS_UPDATES)
         {
-            onFreqLoopUpdateDeltaFixed(physDeltaSec);
+            onFreqLoopUpdateDeltaFixed(startMs, deltaTimeMs, physDeltaSec);
             deltaTimeAccumulatorMs -= physFrameMs;
             physicsUpdatesThisFrame++;
         }
@@ -59,11 +59,11 @@ class IntegratedLoop : Loop
         }
 
         float deltaSec = deltaTimeMs / 1000.0f;
-        onFreqLoopUpdateDelta(startMs, deltaSec);
+        onFreqLoopUpdateDelta(startMs, deltaTimeMs, deltaSec);
 
         immutable float accumRest = deltaTimeAccumulatorMs / physFrameMs;
 
-        onRender(accumRest);
+        onRender(startMs, deltaTimeMs, accumRest);
 
         // if (deltaTimeAccumulatorMs < frameTimeMs)
         // {
@@ -74,6 +74,10 @@ class IntegratedLoop : Loop
         if (deltaTimeAccumulatorMs < 0)
         {
             deltaTimeAccumulatorMs = 0;
+        }
+
+        if(onFrameEnd){
+            onFrameEnd(startMs, deltaTimeMs, physicsUpdatesThisFrame);
         }
     }
 }

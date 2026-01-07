@@ -27,13 +27,14 @@ abstract class Loop
     float physDeltaSec = 1.0f / 60.0;
 
     size_t delegate() timestampMsProvider;
+    void delegate(float startMs, float deltaMs, int physUpdateFrames) onFrameEnd;
 
-    void delegate(float startMs, float dt) onFreqLoopUpdateDelta;
-    void delegate(float dt) onFreqLoopUpdateDeltaFixed;
+    void delegate(float startMs, float deltaMs, float deltaSec) onFreqLoopUpdateDelta;
+    void delegate(float startMs, float deltaMs, float deltaFixedSec) onFreqLoopUpdateDeltaFixed;
 
     void delegate() onDelay;
     void delegate(float) onDelayTimeRestMs;
-    void delegate(float) onRender;
+    void delegate(float startMs, float deltaMs, float renderRestRatio) onRender;
 
     void delegate() onInit;
     void delegate() onRun;
