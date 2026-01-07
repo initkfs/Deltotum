@@ -13,26 +13,26 @@ import Math = api.math;
 class Spring4 : Sprite2d
 {
     VCircle ball;
-    SpringToSprite springTo;
+    RandomAngleMotion move;
 
     override void create(){
 
-        springTo = new SpringToSprite;
+        move = new RandomAngleMotion;
         
         super.create;
         import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
         import api.dm.kit.graphics.colors.rgba: RGBA;
-		ball = new VCircle(50, GraphicStyle(10, RGBA.cyan, true, RGBA.lightcyan));
+		ball = new VCircle(25, GraphicStyle(5, RGBA.cyan, true, RGBA.lightcyan));
 		addCreate(ball);
 
-        springTo.sprite = ball;
+        move.sprite = ball;
+        move.sprite.x = 100;
     }
 
     override void update(float dt){
         super.update(dt);
 
-        springTo.toPoint = input.pointerPos;
-        springTo.update(dt);
+        move.update(dt);
     }
 }
 

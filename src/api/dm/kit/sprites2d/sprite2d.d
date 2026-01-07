@@ -74,6 +74,7 @@ class Sprite2d : EventKitTarget
 
     Vec2f velocity;
     Vec2f acceleration;
+    Vec2f accelerationAngular;
 
     Sprite2d isCollisionProcess;
     Sprite2d[] collisionTargets;
@@ -1203,14 +1204,27 @@ class Sprite2d : EventKitTarget
         checkCollisions;
 
         //TODO check velocity is 0 || acceleration is 0
-        const float accelerationDx = acceleration.x * invMass * delta;
-        const float accelerationDy = acceleration.y * invMass * delta;
+        float accelerationDx = 0;
+        float accelerationDy = 0;
 
-        float newVelocityX = velocity.x + accelerationDx;
-        float newVelocityY = velocity.y + accelerationDy;
+        if (velocityAngular.isZero)
+        {
+            accelerationDx = acceleration.x * invMass * delta;
+            accelerationDy = acceleration.y * invMass * delta;
+        }
+        else
+        {
+            import Math = api.math;
 
-        dx = newVelocityX * delta;
-        dy = newVelocityY * delta;
+            accelerationDx = Math.cosDeg(angle) * accelerationAngular.x * invMass * delta;
+            accelerationDy = Math.sinDeg(angle) * accelerationAngular.y * invMass * delta;
+        }
+
+        velocity.x += accelerationDx;
+        velocity.y += accelerationDy;
+
+        dx = velocity.x;
+        dy = velocity.y;
 
         if (inScreenBounds)
         {
