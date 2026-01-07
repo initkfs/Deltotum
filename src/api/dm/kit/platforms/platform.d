@@ -20,6 +20,8 @@ class Platform : ComponentService
     Screening screen;
     Timing timer;
 
+    float loopFixedDtSec = 1;
+
     this(ComPlatform system, CapGraphics caps, Screening screens, Timing timing) pure @safe
     {
         assert(system);

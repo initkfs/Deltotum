@@ -22,74 +22,27 @@ bool inOutOfBoundsFull(Sprite2d sprite, Rect2f bounds)
     return false;
 }
 
-bool wrapOutOfBounds(Sprite2d sprite, Rect2f bounds)
+void wrapSimple(Sprite2d sprite, Rect2f bounds)
 {
     const spriteBounds = sprite.boundsRect;
 
-    Vec2f newPos = sprite.pos;
-    bool wrapped;
+    float newX = sprite.pos.x;
+    float newY = sprite.pos.y;
 
     if (spriteBounds.right < bounds.x)
     {
-        newPos.x = bounds.right;
-        wrapped = true;
+        sprite.x = bounds.right;
     }
-
     else if (spriteBounds.x > bounds.right)
     {
-        newPos.x = bounds.x - spriteBounds.width;
-        wrapped = true;
-    }
-
-    else if (spriteBounds.x < bounds.x && spriteBounds.right > bounds.x)
-    {
-        newPos.x = bounds.right - (bounds.x - spriteBounds.x);
-        wrapped = true;
-    }
-
-    else if (spriteBounds.x < bounds.right && spriteBounds.right > bounds.right)
-    {
-        newPos.x = bounds.x + (spriteBounds.right - bounds.right);
-        wrapped = true;
+        sprite.x = bounds.x - spriteBounds.width;
     }
 
     if (spriteBounds.bottom < bounds.y)
     {
-        newPos.y = bounds.bottom;
-        wrapped = true;
-    }
-    else if (spriteBounds.y > bounds.bottom)
+        sprite.y = bounds.bottom;
+    }else if (spriteBounds.y > bounds.bottom)
     {
-        newPos.y = bounds.y - spriteBounds.height;
-        wrapped = true;
+        sprite.y = bounds.y - spriteBounds.height;
     }
-    else if (spriteBounds.y < bounds.y && spriteBounds.bottom > bounds.y)
-    {
-        newPos.y = bounds.bottom - (bounds.y - spriteBounds.y);
-        wrapped = true;
-    }
-    else if (spriteBounds.y < bounds.bottom && spriteBounds.bottom > bounds.bottom)
-    {
-        newPos.y = bounds.y + (spriteBounds.bottom - bounds.bottom);
-        wrapped = true;
-    }
-
-    if (!wrapped)
-    {
-        const boundsWidth = bounds.width;
-        const boundsHeight = bounds.height;
-
-        float relX = newPos.x - bounds.x;
-        float relY = newPos.y - bounds.y;
-
-        relX = relX - boundsWidth * Math.floor(relX / boundsWidth);
-        relY = relY - boundsHeight * Math.floor(relY / boundsHeight);
-
-        newPos.x = bounds.x + relX - spriteBounds.width * 0.5f;
-        newPos.y = bounds.y + relY - spriteBounds.height * 0.5f;
-    }
-
-    sprite.pos = newPos;
-
-    return wrapped;
 }

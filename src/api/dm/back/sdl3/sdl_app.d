@@ -807,14 +807,20 @@ class SdlApp : GuiApp
         loop.timestampMsProvider = () => ticksMs;
         loop.onDelay = () => sdlLib.delayMs(10);
         loop.onDelayTimeRestMs = (restMs) => sdlLib.delayMs(cast(uint) restMs);
-        loop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
         loop.onRender = (accumMsRest) => updateRender(accumMsRest);
-        loop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);
+        loop.onFreqLoopUpdateDelta = (timestamp, delta){
+            updateLoopMs(timestamp);
+            updateFreqLoopDelta(delta);
+        };
+        loop.onFreqLoopUpdateDeltaFixed = (delta) => updateFreqLoopDeltaFixed(delta);
 
         loop.isAutoStart = isAutoStart;
         loop.setUp;
         uservices.logger.infof("Init loop, autostart: %s, running: %s, fps: %s, udt: %s", loop.isAutoStart, loop
                 .isRunning, loop.frameRate, loop.updateDelta);
+
+        assert(gservices.platform);
+        gservices.platform.loopFixedDtSec = loop.updateDelta;
     }
 
     bool setMetadata(string appname, string appversion, string appid)
@@ -1190,7 +1196,7 @@ class SdlApp : GuiApp
         }
     }
 
-    void updateLoopMs(size_t timestamp)
+    void updateLoopMs(float timestamp)
     {
         SDL_Event event;
 
@@ -1243,6 +1249,17 @@ class SdlApp : GuiApp
         {
             mustBeWindow.get.currentScene.timeDrawProcessingMs = endStateTime - startStateTime;
         }
+    }
+
+    void updateFreqLoopDeltaFixed(float delta)
+    {
+        windowing.onWindows((window) {
+            if (window.isShowing)
+            {
+                window.updateFixed(delta);
+            }
+            return true;
+        });
     }
 
     void updateFreqLoopDelta(float delta)

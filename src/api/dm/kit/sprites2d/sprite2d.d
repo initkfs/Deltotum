@@ -75,6 +75,7 @@ class Sprite2d : EventKitTarget
     Vec2f velocity;
     Vec2f acceleration;
     Vec2f accelerationAngular;
+    float friction = 1;
 
     Sprite2d isCollisionProcess;
     Sprite2d[] collisionTargets;
@@ -151,6 +152,8 @@ class Sprite2d : EventKitTarget
     bool isEventsFirstProcessChild;
     bool isDispatchChildFromLast;
 
+    bool isOutOfBounds;
+
     //protected
     //{
     //TODO information about children
@@ -224,13 +227,13 @@ class Sprite2d : EventKitTarget
         float offsetX = 0;
         float offsetY = 0;
 
-        float _prevX = 0, _prevY = 0;
-
         float _x = 0;
         float _y = 0;
 
         ulong lastClickTimeMs;
     }
+
+    float _prevX = 0, _prevY = 0;
 
     uint maxClickTimeMs = 300;
 
@@ -1200,6 +1203,9 @@ class Sprite2d : EventKitTarget
         applyLayout;
     }
 
+    Vec2f pxSecToPxFrame(Vec2f pxPerSec) => pxPerSec.scale(platform.loopFixedDtSec);
+    Vec2f pxFrameToPxSec(Vec2f pxPerFrame) => pxPerFrame.div(platform.loopFixedDtSec);
+
     void updateDrawPhys(float alpha)
     {
         if (!isPhysics)
@@ -1232,15 +1238,30 @@ class Sprite2d : EventKitTarget
             accelerationDy = Math.sinDeg(angle) * accelerationAngular.y * invMass * delta;
         }
 
-        velocity.x += accelerationDx;
-        velocity.y += accelerationDy;
+        // if (friction != 1)
+        // {
+        //     //TODO dynamic friction
+        //     //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
+        //     //float dynamicFriction = 1.0f - (speed * 0.01f);
+        //     float frictionPerFrame = 1.0f - (1.0f - friction) * delta;
+        //     velocity.x *= frictionPerFrame;
+        //     velocity.y *= frictionPerFrame;
+        // }
+
+        if (Math.abs(velocity.x) < 0.5f)
+            velocity.x = 0;
+        if (Math.abs(velocity.y) < 0.5f)
+            velocity.y = 0;
 
         dx = velocity.x;
         dy = velocity.y;
-        
-        if (accelerationDx == 0 && accelerationDy == 0)
+
+        if (accelerationDx == 0 && dx != 0)
         {
             dx *= delta;
+        }
+        if (accelerationDy == 0 && dy != 0)
+        {
             dy *= delta;
         }
 
@@ -1251,7 +1272,7 @@ class Sprite2d : EventKitTarget
         _y += dy;
     }
 
-    void update(float delta)
+    void updateFixed(float delta)
     {
         float dx = 0;
         float dy = 0;
@@ -1278,6 +1299,19 @@ class Sprite2d : EventKitTarget
                     child.x = child.x + dx;
                     child.y = child.y + dy;
                 }
+            }
+
+            child.updateFixed(delta);
+        }
+    }
+
+    void update(float delta)
+    {
+        foreach (Sprite2d child; children)
+        {
+            if (!child.isUpdatable)
+            {
+                continue;
             }
 
             child.update(delta);

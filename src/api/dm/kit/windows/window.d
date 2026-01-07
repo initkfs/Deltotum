@@ -792,6 +792,14 @@ class Window : GraphicComponent
         return id;
     }
 
+    void updateFixed(float delta)
+    {
+        if (_currentScene)
+        {
+            _currentScene.updateFixed(delta);
+        }
+    }
+
     void update(float delta)
     {
         if (_currentScene)

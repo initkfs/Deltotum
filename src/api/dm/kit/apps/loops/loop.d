@@ -22,10 +22,14 @@ abstract class Loop
     float frameTimeMs = 0;
     float updateDelta = 0;
 
+    float physFps = 60.0f;
+    float physFrameMs = 1000.0f / 60.0;
+    float physDeltaSec = 1.0f / 60.0;
+
     size_t delegate() timestampMsProvider;
 
-    void delegate(size_t) onLoopUpdateMs;
-    void delegate(float) onFreqLoopUpdateDelta;
+    void delegate(float startMs, float dt) onFreqLoopUpdateDelta;
+    void delegate(float dt) onFreqLoopUpdateDeltaFixed;
 
     void delegate() onDelay;
     void delegate(float) onDelayTimeRestMs;

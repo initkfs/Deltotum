@@ -126,17 +126,16 @@ struct Vec2f
 
         Vec2f scale(float factor) => Vec2f(x * factor, y * factor);
 
-        Vec2f mul(Vec2f other)
-        {
-            return Vec2f(x * other.x, y * other.y);
-        }
+        Vec2f mul(Vec2f other) =. Vec2f(x * other.x, y * other.y);
 
         Vec2f div(float factor)
         {
-            assert(factor != 0);
-            const newX = x / factor;
-            const newY = y / factor;
-            return Vec2f(newX, newY);
+            if (factor == 0)
+            {
+                return Vec2f.zero;
+            }
+
+            return Vec2f(x / factor, y / factor);
         }
 
         Vec2f inc(float value) => Vec2f(x + value, y + value);
@@ -403,7 +402,7 @@ unittest
 
     Vec2f horizontalReflect = Vec2f(5, 6).linoperator(Matrix2x2([
             [-1, 0], [0, 1]
-    ]));
+        ]));
     assert(horizontalReflect.x == -5);
     assert(horizontalReflect.y == 6);
 

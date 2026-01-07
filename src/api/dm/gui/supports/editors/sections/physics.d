@@ -48,22 +48,35 @@ class Physics : Control
         addCreate(material);
 
         material.onPointerPress ~= (ref e) {
-            material.velocity.x = 50;
-            material.velocity.y = 50;
+            material.velocity.x = 300;
+            material.velocity.y = 300;
             material.isPhysics = true;
         };
+
+        import api.sims.phys.movings.friction;
+
+        material.friction = 0.5; 
+    }
+
+    override bool draw(float dt){
+        super.draw(dt);
+        graphic.color = RGBA.green;
+        graphic.rect(graphic.renderBounds);
+        return true;
     }
 
     override void update(float dt)
     {
         super.update(dt);
 
+        import api.dm.kit.graphics.colors.rgba: RGBA;
+
         if (!material)
         {
             return;
         }
 
-        //wrapOutOfBounds(material, graphic.renderBounds);
+        //wrapSimple(material, graphic.renderBounds);
 
         // if (!window.screen.bounds.contains(material.boundsRect))
         // {

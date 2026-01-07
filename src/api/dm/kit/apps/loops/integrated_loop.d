@@ -23,8 +23,8 @@ class IntegratedLoop : Loop
     }
 
     override void updateMs(size_t startMs)
-    in (onLoopUpdateMs)
     in (onFreqLoopUpdateDelta)
+    in (onFreqLoopUpdateDeltaFixed)
     in (onDelayTimeRestMs)
     in (onRender)
     {
@@ -39,26 +39,37 @@ class IntegratedLoop : Loop
         //     deltaTimeAccumulatorMs = deltaTimeAccumLimitMs;
         // }
 
-        onLoopUpdateMs(startMs);
-
         //int updatesThisFrame = 0;
         //deltaTimeAccumulatorMs >= frameTimeMs && updatesThisFrame < 4
-        while (deltaTimeAccumulatorMs >= frameTimeMs)
+
+        int physicsUpdatesThisFrame = 0;
+
+        const int MAX_PHYSICS_UPDATES = 5;
+
+        while (deltaTimeAccumulatorMs >= physFrameMs && physicsUpdatesThisFrame < MAX_PHYSICS_UPDATES)
         {
-            onFreqLoopUpdateDelta(updateDelta);
-            deltaTimeAccumulatorMs -= frameTimeMs;
-            //updatesThisFrame++;
+            onFreqLoopUpdateDeltaFixed(physDeltaSec);
+            deltaTimeAccumulatorMs -= physFrameMs;
+            physicsUpdatesThisFrame++;
         }
 
-        immutable float accumRest = deltaTimeAccumulatorMs / frameTimeMs;
+        if (physicsUpdatesThisFrame >= MAX_PHYSICS_UPDATES && deltaTimeAccumulatorMs > physFrameMs * 2)
+        {
+            deltaTimeAccumulatorMs = physFrameMs; //one frame
+        }
+
+        float deltaSec = deltaTimeMs / 1000.0f;
+        onFreqLoopUpdateDelta(startMs, deltaSec);
+
+        immutable float accumRest = deltaTimeAccumulatorMs / physFrameMs;
 
         onRender(accumRest);
 
-        if (deltaTimeAccumulatorMs < frameTimeMs)
-        {
-            immutable delay = frameTimeMs - deltaTimeAccumulatorMs;
-            onDelayTimeRestMs(delay);
-        }
+        // if (deltaTimeAccumulatorMs < frameTimeMs)
+        // {
+        //     immutable delay = frameTimeMs - deltaTimeAccumulatorMs;
+        //     onDelayTimeRestMs(delay);
+        // }
 
         if (deltaTimeAccumulatorMs < 0)
         {

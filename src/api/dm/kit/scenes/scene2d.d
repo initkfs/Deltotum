@@ -312,6 +312,27 @@ class Scene2d : EventKitTarget
         graphic.rendererPresent;
     }
 
+    void updateFixed(float delta)
+    {
+        Sprite2d[] roots = isPause ? eternalSprites : sprites;
+
+        foreach (root; roots)
+        {
+            root.updateFixed(delta);
+        }
+
+        if (!isPause)
+        {
+            if (controlledSprites.length > 0)
+            {
+                foreach (cs; controlledSprites)
+                {
+                    cs.updateFixed(delta);
+                }
+            }
+        }
+    }
+
     void update(float delta)
     {
         if (!startDrawProcess)
