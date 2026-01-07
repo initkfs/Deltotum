@@ -113,9 +113,9 @@ class Planet : GuiScene
         super.update(dt);       
     }
 
-    override void draw()
+    override void draw(float alpha)
     {
-        super.draw;
+        super.draw(alpha);
     }
 
     override void dispose()

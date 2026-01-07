@@ -193,9 +193,9 @@ class Graphics : Control
         addCreate(drawContainer);
     }
 
-    override bool draw()
+    override bool draw(float alpha)
     {
-        super.draw();
+        super.draw(alpha);
 
         if (!drawContainer)
         {

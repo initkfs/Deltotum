@@ -217,13 +217,13 @@ class Scene3d : Scene2d
         return colorTargetInfo;
     }
 
-    override void drawAll()
+    override void drawAll(float alpha)
     {
         bool isGPU = gpu.isActive;
 
         if (!isGPU)
         {
-            super.drawAll;
+            super.drawAll(alpha);
             return;
         }
 
@@ -282,7 +282,7 @@ class Scene3d : Scene2d
 
         }
 
-        drawSelfAndChildren;
+        drawSelfAndChildren(alpha);
 
         if (isAntiAliasing)
         {
@@ -324,17 +324,17 @@ class Scene3d : Scene2d
         }
     }
 
-    override protected void drawSelfAndChildren()
+    override protected void drawSelfAndChildren(float alpha)
     {
         if (!gpu.isActive)
         {
-            super.drawSelfAndChildren;
+            super.drawSelfAndChildren(alpha);
             return;
         }
 
         if (!isDrawAfterAllSprites && !drawBeforeSprite)
         {
-            drawSelf;
+            drawSelf(alpha);
         }
 
         foreach (obj; sprites)
@@ -345,13 +345,13 @@ class Scene3d : Scene2d
                 continue;
             }
 
-            sprite3d.draw;
+            sprite3d.draw(alpha);
             sprite3d.unvalidate;
         }
 
         if (isDrawAfterAllSprites && !drawBeforeSprite)
         {
-            drawSelf;
+            drawSelf(alpha);
         }
 
         startDrawProcess = false;

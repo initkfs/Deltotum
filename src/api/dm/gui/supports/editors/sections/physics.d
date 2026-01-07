@@ -9,6 +9,7 @@ import Math = api.dm.math;
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.rect2 : Rect2f;
+import api.sims.phys.movings.boundaries;
 
 import std.stdio;
 
@@ -47,8 +48,8 @@ class Physics : Control
         addCreate(material);
 
         material.onPointerPress ~= (ref e) {
-            material.velocity.x = 10;
-            material.velocity.y = 10;
+            material.velocity.x = 50;
+            material.velocity.y = 50;
             material.isPhysics = true;
         };
     }
@@ -62,9 +63,11 @@ class Physics : Control
             return;
         }
 
-        if (!window.screen.bounds.contains(material.boundsRect))
-        {
-            material.velocity = material.velocity.reflect;
-        }
+        //wrapOutOfBounds(material, graphic.renderBounds);
+
+        // if (!window.screen.bounds.contains(material.boundsRect))
+        // {
+        //     material.velocity = material.velocity.reflect;
+        // }
     }
 }

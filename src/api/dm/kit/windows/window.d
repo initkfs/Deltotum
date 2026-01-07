@@ -325,7 +325,7 @@ class Window : GraphicComponent
             return false;
         }
 
-        _currentScene.drawAll;
+        _currentScene.drawAll(alpha);
 
         if (drawingSceneTasks.length > 0)
         {

@@ -20,7 +20,7 @@ class Scene2d : EventKitTarget
     bool isDestructible;
 
     void delegate(Scene2d) onSceneChange;
-    void delegate() onDraw;
+    void delegate(float alpha) onDraw;
 
     size_t timeEventProcessingMs;
     size_t timeUpdateProcessingMs;
@@ -250,36 +250,36 @@ class Scene2d : EventKitTarget
         }
     }
 
-    void draw()
+    void draw(float alpha)
     {
 
     }
 
-    protected void drawSelf()
+    protected void drawSelf(float alpha)
     {
         if (onDraw)
         {
-            onDraw();
+            onDraw(alpha);
         }
 
-        draw;
+        draw(alpha);
     }
 
-    protected void drawSelfAndChildren()
+    protected void drawSelfAndChildren(float alpha)
     {
         if (!isDrawAfterAllSprites && !drawBeforeSprite)
         {
-            drawSelf;
+            drawSelf(alpha);
         }
 
         foreach (obj; sprites)
         {
             if (drawBeforeSprite && drawBeforeSprite is obj)
             {
-                drawSelf;
+                drawSelf(alpha);
             }
 
-            obj.draw;
+            obj.draw(alpha);
             if (obj.isClipped)
             {
                 obj.disableClipping;
@@ -293,22 +293,22 @@ class Scene2d : EventKitTarget
             //TODO unvalidate?
             foreach (cs; controlledSprites)
             {
-                cs.draw;
+                cs.draw(alpha);
                 cs.unvalidate;
             }
         }
 
         if (isDrawAfterAllSprites && !drawBeforeSprite)
         {
-            drawSelf;
+            drawSelf(alpha);
         }
 
         startDrawProcess = false;
     }
 
-    void drawAll()
+    void drawAll(float alpha)
     {
-        drawSelfAndChildren;
+        drawSelfAndChildren(alpha);
         graphic.rendererPresent;
     }
 

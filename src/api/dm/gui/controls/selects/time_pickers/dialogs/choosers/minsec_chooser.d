@@ -152,7 +152,7 @@ class MinSecChooser : BaseCircularTimeChooser
                 auto pos = Vec2f.fromPolarDeg(currAngle, boxRadius - halfLabelSize);
                 proto.xy(textureCenter.x + pos.x - protoBounds.halfWidth, textureCenter.y + pos.y - protoBounds
                         .halfHeight);
-                proto.draw;
+                proto.draw(0);
                 currAngle += angleDiff;
             }
 

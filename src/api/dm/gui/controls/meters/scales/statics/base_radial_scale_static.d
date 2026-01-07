@@ -297,7 +297,7 @@ onDrawAxis : null,
         proto.angle = i * tickOffset;
         proto.angle = (proto.angle + 90) % 360;
 
-        proto.draw;
+        proto.draw(0);
         return true;
     }
 

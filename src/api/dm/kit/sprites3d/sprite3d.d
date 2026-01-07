@@ -66,7 +66,7 @@ class Sprite3d : Sprite2d
         calcWorldMatrix;
     }
 
-    override bool draw()
+    override bool draw(float alpha)
     {
         if (!isVisible)
         {
@@ -92,7 +92,7 @@ class Sprite3d : Sprite2d
 
             if (!obj.isDrawAfterParent && obj.isVisible)
             {
-                obj.draw;
+                obj.draw(alpha);
             }
         }
 
@@ -111,7 +111,7 @@ class Sprite3d : Sprite2d
 
             if (obj.isDrawAfterParent && obj.isVisible)
             {
-                obj.draw;
+                obj.draw(alpha);
             }
         }
 

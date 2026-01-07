@@ -157,7 +157,7 @@ class BaseLed : Control
         foreach (layer; layers)
         {
             texture.centering(layer);
-            layer.draw;
+            layer.draw(0);
         }
 
         return texture;

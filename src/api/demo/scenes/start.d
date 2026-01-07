@@ -414,9 +414,9 @@ class Start : GuiScene
         //writeln(env.downloadData.value1);
     }
 
-    override void draw()
+    override void draw(float alpha)
     {
-        super.draw;
+        super.draw(alpha);
 
         // gpu.dev.bindPipeline(fillPipeline);
 

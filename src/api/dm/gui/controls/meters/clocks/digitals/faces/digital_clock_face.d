@@ -314,7 +314,7 @@ class DigitalClockFace : Control
             {
                 dotProto.dispose;
             }
-            dotProto.draw;
+            dotProto.draw(0);
         }
 
         if (hour1)

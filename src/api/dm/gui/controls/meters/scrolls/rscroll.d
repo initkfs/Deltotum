@@ -131,7 +131,7 @@ class RScroll : BaseRadialMonoScroll
 
         graphic.clear(RGBA.transparent);
 
-        thumbShape.draw;
+        thumbShape.draw(0);
 
         import api.math.geom2.vec2 : Vec2f;
 

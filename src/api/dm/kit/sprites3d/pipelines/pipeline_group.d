@@ -73,7 +73,7 @@ class PipelineGroup : Sprite3d
         }
     }
 
-    override bool draw()
+    override bool draw(float alpha)
     {
         foreach (pipe; childPipelines)
         {
@@ -83,7 +83,7 @@ class PipelineGroup : Sprite3d
                 {
                     pipe.bindDataBuffer;
                 }
-                pipe.draw;
+                pipe.draw(alpha);
             }
 
         }
@@ -94,7 +94,7 @@ class PipelineGroup : Sprite3d
             {
                 bindDataBuffer;
             }
-            return super.draw;
+            return super.draw(alpha);
         }
 
         return false;

@@ -88,9 +88,6 @@ class Sprite2d : EventKitTarget
     void delegate(Rect2f* clip) onClipMove;
     bool isOutClipForwardEvents;
 
-    bool inScreenBounds;
-    bool delegate() onScreenBoundsIsStop;
-
     bool isDrawByParent = true;
     bool isRedraw = true;
     bool isRedrawChildren = true;
@@ -226,6 +223,8 @@ class Sprite2d : EventKitTarget
 
         float offsetX = 0;
         float offsetY = 0;
+
+        float _prevX = 0, _prevY = 0;
 
         float _x = 0;
         float _y = 0;
@@ -658,8 +657,10 @@ class Sprite2d : EventKitTarget
 
     }
 
-    bool draw()
+    bool draw(float alpha)
     {
+        updateDrawPhys(alpha);
+
         if (!isVisible)
         {
             return false;
@@ -683,7 +684,7 @@ class Sprite2d : EventKitTarget
             {
                 //if (!isValid)
                 //{
-                obj.draw;
+                obj.draw(alpha);
                 //}
                 //else
                 //{
@@ -710,7 +711,7 @@ class Sprite2d : EventKitTarget
             {
                 //if (!obj.isValid)
                 {
-                    obj.draw;
+                    obj.draw(alpha);
                 }
                 checkClip(obj);
             }
@@ -1199,6 +1200,17 @@ class Sprite2d : EventKitTarget
         applyLayout;
     }
 
+    void updateDrawPhys(float alpha)
+    {
+        if (!isPhysics)
+        {
+            return;
+        }
+
+        _x = _prevX + (_x - _prevX) * alpha;
+        _y = _prevY + (_y - _prevY) * alpha;
+    }
+
     void updatePhys(out float dx, out float dy, float delta)
     {
         checkCollisions;
@@ -1207,7 +1219,7 @@ class Sprite2d : EventKitTarget
         float accelerationDx = 0;
         float accelerationDy = 0;
 
-        if (velocityAngular.isZero)
+        if (accelerationAngular.isZero)
         {
             accelerationDx = acceleration.x * invMass * delta;
             accelerationDy = acceleration.y * invMass * delta;
@@ -1225,40 +1237,18 @@ class Sprite2d : EventKitTarget
 
         dx = velocity.x;
         dy = velocity.y;
-
-        if (inScreenBounds)
+        
+        if (accelerationDx == 0 && accelerationDy == 0)
         {
-            auto thisBounds = boundsRect;
-            thisBounds.x = _x + dx;
-            thisBounds.y = _y + dy;
-
-            const screen = graphic.renderBounds;
-            if (!screen.contains(thisBounds))
-            {
-                if (!onScreenBoundsIsStop || onScreenBoundsIsStop())
-                {
-                    newVelocityX = 0;
-                    newVelocityY = 0;
-
-                    acceleration.x = 0;
-                    acceleration.y = 0;
-                }
-                else
-                {
-                    newVelocityX = velocity.x;
-                    newVelocityY = velocity.y;
-                }
-
-                dx = 0;
-                dy = 0;
-            }
+            dx *= delta;
+            dy *= delta;
         }
+
+        _prevX = _x;
+        _prevY = _y;
 
         _x += dx;
         _y += dy;
-
-        velocity.x = newVelocityX;
-        velocity.y = newVelocityY;
     }
 
     void update(float delta)
@@ -2269,7 +2259,7 @@ class Sprite2d : EventKitTarget
             isVisible = true;
         }
 
-        draw;
+        draw(0);
 
         isVisible = isVisibleTemp;
     }
