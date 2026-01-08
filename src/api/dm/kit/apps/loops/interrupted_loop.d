@@ -11,12 +11,14 @@ class InterruptedLoop : IntegratedLoop
     {
         super(frameRate);
     }
-    
+
     void update()
-    in (onDelay)
     in (timestampMsProvider)
     {
-        onDelay();
+        if (onStartFrame)
+        {
+            onStartFrame();
+        }
         immutable timeMs = timestampMsProvider();
         updateMs(timeMs);
     }

@@ -1272,7 +1272,7 @@ class Sprite2d : EventKitTarget
         _y += dy;
     }
 
-    void updateFixed(float delta)
+    void update(float delta)
     {
         float dx = 0;
         float dy = 0;
@@ -1299,19 +1299,6 @@ class Sprite2d : EventKitTarget
                     child.x = child.x + dx;
                     child.y = child.y + dy;
                 }
-            }
-
-            child.updateFixed(delta);
-        }
-    }
-
-    void update(float delta)
-    {
-        foreach (Sprite2d child; children)
-        {
-            if (!child.isUpdatable)
-            {
-                continue;
             }
 
             child.update(delta);

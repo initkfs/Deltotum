@@ -805,33 +805,48 @@ class SdlApp : GuiApp
     {
         loop.onExit = () => exit;
         loop.timestampMsProvider = () => ticksMs;
-        loop.onDelay = () => sdlLib.delayMs(10);
-        loop.onDelayTimeRestMs = (restMs) => sdlLib.delayMs(cast(uint) restMs);
-        loop.onRender = (float startMs, float deltaMs, float renderRestRatio) => updateRender(renderRestRatio);
 
-        loop.onFrameEnd = (startMs, deltaMs, physUpdate)
+        if (uservices.config.hasKey(KitConfigKeys.backendIsDelayStartLoopFrame) && uservices.config.getBool(
+                KitConfigKeys.backendIsDelayStartLoopFrame))
         {
-            auto currWindow = windowing.currentOrNull;
-            if (currWindow)
+            int delayMs = uservices.config.getInt(KitConfigKeys.backendDelayStartLoopFrameMs);
+            if (delayMs > 0)
             {
-                currWindow.updateEndFrame(startMs, deltaMs, physUpdate);
+                loop.onStartFrame = () => sdlLib.delayMs(delayMs);
+                version (EnableTrace)
+                {
+                    logger.trace("Enable loop start delay: ", delayMs);
+                }
             }
-        };
+        }
 
-        loop.onFreqLoopUpdateDelta = (startMs, deltaMs, deltaSec)
+        if (uservices.config.hasKey(KitConfigKeys.backendIsDelayLoopRestFrame) && uservices.config.getBool(
+                KitConfigKeys.backendIsDelayLoopRestFrame))
         {
-            updateLoopMs(startMs);
-            updateFreqLoopDelta(startMs, deltaMs, deltaSec);
+            loop.onDelayTimeRestMs = (restMs) {
+                sdlLib.delayMs(cast(uint) restMs);
+            };
+            version (EnableTrace)
+            {
+                logger.trace("Enable loop delay on rest frame: ");
+            }
+        }
+
+        loop.onFreqLoopUpdateDelta = (startMs, deltaTimeMs, accumRest, fixedUpdatesCount) {
+            updateEvents;
+            updateRender(accumRest);
+            updateEndFrame(startMs, deltaTimeMs, fixedUpdatesCount);
         };
-        loop.onFreqLoopUpdateDeltaFixed = (startMs, deltaMs, deltaFixedSec) => updateFreqLoopDeltaFixed(startMs, deltaMs, deltaFixedSec);
+        loop.onFreqLoopUpdateDeltaFixed = (startMs, deltaTimeMs, updateFixedDeltaSec) {
+            updateWindows(startMs, deltaTimeMs, updateFixedDeltaSec);
+        };
 
         loop.isAutoStart = isAutoStart;
         loop.setUp;
-        uservices.logger.infof("Init loop, autostart: %s, running: %s, fps: %s, udt: %s", loop.isAutoStart, loop
-                .isRunning, loop.frameRate, loop.updateDelta);
+        uservices.logger.infof("Init loop, fps: %f, fdt: %f sec", loop.frameRate, loop.updateFixedDeltaSec);
 
         assert(gservices.platform);
-        gservices.platform.loopFixedDtSec = loop.updateDelta;
+        gservices.platform.loopFixedDtSec = loop.updateFixedDeltaSec;
     }
 
     bool setMetadata(string appname, string appversion, string appid)
@@ -976,6 +991,23 @@ class SdlApp : GuiApp
 
         SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer.get);
         window.renderer = sdlRenderer;
+
+        if (uservices.config.hasKey(KitConfigKeys.backendIsVsync) && uservices.config.getBool(
+                KitConfigKeys.backendIsVsync))
+        {
+            int vsyncInterval = uservices.config.getInt(KitConfigKeys.backendVsyncInterval);
+            if (const err = window.renderer.setVsync(vsyncInterval))
+            {
+                uservices.logger.error("VSync error: ", err);
+            }
+            else
+            {
+                version (EnableTrace)
+                {
+                    uservices.logger.trace("Set vsync: ", vsyncInterval);
+                }
+            }
+        }
 
         if (uservices.config.hasKey(KitConfigKeys.backendCheckRendererScale) && uservices.config.getBool(
                 KitConfigKeys.backendCheckRendererScale))
@@ -1207,7 +1239,7 @@ class SdlApp : GuiApp
         }
     }
 
-    void updateLoopMs(float timestamp)
+    void updateEvents()
     {
         SDL_Event event;
 
@@ -1240,47 +1272,14 @@ class SdlApp : GuiApp
         }
     }
 
-    void updateRender(float accumMsRest)
+    void updateWindows(float startMs, float deltaTimeMs, float fixedDtSec)
     {
         const startStateTime = SDL_GetTicks();
         windowing.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
             {
-                window.draw(accumMsRest);
-            }
-            return true;
-        });
-
-        const endStateTime = SDL_GetTicks();
-
-        auto mustBeWindow = windowing.current;
-
-        if (!mustBeWindow.isNull)
-        {
-            mustBeWindow.get.currentScene.timeDrawProcessingMs = endStateTime - startStateTime;
-        }
-    }
-
-    void updateFreqLoopDeltaFixed(float startMs, float deltaMs, float deltaSec)
-    {
-        windowing.onWindows((window) {
-            if (window.isShowing)
-            {
-                window.updateFixed(startMs, deltaMs, deltaSec);
-            }
-            return true;
-        });
-    }
-
-    void updateFreqLoopDelta(float startMs, float deltaMs, float deltaSec)
-    {
-        const startStateTime = SDL_GetTicks();
-        windowing.onWindows((window) {
-            //focus may not be on the window
-            if (window.isShowing)
-            {
-                window.update(startMs, deltaMs, deltaSec);
+                window.update(startMs, deltaTimeMs, fixedDtSec);
             }
             return true;
         });
@@ -1293,6 +1292,33 @@ class SdlApp : GuiApp
         {
             mustBeWindow.get.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
         }
+    }
+
+    void updateRender(float accumMsRest)
+    {
+        auto currWindow = windowing.currentOrNull;
+
+        if (!currWindow || !currWindow.isShowing)
+        {
+            return;
+        }
+
+        //const startStateTime = SDL_GetTicks();
+        currWindow.draw(accumMsRest);
+        //const endStateTime = SDL_GetTicks();
+    }
+
+    void updateEndFrame(float startMs, float deltaMs, size_t fixedUpdateCount)
+    {
+
+        auto currWindow = windowing.currentOrNull;
+
+        if (!currWindow)
+        {
+            return;
+        }
+
+        currWindow.updateEndFrame(startMs, deltaMs, fixedUpdateCount);
     }
 
     void handleEvent(SDL_Event* event)

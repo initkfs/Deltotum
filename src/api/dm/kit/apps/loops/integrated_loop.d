@@ -6,6 +6,7 @@ import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
+ * Loop doesn't use a classic "fixed" physical delta. Its a hybrid version with variable delta.
  */
 class IntegratedLoop : Loop
 {
@@ -25,8 +26,6 @@ class IntegratedLoop : Loop
     override void updateMs(size_t startMs)
     in (onFreqLoopUpdateDelta)
     in (onFreqLoopUpdateDeltaFixed)
-    in (onDelayTimeRestMs)
-    in (onRender)
     {
         //TODO SDL_GetPerformanceCounter
         //(float)((now - start)*1000) / SDL_GetPerformanceFrequency()
@@ -39,45 +38,34 @@ class IntegratedLoop : Loop
         //     deltaTimeAccumulatorMs = deltaTimeAccumLimitMs;
         // }
 
-        //int updatesThisFrame = 0;
-        //deltaTimeAccumulatorMs >= frameTimeMs && updatesThisFrame < 4
+        size_t fixedUpdatesCount;
 
-        int physicsUpdatesThisFrame = 0;
-
-        const int MAX_PHYSICS_UPDATES = 5;
-
-        while (deltaTimeAccumulatorMs >= physFrameMs && physicsUpdatesThisFrame < MAX_PHYSICS_UPDATES)
+        while (deltaTimeAccumulatorMs >= frameTimeMs)
         {
-            onFreqLoopUpdateDeltaFixed(startMs, deltaTimeMs, physDeltaSec);
-            deltaTimeAccumulatorMs -= physFrameMs;
-            physicsUpdatesThisFrame++;
+            onFreqLoopUpdateDeltaFixed(startMs, deltaTimeMs, updateFixedDeltaSec);
+            deltaTimeAccumulatorMs -= frameTimeMs;
+            fixedUpdatesCount++;
         }
 
-        if (physicsUpdatesThisFrame >= MAX_PHYSICS_UPDATES && deltaTimeAccumulatorMs > physFrameMs * 2)
+        if (fixedUpdatesCount >= maxFixedUpdate && deltaTimeAccumulatorMs > frameTimeMs * 2)
         {
-            deltaTimeAccumulatorMs = physFrameMs; //one frame
+            deltaTimeAccumulatorMs = frameTimeMs; //one frame
         }
 
-        float deltaSec = deltaTimeMs / 1000.0f;
-        onFreqLoopUpdateDelta(startMs, deltaTimeMs, deltaSec);
+        immutable float accumRest = deltaTimeAccumulatorMs / frameTimeMs;
 
-        immutable float accumRest = deltaTimeAccumulatorMs / physFrameMs;
+        //float deltaSec = deltaTimeMs / 1000.0f;
+        onFreqLoopUpdateDelta(startMs, deltaTimeMs, accumRest, fixedUpdatesCount);
 
-        onRender(startMs, deltaTimeMs, accumRest);
-
-        // if (deltaTimeAccumulatorMs < frameTimeMs)
-        // {
-        //     immutable delay = frameTimeMs - deltaTimeAccumulatorMs;
-        //     onDelayTimeRestMs(delay);
-        // }
+        if (onDelayTimeRestMs && (deltaTimeAccumulatorMs < frameTimeMs))
+        {
+            immutable delayDtMs = frameTimeMs - deltaTimeAccumulatorMs;
+            onDelayTimeRestMs(delayDtMs);
+        }
 
         if (deltaTimeAccumulatorMs < 0)
         {
             deltaTimeAccumulatorMs = 0;
-        }
-
-        if(onFrameEnd){
-            onFrameEnd(startMs, deltaTimeMs, physicsUpdatesThisFrame);
         }
     }
 }

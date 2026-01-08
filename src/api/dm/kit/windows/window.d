@@ -10,8 +10,8 @@ import api.dm.com.graphics.com_window : ComWindowId, ComWindow, ComWindowProgres
 import api.math.geom2.rect2 : Rect2f;
 import api.math.geom2.vec2 : Vec2f, Vec2i;
 import api.dm.kit.apps.loops.counters.fps_update_counter : FpsUpdateCounter;
-import api.dm.kit.apps.loops.counters.fps_render_counter : FpsRenderCounter;
-import api.dm.kit.apps.loops.counters.fps_phys_counter : FpsPhysCounter;
+import api.dm.kit.apps.loops.counters.fps_update_counter : FpsUpdateCounter;
+import api.dm.kit.apps.loops.counters.fps_fixed_counter : FpsFixedCounter;
 
 //TODO extract COM interfaces
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
@@ -51,9 +51,8 @@ class Window : GraphicComponent
         size_t lastShowingTick = 0;
     }
 
-    FpsRenderCounter renderCounter;
     FpsUpdateCounter updateCounter;
-    FpsPhysCounter physCounter;
+    FpsFixedCounter fixedCounter;
 
     Window parent;
     SingleScreen screen;
@@ -98,9 +97,8 @@ class Window : GraphicComponent
         this.comWindow = window;
 
         //TODO di
-        renderCounter = new FpsRenderCounter;
         updateCounter = new FpsUpdateCounter;
-        physCounter = new FpsPhysCounter;
+        fixedCounter = new FpsFixedCounter;
     }
 
     override void create()
@@ -804,26 +802,17 @@ class Window : GraphicComponent
         return id;
     }
 
-    void updateEndFrame(float startMs, float deltaMs, float physUpdate)
+    void updateEndFrame(float startMs, float deltaMs, size_t physUpdateCount)
     {
-        renderCounter.update(deltaMs);
-        physCounter.update(deltaMs, cast(int) physUpdate);
         updateCounter.update(deltaMs);
+        fixedCounter.update(deltaMs, physUpdateCount);
     }
 
-    void updateFixed(float startMs, float deltaMs, float deltaSec)
+    void update(float startMs, float deltaMs, float fixedDeltaSec)
     {
         if (_currentScene)
         {
-            _currentScene.updateFixed(deltaSec);
-        }
-    }
-
-    void update(float startMs, float deltaMs, float deltaSec)
-    {
-        if (_currentScene)
-        {
-            _currentScene.update(deltaSec);
+            _currentScene.update(fixedDeltaSec);
         }
 
         if (isShowing && showingTasks.length > 0)
@@ -834,7 +823,7 @@ class Window : GraphicComponent
                 lastShowingTick = 0;
                 foreach (task; showingTasks)
                 {
-                    task(deltaSec);
+                    task(fixedDeltaSec);
                 }
                 showingTasks = null;
             }

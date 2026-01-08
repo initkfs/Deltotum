@@ -1,30 +1,30 @@
-module api.dm.kit.apps.loops.counters.fps_render_counter;
+module api.dm.kit.apps.loops.counters.fps_update_counter;
 
 /**
  * Authors: initkfs
  */
-class FpsRenderCounter
+class FpsUpdateCounter
 {
-    float[120] renderFrameTimes = 0; // 2 sec (60 FPS)
+    float[120] updateFrameTimes = 0; // 2 sec (60 FPS)
     int frameIndex = 0;
     float totalRenderTime = 0;
-    int renderFrameCount = 0;
+    int updateFrameCount = 0;
     float lastFpsUpdate = 0;
     float currentFps = 0;
 
     void update(float deltaTimeMs)
     {
-        renderFrameTimes[frameIndex] = deltaTimeMs;
-        frameIndex = (frameIndex + 1) % renderFrameTimes.length;
+        updateFrameTimes[frameIndex] = deltaTimeMs;
+        frameIndex = (frameIndex + 1) % updateFrameTimes.length;
 
         totalRenderTime += deltaTimeMs;
-        renderFrameCount++;
+        updateFrameCount++;
 
         if (totalRenderTime >= 1000.0f)
         {
-            currentFps = (renderFrameCount * 1000.0f) / totalRenderTime;
+            currentFps = (updateFrameCount * 1000.0f) / totalRenderTime;
             totalRenderTime = 0;
-            renderFrameCount = 0;
+            updateFrameCount = 0;
         }
     }
 
@@ -33,7 +33,7 @@ class FpsRenderCounter
     float minfps()
     {
         float maxMs = 0;
-        foreach (time; renderFrameTimes)
+        foreach (time; updateFrameTimes)
         {
             if (time > maxMs)
                 maxMs = time;

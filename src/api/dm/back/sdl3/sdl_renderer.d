@@ -47,6 +47,16 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
+    ComResult setVsync(int interval)
+    {
+        assert(ptr);
+        if (!SDL_SetRenderVSync(ptr, interval))
+        {
+            return getErrorRes("Unable to set vsync on SDL renderer");
+        }
+        return ComResult.success;
+    }
+
     ComResult clearAndFill() nothrow
     {
         if (!tryClearAndFill)

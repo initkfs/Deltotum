@@ -20,6 +20,12 @@ string backendJoystickIsClassic = "backendJoystickIsClassic";
 
 string backendCheckRendererScale = "backendCheckRendererScale";
 
+string backendIsVsync="backendIsVsync";
+string backendVsyncInterval="backendVsyncInterval";
+string backendIsDelayStartLoopFrame = "backendIsDelayStartLoopFrame";
+string backendDelayStartLoopFrameMs = "backendDelayStartLoopFrameMs";
+string backendIsDelayLoopRestFrame = "backendIsDelayLoopRestFrame";
+
 string graphicsUseVector = "graphicsUseVector";
 string graphicsIsIconPack = "graphicsIsIconPack";
 

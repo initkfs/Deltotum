@@ -20,21 +20,18 @@ abstract class Loop
     float frameRate = 0;
 
     float frameTimeMs = 0;
-    float updateDelta = 0;
+    float updateFixedDeltaSec = 0;
+    size_t maxFixedUpdate = 5;
 
-    float physFps = 60.0f;
-    float physFrameMs = 1000.0f / 60.0;
-    float physDeltaSec = 1.0f / 60.0;
+    bool isDelayLoop;
 
     size_t delegate() timestampMsProvider;
-    void delegate(float startMs, float deltaMs, int physUpdateFrames) onFrameEnd;
 
-    void delegate(float startMs, float deltaMs, float deltaSec) onFreqLoopUpdateDelta;
+    void delegate(float startMs, float deltaMs, float renderRestRatio, size_t fixedFrameCount) onFreqLoopUpdateDelta;
     void delegate(float startMs, float deltaMs, float deltaFixedSec) onFreqLoopUpdateDeltaFixed;
 
-    void delegate() onDelay;
+    void delegate() onStartFrame;
     void delegate(float) onDelayTimeRestMs;
-    void delegate(float startMs, float deltaMs, float renderRestRatio) onRender;
 
     void delegate() onInit;
     void delegate() onRun;
@@ -49,7 +46,7 @@ abstract class Loop
         frameTimeMs = msInSec / frameRate;
         //or 1.0 / frameTimeMs, ~0.016666
         //updateDelta = frameTimeMs / deltaFactor; //deltaFactor == 100
-        updateDelta = 1.0 / frameRate;
+        updateFixedDeltaSec = 1.0 / frameRate;
     }
 
     abstract
@@ -71,13 +68,17 @@ abstract class Loop
     }
 
     void loop()
-    in (onDelay)
     in (timestampMsProvider)
     {
         while (isRunning)
         {
-            onDelay();
+            if (onStartFrame)
+            {
+                onStartFrame();
+            }
+
             immutable timeMs = timestampMsProvider();
+
             updateMs(timeMs);
         }
     }

@@ -48,6 +48,8 @@ nothrow:
     ComResult getIsClip(out bool isClip);
     ComResult removeClipRect();
 
+    ComResult setVsync(int interval);
+
     ComResult setBlendMode(ComBlendMode mode);
     ComResult getBlendMode(out ComBlendMode mode);
 
