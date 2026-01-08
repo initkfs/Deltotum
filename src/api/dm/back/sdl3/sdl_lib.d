@@ -1,7 +1,5 @@
 module api.dm.back.sdl3.sdl_lib;
 
-
-
 import std.string : toStringz, fromStringz;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -41,6 +39,14 @@ class SdlLib : SdlObject
     ulong ticksMs() nothrow => SDL_GetTicks();
     ulong ticksNs() nothrow => SDL_GetTicksNS();
 
+    float ticksMsPrec()
+    {
+        ulong count = SDL_GetPerformanceCounter();
+        ulong freq = SDL_GetPerformanceFrequency();
+        float result = count * 1000.0f / freq;
+        return result;
+    }
+
     void delayMs(uint ms)
     {
         SDL_Delay(ms);
@@ -49,6 +55,11 @@ class SdlLib : SdlObject
     void delayNs(ulong ms)
     {
         SDL_DelayNS(ms);
+    }
+
+    void delayNsPrec(ulong ms)
+    {
+        SDL_DelayPrecise(ms);
     }
 
     /** 

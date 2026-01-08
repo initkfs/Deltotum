@@ -806,10 +806,10 @@ class SdlApp : GuiApp
         loop.onExit = () => exit;
         loop.timestampMsProvider = () => ticksMs;
 
-        if (uservices.config.hasKey(KitConfigKeys.backendIsDelayStartLoopFrame) && uservices.config.getBool(
-                KitConfigKeys.backendIsDelayStartLoopFrame))
+        if (uservices.config.hasKey(KitConfigKeys.loopIsDelayFrame) && uservices.config.getBool(
+                KitConfigKeys.loopIsDelayFrame))
         {
-            int delayMs = uservices.config.getInt(KitConfigKeys.backendDelayStartLoopFrameMs);
+            int delayMs = uservices.config.getInt(KitConfigKeys.loopDelayFrameMs);
             if (delayMs > 0)
             {
                 loop.onStartFrame = () => sdlLib.delayMs(delayMs);
@@ -820,11 +820,30 @@ class SdlApp : GuiApp
             }
         }
 
-        if (uservices.config.hasKey(KitConfigKeys.backendIsDelayLoopRestFrame) && uservices.config.getBool(
-                KitConfigKeys.backendIsDelayLoopRestFrame))
+        if (uservices.config.hasKey(KitConfigKeys.loopIsControlFixed) && uservices.config.getBool(
+                KitConfigKeys.loopIsControlFixed))
         {
+            const maxAccum = uservices.config.getPositiveLong(
+                KitConfigKeys.loopFixedMaxAccumFrames);
+            loop.maxAccumulatedMs = maxAccum * loop.frameTimeMs;
+            loop.isControlFixedUpdate = true;
+            version (EnableTrace)
+            {
+                logger.trace("Enable fixed updates control in loop");
+            }
+        }
+
+        if (uservices.config.hasKey(KitConfigKeys.loopIsDelayFixedRest) && uservices.config.getBool(
+                KitConfigKeys.loopIsDelayFixedRest))
+        {
+            float restFactor = uservices.config.getFloat(
+                KitConfigKeys.loopDelayFixedRestFactor01);
             loop.onDelayTimeRestMs = (restMs) {
-                sdlLib.delayMs(cast(uint) restMs);
+                if (restFactor != 1)
+                {
+                    restMs *= restFactor;
+                }
+                sdlLib.delayNsPrec(cast(ulong)(restMs * 1_000_000));
             };
             version (EnableTrace)
             {
@@ -832,18 +851,19 @@ class SdlApp : GuiApp
             }
         }
 
-        loop.onFreqLoopUpdateDelta = (startMs, deltaTimeMs, accumRest, fixedUpdatesCount) {
+        loop.onLoopUpdate = (startMs, deltaTimeMs, accumRest, fixedUpdatesCount) {
             updateEvents;
             updateRender(accumRest);
             updateEndFrame(startMs, deltaTimeMs, fixedUpdatesCount);
         };
-        loop.onFreqLoopUpdateDeltaFixed = (startMs, deltaTimeMs, updateFixedDeltaSec) {
+        loop.onLoopUpdateFixed = (startMs, deltaTimeMs, updateFixedDeltaSec) {
             updateWindows(startMs, deltaTimeMs, updateFixedDeltaSec);
         };
 
         loop.isAutoStart = isAutoStart;
         loop.setUp;
-        uservices.logger.infof("Init loop, fps: %f, fdt: %f sec", loop.frameRate, loop.updateFixedDeltaSec);
+        uservices.logger.infof("Init loop, fps: %f, fdt: %f sec", loop.frameRate, loop
+                .updateFixedDeltaSec);
 
         assert(gservices.platform);
         gservices.platform.loopFixedDtSec = loop.updateFixedDeltaSec;
@@ -992,19 +1012,36 @@ class SdlApp : GuiApp
         SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer.get);
         window.renderer = sdlRenderer;
 
-        if (uservices.config.hasKey(KitConfigKeys.backendIsVsync) && uservices.config.getBool(
-                KitConfigKeys.backendIsVsync))
+        if (uservices.config.hasKey(KitConfigKeys.engineIsVsync))
         {
-            int vsyncInterval = uservices.config.getInt(KitConfigKeys.backendVsyncInterval);
-            if (const err = window.renderer.setVsync(vsyncInterval))
+            const isVsync = uservices.config.getBool(KitConfigKeys.engineIsVsync);
+            if (!isVsync)
             {
-                uservices.logger.error("VSync error: ", err);
+                if (const err = window.renderer.setVsync(SDL_RENDERER_VSYNC_DISABLED))
+                {
+                    uservices.logger.error("Disabling vsync error: ", err.toString);
+                }
+                else
+                {
+                    version (EnableTrace)
+                    {
+                        uservices.logger.trace("Disable Vsync");
+                    }
+                }
             }
             else
             {
-                version (EnableTrace)
+                int vsyncInterval = uservices.config.getInt(KitConfigKeys.engineVsyncInterval);
+                if (const err = window.renderer.setVsync(vsyncInterval))
                 {
-                    uservices.logger.trace("Set vsync: ", vsyncInterval);
+                    uservices.logger.error("Unable to set vsync interval: ", err.toString);
+                }
+                else
+                {
+                    version (EnableTrace)
+                    {
+                        uservices.logger.trace("Set VSync interval: ", vsyncInterval);
+                    }
                 }
             }
         }
@@ -1034,6 +1071,29 @@ class SdlApp : GuiApp
                         throw new Exception("Unable to set renderer scale: ", sdlRenderer.getError);
                     }
                 }
+            }
+        }
+
+        if (uservices.config.hasKey(KitConfigKeys.engineIsLogFpsToFile) && uservices.config.getBool(
+                KitConfigKeys.engineIsLogFpsToFile))
+        {
+            //TODO from config;
+            import std.stdio : File;
+            import std.path : buildPath;
+            import std.format : format;
+
+            string logPath = buildPath(uservices.context.app.workDir, format("window_fps_log_%d.log", window
+                    .id));
+            try
+            {
+                auto fpsLog = new File(logPath, "w");
+                //TODO to window
+                fpsLog.writeln("update fixed");
+                window.fpsLog = fpsLog;
+            }
+            catch (Exception e)
+            {
+                uservices.logger.error(e);
             }
         }
 
@@ -1074,12 +1134,16 @@ class SdlApp : GuiApp
         );
 
         windowBuilder.graphic.comSurfaceProvider = ProviderFactory!ComSurface(
+
             &newComSurface,
+
             &newComSurfaceScoped
         );
 
         windowBuilder.graphic.comImageProvider = ProviderFactory!ComImage(
+
             &newComImage,
+
             &newComImageScoped
         );
 

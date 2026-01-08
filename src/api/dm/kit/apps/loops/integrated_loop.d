@@ -6,7 +6,6 @@ import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
- * Loop doesn't use a classic "fixed" physical delta. Its a hybrid version with variable delta.
  */
 class IntegratedLoop : Loop
 {
@@ -24,38 +23,36 @@ class IntegratedLoop : Loop
     }
 
     override void updateMs(size_t startMs)
-    in (onFreqLoopUpdateDelta)
-    in (onFreqLoopUpdateDeltaFixed)
+    in (onLoopUpdate)
+    in (onLoopUpdateFixed)
     {
-        //TODO SDL_GetPerformanceCounter
-        //(float)((now - start)*1000) / SDL_GetPerformanceFrequency()
-        float deltaTimeMs = startMs - lastUpdateTimeMs;
+        //TODO (0xFFFFFFFF - lastUpdateTimeMs) + currentTime + 1;
+        immutable float deltaTimeMs = startMs - lastUpdateTimeMs;
         lastUpdateTimeMs = startMs;
         deltaTimeAccumulatorMs += deltaTimeMs;
 
-        // if (deltaTimeAccumulatorMs > deltaTimeAccumLimitMs)
-        // {
-        //     deltaTimeAccumulatorMs = deltaTimeAccumLimitMs;
-        // }
+        if (isControlFixedUpdate && deltaTimeAccumulatorMs > maxAccumulatedMs)
+        {
+            deltaTimeAccumulatorMs = maxAccumulatedMs;
+        }
 
         size_t fixedUpdatesCount;
-
         while (deltaTimeAccumulatorMs >= frameTimeMs)
         {
-            onFreqLoopUpdateDeltaFixed(startMs, deltaTimeMs, updateFixedDeltaSec);
+            onLoopUpdateFixed(startMs, deltaTimeMs, updateFixedDeltaSec);
             deltaTimeAccumulatorMs -= frameTimeMs;
             fixedUpdatesCount++;
         }
 
-        if (fixedUpdatesCount >= maxFixedUpdate && deltaTimeAccumulatorMs > frameTimeMs * 2)
-        {
-            deltaTimeAccumulatorMs = frameTimeMs; //one frame
-        }
+        // if (isControlFixedUpdate && fixedUpdatesCount >= maxFixedUpdate && deltaTimeAccumulatorMs > frameTimeMs * 2)
+        // {
+        //     deltaTimeAccumulatorMs = frameTimeMs; //one frame
+        // }
 
         immutable float accumRest = deltaTimeAccumulatorMs / frameTimeMs;
 
         //float deltaSec = deltaTimeMs / 1000.0f;
-        onFreqLoopUpdateDelta(startMs, deltaTimeMs, accumRest, fixedUpdatesCount);
+        onLoopUpdate(startMs, deltaTimeMs, accumRest, fixedUpdatesCount);
 
         if (onDelayTimeRestMs && (deltaTimeAccumulatorMs < frameTimeMs))
         {

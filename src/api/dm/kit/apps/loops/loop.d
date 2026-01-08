@@ -22,13 +22,17 @@ abstract class Loop
     float frameTimeMs = 0;
     float updateFixedDeltaSec = 0;
     size_t maxFixedUpdate = 5;
+    bool isControlFixedUpdate;
+
+    //33-66ms high input, 500-1000 physics, 100-250 common, 4 * 16.666ms
+    float maxAccumulatedMs = 250;
 
     bool isDelayLoop;
 
     size_t delegate() timestampMsProvider;
 
-    void delegate(float startMs, float deltaMs, float renderRestRatio, size_t fixedFrameCount) onFreqLoopUpdateDelta;
-    void delegate(float startMs, float deltaMs, float deltaFixedSec) onFreqLoopUpdateDeltaFixed;
+    void delegate(float startMs, float deltaMs, float renderRestRatio, size_t fixedFrameCount) onLoopUpdate;
+    void delegate(float startMs, float deltaMs, float deltaFixedSec) onLoopUpdateFixed;
 
     void delegate() onStartFrame;
     void delegate(float) onDelayTimeRestMs;
@@ -42,10 +46,7 @@ abstract class Loop
         this.frameRate = frameRate;
         assert(frameRate > 0);
 
-        //TODO auto perfFreqMs = SDL_GetPerformanceFrequency() / 1000.0 / 1000;
         frameTimeMs = msInSec / frameRate;
-        //or 1.0 / frameTimeMs, ~0.016666
-        //updateDelta = frameTimeMs / deltaFactor; //deltaFactor == 100
         updateFixedDeltaSec = 1.0 / frameRate;
     }
 

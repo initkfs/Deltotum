@@ -20,12 +20,6 @@ string backendJoystickIsClassic = "backendJoystickIsClassic";
 
 string backendCheckRendererScale = "backendCheckRendererScale";
 
-string backendIsVsync="backendIsVsync";
-string backendVsyncInterval="backendVsyncInterval";
-string backendIsDelayStartLoopFrame = "backendIsDelayStartLoopFrame";
-string backendDelayStartLoopFrameMs = "backendDelayStartLoopFrameMs";
-string backendIsDelayLoopRestFrame = "backendIsDelayLoopRestFrame";
-
 string graphicsUseVector = "graphicsUseVector";
 string graphicsIsIconPack = "graphicsIsIconPack";
 
@@ -39,6 +33,18 @@ string fontSizeMedium = "fontSizeMedium";
 string fontSizeLarge = "fontSizeLarge";
 string fontSizeSmall = "fontSizeSmall";
 
+string engineIsVsync="engineIsVsync";
+string engineVsyncInterval="engineVsyncInterval";
+
+string loopIsDelayFrame = "loopIsDelayFrame";
+string loopDelayFrameMs = "loopDelayFrameMs";
+string loopIsDelayFixedRest = "loopIsDelayFixedRest";
+string loopDelayFixedRestFactor01 = "loopDelayFixedRestFactor01";
+string loopIsControlFixed = "loopIsControlFixed";
+string loopFixedMaxAccumFrames = "loopFixedMaxAccumFrames";
+
 string engineFrameRate = "engineFrameRate";
 string engineIsXML = "engineIsXML";
+
+string engineIsLogFpsToFile = "engineIsLogFpsToFile";
 

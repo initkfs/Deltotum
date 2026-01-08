@@ -23,6 +23,8 @@ import api.core.loggers.logging : Logging;
 import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.gui.themes.icons.icon_name;
 
+import std.stdio : File;
+
 /**
  * Authors: initkfs
  */
@@ -87,6 +89,9 @@ class Window : GraphicComponent
     bool isFocus;
     bool isShowing;
     bool isDisposed;
+
+    //TODO remove
+    File* fpsLog;
 
     this(ComWindow window)
     {
@@ -357,6 +362,15 @@ class Window : GraphicComponent
         version (EnableTrace)
         {
             logger.tracef("Start dispose window '%s' with id %d", title, windowId);
+        }
+
+        if (fpsLog && fpsLog.isOpen)
+        {
+            fpsLog.close;
+            version (EnableTrace)
+            {
+                logger.infof("Close fps log for window id %d: %s", windowId, fpsLog.name);
+            }
         }
 
         //TODO close child windows
@@ -806,6 +820,18 @@ class Window : GraphicComponent
     {
         updateCounter.update(deltaMs);
         fixedCounter.update(deltaMs, physUpdateCount);
+
+        if (fpsLog && fpsLog.isOpen)
+        {
+            try
+            {
+                fpsLog.writefln("%f %f", updateCounter.fps, fixedCounter.fps);
+            }
+            catch (Exception e)
+            {
+                logger.error(e.toString);
+            }
+        }
     }
 
     void update(float startMs, float deltaMs, float fixedDeltaSec)
