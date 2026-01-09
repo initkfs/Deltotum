@@ -71,11 +71,14 @@ class Sprite2d : EventKitTarget
     bool isOpacityForChild;
 
     bool isPhysics;
+    bool isPhysInterpolateLastXY;
 
     Vec2f velocity;
     Vec2f acceleration;
     Vec2f accelerationAngular;
     float friction = 1;
+    float gravity = 0;
+    float bounce = -0.7;
 
     Sprite2d isCollisionProcess;
     Sprite2d[] collisionTargets;
@@ -1208,17 +1211,29 @@ class Sprite2d : EventKitTarget
 
     void updateDrawPhys(float alpha)
     {
-        if (!isPhysics)
+        if (!isPhysics || !isPhysInterpolateLastXY)
         {
             return;
         }
 
-        _x = _prevX + (_x - _prevX) * alpha;
-        _y = _prevY + (_y - _prevY) * alpha;
+        if (_prevX != 0)
+        {
+            _x = _prevX + (_x - _prevX) * alpha;
+        }
+
+        if (_prevY != 0)
+        {
+            _y = _prevY + (_y - _prevY) * alpha;
+        }
     }
 
     void updatePhys(out float dx, out float dy, float delta)
     {
+        if (isDrag)
+        {
+            return;
+        }
+
         checkCollisions;
 
         //TODO check velocity is 0 || acceleration is 0
@@ -1238,15 +1253,23 @@ class Sprite2d : EventKitTarget
             accelerationDy = Math.sinDeg(angle) * accelerationAngular.y * invMass * delta;
         }
 
-        // if (friction != 1)
-        // {
-        //     //TODO dynamic friction
-        //     //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
-        //     //float dynamicFriction = 1.0f - (speed * 0.01f);
-        //     float frictionPerFrame = 1.0f - (1.0f - friction) * delta;
-        //     velocity.x *= frictionPerFrame;
-        //     velocity.y *= frictionPerFrame;
-        // }
+        velocity.x += accelerationDx;
+        velocity.y += accelerationDy;
+
+        if (gravity != 0)
+        {
+            velocity.y += gravity;
+        }
+
+        if (friction != 1)
+        {
+            //TODO dynamic friction
+            //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
+            //float dynamicFriction = 1.0f - (speed * 0.01f);
+            float frictionPerFrame = 1.0f - (1.0f - friction) * delta;
+            velocity.x *= frictionPerFrame;
+            velocity.y *= frictionPerFrame;
+        }
 
         if (Math.abs(velocity.x) < 0.5f)
             velocity.x = 0;
@@ -1265,8 +1288,11 @@ class Sprite2d : EventKitTarget
             dy *= delta;
         }
 
-        _prevX = _x;
-        _prevY = _y;
+        if (isPhysInterpolateLastXY)
+        {
+            _prevX = _x;
+            _prevY = _y;
+        }
 
         _x += dx;
         _y += dy;
@@ -1590,6 +1616,10 @@ class Sprite2d : EventKitTarget
             }
         }
 
+        if(isPhysInterpolateLastXY && _prevX != 0){
+            _prevX = 0;
+        }
+
         _x = newX;
 
         if (!isInvalidationProcess)
@@ -1637,6 +1667,10 @@ class Sprite2d : EventKitTarget
             {
                 onClipMove(&clip);
             }
+        }
+
+        if(isPhysInterpolateLastXY && _prevY != 0){
+            _prevY = 0;
         }
 
         _y = newY;

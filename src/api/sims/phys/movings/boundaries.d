@@ -41,8 +41,36 @@ void wrapSimple(Sprite2d sprite, Rect2f bounds)
     if (spriteBounds.bottom < bounds.y)
     {
         sprite.y = bounds.bottom;
-    }else if (spriteBounds.y > bounds.bottom)
+    }
+    else if (spriteBounds.y > bounds.bottom)
     {
         sprite.y = bounds.y - spriteBounds.height;
+    }
+}
+
+void throwing(Sprite2d sprite, Rect2f bounds)
+{
+    const spriteBounds = sprite.boundsRect;
+
+    if (spriteBounds.right > bounds.right)
+    {
+        sprite.x = bounds.right - spriteBounds.width;
+        sprite.velocity.x *= sprite.bounce;
+    }
+    else if (spriteBounds.x < bounds.x)
+    {
+        sprite.x = bounds.x;
+        sprite.velocity.x *= sprite.bounce;
+    }
+
+    if (spriteBounds.bottom > bounds.bottom)
+    {
+        sprite.y = bounds.bottom - spriteBounds.height;
+        sprite.velocity.y *= sprite.bounce;
+    }
+    else if (spriteBounds.y < bounds.y)
+    {
+        sprite.y = bounds.y;
+        sprite.velocity.y *= sprite.bounce;
     }
 }

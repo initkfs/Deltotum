@@ -53,9 +53,7 @@ class Physics : Control
             material.isPhysics = true;
         };
 
-        import api.sims.phys.movings.friction;
-
-        material.friction = 0.5; 
+        material.friction = 0.65; 
     }
 
     override bool draw(float dt){
