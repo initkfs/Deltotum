@@ -146,6 +146,19 @@ struct RGBA
         return newColor;
     }
 
+    static RGBA randomLight(float alpha = maxAlpha)
+    {
+        auto rnd = rands;
+        return randomLight(rnd, alpha);
+    }
+
+    static RGBA randomLight(Random rnd, float alpha = maxAlpha)
+    {
+        import api.dm.kit.graphics.colors.hsla : HSLA;
+
+        return HSLA.randomHue(rnd, alpha).toRGBA;
+    }
+
     RGBA invert() nothrow pure @safe
     {
         return RGBA(maxColor - r, maxColor - g, maxColor - b, a);
@@ -453,7 +466,7 @@ struct RGBA
 
     float[3] toArrayFRGB() => [rNorm, gNorm, bNorm];
 
-    import api.math.geom3.vec3: Vec3f;
+    import api.math.geom3.vec3 : Vec3f;
 
     Vec3f toVec3Norm() => Vec3f(rNorm, gNorm, bNorm);
 

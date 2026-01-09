@@ -1266,15 +1266,16 @@ class Sprite2d : EventKitTarget
             //TODO dynamic friction
             //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
             //float dynamicFriction = 1.0f - (speed * 0.01f);
-            float frictionPerFrame = 1.0f - (1.0f - friction) * delta;
-            velocity.x *= frictionPerFrame;
-            velocity.y *= frictionPerFrame;
+            float fx = -velocity.x * friction;
+            float fy = -velocity.y * friction;
+            velocity.x += fx * delta;
+            velocity.y += fy * delta;
         }
 
-        if (Math.abs(velocity.x) < 0.5f)
-            velocity.x = 0;
-        if (Math.abs(velocity.y) < 0.5f)
-            velocity.y = 0;
+        // if (Math.abs(velocity.x) < 0.5f)
+        //     velocity.x = 0;
+        // if (Math.abs(velocity.y) < 0.5f)
+        //     velocity.y = 0;
 
         dx = velocity.x;
         dy = velocity.y;
@@ -1616,7 +1617,8 @@ class Sprite2d : EventKitTarget
             }
         }
 
-        if(isPhysInterpolateLastXY && _prevX != 0){
+        if (isPhysInterpolateLastXY && _prevX != 0)
+        {
             _prevX = 0;
         }
 
@@ -1669,7 +1671,8 @@ class Sprite2d : EventKitTarget
             }
         }
 
-        if(isPhysInterpolateLastXY && _prevY != 0){
+        if (isPhysInterpolateLastXY && _prevY != 0)
+        {
             _prevY = 0;
         }
 

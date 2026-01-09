@@ -27,7 +27,13 @@ struct HSLA
     float l = maxLightness;
     float a = maxAlpha;
 
-    import api.math.random : Random;
+    import api.math.random : Random, rands;
+
+    static HSLA random(float newAlpha = maxAlpha)
+    {
+        Random rnd = rands;
+        return random(rnd, newAlpha);
+    }
 
     static HSLA random(Random rnd, float newAlpha = maxAlpha)
     {
@@ -35,6 +41,22 @@ struct HSLA
             rnd.between(minHue, maxHue),
             rnd.between(minSaturation, maxSaturation),
             rnd.between(minLightness, maxLightness),
+            newAlpha
+        );
+    }
+
+    static HSLA randomHue(float newAlpha = maxAlpha)
+    {
+        Random rnd = rands;
+        return randomHue(rnd, newAlpha);
+    }
+
+    static HSLA randomHue(Random rnd, float newAlpha = maxAlpha)
+    {
+        return HSLA(
+            rnd.between(minHue, maxHue),
+            maxSaturation,
+            maxLightness / 2.0,
             newAlpha
         );
     }

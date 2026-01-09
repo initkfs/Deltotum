@@ -80,7 +80,35 @@ class RandomAngleMotion
         angleRad.y += speed.y * dt;
 
         sprite.x = center.x + Math.sin(angleRad.x) * range;
-		sprite.y = center.y + Math.sin(angleRad.y) * range;
-		
+        sprite.y = center.y + Math.sin(angleRad.y) * range;
+
+    }
+}
+
+class EasingTo : Sprite2d
+{
+    float easing = 0.2;
+    Vec2f target;
+    bool isMove;
+
+    override void update(float dt)
+    {
+        super.update(dt);
+
+        if (!isMove)
+        {
+            return;
+        }
+
+        foreach (sprite; children)
+        {
+            const dist = target.sub(sprite.pos);
+
+            const dx = dist.x * easing;
+            const dy = dist.y * easing;
+
+            sprite.acceleration.x = dx;
+            sprite.acceleration.y = dy;
+        }
     }
 }

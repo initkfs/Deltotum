@@ -2,14 +2,16 @@ module api.demo.demo1.scenes.game;
 
 import api.sims.phys.movings.moving;
 import api.sims.phys.movings.boundaries;
+import api.sims.phys.movings.physeffects;
 
 import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
-import api.dm.kit.graphics.colors.rgba: RGBA;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import std.stdio;
 
+import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
 class Spring4 : Sprite2d
@@ -17,42 +19,40 @@ class Spring4 : Sprite2d
     VCircle ball;
     RandomAngleMotion move;
 
-    override void create(){
+    OffsetSpring moving;
 
-        move = new RandomAngleMotion;
-        
+    override void create()
+    {
+
+        moving = new OffsetSpring;
+
         super.create;
-        import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
-        import api.dm.kit.graphics.colors.rgba: RGBA;
-		ball = new VCircle(25, GraphicStyle(5, RGBA.cyan, true, RGBA.lightcyan));
-		addCreate(ball);
-        ball.isPhysics = true;
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        // move.sprite = ball;
-        ball.pos(200, 200);
-        ball.isDraggable = true;
+        addCreate(moving);
 
-        ball.onPointerPress ~= (ref e){
-            ball.gravity = 50;
-        };
+        //moving.spring = 0.1;
+
     }
 
-    override bool draw(float alpha){
+    override bool draw(float alpha)
+    {
         super.draw(alpha);
 
         graphic.color = RGBA.greenyellow;
         graphic.rect(graphic.renderBounds);
-        graphic.rect(ball.boundsRect);
+        //graphic.rect(ball.boundsRect);
         return true;
     }
 
-    override void update(float dt){
+    override void update(float dt)
+    {
         super.update(dt);
 
         auto bounds = graphic.renderBounds;
         bounds.y -= 100;
-        throwing(ball, bounds);
-        //move.update(dt);
+        //throwing(ball, bounds);
     }
 }
 

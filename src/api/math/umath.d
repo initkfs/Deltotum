@@ -55,6 +55,8 @@ alias atan = mathTrig.atan;
 //-π to π
 alias atan2 = mathTrig.atan2;
 
+float atan2(Vec2f vec) => atan2(vec.y, vec.x);
+
 //inverse hyperbolic tangent, -1..1
 alias atanh = mathTrig.atanh;
 
