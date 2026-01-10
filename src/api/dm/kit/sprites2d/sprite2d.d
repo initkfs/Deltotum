@@ -74,6 +74,7 @@ class Sprite2d : EventKitTarget
     bool isPhysInterpolateLastXY;
 
     Vec2f velocity;
+    float angularVelocity;
     Vec2f acceleration;
     Vec2f accelerationAngular;
     float friction = 1;
@@ -1271,6 +1272,8 @@ class Sprite2d : EventKitTarget
             velocity.x += -velocity.x * friction;
             velocity.y += -velocity.y * friction;
         }
+
+        angle =  angle + angularVelocity * delta;
 
         if (isStopOnSmallVelocity)
         {

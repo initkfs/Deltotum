@@ -10,7 +10,7 @@ import Math = api.dm.math;
  */
 class VRectangle : VShape
 {
-    this(float width = 50, float height = 50, GraphicStyle style)
+    this(float width = 50, float height = 50, GraphicStyle style = GraphicStyle.simple) 
     {
         super(width, height, style);
     }

@@ -410,7 +410,7 @@ class Scene2d : EventKitTarget
         if (!obj.isBuilt)
         {
             build(obj);
-            assert(obj.isBuilt);
+            assert(obj.isBuilt, "Object not built: " ~ obj.toString);
         }
 
         if (!obj.isCreated)
@@ -418,11 +418,11 @@ class Scene2d : EventKitTarget
             if (!obj.isInitializing)
             {
                 obj.initialize;
-                assert(obj.isInitializing);
+                assert(obj.isInitializing, "Object not initialized: " ~ obj.toString);
             }
 
             obj.create;
-            assert(obj.isCreating);
+            assert(obj.isCreating, "Object not created: " ~ obj.toString);
         }
 
         add(obj);
