@@ -61,7 +61,6 @@ import api.dm.kit.media.multimedia : MultiMedia;
 import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.platforms.screens.screening : Screening;
-import api.dm.lib.vips.native.v8.binddynamic : VipsLib;
 
 import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
@@ -98,7 +97,6 @@ class SdlApp : GuiApp
         Nullable!SdlJoystick sdlCurrentJoystick;
 
         CairoLib cairoLib;
-        VipsLib vipsLib;
 
         SDLScreen comScreen;
 
@@ -314,33 +312,6 @@ class SdlApp : GuiApp
 
             cairoLibForLoad.load;
         }
-
-        //if (gservices.platform.cap.isImageProcessing)
-        //{
-        auto imgProcLib = new VipsLib;
-
-        imgProcLib.onLoad = () {
-            vipsLib = imgProcLib;
-            version (EnableTrace)
-            {
-                uservices.logger.trace("Load libvips.");
-            }
-
-            import api.dm.lib.vips.native.v8.binddynamic : vips_init, vips_shutdown, vips_error_buffer_copy;
-            import std.string : toStringz, fromStringz;
-
-            //TODO args[0] keep ref?
-            if (vips_init(args[0].toStringz))
-            {
-                uservices.logger.error("Vips init error: ", vips_error_buffer_copy()
-                        .fromStringz.idup);
-                vipsLib.unload;
-                vipsLib = null;
-            }
-        };
-
-        imgProcLib.load;
-        //}
 
         if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
         {
