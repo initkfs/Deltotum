@@ -44,7 +44,6 @@ string loopIsControlFixed = "loopIsControlFixed";
 string loopFixedMaxAccumFrames = "loopFixedMaxAccumFrames";
 
 string engineFrameRate = "engineFrameRate";
-string engineIsXML = "engineIsXML";
 
 string engineIsLogFpsToFile = "engineIsLogFpsToFile";
 

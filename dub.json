@@ -106,8 +106,7 @@
         "avutil",
         "swresample",
         "swscale",
-        "box2d",
-        "gobject-2.0"
+        "box2d"
     ],
     "versions": []
 }
