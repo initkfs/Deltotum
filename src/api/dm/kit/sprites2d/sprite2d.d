@@ -79,6 +79,8 @@ class Sprite2d : EventKitTarget
     float friction = 1;
     float gravity = 0;
     float bounce = -0.7;
+    bool isStopOnSmallVelocity;
+    float smallVelocityAbs = 0.5;
 
     Sprite2d isCollisionProcess;
     Sprite2d[] collisionTargets;
@@ -1242,15 +1244,15 @@ class Sprite2d : EventKitTarget
 
         if (accelerationAngular.isZero)
         {
-            accelerationDx = acceleration.x * invMass * delta;
-            accelerationDy = acceleration.y * invMass * delta;
+            accelerationDx = acceleration.x * invMass;
+            accelerationDy = acceleration.y * invMass;
         }
         else
         {
             import Math = api.math;
 
-            accelerationDx = Math.cosDeg(angle) * accelerationAngular.x * invMass * delta;
-            accelerationDy = Math.sinDeg(angle) * accelerationAngular.y * invMass * delta;
+            accelerationDx = Math.cosDeg(angle) * accelerationAngular.x * invMass;
+            accelerationDy = Math.sinDeg(angle) * accelerationAngular.y * invMass;
         }
 
         velocity.x += accelerationDx;
@@ -1263,31 +1265,26 @@ class Sprite2d : EventKitTarget
 
         if (friction != 1)
         {
-            //TODO dynamic friction
+            //dynamic friction
             //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
             //float dynamicFriction = 1.0f - (speed * 0.01f);
-            float fx = -velocity.x * friction;
-            float fy = -velocity.y * friction;
-            velocity.x += fx * delta;
-            velocity.y += fy * delta;
+            velocity.x += -velocity.x * friction;
+            velocity.y += -velocity.y * friction;
         }
 
-        // if (Math.abs(velocity.x) < 0.5f)
-        //     velocity.x = 0;
-        // if (Math.abs(velocity.y) < 0.5f)
-        //     velocity.y = 0;
+        if (isStopOnSmallVelocity)
+        {
+            if (Math.abs(velocity.x) <= smallVelocityAbs)
+                velocity.x = 0;
+            if (Math.abs(velocity.y) <= smallVelocityAbs)
+                velocity.y = 0;
+        }
 
         dx = velocity.x;
         dy = velocity.y;
 
-        if (accelerationDx == 0 && dx != 0)
-        {
-            dx *= delta;
-        }
-        if (accelerationDy == 0 && dy != 0)
-        {
-            dy *= delta;
-        }
+        dx *= delta;
+        dy *= delta;
 
         if (isPhysInterpolateLastXY)
         {

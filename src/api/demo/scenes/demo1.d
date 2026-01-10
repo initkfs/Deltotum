@@ -30,10 +30,17 @@ class Spring4 : Sprite2d
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        addCreate(moving);
+        //addCreate(moving);
 
         //moving.spring = 0.1;
 
+        ball = new VCircle(20);
+        ball.isPhysics = true;
+        addCreate(ball);
+        ball.toCenter;
+        ball.onPointerPress ~= (ref e){
+            ball.gravity = 10;
+        };
     }
 
     override bool draw(float alpha)
