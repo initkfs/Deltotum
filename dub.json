@@ -75,8 +75,7 @@
     "importPaths": [
         "./src",
         "./libs/sdl3",
-        "./libs/ffmpeg",
-        "./libs/box2d"
+        "./libs/ffmpeg"
     ],
     "dflags": [
         "-dip1000",
@@ -85,13 +84,11 @@
         "-Xcc=-fuse-ld=lld",
         "-J=./data",
         "-P=-I./libs/sdl3/SDL_lib",
-        "-P=-I./libs/ffmpeg/include",
-        "-P=-I./libs/box2d/include"
+        "-P=-I./libs/ffmpeg/include"
     ],
     "lflags": [
         "-L./libs/sdl3",
         "-L./libs/ffmpeg/lib",
-        "-L./libs/box2d/lib",
         "-rpath=./libs/sdl3"
     ],
     "libs": [
@@ -105,8 +102,7 @@
         "avformat",
         "avutil",
         "swresample",
-        "swscale",
-        "box2d"
+        "swscale"
     ],
     "versions": []
 }
