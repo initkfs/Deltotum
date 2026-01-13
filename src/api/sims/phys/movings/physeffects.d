@@ -17,7 +17,7 @@ import Math = api.math;
 
 class TripleSpring : Sprite2d
 {
-    float spring = 3;
+    float spring = 10;
     float springLength = 100;
     float friction = 0.95;
 
@@ -40,7 +40,7 @@ class TripleSpring : Sprite2d
         addCreate([ball0, ball1, ball2]);
     }
 
-    protected Sprite createTarget() {
+    protected Sprite2d createTarget() {
         auto target = new VCircle(20, GraphicStyle(5, RGBA.random, true, RGBA.random));
         target.isDraggable = true;
         target.isPhysics = true;
@@ -61,21 +61,21 @@ class TripleSpring : Sprite2d
 
         if (!ball0.isDrag)
         {
-            ball0.acceleration = springTo(ball0, ball1).add(springTo(ball0, ball2));
+            ball0.acceleration = springTo(ball0, ball1, dt).add(springTo(ball0, ball2, dt));
         }
 
         if (!ball1.isDrag)
         {
-            ball1.acceleration = springTo(ball1, ball0).add(springTo(ball1, ball2));
+            ball1.acceleration = springTo(ball1, ball0, dt).add(springTo(ball1, ball2, dt));
         }
 
         if (!ball2.isDrag)
         {
-            ball2.acceleration = springTo(ball2, ball0).add(springTo(ball2, ball1));
+            ball2.acceleration = springTo(ball2, ball0, dt).add(springTo(ball2, ball1, dt));
         }
     }
 
-    Vec2f springTo(Sprite2d ballA, Sprite2d ballB)
+    Vec2f springTo(Sprite2d ballA, Sprite2d ballB, float dt)
     {
         auto dxdx = ballB.center.sub(ballA.center);
         auto angleRad = Math.atan2(dxdx.y, dxdx.x);
@@ -83,7 +83,7 @@ class TripleSpring : Sprite2d
         const targetX = ballB.x - Math.cos(angleRad) * springLength;
         const targetY = ballB.y - Math.sin(angleRad) * springLength;
 
-        return Vec2f((targetX - ballA.x) * spring, (targetY - ballA.y) * spring);
+        return Vec2f((targetX - ballA.x) * spring * dt, (targetY - ballA.y) * spring * dt);
     }
 }
 
@@ -125,7 +125,7 @@ class OffsetSpring : Sprite2d
         auto targetX = input.pointerPos.x + Math.cos(angle) * springLen;
         auto targetY = input.pointerPos.y + Math.sin(angle) * springLen;
 
-        sprite.acceleration = Vec2f((targetX - sprite.x) * spring, (targetY - sprite.y) * spring);
+        sprite.acceleration = Vec2f((targetX - sprite.x) * spring * dt, (targetY - sprite.y) * spring * dt);
     }
 }
 
@@ -182,8 +182,8 @@ class MultiSpring : Sprite2d
         Vec2f accel;
         foreach (handle; handles)
         {
-            accel.x += (handle.center.x - sprite.center.x) * spring;
-            accel.y += (handle.center.y - sprite.center.y) * spring;
+            accel.x += (handle.center.x - sprite.center.x) * spring * dt;
+            accel.y += (handle.center.y - sprite.center.y) * spring * dt;
         }
         sprite.acceleration = accel;
     }
@@ -241,14 +241,14 @@ class SpringChain : Sprite2d
             auto prev = children[i - 1];
             auto curr = children[i];
 
-            apply(curr, prev.center.x, prev.center.y);
+            apply(curr, prev.center.x, prev.center.y, dt);
         }
     }
 
-    void apply(Sprite2d sprite, float targetX, float targetY)
+    void apply(Sprite2d sprite, float targetX, float targetY, float dt)
     {
-        sprite.acceleration.x = (targetX - sprite.center.x) * spring;
-        sprite.acceleration.y = (targetY - sprite.center.y) * spring;
+        sprite.acceleration.x = (targetX - sprite.center.x) * spring * dt;
+        sprite.acceleration.y = (targetY - sprite.center.y) * spring * dt;
     }
 }
 
