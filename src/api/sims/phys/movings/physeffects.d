@@ -15,7 +15,79 @@ import Math = api.math;
     springTo.updtate(dt, input.pointerPos);
  */
 
- class OffsetSpring : Sprite2d
+class TripleSpring : Sprite2d
+{
+    float spring = 3;
+    float springLength = 100;
+    float friction = 0.95;
+
+    Sprite2d ball0;
+    Sprite2d ball1;
+    Sprite2d ball2;
+
+    override void create()
+    {
+        super.create;
+
+        ball0 = createTarget;
+        ball0.pos = Vec2f(101, 100);
+       
+        ball1 = createTarget;
+        ball1.pos = Vec2f(205, 103);
+        
+        ball2 = createTarget;
+        ball2.pos = Vec2f(150, 201);
+        addCreate([ball0, ball1, ball2]);
+    }
+
+    protected Sprite createTarget() {
+        auto target = new VCircle(20, GraphicStyle(5, RGBA.random, true, RGBA.random));
+        target.isDraggable = true;
+        target.isPhysics = true;
+        target.friction = friction;
+        return target;
+    }
+
+    override void drawContent(){
+        graphic.color = RGBA.lightcyan;
+        graphic.line(ball0.center, ball1.center);
+        graphic.line(ball1.center, ball2.center);
+        graphic.line(ball2.center, ball0.center);
+    }
+
+    override void update(float dt)
+    {
+        super.update(dt);
+
+        if (!ball0.isDrag)
+        {
+            ball0.acceleration = springTo(ball0, ball1).add(springTo(ball0, ball2));
+        }
+
+        if (!ball1.isDrag)
+        {
+            ball1.acceleration = springTo(ball1, ball0).add(springTo(ball1, ball2));
+        }
+
+        if (!ball2.isDrag)
+        {
+            ball2.acceleration = springTo(ball2, ball0).add(springTo(ball2, ball1));
+        }
+    }
+
+    Vec2f springTo(Sprite2d ballA, Sprite2d ballB)
+    {
+        auto dxdx = ballB.center.sub(ballA.center);
+        auto angleRad = Math.atan2(dxdx.y, dxdx.x);
+
+        const targetX = ballB.x - Math.cos(angleRad) * springLength;
+        const targetY = ballB.y - Math.sin(angleRad) * springLength;
+
+        return Vec2f((targetX - ballA.x) * spring, (targetY - ballA.y) * spring);
+    }
+}
+
+class OffsetSpring : Sprite2d
 {
     float spring = 2;
     float springLen = 100;
@@ -28,7 +100,7 @@ import Math = api.math;
 
         sprite = new VCircle(25, GraphicStyle(5, RGBA.randomLight, true, RGBA.randomLight));
         sprite.isDraggable = true;
-        sprite.friction  = 9;
+        sprite.friction = 9;
         sprite.isPhysics = true;
         addCreate(sprite);
     }
@@ -49,11 +121,10 @@ import Math = api.math;
         super.update(dt);
 
         Vec2f dxdy = sprite.pos.sub(input.pointerPos);
-		auto angle = Math.atan2(dxdy);
-		auto targetX = input.pointerPos.x + Math.cos(angle) * springLen;
-		auto targetY = input.pointerPos.y + Math.sin(angle) * springLen;
+        auto angle = Math.atan2(dxdy);
+        auto targetX = input.pointerPos.x + Math.cos(angle) * springLen;
+        auto targetY = input.pointerPos.y + Math.sin(angle) * springLen;
 
-        
         sprite.acceleration = Vec2f((targetX - sprite.x) * spring, (targetY - sprite.y) * spring);
     }
 }
@@ -83,7 +154,7 @@ class MultiSpring : Sprite2d
 
         sprite = new VCircle(25, GraphicStyle(5, RGBA.randomLight, true, RGBA.randomLight));
         sprite.isDraggable = true;
-        sprite.friction  = 9;
+        sprite.friction = 9;
         sprite.isPhysics = true;
         addCreate(sprite);
     }

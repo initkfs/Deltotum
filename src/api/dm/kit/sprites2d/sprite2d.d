@@ -74,7 +74,7 @@ class Sprite2d : EventKitTarget
     bool isPhysInterpolateLastXY;
 
     Vec2f velocity;
-    float angularVelocity;
+    float angularVelocity = 0;
     Vec2f acceleration;
     Vec2f accelerationAngular;
     float friction = 1;
@@ -244,6 +244,7 @@ class Sprite2d : EventKitTarget
     uint maxClickTimeMs = 300;
 
     bool isDrag;
+    bool isNoDragWhenPhysics;
 
     enum float defaultTrashold = 0.01;
 
@@ -315,20 +316,6 @@ class Sprite2d : EventKitTarget
                     {
                         this.x = x;
                         this.y = y;
-
-                        debug
-                        {
-                            import std.format : format;
-
-                            string dragInfo = format("Drag. x:%s, y:%s.", x, y);
-                            if (parent !is null)
-                            {
-                                const xInParent = x - parent.x;
-                                const yInParent = y - parent.y;
-                                dragInfo ~= format("In parent x:%s, y:%s.", xInParent, yInParent);
-                            }
-                            writeln(dragInfo);
-                        }
                     }
                 }
             }
@@ -1219,20 +1206,24 @@ class Sprite2d : EventKitTarget
             return;
         }
 
-        if (_prevX != 0)
+        if (isPhysInterpolateLastXY)
         {
-            _x = _prevX + (_x - _prevX) * alpha;
+            if (_prevX != 0)
+            {
+                _x = _prevX + (_x - _prevX) * alpha;
+            }
+
+            if (_prevY != 0)
+            {
+                _y = _prevY + (_y - _prevY) * alpha;
+            }
         }
 
-        if (_prevY != 0)
-        {
-            _y = _prevY + (_y - _prevY) * alpha;
-        }
     }
 
     void updatePhys(out float dx, out float dy, float delta)
     {
-        if (isDrag)
+        if (isDrag && isNoDragWhenPhysics)
         {
             return;
         }
@@ -1269,11 +1260,11 @@ class Sprite2d : EventKitTarget
             //dynamic friction
             //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
             //float dynamicFriction = 1.0f - (speed * 0.01f);
-            velocity.x += -velocity.x * friction;
-            velocity.y += -velocity.y * friction;
+            velocity.x *= friction;
+            velocity.y *= friction;
         }
 
-        angle =  angle + angularVelocity * delta;
+        angle = angle + angularVelocity * delta;
 
         if (isStopOnSmallVelocity)
         {

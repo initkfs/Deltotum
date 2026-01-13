@@ -9,6 +9,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle : VRectangle;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.sims.phys.movings.moving;
+import api.sims.phys.movings.physeffects;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -22,6 +24,7 @@ import Math = api.math;
  */
 class Demo1 : GuiScene
 {
+    
     this()
     {
         name = "game";
@@ -34,6 +37,8 @@ class Demo1 : GuiScene
     override void create()
     {
         super.create;
+
+        addCreate(new TripleSpring);
     }
 
     override void update(float delta)
