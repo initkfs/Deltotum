@@ -685,10 +685,13 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     bool startRenderPass(SDL_Window* currSdlWindow, SDL_FColor clearColor, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
     {
+        SDL_GPUColorTargetInfo target;
+        target.clear_color = clearColor;
+        target.load_op = SDL_GPU_LOADOP_CLEAR;
+        target.store_op = SDL_GPU_STOREOP_STORE;
+
         SDL_GPUColorTargetInfo[1] colorTargetInfo;
-        colorTargetInfo[0].clear_color = clearColor;
-        colorTargetInfo[0].load_op = SDL_GPU_LOADOP_CLEAR;
-        colorTargetInfo[0].store_op = SDL_GPU_STOREOP_STORE;
+        colorTargetInfo[0] = target;
 
         return startRenderPass(colorTargetInfo, currSdlWindow, stencilInfo);
     }

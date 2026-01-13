@@ -77,14 +77,15 @@
         "./libs/sdl3",
         "./libs/ffmpeg"
     ],
+    "cImportPaths": [
+        "./libs/sdl3/SDL_lib"
+    ],
     "dflags": [
         "-dip1000",
         "-preview=in",
         "-preview=fixAliasThis",
         "-Xcc=-fuse-ld=lld",
-        "-J=./data",
-        "-P=-I./libs/sdl3/SDL_lib",
-        "-P=-I./libs/ffmpeg/include"
+        "-J=./data"
     ],
     "lflags": [
         "-L./libs/sdl3",

@@ -243,7 +243,8 @@ class Scene3d : Scene2d
 
             if (isAntiAliasing)
             {
-                SDL_GPUColorTargetInfo[1] targets = [createTargetInfo];
+                SDL_GPUColorTargetInfo[1] targets;
+                targets[0] = createTargetInfo;
                 if (!gpu.startRenderPass(targets, &depthStencilTargetInfo))
                 {
                     gpu.dev.resetState;
@@ -264,7 +265,8 @@ class Scene3d : Scene2d
         {
             if (isAntiAliasing)
             {
-                SDL_GPUColorTargetInfo[1] targets = [createTargetInfo];
+                SDL_GPUColorTargetInfo[1] targets;
+                targets[0] = createTargetInfo;
                 if (!gpu.startRenderPass(targets))
                 {
                     gpu.dev.resetState;
