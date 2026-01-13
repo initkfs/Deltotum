@@ -234,7 +234,7 @@ class SpringChain : Sprite2d
     {
         super.update(dt);
 
-        apply(children[0], input.pointerPos.x, input.pointerPos.y);
+        apply(children[0], input.pointerPos.x, input.pointerPos.y, dt);
 
         foreach (i; 1 .. children.length)
         {

@@ -38,7 +38,7 @@ class Demo1 : GuiScene
     {
         super.create;
 
-        addCreate(new TripleSpring);
+        addCreate(new AngleBounce);
     }
 
     override void update(float delta)

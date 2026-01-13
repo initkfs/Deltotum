@@ -24,6 +24,11 @@ struct Line2f
         end = Vec2f(x1, y1);
     }
 
+    static Line2f fromAngleDeg(Vec2f start, float angleDeg = 45, float length = 200){
+        Vec2f end = start + Vec2f(length * Math.cosDeg(angleDeg), length * Math.sinDeg(angleDeg));
+        return Line2f(start, end);
+    } 
+
     Vec2f midpoint()
     {
         const midx = (start.x + end.x) / 2;
