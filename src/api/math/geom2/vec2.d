@@ -318,6 +318,14 @@ struct Vec2f
             else
                 static assert(0, "Operator " ~ op ~ " not implemented");
         }
+
+        Vec2f opBinary(string op)(float other)
+        {
+            static if (op == "*")
+                return scale(other);
+            else
+                static assert(0, "Operator " ~ op ~ " not implemented");
+        }
     }
 
     Matrix2x1 transpose() const pure @safe => Matrix2x1([[x], [y]]);

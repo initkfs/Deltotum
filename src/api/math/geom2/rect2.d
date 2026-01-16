@@ -176,6 +176,8 @@ struct Rect2f
         return Rect2f(0, 0, newW, newH);
     }
 
+    Vec2f pos() => Vec2f(x, y);
+
     string toString() const
     {
         import std.format : format;

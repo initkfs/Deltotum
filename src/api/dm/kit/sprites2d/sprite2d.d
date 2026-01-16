@@ -80,6 +80,7 @@ class Sprite2d : EventKitTarget
     float friction = 1;
     float gravity = 0;
     float bounce = -0.7;
+    float restitution = 1;
     bool isStopOnSmallVelocity;
     float smallVelocityAbs = 0.5;
 
@@ -2655,6 +2656,10 @@ class Sprite2d : EventKitTarget
 
     float invMass() pure @safe nothrow
     {
+        if (mass == 0)
+        {
+            return 0;
+        }
         return 1.0 / mass;
     }
 

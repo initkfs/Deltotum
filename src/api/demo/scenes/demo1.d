@@ -11,6 +11,8 @@ import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle : VRectangle;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.sims.phys.movings.moving;
 import api.sims.phys.movings.physeffects;
+import api.sims.phys.impulses.simple_resolver;
+import api.math.geom2.circle2 : Circle2f;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -24,6 +26,8 @@ import Math = api.math;
  */
 class Demo1 : GuiScene
 {
+    VCircle ball1;
+    VCircle ball2;
     
     this()
     {
@@ -38,11 +42,31 @@ class Demo1 : GuiScene
     {
         super.create;
 
-        addCreate(new AngleBounce);
+        ball1 = new VCircle(50, GraphicStyle(5, RGBA.red));
+        apply(ball1);
+        ball1.pos = Vec2f(10, 100);
+        ball1.mass = 1;
+        ball2 = new VCircle(50, GraphicStyle(5, RGBA.green));
+        ball2.pos = Vec2f(300, 100);
+        apply(ball2);
+        ball2.mass = 1;
+        
+
+        ball1.onPointerPress ~= (ref e){
+            ball1.velocity = Vec2f(100);
+            ball2.velocity = Vec2f(-100);
+        };
+    }
+
+    void apply(Sprite2d sprite){
+        sprite.isPhysics = true;
+        addCreate(sprite);
     }
 
     override void update(float delta)
     {
         super.update(delta);
+
+        resolve(ball1, ball2);
     }
 }
