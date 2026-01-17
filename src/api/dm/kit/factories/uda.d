@@ -10,7 +10,7 @@ struct Load
     float height = 0;
     string path;
     size_t count = 1;
-    bool isAdd;
+    bool isAdd = true;
 }
 
 struct LAnimImage

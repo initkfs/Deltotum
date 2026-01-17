@@ -60,11 +60,15 @@ class Scene2d : EventKitTarget
 
     void delegate() udaProcessor;
 
+    string udaUserDirPath;
+
     size_t invalidNodesCount;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
         initProcessUDA!(ThisType)(isInitUDAProcessor);
+
+        udaUserDirPath = "user:";
     }
 
     bool initProcessUDA(Type)(bool isInitUDAProcessor)
@@ -149,9 +153,8 @@ class Scene2d : EventKitTarget
                                 {
                                     const w = udaAttr.width > 0 ? udaAttr.width : -1;
                                     const h = udaAttr.height > 0 ? udaAttr.height : -1;
-
                                     injectField!(typeof(member), Image, fieldName, udaAttr)(() {
-                                        return f.images.image(udaAttr.path, w, h);
+                                        return f.images.image(asset.imagePath(udaPath(udaAttr.path)), w, h);
                                     });
                                 }
 
@@ -217,6 +220,33 @@ class Scene2d : EventKitTarget
             }
 
         }
+    }
+
+    string udaPath(string path)
+    {
+        import std.path : isAbsolute;
+
+        if (path.isAbsolute)
+        {
+            return path;
+        }
+
+        import std.algorithm.searching : startsWith;
+
+        if (udaUserDirPath.length > 0 && path.startsWith(udaUserDirPath))
+        {
+            auto userDir = context.app.userDir;
+            if (userDir.length == 0)
+            {
+                return path;
+            }
+
+            import std.path : buildPath;
+
+            return buildPath(userDir, path[udaUserDirPath.length .. $]);
+        }
+
+        return path;
     }
 
     override void create()
