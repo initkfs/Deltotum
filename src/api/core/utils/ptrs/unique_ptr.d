@@ -17,7 +17,7 @@ struct UniqPtr(T, AllocType = ubyte,
         bool isAutoFree,
         FreeFunc newFreeFunPtr,
         ReallocFunc newReallocFunPtr
-    )  nothrow pure @safe
+    ) nothrow pure @safe
     {
         this.isAutoFree = isAutoFree;
 
@@ -29,7 +29,7 @@ struct UniqPtr(T, AllocType = ubyte,
         bool isAutoFree = true,
         FreeFunc newFreeFunPtr = null,
         ReallocFunc newReallocFunPtr = null
-    )  nothrow pure @safe
+    ) nothrow pure @safe
     {
         _ptr = ptrs;
         this(isAutoFree, newFreeFunPtr, newReallocFunPtr);
@@ -40,7 +40,7 @@ struct UniqPtr(T, AllocType = ubyte,
         bool isAutoFree = true,
         FreeFunc newFreeFunPtr = null,
         ReallocFunc newReallocFunPtr = null
-    )  nothrow pure
+    ) nothrow pure
     {
         assert(newPtr);
 
@@ -54,7 +54,7 @@ struct UniqPtr(T, AllocType = ubyte,
         this(isAutoFree, newFreeFunPtr, newReallocFunPtr);
     }
 
-    this(UniqPtr!(T, AllocType) rhs)  nothrow @safe
+    this(UniqPtr!(T, AllocType) rhs) nothrow @safe
     {
         assert(!rhs.isFreed);
         _ptr = rhs._ptr;
@@ -84,7 +84,7 @@ struct UniqPtr(T, AllocType = ubyte,
         }
     }
 
-    void free()  nothrow scope @safe
+    void free() nothrow scope @safe
     in (_ptr)
     in (freeFunPtr)
     {
@@ -97,12 +97,12 @@ struct UniqPtr(T, AllocType = ubyte,
     }
 
     // a = v
-    void opAssign(T v)  nothrow @safe
+    void opAssign(T v) nothrow @safe
     {
         value = v;
     }
 
-    void opAssign(ref UniqPtr!(T, AllocType) newPtr)  nothrow @safe
+    void opAssign(ref UniqPtr!(T, AllocType) newPtr) nothrow @safe
     {
         if (_ptr)
         {
@@ -123,7 +123,7 @@ struct UniqPtr(T, AllocType = ubyte,
 @safe unittest
 {
     int value = 45;
-    auto ptr = (() @trusted => UniqPtr!(int)(&value, value.sizeof, isAutoFree:
+    auto ptr = (() @trusted => UniqPtr!(int)( & value, value.sizeof, isAutoFree:
             false))();
 
     assert(!ptr.isFreed, "Pointer freed");
@@ -193,7 +193,7 @@ struct UniqPtr(T, AllocType = ubyte,
             })();
         }
 
-        static bool reallocPtr(size_t newBytes, scope ref void[] ptr)  nothrow @safe
+        static bool reallocPtr(size_t newBytes, scope ref void[] ptr) nothrow @safe
         {
             return (() @trusted {
                 void* newPtr = realloc(ptr.ptr, newBytes);
@@ -203,7 +203,7 @@ struct UniqPtr(T, AllocType = ubyte,
             })();
         }
 
-        static bool freePtr(scope void[] ptr)  nothrow @safe
+        static bool freePtr(scope void[] ptr) nothrow @safe
         {
             return (() @trusted { free(ptr.ptr); return true; })();
         }
@@ -212,7 +212,7 @@ struct UniqPtr(T, AllocType = ubyte,
         assert(allocate(1, value2));
 
         auto ptrV2 = UniqPtr!(int)(value2, isAutoFree:
-            true, &freePtr, &reallocPtr);
+            true,  & freePtr,  & reallocPtr);
         assert(ptrV2.reallcap(2));
         assert(ptrV2.capacity == 2);
         assert(
@@ -224,7 +224,7 @@ struct UniqPtr(T, AllocType = ubyte,
         int[] value3;
         assert(allocate(1, value3));
         auto ptrV3 = UniqPtr!(int)(value3, isAutoFree:
-            true, &freePtr, &reallocPtr);
+            true,  & freePtr,  & reallocPtr);
         assert(ptrV3.realloc(int.sizeof * 3));
         assert(ptrV3.capacity == 3);
         assert(ptrV3.sizeBytes == int.sizeof * 3);
@@ -243,20 +243,24 @@ struct UniqPtr(T, AllocType = ubyte,
         int[] aClValue;
         assert(allocate(1, aClValue));
         aCl.ptr = UniqPtr!(int)(aClValue, isAutoFree:
-            false, &freePtr, &reallocPtr);
+            false,  & freePtr,  & reallocPtr);
         aCl.ptr = 20;
         assert(aCl.ptr.value == 20);
 
         //Move
-        int[] moveValue = [1];
-        auto ptrSrc = UniqPtr!int(moveValue, isAutoFree:
-            true);
-        UniqPtr!int ptrDst = __rvalue(ptrSrc);
-        ptrDst.isAutoFree = false;
-        assert(ptrDst._ptr == moveValue);
-        assert(!ptrDst.isFreed);
-        assert(!ptrSrc._ptr);
-        assert(!ptrSrc.isAutoFree);
+        () @trusted
+        {
+            int[] moveValue = [1];
+            auto ptrSrc = UniqPtr!int(moveValue, isAutoFree:
+                true);
+            UniqPtr!int ptrDst = __rvalue(ptrSrc);
+            ptrDst.isAutoFree = false;
+            assert(ptrDst._ptr == moveValue);
+            assert(!ptrDst.isFreed);
+            assert(!ptrSrc._ptr);
+            assert(!ptrSrc.isAutoFree);
+        }
+        ();
     }
 
 }
