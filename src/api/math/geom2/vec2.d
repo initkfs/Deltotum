@@ -126,7 +126,7 @@ struct Vec2f
 
         Vec2f scale(float factor) => Vec2f(x * factor, y * factor);
 
-        Vec2f mul(Vec2f other) =. Vec2f(x * other.x, y * other.y);
+        Vec2f mul(Vec2f other) = .Vec2f(x * other.x, y * other.y);
 
         Vec2f div(float factor)
         {
@@ -150,7 +150,7 @@ struct Vec2f
         {
             //(-y, x), rotate 90 deg ccw
             //(y, -x), rotate 90 cw
-            return Vec2f(-y, x);
+            return Vec2f( - y, x);
         }
 
         Vec2f translate(float tx, float ty) => Vec2f(x + tx, y + ty);
@@ -183,8 +183,7 @@ struct Vec2f
             return dop / otherLen;
         }
 
-        Vec2f project(float factor)
-        in (factor != 0.0)
+        Vec2f project(float factor) in (factor != 0.0)
         {
             return Vec2f(x / factor, y / factor);
         }
@@ -194,6 +193,10 @@ struct Vec2f
         bool isCollinear(Vec2f other) => cross(other) == 0;
 
         float cross(Vec2f other) => x * other.y - y * other.x;
+        static Vec2f cross(Vec2f a, float s) => Vec2f(s * a.y,  - s * a.x);
+        
+        //static Vec2f cross(float s, Vec2f a) => Vec2f( - s * a.y, s * a.x);
+        static Vec2f cross(float s, Vec2f a) => Vec2f(s * a.y, -s * a.x);
 
         static float cross(Vec2f p0, Vec2f p1, Vec2f p2) nothrow pure @safe
         {

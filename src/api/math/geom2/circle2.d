@@ -73,6 +73,7 @@ struct Circle2f
         return radius * (math.PI * 2);
     }
 
+    alias pos = center;
     Vec2f center() => Vec2f(x, y);
 
     float area() const  nothrow pure @safe

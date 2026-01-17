@@ -6,6 +6,7 @@ module api.sims.phys.rigids2d.collisions.contact_checker;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.geom2.circle2 : Circle2f;
+import api.math.geom2.polygon2 : Polygon2f;
 
 import api.sims.phys.rigids2d.collisions.contacts;
 
@@ -16,14 +17,16 @@ bool checkAABBAndAABB(Rect2f a, Rect2f b, ref Contact2d collision)
 {
     Vec2f normal = b.pos - a.pos;
 
-    float aExtent = a.halfWidth;
-    float bExtent = b.halfWidth;
+    float aExtentX = a.halfWidth;
+    float aExtentY = a.halfHeight;
+    float bExtentX = b.halfWidth;
+    float bExtentY = b.halfHeight;
 
-    float xOverlap = aExtent + bExtent - Math.abs(normal.x);
+    float xOverlap = aExtentX + bExtentX - Math.abs(normal.x);
 
     if (xOverlap > 0)
     {
-        float yOverlap = aExtent + bExtent - Math.abs(normal.y);
+        float yOverlap = aExtentY + bExtentY - Math.abs(normal.y);
 
         if (yOverlap > 0)
         {
@@ -31,12 +34,51 @@ bool checkAABBAndAABB(Rect2f a, Rect2f b, ref Contact2d collision)
             {
                 collision.normal = normal.x > 0 ? Vec2f(1, 0) : Vec2f(-1, 0);
                 collision.penetration = xOverlap;
+
+                if (normal.x > 0)
+                {
+                    // A to B
+                    float contactX = a.pos.x + aExtentX - xOverlap * 0.5f;
+                    float contactY = Math.max(a.pos.y - aExtentY, b.pos.y - bExtentY) +
+                        Math.min(a.pos.y + aExtentY, b.pos.y + bExtentY);
+                    contactY *= 0.5f;
+                    collision.pos = Vec2f(contactX, contactY);
+                }
+                else
+                {
+                    // A to B
+                    float contactX = a.pos.x - aExtentX + xOverlap * 0.5f;
+                    float contactY = Math.max(a.pos.y - aExtentY, b.pos.y - bExtentY) +
+                        Math.min(a.pos.y + aExtentY, b.pos.y + bExtentY);
+                    contactY *= 0.5f;
+                    collision.pos = Vec2f(contactX, contactY);
+                }
+
                 return true;
             }
             else
             {
                 collision.normal = normal.y > 0 ? Vec2f(0, 1) : Vec2f(0, -1);
                 collision.penetration = yOverlap;
+
+                if (normal.y > 0)
+                {
+                    // A is higher than B (if Y is pointing down)
+                    float contactY = a.pos.y + aExtentY - yOverlap * 0.5f;
+                    float contactX = Math.max(a.pos.x - aExtentX, b.pos.x - bExtentX) +
+                        Math.min(a.pos.x + aExtentX, b.pos.x + bExtentX);
+                    contactX *= 0.5f;
+                    collision.pos = Vec2f(contactX, contactY);
+                }
+                else
+                {
+                    // A is lower than B (if Y is pointing down)
+                    float contactY = a.pos.y - aExtentY + yOverlap * 0.5f;
+                    float contactX = Math.max(a.pos.x - aExtentX, b.pos.x - bExtentX) +
+                        Math.min(a.pos.x + aExtentX, b.pos.x + bExtentX);
+                    contactX *= 0.5f;
+                    collision.pos = Vec2f(contactX, contactY);
+                }
                 return true;
             }
         }
@@ -45,35 +87,35 @@ bool checkAABBAndAABB(Rect2f a, Rect2f b, ref Contact2d collision)
     return false;
 }
 
-bool checkCircleAndCircle(Circle2f a, Circle2f b, ref Contact2d collision)
+bool checkCircleAndCircle(Circle2f a, Circle2f b, ref Contact2d collision, float eps = 1e-7f)
 {
-    float dx = b.x - a.x;
-    float dy = b.y - a.y;
+    Vec2f normal = b.center.sub(a.center);
 
+    float distSqr = normal.lengthSquared();
     float radiusSum = a.radius + b.radius;
 
-    float distSq = dx * dx + dy * dy;
-
-    if (distSq > radiusSum * radiusSum)
-        return false;
-
-    if (distSq < 0.0001f)
+    if (distSqr >= radiusSum * radiusSum)
     {
+        return false;
+    }
+
+    if (distSqr < eps)
+    {
+        collision.penetration = a.radius;
         collision.normal = Vec2f(1.0f, 0.0f);
-        collision.penetration = radiusSum;
+        collision.pos = a.center;
         return true;
     }
 
-    float distance = Math.sqrt(distSq);
+    float dist = Math.sqrt(distSqr);
 
-    collision.normal.x = dx / distance;
-    collision.normal.y = dy / distance;
-
-    collision.penetration = radiusSum - distance;
-
+    collision.penetration = radiusSum - dist;
+    collision.normal = normal.div(dist);
+    collision.pos = normal.scale(a.radius).add(a.center);
     return true;
 }
 
+//TODO reflect normal in AABBvsCircle vs CirclevsAABB
 bool checkCircleAndAABB(Circle2f circle, Rect2f rect, ref Contact2d collision)
 {
     float closestX = Math.clamp(circle.x,
@@ -102,13 +144,37 @@ bool checkCircleAndAABB(Circle2f circle, Rect2f rect, ref Contact2d collision)
             Math.min(topDist, bottomDist));
 
         if (Math.abs(minDist - leftDist) < 0.001f)
+        {
             collision.normal = Vec2f(-1.0f, 0.0f);
+            collision.pos = Vec2f(rect.pos.x - rect.halfWidth,
+                Math.clamp(circle.y,
+                    rect.pos.y - rect.halfHeight,
+                    rect.pos.y + rect.halfHeight));
+        }
         else if (Math.abs(minDist - rightDist) < 0.001f)
+        {
             collision.normal = Vec2f(1.0f, 0.0f);
+            collision.pos = Vec2f(rect.pos.x + rect.halfWidth,
+                Math.clamp(circle.y,
+                    rect.pos.y - rect.halfHeight,
+                    rect.pos.y + rect.halfHeight));
+        }
         else if (Math.abs(minDist - topDist) < 0.001f)
+        {
             collision.normal = Vec2f(0.0f, -1.0f);
+            collision.pos = Vec2f(Math.clamp(circle.x,
+                    rect.pos.x - rect.halfWidth,
+                    rect.pos.x + rect.halfWidth),
+                rect.pos.y - rect.halfHeight);
+        }
         else
+        {
             collision.normal = Vec2f(0.0f, 1.0f);
+            collision.pos = Vec2f(Math.clamp(circle.x,
+                    rect.pos.x - rect.halfWidth,
+                    rect.pos.x + rect.halfWidth),
+                rect.pos.y + rect.halfHeight);
+        }
 
         collision.penetration = circle.radius + minDist;
         return true;

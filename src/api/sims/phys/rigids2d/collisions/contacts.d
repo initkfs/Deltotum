@@ -9,4 +9,5 @@ struct Contact2d
 {
     Vec2f normal;
     float penetration = 0;
+    Vec2f pos;
 }

@@ -259,7 +259,7 @@ unittest
     auto minValue = 1;
     auto maxValue = 50;
 
-    import std.math.operations: isClose;
+    import std.math.operations : isClose;
 
     const eps = 0.01;
 
@@ -401,3 +401,8 @@ import std.math.remainder : fmod;
 
 //[0, 360]
 float wrapAngle360(float angle) => wrapAngle(angle, 0, 360.0);
+
+float pythagorean(float a, float b)
+{
+    return sqrt(a * a + b * b);
+}

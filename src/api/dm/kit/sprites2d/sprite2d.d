@@ -80,11 +80,16 @@ class Sprite2d : EventKitTarget
     float linearAcceleration = 0;
     float angularAngle = 0;
 
-    float friction = 1;
+    float friction = 0;
+    float dynamicFriction = 0;
     float gravity = 0;
     float restitution = 1;
     bool isStopOnSmallVelocity;
     float smallVelocityAbs = 0.5;
+
+    float torque = 0;
+    float invInertia = 0;
+    float inertia;
 
     Sprite2d isCollisionProcess;
     Sprite2d[] collisionTargets;
@@ -1213,6 +1218,7 @@ class Sprite2d : EventKitTarget
         {
             if (_prevX != 0)
             {
+                //previous * alpha + current * (1.0f - alpha)
                 _x = _prevX + (_x - _prevX) * alpha;
             }
 
