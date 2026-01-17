@@ -1,23 +1,18 @@
-module api.sims.phys.impulses.simple_resolver;
-
-import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.math.geom2.rect2 : Rect2f;
-import api.math.geom2.circle2 : Circle2f;
-
-import api.math.geom2.vec2 : Vec2f;
-import Math = api.math;
+module api.sims.phys.rigids2d.collisions.contact_checker;
 
 /**
  * Authors: initkfs
  */
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.circle2 : Circle2f;
 
-struct Collision
-{
-    Vec2f normal;
-    float penetration = 0;
-}
+import api.sims.phys.rigids2d.collisions.contacts;
 
-bool checkAABBAndAABB(Rect2f a, Rect2f b, ref Collision collision)
+import api.math.geom2.vec2 : Vec2f;
+import Math = api.math;
+
+bool checkAABBAndAABB(Rect2f a, Rect2f b, ref Contact2d collision)
 {
     Vec2f normal = b.pos - a.pos;
 
@@ -50,7 +45,7 @@ bool checkAABBAndAABB(Rect2f a, Rect2f b, ref Collision collision)
     return false;
 }
 
-bool checkCircleAndCircle(Circle2f a, Circle2f b, ref Collision collision)
+bool checkCircleAndCircle(Circle2f a, Circle2f b, ref Contact2d collision)
 {
     float dx = b.x - a.x;
     float dy = b.y - a.y;
@@ -79,7 +74,7 @@ bool checkCircleAndCircle(Circle2f a, Circle2f b, ref Collision collision)
     return true;
 }
 
-bool checkCircleAndAABB(Circle2f circle, Rect2f rect, ref Collision collision)
+bool checkCircleAndAABB(Circle2f circle, Rect2f rect, ref Contact2d collision)
 {
     float closestX = Math.clamp(circle.x,
         rect.pos.x - rect.halfWidth,
@@ -125,71 +120,4 @@ bool checkCircleAndAABB(Circle2f circle, Rect2f rect, ref Collision collision)
     collision.penetration = circle.radius - distance;
 
     return true;
-}
-
-bool resolve(Sprite2d a, Sprite2d b)
-{
-    if (!a.boundsRect.intersect(b.boundsRect))
-    {
-        return false;
-    }
-
-    Collision collision;
-
-    if (!checkAABBAndAABB(a.boundsRect, b.boundsRect, collision))
-    {
-        return false;
-    }
-
-    if (!resolve(a, b, collision))
-    {
-        return false;
-    }
-
-    return true;
-}
-
-bool resolve(Sprite2d a, Sprite2d b, Collision collision)
-{
-    Vec2f relativeVel = b.velocity - a.velocity;
-
-    float velAlongNormal = relativeVel.dot(collision.normal);
-
-    if (velAlongNormal > 0)
-    {
-        return false;
-    }
-
-    float e = Math.min(a.restitution, b.restitution);
-
-    float j = (-(1 + e)) * velAlongNormal;
-    j /= a.invMass + b.invMass;
-
-    Vec2f impulse = collision.normal.scale(j);
-
-    a.velocity -= impulse.scale(a.invMass);
-    b.velocity += impulse.scale(b.invMass);
-
-    posCorrection(a, b, collision.penetration, collision.normal);
-
-    return true;
-}
-
-void posCorrection(Sprite2d a, Sprite2d b, float penetration, Vec2f normal)
-{
-    const float k_slop = 0.01f; // 0.01 - 0.1, prevent jitter
-    const float percent = 0.8f; // 20% - 80%
-
-    if (penetration <= k_slop)
-        return;
-
-    float correctionDepth = (penetration - k_slop) * percent;
-    Vec2f correction = normal.scale(correctionDepth);
-
-    float totalInvMass = a.invMass + b.invMass;
-    if (totalInvMass > 0)
-    {
-        a.pos -= correction * (a.invMass / totalInvMass);
-        b.pos += correction * (b.invMass / totalInvMass);
-    }
 }

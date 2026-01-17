@@ -1,17 +1,17 @@
 module api.demo.demo1.scenes.game;
 
-import api.sims.phys.movings.moving;
-import api.sims.phys.movings.boundaries;
-import api.sims.phys.movings.physeffects;
+import api.sims.phys.rigids2d.movings.moving;
+import api.sims.phys.rigids2d.movings.boundaries;
+import api.sims.phys.rigids2d.movings.physeffects;
 
 import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle : VRectangle;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.sims.phys.movings.moving;
-import api.sims.phys.movings.physeffects;
-import api.sims.phys.impulses.simple_resolver;
+import api.sims.phys.rigids2d.movings.moving;
+import api.sims.phys.rigids2d.movings.physeffects;
+import api.sims.phys.rigids2d.collisions.impulse_resolver;
 import api.dm.kit.sprites2d.images.image: Image;
 import api.math.geom2.circle2 : Circle2f;
 import api.dm.kit.factories.uda;
@@ -30,7 +30,7 @@ class Demo1 : GuiScene
 {
     @Load(path: "user:Planets/planet-1.png", width: 100, height: 100)
     Image ball1;
-     @Load(path: "user:Planets/planet-4.png", width: 100, height: 100)
+    @Load(path: "user:Planets/planet-4.png", width: 100, height: 100)
     Image ball2;
     
     this()
@@ -72,5 +72,8 @@ class Demo1 : GuiScene
         super.update(delta);
 
         resolve(ball1, ball2);
+
+        wrapBounds(ball1, graphic.renderBounds);
+        wrapBounds(ball2, graphic.renderBounds);
     }
 }

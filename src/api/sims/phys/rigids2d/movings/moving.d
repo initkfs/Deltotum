@@ -1,4 +1,4 @@
-module api.sims.phys.movings.moving;
+module api.sims.phys.rigids2d.movings.moving;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.vec2 : Vec2f;
@@ -14,6 +14,7 @@ import Math = api.math;
 
 class AngleBounce : Sprite2d
 {
+    float bounce = -0.5;
 
     Line2f line;
     float angleDeg = 45;
@@ -31,7 +32,6 @@ class AngleBounce : Sprite2d
         addCreate(ball);
 
         ball.gravity = 1;
-        ball.bounce = -0.5;
         ball.isDraggable = true;
         ball.onPointerRelease ~= (ref e) { ball.isPhysics = true; };
 
@@ -99,7 +99,7 @@ class AngleBounce : Sprite2d
                 if (y2 > -ball.height / 2)
                 {
                     y2 = -ball.height / 2;
-                    vy1 *= ball.bounce;
+                    vy1 *= bounce;
                 }
 
                 x1 = cos * x2 - sin * y2;

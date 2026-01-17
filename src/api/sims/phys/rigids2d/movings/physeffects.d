@@ -1,4 +1,4 @@
-module api.sims.phys.movings.physeffects;
+module api.sims.phys.rigids2d.movings.physeffects;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;

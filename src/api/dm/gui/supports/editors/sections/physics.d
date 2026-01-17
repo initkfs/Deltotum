@@ -9,7 +9,7 @@ import Math = api.dm.math;
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.rect2 : Rect2f;
-import api.sims.phys.movings.boundaries;
+import api.sims.phys.rigids2d.movings.boundaries;
 
 import std.stdio;
 

@@ -58,13 +58,12 @@ class Sprite2d : EventKitTarget
     protected
     {
         float _angle = 0;
+        float _invMass = 1;
     }
 
     bool isAngleForChild = true;
 
     float scale = 1;
-    float mass = 1;
-    float speed = 0;
 
     float _opacity = 1;
     float maxOpacity = float.max;
@@ -79,7 +78,6 @@ class Sprite2d : EventKitTarget
     Vec2f accelerationAngular;
     float friction = 1;
     float gravity = 0;
-    float bounce = -0.7;
     float restitution = 1;
     bool isStopOnSmallVelocity;
     float smallVelocityAbs = 0.5;
@@ -2654,13 +2652,31 @@ class Sprite2d : EventKitTarget
         _layoutMovable = value;
     }
 
-    float invMass() pure @safe nothrow
+    float invMass() pure @safe nothrow => _invMass;
+    void invMass(float v)
     {
-        if (mass == 0)
+        _invMass = v;
+    }
+
+    void mass(float v)
+    {
+        if (v == 0)
+        {
+            _invMass = 0;
+            return;
+        }
+
+        _invMass = 1.0 / v;
+    }
+
+    float mass() pure @safe nothrow
+    {
+        if (_invMass == 0)
         {
             return 0;
         }
-        return 1.0 / mass;
+
+        return 1.0 / _invMass;
     }
 
     float opacity()
