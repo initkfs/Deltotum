@@ -73,9 +73,13 @@ class Sprite2d : EventKitTarget
     bool isPhysInterpolateLastXY;
 
     Vec2f velocity;
-    float angularVelocity = 0;
     Vec2f acceleration;
-    Vec2f accelerationAngular;
+
+    float angularVelocity = 0;
+    float angularAcceleration = 0;
+    float linearAcceleration = 0;
+    float angularAngle = 0;
+
     float friction = 1;
     float gravity = 0;
     float restitution = 1;
@@ -1220,6 +1224,18 @@ class Sprite2d : EventKitTarget
 
     }
 
+    Vec2f terminalVelocity(float dt)
+    {
+        //acceleration * dt = velocity * friction * dt
+        //acceleration = velocity * friction
+        if (friction == 0)
+        {
+            return velocity;
+        }
+
+        return (acceleration * (1 - friction * dt)).div(friction);
+    }
+
     void updatePhys(out float dx, out float dy, float delta)
     {
         if (isDrag && isNoDragWhenPhysics)
@@ -1230,40 +1246,38 @@ class Sprite2d : EventKitTarget
         checkCollisions;
 
         //TODO check velocity is 0 || acceleration is 0
-        float accelerationDx = 0;
-        float accelerationDy = 0;
-
-        if (accelerationAngular.isZero)
-        {
-            accelerationDx = acceleration.x * invMass;
-            accelerationDy = acceleration.y * invMass;
-        }
-        else
-        {
-            import Math = api.math;
-
-            accelerationDx = Math.cosDeg(angle) * accelerationAngular.x * invMass;
-            accelerationDy = Math.sinDeg(angle) * accelerationAngular.y * invMass;
-        }
+        float accelerationDx = acceleration.x * invMass * delta;
+        float accelerationDy = acceleration.y * invMass * delta;
 
         velocity.x += accelerationDx;
         velocity.y += accelerationDy;
 
         if (gravity != 0)
         {
-            velocity.y += gravity;
+            velocity.y += gravity * delta;
         }
 
-        if (friction != 1)
+        if (friction != 0)
         {
             //dynamic friction
             //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
             //float dynamicFriction = 1.0f - (speed * 0.01f);
-            velocity.x *= friction;
-            velocity.y *= friction;
+            //or velocity += (acceleration - friction * velocity) * dt
+            const fdt = (1.0 - friction * delta);
+            velocity.x *= fdt;
+            velocity.y *= fdt;
         }
 
-        angle = angle + angularVelocity * delta;
+        if (angularAngle != 0)
+        {
+            import Math = api.math;
+
+            float accelX = Math.cosDeg(angle) * linearAcceleration;
+            float accelY = Math.sinDeg(angle) * linearAcceleration;
+
+            velocity.x += accelX * delta;
+            velocity.y += accelY * delta;
+        }
 
         if (isStopOnSmallVelocity)
         {
@@ -1287,6 +1301,9 @@ class Sprite2d : EventKitTarget
 
         _x += dx;
         _y += dy;
+
+        angularVelocity += angularAcceleration * delta;
+        angle = angle + angularVelocity * delta;
     }
 
     void update(float delta)
