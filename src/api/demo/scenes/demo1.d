@@ -49,12 +49,14 @@ class Demo1 : GuiScene
         apply(ball1);
         ball1.pos = Vec2f(10, 100);
         ball1.mass = 2;
-        ball1.friction = 0.5;        
+        ball1.friction = 0.5;   
+        ball1.isDrawBounds = true;    
         
         apply(ball2);
         ball2.pos = Vec2f(300, 100);
         ball2.mass = 1;
         ball2.friction = 0.5;
+        ball2.isDrawBounds = true;  
 
         ball1.onPointerPress ~= (ref e){
             ball1.acceleration = Vec2f(100);
@@ -70,8 +72,9 @@ class Demo1 : GuiScene
     override void update(float delta)
     {
         super.update(delta);
+        
 
-        resolve(ball1, ball2);
+        resolve(ball1, ball2, delta);
 
         wrapBounds(ball1, graphic.renderBounds);
         wrapBounds(ball2, graphic.renderBounds);

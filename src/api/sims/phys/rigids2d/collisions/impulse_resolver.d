@@ -14,7 +14,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-bool resolve(Sprite2d a, Sprite2d b)
+bool resolve(Sprite2d a, Sprite2d b, float delta)
 {
     if (!a.boundsRect.intersect(b.boundsRect))
     {
@@ -28,7 +28,7 @@ bool resolve(Sprite2d a, Sprite2d b)
         return false;
     }
 
-    if (!resolve(a, b, collision))
+    if (!resolve(a, b, collision, delta))
     {
         return false;
     }
@@ -36,7 +36,7 @@ bool resolve(Sprite2d a, Sprite2d b)
     return true;
 }
 
-bool resolve(Sprite2d a, Sprite2d b, Contact2d collision)
+bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt)
 {
     Vec2f ra = collision.pos.sub(a.pos);
     Vec2f rb = collision.pos.sub(b.pos);
@@ -66,10 +66,29 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision)
     float j = (-(1 + e)) * velAlongNormal;
     j /= invMassSum;
 
+    //TODO only for acceleration\gravity or velAlongNormal < 0.1f
+    //Baumgarte stabilization
+    float bias = 0.0f;
+    
+    const float beta = 0.1f; //(0.1-0.3), > 0.5 cause jitter
+    const float slop = 0.01f; //0.01-0.05
+    const float maxBias = 2.0f;
+
+    if (collision.penetration > slop)
+    {
+        bias = (beta / dt) * (collision.penetration - slop);
+        bias = Math.min(bias, maxBias);
+    }
+
+    j += bias;
+
     Vec2f impulse = collision.normal.scale(j);
 
     a.velocity -= impulse.scale(a.invMass);
     b.velocity += impulse.scale(b.invMass);
+
+    a.angularVelocity -= a.invInertia * ra.cross(impulse);
+    b.angularVelocity += b.invInertia * rb.cross(impulse);
 
     //Friction Ff <= mu * Fn
     Vec2f tangent = (relativeVel.sub(collision.normal.scale(relativeVel.dot(collision.normal))));
@@ -102,7 +121,7 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision)
 
             a.velocity -= frictionImpulse.scale(a.invMass);
             a.angularVelocity -= a.invInertia * ra.cross(frictionImpulse);
-            
+
             b.velocity += frictionImpulse.scale(b.invMass);
             b.angularVelocity += b.invInertia * rb.cross(frictionImpulse);
         }
@@ -117,8 +136,8 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision)
 void posCorrection(Sprite2d a, Sprite2d b, float penetration, Vec2f normal)
 {
     const float slop = 0.01f; // 0.01 - 0.1, prevent jitter
-    const float percent = 0.8f; // 20% - 80%
-    const float maxCorrection = 0.1f;
+    const float percent = 0.4f; // 20% - 80%
+    const float maxCorrection = 1f;
 
     if (penetration <= slop)
         return;
