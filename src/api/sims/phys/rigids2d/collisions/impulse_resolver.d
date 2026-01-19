@@ -180,9 +180,16 @@ void applyImpulse(Sprite2d sprite, Vec2f impulse, Vec2f contactVector)
     sprite.angularVelocity += sprite.invInertia * contactVector.cross(impulse);
 }
 
-void calcInertia(Sprite2d sprite, Circle2f circle)
-{
-    //solid circle, or I = m * r² for rings
-    sprite.inertia = 0.5f * sprite.mass * circle.radius * circle.radius;
-    sprite.invInertia = (sprite.inertia > 1e-7f) ? 1.0f / sprite.inertia : 0.0f;
-}
+// void calcInertia(Sprite2d sprite, Circle2f circle)
+// {
+//     //solid circle, or I = m * r² for rings
+//     sprite.inertia = 0.5f * sprite.mass * circle.radius * circle.radius;
+//     sprite.invInertia = (sprite.inertia > 1e-7f) ? 1.0f / sprite.inertia : 0.0f;
+// }
+
+// void calcInertia(Sprite2d sprite, Rect2f shape)
+// {
+//     //rotate around float inertia = (1.0f / 3.0f) * mass * (width*width + height*height);
+//     float inertia = (1.0f / 12.0f) * mass * (width*width + height*height);
+//     sprite.invInertia = (sprite.inertia > 1e-7f) ? 1.0f / sprite.inertia : 0.0f;
+// }

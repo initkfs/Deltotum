@@ -87,10 +87,6 @@ class Sprite2d : EventKitTarget
     bool isStopOnSmallVelocity;
     float smallVelocityAbs = 0.5;
 
-    float torque = 0;
-    float invInertia = 0;
-    float inertia;
-
     size_t physicsIters = 1;
 
     bool delegate(Sprite2d, Sprite2d) onCollision;
@@ -1319,6 +1315,15 @@ class Sprite2d : EventKitTarget
         _y += dy;
 
         angularVelocity += angularAcceleration * delta;
+
+        // float angularSpeed = Math.abs(angularVelocity);
+        // float frictionFactor = friction * (1.0f + angularSpeed * 0.1f);
+
+        // angularVelocity *= (1.0f - frictionFactor * delta);
+
+        if (Math.abs(angularVelocity) < 0.001f)
+            angularVelocity = 0.0f;
+        
         angle = angle + angularVelocity * delta;
     }
 
@@ -2820,6 +2825,20 @@ class Sprite2d : EventKitTarget
     float angle()
     {
         return _angle;
+    }
+
+    //TODO cache
+    float inertia()
+    {
+        const boundsR = boundsRect;
+        return (1.0f / 12.0f) * mass * (
+            boundsR.width * boundsR.width + boundsR.height * boundsR.height);
+    }
+
+    float invInertia()
+    {
+        const inv = inertia;
+        return (inv > 1e-7f) ? (1.0f / inv) : 0.0f;
     }
 
     void show()

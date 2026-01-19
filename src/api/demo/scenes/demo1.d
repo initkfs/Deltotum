@@ -12,6 +12,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.sims.phys.rigids2d.movings.moving;
 import api.sims.phys.rigids2d.movings.physeffects;
 import api.sims.phys.rigids2d.collisions.impulse_resolver;
+import api.sims.phys.rigids2d.collisions.joints;
 import api.dm.kit.sprites2d.images.image: Image;
 import api.math.geom2.circle2 : Circle2f;
 import api.dm.kit.factories.uda;
@@ -36,6 +37,8 @@ class Demo1 : GuiScene
     Image ball3;
 
     Sprite2d root;
+
+    DistanceJoint joint;
     
     this()
     {
@@ -52,30 +55,33 @@ class Demo1 : GuiScene
 
         root = new Sprite2d;
         addCreate(root);
-        root.isPhysics = true;
+        //root.isPhysics = true;
 
         apply(ball1);
         ball1.pos = Vec2f(10, 100);
-        ball1.mass = 2;
+        ball1.isDraggable = true;
+        ball1.mass = 100;
+        ball1.angularVelocity = 15;
         ball1.friction = 0.5;   
         ball1.isDrawBounds = true;    
         
         apply(ball2);
         ball2.pos = Vec2f(150, 100);
-        ball2.mass = 1;
+        ball2.mass = 100;
         ball2.friction = 0.5;
         ball2.isDrawBounds = true;  
+        ball2.isDraggable = true;
 
-        apply(ball3);
-        ball3.pos = Vec2f(400, 100);
-        ball3.mass = 1;
-        ball3.friction = 0.5;
-        ball3.isDrawBounds = true; 
 
-        ball1.onPointerPress ~= (ref e){
-            ball1.acceleration = Vec2f(100);
-            ball3.acceleration = Vec2f(-100);
+        ball1.onPointerRelease ~= (ref e){
+            //ball1.velocity = Vec2f(1000);
+            //ball3.acceleration = Vec2f(-100);
         };
+
+        joint = new DistanceJoint(ball1, ball2);
+        joint.length = 10;
+        joint.isPhysics = true;
+        addCreate(joint);
     }
 
     void apply(Sprite2d sprite){
