@@ -91,8 +91,7 @@ class Sprite2d : EventKitTarget
     float invInertia = 0;
     float inertia;
 
-    Sprite2d isCollisionProcess;
-    Sprite2d[] collisionTargets;
+    size_t physicsIters = 1;
 
     bool delegate(Sprite2d, Sprite2d) onCollision;
 
@@ -1249,8 +1248,6 @@ class Sprite2d : EventKitTarget
             return;
         }
 
-        checkCollisions;
-
         //TODO check velocity is 0 || acceleration is 0
         float accelerationDx = acceleration.x * invMass * delta;
         float accelerationDy = acceleration.y * invMass * delta;
@@ -1303,6 +1300,19 @@ class Sprite2d : EventKitTarget
         {
             _prevX = _x;
             _prevY = _y;
+        }
+
+        //TODO sprite.predictedPos = sprite.pos + sprite.velocity * dt;
+        if (physicsIters == 1)
+        {
+            checkCollisions(delta);
+        }
+        else
+        {
+            foreach (iter; 0 .. physicsIters)
+            {
+                checkCollisions(delta);
+            }
         }
 
         _x += dx;
@@ -1370,39 +1380,30 @@ class Sprite2d : EventKitTarget
         return hitbox.intersect(other.hitbox);
     }
 
-    void checkCollisions()
+    void checkCollisions(float dt)
     {
-        if (!onCollision)
+        foreach (i, firstSprite; children)
         {
-            return;
-        }
-
-        foreach (i, firstSprite; collisionTargets)
-        {
-            foreach (secondSprite; collisionTargets[i + 1 .. $])
+            if (!firstSprite.isPhysics)
             {
-                if (firstSprite is secondSprite)
+                continue;
+            }
+            foreach (secondSprite; children[i + 1 .. $])
+            {
+                if (!secondSprite.isPhysics)
                 {
                     continue;
                 }
-                if (firstSprite.intersect(secondSprite))
+
+                if (onCollision)
                 {
-                    if (!firstSprite.isCollisionProcess && !secondSprite.isCollisionProcess)
-                    {
-                        onCollision(firstSprite, secondSprite);
-                    }
+                    onCollision(firstSprite, secondSprite);
                 }
                 else
                 {
-                    if (firstSprite.isCollisionProcess is secondSprite)
-                    {
-                        firstSprite.isCollisionProcess = null;
-                    }
+                    import api.sims.phys.rigids2d.collisions.impulse_resolver;
 
-                    if (secondSprite.isCollisionProcess is firstSprite)
-                    {
-                        secondSprite.isCollisionProcess = null;
-                    }
+                    resolve(firstSprite, secondSprite, dt, false);
                 }
             }
         }

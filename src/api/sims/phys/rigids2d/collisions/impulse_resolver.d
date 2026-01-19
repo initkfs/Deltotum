@@ -14,7 +14,17 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-bool resolve(Sprite2d a, Sprite2d b, float delta)
+bool resolve(Sprite2d a, Sprite2d b, float delta, bool isCorrectPos = true)
+{
+    if (!a.boundsRect.intersect(b.boundsRect))
+    {
+        return false;
+    }
+
+    return resolveIntersected(a, b, delta, isCorrectPos);
+}
+
+bool resolveIntersected(Sprite2d a, Sprite2d b, float delta, bool isCorrectPos = true)
 {
     if (!a.boundsRect.intersect(b.boundsRect))
     {
@@ -28,7 +38,7 @@ bool resolve(Sprite2d a, Sprite2d b, float delta)
         return false;
     }
 
-    if (!resolve(a, b, collision, delta))
+    if (!resolve(a, b, collision, delta, isCorrectPos))
     {
         return false;
     }
@@ -36,7 +46,7 @@ bool resolve(Sprite2d a, Sprite2d b, float delta)
     return true;
 }
 
-bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt)
+bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorrectPos = true)
 {
     Vec2f ra = collision.pos.sub(a.pos);
     Vec2f rb = collision.pos.sub(b.pos);
@@ -69,15 +79,23 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt)
     //TODO only for acceleration\gravity or velAlongNormal < 0.1f
     //Baumgarte stabilization
     float bias = 0.0f;
-    
+
     const float beta = 0.1f; //(0.1-0.3), > 0.5 cause jitter
     const float slop = 0.01f; //0.01-0.05
     const float maxBias = 2.0f;
 
     if (collision.penetration > slop)
     {
-        bias = (beta / dt) * (collision.penetration - slop);
-        bias = Math.min(bias, maxBias);
+        if (dt < 1e-7f)
+        {
+            bias = 0.0f;
+        }
+        else
+        {
+            bias = (beta / dt) * (collision.penetration - slop);
+            bias = Math.min(bias, maxBias);
+        }
+
     }
 
     j += bias;
@@ -128,7 +146,9 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt)
 
     }
 
-    posCorrection(a, b, collision.penetration, collision.normal);
+    if(isCorrectPos){
+        posCorrection(a, b, collision.penetration, collision.normal);
+    }
 
     return true;
 }
