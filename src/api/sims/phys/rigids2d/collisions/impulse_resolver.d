@@ -154,7 +154,7 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
             a.angularVelocity -= a.invInertia * ra.cross(frictionImpulse);
 
             b.velocity += frictionImpulse.scale(b.invMass);
-            b.angularVelocity -= b.invInertia * rb.cross(frictionImpulse);
+            b.angularVelocity += b.invInertia * rb.cross(frictionImpulse);
 
         }
 
