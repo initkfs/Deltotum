@@ -71,6 +71,22 @@ struct Vec2f
         return Vec2f(polarRad.x, Math.radToDeg(polarRad.y));
     }
 
+    import api.math.random : rands, Random;
+    import api.math.geom2.rect2 : Rect2f;
+
+    static Vec2f random(Rect2f bounds)
+    {
+        auto rnd = rands;
+        return Vec2f(rnd.between(bounds.x, bounds.right), rnd.between(bounds.y, bounds.bottom));
+    }
+
+    static Vec2f random(float min = 0, float max = 100) => random(min, max, min, max);
+    static Vec2f random(float minX = 0, float maxX = 100, float minY = 0, float maxY = 100)
+    {
+        auto rnd = rands;
+        return Vec2f(rnd.between(minX, maxX), rnd.between(minY, maxY));
+    }
+
     const nothrow pure @safe
     {
         Vec2f add(Vec2f other) => Vec2f(x + other.x, y + other.y);
@@ -150,7 +166,7 @@ struct Vec2f
         {
             //(-y, x), rotate 90 deg ccw
             //(y, -x), rotate 90 cw
-            return Vec2f( - y, x);
+            return Vec2f(-y, x);
         }
 
         Vec2f translate(float tx, float ty) => Vec2f(x + tx, y + ty);
@@ -183,7 +199,8 @@ struct Vec2f
             return dop / otherLen;
         }
 
-        Vec2f project(float factor) in (factor != 0.0)
+        Vec2f project(float factor)
+        in (factor != 0.0)
         {
             return Vec2f(x / factor, y / factor);
         }
@@ -193,8 +210,8 @@ struct Vec2f
         bool isCollinear(Vec2f other) => cross(other) == 0;
 
         float cross(Vec2f other) => x * other.y - y * other.x;
-        static Vec2f cross(Vec2f a, float s) => Vec2f(s * a.y,  - s * a.x);
-        static Vec2f cross(float s, Vec2f a) => Vec2f( - s * a.y, s * a.x);
+        static Vec2f cross(Vec2f a, float s) => Vec2f(s * a.y, -s * a.x);
+        static Vec2f cross(float s, Vec2f a) => Vec2f(-s * a.y, s * a.x);
 
         static float cross(Vec2f p0, Vec2f p1, Vec2f p2) nothrow pure @safe
         {

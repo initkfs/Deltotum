@@ -73,9 +73,11 @@ class Sprite2d : EventKitTarget
     bool isPhysInterpolateLastXY;
 
     Vec2f velocity;
+    Vec2f maxVelocity;
     Vec2f acceleration;
 
     float angularVelocity = 0;
+    float maxAngularVelocity = 0;
     float angularAcceleration = 0;
     float linearAcceleration = 0;
     float angularAngle = 0;
@@ -88,7 +90,7 @@ class Sprite2d : EventKitTarget
     float angularFriction = 0;
     float angularInertia = 0;
     float gravity = 0;
-    float restitution = 1;
+    float restitution = 0.5;
     bool isStopOnSmallVelocity;
     float smallVelocityAbs = 0.5;
 
@@ -1282,6 +1284,19 @@ class Sprite2d : EventKitTarget
             velocity.y += accelY * delta;
         }
 
+        if (!maxVelocity.isZero)
+        {
+            if (Math.abs(velocity.x) > maxVelocity.x)
+            {
+                velocity.x = maxVelocity.x * Math.sign(velocity.x);
+            }
+
+            if (Math.abs(velocity.y) > maxVelocity.y)
+            {
+                velocity.y = maxVelocity.y * Math.sign(velocity.y);
+            }
+        }
+
         if (isStopOnSmallVelocity)
         {
             if (Math.abs(velocity.x) <= smallVelocityAbs)
@@ -1328,7 +1343,12 @@ class Sprite2d : EventKitTarget
             angularVelocity *= (1.0f - frictionFactor * delta);
         }
 
-        if (Math.abs(angularVelocity) < 0.01f)
+        if (maxAngularVelocity != 0 && Math.abs(angularVelocity) > maxAngularVelocity)
+        {
+            angularVelocity = maxAngularVelocity * Math.sign(angularVelocity);
+        }
+
+        if (Math.abs(angularVelocity) < 0.5f)
             angularVelocity = 0.0f;
 
         angle = angle + angularVelocity * delta;
@@ -2821,9 +2841,9 @@ class Sprite2d : EventKitTarget
         return _angle;
     }
 
-    float inertiaRect() => (1.0f / 12.0f) * mass * (
-        boundsRect.width * boundsRect.width + boundsRect.height * boundsRect.height);
-    float inertiaCircle() => 0.5f * mass * halfWidth * halfWidth;
+    float inertiaRect(float scale = 0.0001) => (1.0f / 12.0f) * mass * (
+        boundsRect.width * boundsRect.width + boundsRect.height * boundsRect.height) * scale;
+    float inertiaCircle(float scale = 0.0001) => 0.5f * mass * halfWidth * halfWidth * scale;
 
     //TODO cache
     float inertia()
@@ -2840,11 +2860,13 @@ class Sprite2d : EventKitTarget
     bool isPhysShapeRect() => physShape == PhysShape.rect;
     bool isPhysShapeCircle() => physShape == PhysShape.circle;
 
-    void setPhysShapeRect(){
+    void setPhysShapeRect()
+    {
         physShape = PhysShape.rect;
     }
 
-    void setPhysShapeCircle(){
+    void setPhysShapeCircle()
+    {
         physShape = PhysShape.circle;
     }
 

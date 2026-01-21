@@ -13,11 +13,12 @@ import api.sims.phys.rigids2d.movings.moving;
 import api.sims.phys.rigids2d.movings.physeffects;
 import api.sims.phys.rigids2d.collisions.impulse_resolver;
 import api.sims.phys.rigids2d.collisions.joints;
-import api.dm.kit.sprites2d.images.image: Image;
+import api.dm.kit.sprites2d.images.image : Image;
 import api.math.geom2.circle2 : Circle2f;
 import api.dm.kit.factories.uda;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.sims.phys.rigids2d.movings.gravity;
 
 import std.stdio;
 
@@ -29,17 +30,20 @@ import Math = api.math;
  */
 class Demo1 : GuiScene
 {
-    @Load(path: "user:Planets/planet-1.png", width: 100, height: 100)
+    @Load(path : "user:Planets/planet-4.png", width:
+        50, height:
+        50, isAdd:
+        false)
     Image ball1;
-    @Load(path: "user:Planets/planet-4.png", width: 100, height: 100)
-    Image ball2;
-    @Load(path: "user:Planets/planet-5.png", width: 100, height: 100)
-    Image ball3;
+    // @Load(path: "user:Planets/planet-4.png", width: 100, height: 100)
+    // Image ball2;
+    // @Load(path: "user:Planets/planet-5.png", width: 100, height: 100)
+    // Image ball3;
 
     Sprite2d root;
 
     DistanceJoint joint;
-    
+
     this()
     {
         name = "game";
@@ -56,25 +60,50 @@ class Demo1 : GuiScene
         root = new Sprite2d;
         addCreate(root);
         root.isPhysics = true;
-        root.physicsIters = 3;
+        root.physicsIters = 4;
 
-        apply(ball1);
-        ball1.pos = Vec2f(10, 150);
-        ball1.isDraggable = true;
-        ball1.mass = 10;
-        ball1.angularInertia = 100;
-        ball1.friction = 0.8; 
-        ball1.angularFriction = 0.8;  
-        ball1.isDrawBounds = true;    
-        
-        apply(ball2);
-        ball2.pos = Vec2f(200, 100);
-        ball2.mass = 20;
-        ball2.friction = 0.8;
-        ball2.angularInertia = 100;
-        ball2.angularFriction = 0.8; 
-        ball2.isDrawBounds = true;  
-        ball2.isDraggable = true;
+       
+
+        foreach (i; 0 .. 100)
+        {
+            auto ball = rnd.any(images).copy;
+            apply(ball);
+            ball.maxVelocity = Vec2f(500, 500);
+            ball.maxAngularVelocity = 100;
+            ball.pos = Vec2f.random(graphic.renderBounds);
+            ball.velocity = Vec2f.random(-300, 300);
+            ball.mass = rnd.between(1, 100);
+            //ball.angularInertia = 50;
+            ball.restitution = 0.1;
+            ball.friction = 0.1;
+            ball.angularFriction = 0.1;
+            //ball.isDrawBounds = true;
+        }
+
+        onPointerPress ~= (ref e) {
+
+            if(e.button == 3){
+                if(isGrav){
+                    return;
+                }
+                isGrav = true;
+                return;
+            }
+
+            foreach (ch; root.children)
+            {
+                ch.velocity = Vec2f.random(-500, 500);
+            }
+        };
+
+        // apply(ball2);
+        // ball2.pos = Vec2f(200, 100);
+        // ball2.mass = 20;
+        // ball2.friction = 0.8;
+        // ball2.angularInertia = 100;
+        // ball2.angularFriction = 0.8; 
+        // ball2.isDrawBounds = true;  
+        // ball2.isDraggable = true;
 
         // apply(ball3);
         // ball3.pos = Vec2f(350, 100);
@@ -83,10 +112,10 @@ class Demo1 : GuiScene
         // ball3.isDrawBounds = true;  
         // ball3.isDraggable = true;
 
-        ball1.onPointerRelease ~= (ref e){
-            ball1.velocity = Vec2f(200);
-            //ball3.acceleration = Vec2f(-500);
-        };
+        // ball1.onPointerRelease ~= (ref e){
+        //     ball1.velocity = Vec2f(200);
+        //     //ball3.acceleration = Vec2f(-500);
+        // };
 
         // joint = new DistanceJoint(ball1, ball2);
         // joint.length = 10;
@@ -94,17 +123,35 @@ class Demo1 : GuiScene
         // addCreate(joint);
     }
 
-    void apply(Sprite2d sprite){
+    void apply(Sprite2d sprite)
+    {
         sprite.isPhysics = true;
         sprite.setPhysShapeCircle;
         root.addCreate(sprite);
     }
 
+    bool isGrav;
+
     override void update(float delta)
     {
         super.update(delta);
-        
-        wrapBounds(ball1, graphic.renderBounds);
-        wrapBounds(ball2, graphic.renderBounds);
+
+        foreach (sp; root.children)
+        {
+            wrapBounds(sp, graphic.renderBounds);
+        }
+
+        if(!isGrav){
+            return;
+        }
+
+        foreach (i, firstSprite; root.children)
+        {
+            foreach (secondSprite; root.children[i + 1 .. $])
+            {
+                gravitate(firstSprite, secondSprite, delta);
+            }
+        }
+
     }
 }

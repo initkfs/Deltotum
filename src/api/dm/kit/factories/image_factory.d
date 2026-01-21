@@ -9,6 +9,23 @@ import api.dm.kit.sprites2d.images.anim_image : AnimImage;
  */
 class ImageFactory : GraphicComponent
 {
+    Image[] images(string dir, int requestWidth = -1, int requestHeight = -1)
+    {
+        import std.file: exists, isDir, dirEntries, SpanMode;
+
+        if(!dir.exists || !dir.isDir){
+            throw new Exception("Path not exists or not a directory: " ~ dir);
+        }
+
+        string[] files;
+        foreach(entry; dir.dirEntries(SpanMode.breadth)){
+            files ~= entry.name;
+        }
+
+        return images(files, requestWidth, requestHeight);
+    }
+
+
     Image[] images(string[] paths, int requestWidth = -1, int requestHeight = -1)
     {
         Image[] newImages = new Image[paths.length];

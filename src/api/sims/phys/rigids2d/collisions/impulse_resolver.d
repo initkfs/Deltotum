@@ -91,7 +91,7 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
 
     const float beta = 0.1f; //(0.1-0.3), > 0.5 cause jitter
     const float slop = 0.01f; //0.01-0.05
-    const float maxBias = 2;
+    const float maxBias = 50;
 
     if (collision.penetration > slop)
     {
@@ -198,17 +198,3 @@ void applyImpulse(Sprite2d sprite, Vec2f impulse, Vec2f contactVector)
     sprite.velocity.add(impulse.scale(sprite.invMass));
     sprite.angularVelocity += sprite.invInertia * contactVector.cross(impulse);
 }
-
-// void calcInertia(Sprite2d sprite, Circle2f circle)
-// {
-//     //solid circle, or I = m * r² for rings
-//     sprite.inertia = 0.5f * sprite.mass * circle.radius * circle.radius;
-//     sprite.invInertia = (sprite.inertia > 1e-7f) ? 1.0f / sprite.inertia : 0.0f;
-// }
-
-// void calcInertia(Sprite2d sprite, Rect2f shape)
-// {
-//     //rotate around float inertia = (1.0f / 3.0f) * mass * (width*width + height*height);
-//     float inertia = (1.0f / 12.0f) * mass * (width*width + height*height);
-//     sprite.invInertia = (sprite.inertia > 1e-7f) ? 1.0f / sprite.inertia : 0.0f;
-// }
