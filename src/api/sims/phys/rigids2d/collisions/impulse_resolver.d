@@ -151,10 +151,14 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
             }
 
             a.velocity -= frictionImpulse.scale(a.invMass);
-            a.angularVelocity -= a.invInertia * ra.cross(frictionImpulse);
+
+            const angInvInertiaA = a.angularInertia != 0 ? 1.0 / a.angularInertia : a.invInertia;
+            a.angularVelocity -= angInvInertiaA * ra.cross(frictionImpulse);
 
             b.velocity += frictionImpulse.scale(b.invMass);
-            b.angularVelocity += b.invInertia * rb.cross(frictionImpulse);
+
+            const angInvInertiaB = b.angularInertia != 0 ? 1.0 / b.angularInertia : b.invInertia;
+            b.angularVelocity += angInvInertiaB * rb.cross(frictionImpulse);
 
         }
 

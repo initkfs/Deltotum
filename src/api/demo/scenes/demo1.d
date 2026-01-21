@@ -62,6 +62,7 @@ class Demo1 : GuiScene
         ball1.pos = Vec2f(10, 150);
         ball1.isDraggable = true;
         ball1.mass = 10;
+        ball1.angularInertia = 100;
         ball1.friction = 0.8; 
         ball1.angularFriction = 0.8;  
         ball1.isDrawBounds = true;    
@@ -70,6 +71,7 @@ class Demo1 : GuiScene
         ball2.pos = Vec2f(200, 100);
         ball2.mass = 20;
         ball2.friction = 0.8;
+        ball2.angularInertia = 100;
         ball2.angularFriction = 0.8; 
         ball2.isDrawBounds = true;  
         ball2.isDraggable = true;

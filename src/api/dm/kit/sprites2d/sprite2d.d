@@ -86,6 +86,7 @@ class Sprite2d : EventKitTarget
 
     float friction = 0;
     float angularFriction = 0;
+    float angularInertia = 0;
     float gravity = 0;
     float restitution = 1;
     bool isStopOnSmallVelocity;
