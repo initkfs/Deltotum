@@ -55,37 +55,44 @@ class Demo1 : GuiScene
 
         root = new Sprite2d;
         addCreate(root);
-        //root.isPhysics = true;
+        root.isPhysics = true;
+        root.physicsIters = 3;
 
         apply(ball1);
-        ball1.pos = Vec2f(10, 100);
+        ball1.pos = Vec2f(10, 150);
         ball1.isDraggable = true;
-        ball1.mass = 100;
-        ball1.angularVelocity = 15;
-        ball1.friction = 0.5;   
+        ball1.mass = 10;
+        ball1.friction = 0.8;   
         ball1.isDrawBounds = true;    
         
         apply(ball2);
-        ball2.pos = Vec2f(150, 100);
-        ball2.mass = 100;
-        ball2.friction = 0.5;
+        ball2.pos = Vec2f(200, 100);
+        ball2.mass = 20;
+        ball2.friction = 0.8;
         ball2.isDrawBounds = true;  
         ball2.isDraggable = true;
 
+        // apply(ball3);
+        // ball3.pos = Vec2f(350, 100);
+        // ball3.mass = 3;
+        // ball3.friction = 0.5;
+        // ball3.isDrawBounds = true;  
+        // ball3.isDraggable = true;
 
         ball1.onPointerRelease ~= (ref e){
-            //ball1.velocity = Vec2f(1000);
-            //ball3.acceleration = Vec2f(-100);
+            ball1.velocity = Vec2f(200);
+            //ball3.acceleration = Vec2f(-500);
         };
 
-        joint = new DistanceJoint(ball1, ball2);
-        joint.length = 10;
-        joint.isPhysics = true;
-        addCreate(joint);
+        // joint = new DistanceJoint(ball1, ball2);
+        // joint.length = 10;
+        // joint.isPhysics = true;
+        // addCreate(joint);
     }
 
     void apply(Sprite2d sprite){
         sprite.isPhysics = true;
+        sprite.setPhysShapeCircle;
         root.addCreate(sprite);
     }
 

@@ -111,7 +111,13 @@ bool checkCircleAndCircle(Circle2f a, Circle2f b, ref Contact2d collision, float
 
     collision.penetration = radiusSum - dist;
     collision.normal = normal.div(dist);
-    collision.pos = normal.scale(a.radius).add(a.center);
+
+    Vec2f pointOnA = (collision.normal * a.radius) + a.center;
+    Vec2f pointOnB = (collision.normal * (-b.radius)) + b.center;
+
+    collision.pos = (pointOnA + pointOnB) * 0.5f;
+    //collision.pos = collision.normal.scale(a.radius).add(a.center);
+
     return true;
 }
 

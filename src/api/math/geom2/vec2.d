@@ -194,9 +194,7 @@ struct Vec2f
 
         float cross(Vec2f other) => x * other.y - y * other.x;
         static Vec2f cross(Vec2f a, float s) => Vec2f(s * a.y,  - s * a.x);
-        
-        //static Vec2f cross(float s, Vec2f a) => Vec2f( - s * a.y, s * a.x);
-        static Vec2f cross(float s, Vec2f a) => Vec2f(s * a.y, -s * a.x);
+        static Vec2f cross(float s, Vec2f a) => Vec2f( - s * a.y, s * a.x);
 
         static float cross(Vec2f p0, Vec2f p1, Vec2f p2) nothrow pure @safe
         {

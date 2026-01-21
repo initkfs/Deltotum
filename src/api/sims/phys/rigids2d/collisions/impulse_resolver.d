@@ -16,24 +16,33 @@ import Math = api.math;
 
 bool resolve(Sprite2d a, Sprite2d b, float delta, bool isCorrectPos = true)
 {
-    if (!a.boundsRect.intersect(b.boundsRect))
-    {
-        return false;
-    }
-
-    return resolveIntersected(a, b, delta, isCorrectPos);
-}
-
-bool resolveIntersected(Sprite2d a, Sprite2d b, float delta, bool isCorrectPos = true)
-{
-    if (!a.boundsRect.intersect(b.boundsRect))
-    {
-        return false;
-    }
-
     Contact2d collision;
 
-    if (!checkAABBAndAABB(a.boundsRect, b.boundsRect, collision))
+    if (a.isPhysShapeRect && b.isPhysShapeRect)
+    {
+        if (!a.boundsRect.intersect(b.boundsRect))
+        {
+            return false;
+        }
+
+        if (!checkAABBAndAABB(a.boundsRect, b.boundsRect, collision))
+        {
+            return false;
+        }
+    }
+    else if (a.isPhysShapeCircle && b.isPhysShapeCircle)
+    {
+        if (!a.boundsCircle.intersect(b.boundsCircle))
+        {
+            return false;
+        }
+
+        if (!checkCircleAndCircle(a.boundsCircle, b.boundsCircle, collision))
+        {
+            return false;
+        }
+    }
+    else
     {
         return false;
     }
@@ -48,13 +57,13 @@ bool resolveIntersected(Sprite2d a, Sprite2d b, float delta, bool isCorrectPos =
 
 bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorrectPos = true)
 {
-    Vec2f ra = collision.pos.sub(a.pos);
-    Vec2f rb = collision.pos.sub(b.pos);
+    Vec2f ra = collision.pos.sub(a.center);
+    Vec2f rb = collision.pos.sub(b.center);
 
     Vec2f velLinear = b.velocity.sub(a.velocity);
 
-    Vec2f velRotB = Vec2f.cross(b.angularVelocity, rb); // ω_b × r_b
-    Vec2f velRotA = Vec2f.cross(a.angularVelocity, ra); // ω_a × r_a
+    Vec2f velRotB = Vec2f.cross(rb, b.angularVelocity); // ω_b × r_b
+    Vec2f velRotA = Vec2f.cross(ra, a.angularVelocity); // ω_a × r_a
 
     Vec2f relativeVel = velLinear.add(velRotB).sub(velRotA);
 
@@ -82,7 +91,7 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
 
     const float beta = 0.1f; //(0.1-0.3), > 0.5 cause jitter
     const float slop = 0.01f; //0.01-0.05
-    const float maxBias = 2.0f;
+    const float maxBias = 2;
 
     if (collision.penetration > slop)
     {
@@ -105,17 +114,19 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
     a.velocity -= impulse.scale(a.invMass);
     b.velocity += impulse.scale(b.invMass);
 
-    a.angularVelocity -= a.invInertia * ra.cross(impulse);
-    b.angularVelocity += b.invInertia * rb.cross(impulse);
-
+    //a.angularVelocity -= a.invInertia * ra.cross(impulse);
+    //b.angularVelocity += b.invInertia * rb.cross(impulse);
+    
     //Friction Ff <= mu * Fn
     Vec2f tangent = (relativeVel.sub(collision.normal.scale(relativeVel.dot(collision.normal))));
+    
     if (tangent.lengthSquared > 1e-7f)
     {
         tangent = tangent.normalize;
 
         float raCrossT = ra.cross(tangent);
         float rbCrossT = rb.cross(tangent);
+        
         float invMassSumTangent = a.invMass + b.invMass + (
             raCrossT * raCrossT) * a.invInertia + (rbCrossT * rbCrossT) * b.invInertia;
 
@@ -128,25 +139,29 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
             float maxFriction = mu * Math.abs(j);
 
             Vec2f frictionImpulse;
-            if (Math.abs(jt) < j * mu)
+
+            if (Math.abs(jt) < maxFriction)
                 frictionImpulse = tangent.scale(jt);
             else
             {
                 //dynamicFriction = Math.pythagorean(a.dynamicFriction, b.dynamicFriction);
-                auto dynamicFriction = (a.dynamicFriction + b.dynamicFriction) / 2;
-                frictionImpulse = tangent * (-maxFriction * dynamicFriction / mu);
+                //auto dynamicFriction = (a.dynamicFriction + b.dynamicFriction) / 2;
+                //frictionImpulse = tangent * (-maxFriction * dynamicFriction / mu);
+                frictionImpulse = tangent.scale(-maxFriction * Math.sign(jt));
             }
 
             a.velocity -= frictionImpulse.scale(a.invMass);
             a.angularVelocity -= a.invInertia * ra.cross(frictionImpulse);
 
             b.velocity += frictionImpulse.scale(b.invMass);
-            b.angularVelocity += b.invInertia * rb.cross(frictionImpulse);
+            b.angularVelocity -= b.invInertia * rb.cross(frictionImpulse);
+
         }
 
     }
 
-    if(isCorrectPos){
+    if (isCorrectPos)
+    {
         posCorrection(a, b, collision.penetration, collision.normal);
     }
 

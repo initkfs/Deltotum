@@ -80,8 +80,12 @@ class Sprite2d : EventKitTarget
     float linearAcceleration = 0;
     float angularAngle = 0;
 
+    import api.sims.phys.rigids2d.phys_shape : PhysShape;
+
+    PhysShape physShape;
+
     float friction = 0;
-    float dynamicFriction = 0;
+    float angularFriction = 0;
     float gravity = 0;
     float restitution = 1;
     bool isStopOnSmallVelocity;
@@ -227,7 +231,6 @@ class Sprite2d : EventKitTarget
 
     protected
     {
-        Sprite2d _hitbox;
         GraphicCanvas _gContext;
 
         float _width = 0;
@@ -1316,14 +1319,17 @@ class Sprite2d : EventKitTarget
 
         angularVelocity += angularAcceleration * delta;
 
-        // float angularSpeed = Math.abs(angularVelocity);
-        // float frictionFactor = friction * (1.0f + angularSpeed * 0.1f);
+        if (angularFriction != 0)
+        {
+            float angularSpeed = Math.abs(angularVelocity);
+            float frictionFactor = angularFriction * (1.0f + angularSpeed * 0.1f);
 
-        // angularVelocity *= (1.0f - frictionFactor * delta);
+            angularVelocity *= (1.0f - frictionFactor * delta);
+        }
 
-        if (Math.abs(angularVelocity) < 0.001f)
+        if (Math.abs(angularVelocity) < 0.01f)
             angularVelocity = 0.0f;
-        
+
         angle = angle + angularVelocity * delta;
     }
 
@@ -1377,12 +1383,7 @@ class Sprite2d : EventKitTarget
 
     bool intersect(Sprite2d other)
     {
-        if (!hitbox && !other.hitbox)
-        {
-            return intersectBounds(other);
-        }
-
-        return hitbox.intersect(other.hitbox);
+        return intersectBounds(other);
     }
 
     void checkCollisions(float dt)
@@ -1416,6 +1417,16 @@ class Sprite2d : EventKitTarget
 
     Rect2f boundsRect() => Rect2f(x, y, _width, _height);
     Rect2f boundsLocal() => Rect2f(0, 0, _width, _height);
+
+    import api.math.geom2.circle2 : Circle2f;
+
+    Circle2f boundsCircle()
+    {
+        import Math = api.math;
+
+        const radius = Math.max(halfWidth, halfHeight);
+        return Circle2f(center.x, center.y, radius);
+    }
 
     Rect2f boundsRectInParent()
     {
@@ -2513,11 +2524,6 @@ class Sprite2d : EventKitTarget
 
         super.dispose;
 
-        if (_hitbox)
-        {
-            _hitbox.dispose;
-        }
-
         foreach (Sprite2d child; children)
         {
             child.parent = null;
@@ -2575,19 +2581,6 @@ class Sprite2d : EventKitTarget
         }
 
         return true;
-    }
-
-    void hitbox(Sprite2d sprite)
-    {
-        addCreate(sprite);
-        sprite.isLayoutManaged = false;
-        //sprite.isVisible = false;
-        _hitbox = sprite;
-    }
-
-    Sprite2d hitbox()
-    {
-        return _hitbox;
     }
 
     Rect2f boundingBox() => boundingBox(angle);
@@ -2827,12 +2820,31 @@ class Sprite2d : EventKitTarget
         return _angle;
     }
 
+    float inertiaRect() => (1.0f / 12.0f) * mass * (
+        boundsRect.width * boundsRect.width + boundsRect.height * boundsRect.height);
+    float inertiaCircle() => 0.5f * mass * halfWidth * halfWidth;
+
     //TODO cache
     float inertia()
     {
-        const boundsR = boundsRect;
-        return (1.0f / 12.0f) * mass * (
-            boundsR.width * boundsR.width + boundsR.height * boundsR.height);
+        final switch (physShape) with (PhysShape)
+        {
+            case rect:
+                return inertiaRect;
+            case circle:
+                return inertiaCircle;
+        }
+    }
+
+    bool isPhysShapeRect() => physShape == PhysShape.rect;
+    bool isPhysShapeCircle() => physShape == PhysShape.circle;
+
+    void setPhysShapeRect(){
+        physShape = PhysShape.rect;
+    }
+
+    void setPhysShapeCircle(){
+        physShape = PhysShape.circle;
     }
 
     float invInertia()
