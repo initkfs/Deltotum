@@ -20,6 +20,7 @@ import api.dm.kit.factories.uda;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.sims.phys.rigids2d.movings.gravity;
 import api.sims.phys.rigids2d.fk;
+import api.sims.phys.rigids2d.ik;
 import std.stdio;
 
 import api.math.geom2.vec2 : Vec2f;
@@ -44,7 +45,7 @@ class Demo1 : GuiScene
     {
         super.create;
 
-        auto segment = new SegmentWalk;
+        auto segment = new SegmentDrag;
         addCreate(segment);
 
         segment.toCenter;

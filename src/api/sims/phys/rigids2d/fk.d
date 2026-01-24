@@ -121,7 +121,9 @@ class SegmentChain : Sprite2d
 {
     Segment[] segments;
 
-    void createSegment(float len)
+    bool isSetPos = true;
+
+    void createSegment(float len = 100)
     {
         auto segment = new Segment(len);
         addCreate(segment);
@@ -159,6 +161,10 @@ class SegmentChain : Sprite2d
 
         if (segments.length <= 1)
         {
+            return;
+        }
+
+        if(!isSetPos){
             return;
         }
 
