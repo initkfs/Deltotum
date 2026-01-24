@@ -39,7 +39,7 @@ struct Vec2f
     static nothrow pure @safe Vec2f zero() => Vec2f();
     nothrow pure @safe bool isZero() const => (x == 0) && (y == 0);
     static nothrow pure @safe Vec2f infinity() => Vec2f(float.infinity, float.infinity);
-    bool isInfinity() const => (x == float.infinity) || (y == float.infinity);
+    bool isInfinity() const nothrow pure @safe => (x == float.infinity) || (y == float.infinity);
 
     static Vec2f fromPolarDeg(float angleDeg, float radius) nothrow pure @safe
     {

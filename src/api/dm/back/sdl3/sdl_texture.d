@@ -10,6 +10,7 @@ import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 
 import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.vec2 : Vec2f;
 import api.math.pos2.flip : Flip;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -703,13 +704,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     }
 
     bool draw(Rect2f srcBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
-            .none)
+            .none, Vec2f rotateCenter = Vec2f.zero)
     {
-        return draw(this, srcBounds, destBounds, angle, flip);
+        return draw(this, srcBounds, destBounds, angle, flip, rotateCenter);
     }
 
     bool draw(ComTexture other, Rect2f srcBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
-            .none)
+            .none, Vec2f rotateCenter = Vec2f.zero)
     {
         SDL_FRect srcRect;
         srcRect.x = srcBounds.x;
@@ -750,8 +751,15 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         //https://discourse.libsdl.org/t/1st-frame-sdl-renderer-software-sdl-flip-horizontal-ubuntu-wrong-display-is-it-a-bug-of-sdl-rendercopyex/25924
         SdlTexture t = cast(SdlTexture) other;
         assert(t);
-        SDL_FPoint* rotateCenter = null;
-        if (const err = renderer.renderTextureEx(t, &srcRect, &destRect, angle, rotateCenter, sdlFlip))
+        SDL_FPoint rotateCenterPoint;
+        if (!rotateCenter.isInfinity)
+        {
+            rotateCenterPoint = SDL_FPoint(rotateCenter.x, rotateCenter.y);
+        }
+
+        SDL_FPoint* rotateCenterPtr = rotateCenter.isInfinity ? null : &rotateCenterPoint;
+
+        if (const err = renderer.renderTextureEx(t, &srcRect, &destRect, angle, rotateCenterPtr, sdlFlip))
         {
             return false;
         }

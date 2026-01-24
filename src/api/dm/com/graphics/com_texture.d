@@ -8,6 +8,7 @@ import api.dm.com.com_destroyable : ComDestroyable;
 import api.dm.com.com_error_manageable : ComErrorManageable;
 
 import api.math.geom2.rect2 : Rect2f;
+import api.math.geom2.vec2: Vec2f;
 import api.math.pos2.flip : Flip;
 import api.dm.com.graphics.com_surface : ComSurface;
 
@@ -91,9 +92,9 @@ nothrow:
     ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
 
     bool draw(ComTexture other, Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
-            .none);
+            .none, Vec2f rotateCenter = Vec2f.zero);
     bool draw(Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
-            .none);
+            .none, Vec2f rotateCenter = Vec2f.zero);
 
     ComResult copyToNew(out ComTexture);
     ComResult copyTo(ComTexture toTexture, Rect2f srcRect, Rect2f destRect, float angle = 0, Flip flip = Flip

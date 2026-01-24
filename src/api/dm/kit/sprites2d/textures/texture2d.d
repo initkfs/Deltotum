@@ -9,6 +9,7 @@ import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.pos2.flip : Flip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.math.geom2.vec2: Vec2f;
 
 /**
  * Authors: initkfs
@@ -17,6 +18,8 @@ class Texture2d : Sprite2d
 {
     bool isDrawTexture = true;
     Flip flip = Flip.none;
+
+    Vec2f rotateCenter = Vec2f.infinity;
 
     protected
     {
@@ -222,7 +225,7 @@ class Texture2d : Sprite2d
     void drawTexture(ComTexture texture, Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
-        if (!texture.draw(textureBounds, destBounds, angle, flip))
+        if (!texture.draw(textureBounds, destBounds, angle, flip, rotateCenter))
         {
             logger.error("Error texture drawing: ", texture.getLastErrorNew);
         }
