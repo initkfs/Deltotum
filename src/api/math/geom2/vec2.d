@@ -178,6 +178,14 @@ struct Vec2f
             return Vec2f(newX, newY);
         }
 
+        Vec2f rotate(Vec2f center, float angleDeg)
+        {
+            float shiftedX = x - center.x;
+            float shiftedY = y - center.y;
+
+            return Vec2f(shiftedX, shiftedY).rotate(angleDeg).add(center);
+        }
+
         Vec2f shear(float sx, float sy)
         {
             immutable newX = x + sx * y;

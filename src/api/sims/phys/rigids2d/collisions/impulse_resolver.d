@@ -80,7 +80,8 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
     float invMassSum = a.invMass + b.invMass + (
         raCrossN * raCrossN) * a.invInertia + (rbCrossN * rbCrossN) * b.invInertia;
 
-    float e = Math.min(a.restitution, b.restitution);
+    //float e = Math.min(a.restitution, b.restitution);
+    float e = (a.restitution + b.restitution) / 2;
 
     float j = (-(1 + e)) * velAlongNormal;
     j /= invMassSum;
@@ -135,7 +136,7 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
             float jt = -relativeVel.dot(tangent);
             jt = jt / invMassSumTangent;
             //float mu = Math.pythagorean(a.friction, b.friction);
-            float mu = (a.friction + b.friction) / 2;
+            float mu = (a.damping + b.damping) / 2;
             float maxFriction = mu * Math.abs(j);
 
             Vec2f frictionImpulse;

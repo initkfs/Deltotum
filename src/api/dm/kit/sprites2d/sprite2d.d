@@ -86,8 +86,8 @@ class Sprite2d : EventKitTarget
 
     PhysShape physShape;
 
-    float friction = 0;
-    float angularFriction = 0;
+    float damping = 0;
+    float angularDamping = 0;
     float angularInertia = 0;
     float gravity = 0;
     float restitution = 0.5;
@@ -97,6 +97,16 @@ class Sprite2d : EventKitTarget
     size_t physicsIters = 1;
 
     bool delegate(Sprite2d, Sprite2d) onCollision;
+
+    //TODO extract therms
+    float _temp = 0;
+
+    //amount of thermal energy
+    float heatContent = 0;
+
+    import api.sims.phys.heats.thermal_material : ThermalMaterial;
+
+    ThermalMaterial thermMat;
 
     Rect2f clip;
     bool isMoveClip;
@@ -1233,14 +1243,14 @@ class Sprite2d : EventKitTarget
 
     Vec2f terminalVelocity(float dt)
     {
-        //acceleration * dt = velocity * friction * dt
-        //acceleration = velocity * friction
-        if (friction == 0)
+        //acceleration * dt = velocity * damping * dt
+        //acceleration = velocity * damping
+        if (damping == 0)
         {
             return velocity;
         }
 
-        return (acceleration * (1 - friction * dt)).div(friction);
+        return (acceleration * (1 - damping * dt)).div(damping);
     }
 
     void updatePhys(out float dx, out float dy, float delta)
@@ -1262,13 +1272,13 @@ class Sprite2d : EventKitTarget
             velocity.y += gravity * delta;
         }
 
-        if (friction != 0)
+        if (damping != 0)
         {
-            //dynamic friction
+            //dynamic damping
             //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
             //float dynamicFriction = 1.0f - (speed * 0.01f);
-            //or velocity += (acceleration - friction * velocity) * dt
-            const fdt = (1.0 - friction * delta);
+            //or velocity += (acceleration - damping * velocity) * dt
+            const fdt = (1.0 - damping * delta);
             velocity.x *= fdt;
             velocity.y *= fdt;
         }
@@ -1335,10 +1345,10 @@ class Sprite2d : EventKitTarget
 
         angularVelocity += angularAcceleration * delta;
 
-        if (angularFriction != 0)
+        if (angularDamping != 0)
         {
             float angularSpeed = Math.abs(angularVelocity);
-            float frictionFactor = angularFriction * (1.0f + angularSpeed * 0.1f);
+            float frictionFactor = angularDamping * (1.0f + angularSpeed * 0.1f);
 
             angularVelocity *= (1.0f - frictionFactor * delta);
         }
@@ -1352,6 +1362,38 @@ class Sprite2d : EventKitTarget
             angularVelocity = 0.0f;
 
         angle = angle + angularVelocity * delta;
+    }
+
+    void temp(float newTemp)
+    {
+        _temp = newTemp;
+        heatContent = mass * thermMat.specificHeat * _temp;
+    }
+
+    float temp() => _temp;
+
+    void updateTemp()
+    {
+        _temp = heatContent / (mass * thermMat.specificHeat);
+
+        if (_temp >= thermMat.meltingPoint)
+        {
+            //startMelting;
+        }
+
+        if (_temp >= thermMat.boilingPoint)
+        {
+            //startBoiling;
+        }
+
+        //restitution = thermMat.elasticityVsTemp(temp);
+        //friction = thermMat.frictionVsTemp(temp);
+    }
+
+    void addHeat(float joules)
+    {
+        heatContent += joules;
+        updateTemp;
     }
 
     void update(float delta)

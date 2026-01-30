@@ -53,7 +53,7 @@ class Physics : Control
             material.isPhysics = true;
         };
 
-        material.friction = 0.65; 
+        material.damping = 0.65; 
     }
 
     override bool draw(float dt){

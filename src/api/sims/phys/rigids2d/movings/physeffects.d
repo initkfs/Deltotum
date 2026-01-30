@@ -44,7 +44,7 @@ class TripleSpring : Sprite2d
         auto target = new VCircle(20, GraphicStyle(5, RGBA.random, true, RGBA.random));
         target.isDraggable = true;
         target.isPhysics = true;
-        target.friction = friction;
+        target.damping = friction;
         return target;
     }
 
@@ -100,7 +100,7 @@ class OffsetSpring : Sprite2d
 
         sprite = new VCircle(25, GraphicStyle(5, RGBA.randomLight, true, RGBA.randomLight));
         sprite.isDraggable = true;
-        sprite.friction = 9;
+        sprite.damping = 9;
         sprite.isPhysics = true;
         addCreate(sprite);
     }
@@ -154,7 +154,7 @@ class MultiSpring : Sprite2d
 
         sprite = new VCircle(25, GraphicStyle(5, RGBA.randomLight, true, RGBA.randomLight));
         sprite.isDraggable = true;
-        sprite.friction = 9;
+        sprite.damping = 9;
         sprite.isPhysics = true;
         addCreate(sprite);
     }
@@ -205,7 +205,7 @@ class SpringChain : Sprite2d
             auto ball = new VCircle(25, GraphicStyle(5, RGBA.randomLight, true, RGBA.randomLight));
             ball.isPhysics = true;
             ball.gravity = 3;
-            ball.friction = 9;
+            ball.damping = 9;
             addCreate(ball);
         }
     }
