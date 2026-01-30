@@ -100,9 +100,12 @@ class Sprite2d : EventKitTarget
 
     //TODO extract therms
     float _temp = 0;
-
     //amount of thermal energy
     float heatContent = 0;
+
+    //TODO extract
+    //+1, -1, 0
+    float charge = 0;
 
     import api.sims.phys.heats.thermal_material : ThermalMaterial;
 
