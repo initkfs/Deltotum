@@ -435,6 +435,8 @@ class Sprite3d : Sprite2d
         return true;
     }
 
+    alias pos = typeof(super).pos;
+
     Vec3f pos3() @safe pure nothrow => Vec3f(_x, _y, _z);
 
     bool pos(Vec3f newPos) => pos(newPos.x, newPos.y, newPos.z);
