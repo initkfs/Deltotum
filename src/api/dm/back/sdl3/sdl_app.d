@@ -67,6 +67,7 @@ import std.stdio;
 import KitConfigKeys = api.dm.kit.kit_config_keys;
 
 import api.dm.lib.cairo : CairoLib;
+import api.dm.lib.ffmpeg.native.binddynamic : FfmpegLib;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -97,6 +98,7 @@ class SdlApp : GuiApp
         Nullable!SdlJoystick sdlCurrentJoystick;
 
         CairoLib cairoLib;
+        FfmpegLib ffmpegLib;
 
         SDLScreen comScreen;
 
@@ -312,6 +314,27 @@ class SdlApp : GuiApp
 
             cairoLibForLoad.load;
         }
+
+        //TODO config flag
+        auto ffmpegLibForLoad = new FfmpegLib;
+
+        //TODO from config
+        import std.path: buildPath;
+
+        ffmpegLibForLoad.workDirPath = buildPath(uservices.context.app.workDir, "libs/ffmpeg/lib");
+
+        ffmpegLibForLoad.onLoad = () {
+            ffmpegLib = ffmpegLibForLoad;
+            uservices.logger.trace("Load FFMPEG library.");
+        };
+
+        ffmpegLibForLoad.onLoadErrors = (err) {
+            uservices.logger.error("FFMPEG loading error: ", err);
+            ffmpegLibForLoad.unload;
+            ffmpegLib = null;
+        };
+
+        ffmpegLibForLoad.load;
 
         if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
         {

@@ -21,7 +21,7 @@ import api.dm.addon.media.video.gui.audio_decoder : AudioDecoder;
 import api.dm.addon.media.video.gui.video_decoder : VideoDecoder, UVFrame, VideoDecoderContext;
 import api.dm.addon.media.video.gui.audio_decoder : AudioDecoder, AudioDecoderContext;
 
-import cffmpeg;
+import api.dm.lib.ffmpeg.native;
 import csdl;
 
 import Math = api.math;
@@ -160,6 +160,7 @@ class VideoPlayer(
 
         char* file = cast(char*) path.toStringz;
 
+        assert(avformat_alloc_context);
         pFormatCtx = avformat_alloc_context();
         contextMutex = new shared Mutex;
 
@@ -192,7 +193,7 @@ class VideoPlayer(
 
             AVCodecParameters* codecParam = stream.codecpar;
             AVCodec* codec = avcodec_find_decoder(codecParam.codec_id);
-            if (codecParam.codec_type == AVMEDIA_TYPE_VIDEO && !foundVideo)
+            if (codecParam.codec_type == AVMediaType.AVMEDIA_TYPE_VIDEO && !foundVideo)
             {
                 //fmt_ctx.streams[i].discard = AVDISCARD_ALL;
                 vidCodec = codec;
@@ -205,7 +206,7 @@ class VideoPlayer(
                 //fpsrendering = 1.0 / (cast(float) rational.num / cast(float)(rational.den));
                 foundVideo = true;
             }
-            else if (codecParam.codec_type == AVMEDIA_TYPE_AUDIO && !foundAudio)
+            else if (codecParam.codec_type == AVMediaType.AVMEDIA_TYPE_AUDIO && !foundAudio)
             {
                 audCodec = codec;
                 audpar = codecParam;
@@ -466,8 +467,8 @@ class VideoPlayer(
                     debug {
                         import std.stdio: writefln;
                         
-                        writefln("Read %s bytes for audiodevice: %s. Size: %s, ri: %s, wi: %s", additional_amount, isRead, audioBuffer
-                            .size, audioBuffer.readIndex, audioBuffer.writeIndex);
+                        // writefln("Read %s bytes for audiodevice: %s. Size: %s, ri: %s, wi: %s", additional_amount, isRead, audioBuffer
+                        //     .size, audioBuffer.readIndex, audioBuffer.writeIndex);
                     }
                 }
             }

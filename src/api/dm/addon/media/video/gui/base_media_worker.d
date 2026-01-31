@@ -3,7 +3,7 @@ module api.dm.addon.media.video.gui.base_media_worker;
 import core.thread.osthread : Thread;
 import std.logger : Logger;
 
-import cffmpeg;
+import api.dm.lib.ffmpeg.native;
 
 /**
  * Authors: initkfs

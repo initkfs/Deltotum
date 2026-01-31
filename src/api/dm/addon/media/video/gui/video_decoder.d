@@ -7,7 +7,7 @@ import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 import std.logger : Logger;
 import std.string : fromStringz, toStringz;
 
-import cffmpeg;
+import api.dm.lib.ffmpeg.native;
 
 struct UVFrame
 {
@@ -179,7 +179,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             //     logger.error("Error fillint buffer");
             // }
 
-            AVPixelFormat destFormat = AV_PIX_FMT_YUV420P;
+            AVPixelFormat destFormat = AVPixelFormat.AV_PIX_FMT_YUV420P;
 
             SwsContext* convertContext = sws_getContext(
                 ctx.width,
@@ -188,7 +188,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 context.windowWidth,
                 context.windowHeight,
                 destFormat,
-                SWS_BILINEAR,
+                SwsFlags.SWS_BILINEAR,
                 null,
                 null,
                 null
@@ -378,6 +378,8 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                         break;
                     }
 
+                    import core.stdc.errno: EAGAIN;
+
                     if (isSend < 0 && isSend != AVERROR(EAGAIN))
                     {
                         //TODO drop packet?
@@ -386,6 +388,8 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                         logger.error("Error sending packet in video decoder: ", errorText(isSend));
                         continue;
                     }
+
+                    import core.stdc.errno: EAGAIN;
 
                     const isReceive = avcodec_receive_frame(ctx, frame);
                     if (isReceive == AVERROR(EAGAIN))
@@ -429,7 +433,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
                 outFrame.width = context.windowWidth;
                 outFrame.height = context.windowHeight;
-                outFrame.format = AV_PIX_FMT_YUV420P;
+                outFrame.format = AVPixelFormat.AV_PIX_FMT_YUV420P;
 
                 const isOutBuffer = av_frame_get_buffer(outFrame, 1);
                 if (isOutBuffer < 0)

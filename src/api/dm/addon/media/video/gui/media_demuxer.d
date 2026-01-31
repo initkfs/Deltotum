@@ -10,7 +10,7 @@ import core.sync.mutex : Mutex;
 
 import Math = api.math;
 
-import cffmpeg;
+import api.dm.lib.ffmpeg.native;
 
 struct DemuxerContext
 {
@@ -116,6 +116,8 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                     logger.infof("Received EOF for media demuxer, break");
                     break;
                 }
+
+                import core.stdc.errno: EAGAIN;
 
                 if (packetRet == AVERROR(EAGAIN))
                 {

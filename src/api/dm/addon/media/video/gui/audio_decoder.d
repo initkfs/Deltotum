@@ -8,7 +8,9 @@ import api.core.utils.adt.container_result : ContainerResult;
 import std.logger : Logger;
 import std.string : toStringz, fromStringz;
 
-import cffmpeg;
+import api.dm.lib.ffmpeg.native;
+
+import core.stdc.errno: EAGAIN;
 
 struct AudioDecoderContext
 {
@@ -278,6 +280,8 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 {
                     if (audioBuff)
                     {
+                        import core.stdc.stdlib: free;
+                        
                         free(audioBuff);
                     }
                 }
@@ -366,18 +370,18 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
     AVSampleFormat toLibFormat(ComAudioFormat format)
     {
         //TODO default
-        AVSampleFormat libFormat = AV_SAMPLE_FMT_S16;
+        AVSampleFormat libFormat = AVSampleFormat.AV_SAMPLE_FMT_S16;
         switch (format) with (ComAudioFormat)
         {
             //TODO planar swr_convert, AV_SAMPLE_FMT_S32P, AV_SAMPLE_FMT_S16P
             case s16:
-                libFormat = AV_SAMPLE_FMT_S16;
+                libFormat = AVSampleFormat.AV_SAMPLE_FMT_S16;
                 break;
             case s32:
-                libFormat = AV_SAMPLE_FMT_S32;
+                libFormat = AVSampleFormat.AV_SAMPLE_FMT_S32;
                 break;
             case f32:
-                libFormat = AV_SAMPLE_FMT_FLT;
+                libFormat = AVSampleFormat.AV_SAMPLE_FMT_FLT;
                 break;
             default:
                 break;
