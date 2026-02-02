@@ -46,6 +46,8 @@ class CliApp : SimpleUnit
 
     CrashHandler[] crashHandlers;
 
+    int exitCode;
+
     private
     {
         UniComponent _uniServices;
@@ -138,15 +140,17 @@ class CliApp : SimpleUnit
         return true;
     }
 
-    void exit(int code = 0)
+    override void dispose()
     {
+        super.dispose;
+
         assert(uservices.context);
-        uservices.context.app.exit(code);
+        uservices.context.app.exit(exitCode);
     }
 
     UniComponent newUniServices() => new UniComponent;
 
-    protected void consumeThrowable(Throwable ex, bool isRethrow = true)
+    void consumeThrowable(Throwable ex, bool isRethrow = false)
     {
         try
         {
@@ -162,7 +166,7 @@ class CliApp : SimpleUnit
         catch (Exception exFromHandler)
         {
             exFromHandler.next = ex;
-            if (uservices.logging)
+            if (uservices && uservices.logging)
             {
                 uservices.logger.errorf("Exception from error handler: %s", exFromHandler);
             }
@@ -175,9 +179,9 @@ class CliApp : SimpleUnit
         }
         finally
         {
-            if (uservices.logging)
+            if (uservices && uservices.logging)
             {
-                uservices.logger.errorf("Error from application. %s", ex);
+                uservices.logger.error("Error from application. ", ex);
             }
 
             if (isRethrow)

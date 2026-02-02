@@ -29,11 +29,14 @@ abstract class LoopApp : GraphicApp
         mainLoop.isRunning = false;
     }
 
-    override void requestExit()
+    override void exit()
     {
-        super.requestExit;
-        stop;
+        if (isRunning)
+        {
+            stop;
+        }
         isProcessEvents = false;
+        super.exit;
     }
 
 }

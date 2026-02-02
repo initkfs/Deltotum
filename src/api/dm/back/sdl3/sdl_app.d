@@ -68,6 +68,7 @@ import KitConfigKeys = api.dm.kit.kit_config_keys;
 
 import api.dm.lib.cairo : CairoLib;
 import api.dm.lib.ffmpeg.native.binddynamic : FfmpegLib;
+import api.dm.lib.portaudio.native.binddynamic : PortAudioLib;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -99,6 +100,7 @@ class SdlApp : GuiApp
 
         CairoLib cairoLib;
         FfmpegLib ffmpegLib;
+        PortAudioLib portaudioLib;
 
         SDLScreen comScreen;
 
@@ -122,475 +124,505 @@ class SdlApp : GuiApp
 
     override bool initialize(string[] args)
     {
-        if (!super.initialize(args))
-        {
-            return false;
-        }
-
-        if (isHeadless)
-        {
-            import std.process : environment;
-
-            environment["SDL_VIDEODRIVER"] = "dummy";
-            uservices.logger.infof("Headless mode enabled");
-        }
-
-        uint flags = 0;
-
-        flags |= SDL_INIT_VIDEO;
-
-        if (isAudioEnabled)
-        {
-            flags |= SDL_INIT_AUDIO;
-            gservices.platform.cap.isAudio = true;
-            version (EnableTrace)
-            {
-                uservices.logger.trace("Audio enabled");
-            }
-        }
-
-        if (isJoystickEnabled)
-        {
-            flags |= SDL_INIT_JOYSTICK;
-            gservices.platform.cap.isJoystick = true;
-
-            version (EnableTrace)
-            {
-                uservices.logger.trace("Joystick enabled");
-            }
-        }
-
-        if (onCreatedInitFlags)
-        {
-            flags = onCreatedInitFlags(flags);
-        }
-
-        if (const err = createSystems(gservices.platform.cap))
-        {
-            uservices.logger.errorf("SDL systems creation error: " ~ err.toString);
-            return false;
-        }
-
-        if (onCreatedSystems)
-        {
-            onCreatedSystems();
-        }
-
-        if (const err = initializeSystems(flags, gservices.platform.cap))
-        {
-            uservices.logger.errorf("SDL systems initialization error: " ~ err.toString);
-            return false;
-        }
-
-        //TODO move to systems
-        import KitConfigKeys = api.dm.kit.kit_config_keys;
-
-        gpuDevice = new SdlGPUDevice;
-        if (uservices.config.hasKey(KitConfigKeys.backendIsGPU) && uservices.config.getBool(
-                KitConfigKeys.backendIsGPU))
-        {
-            if (const err = gpuDevice.create)
-            {
-                throw new Exception(err.toString);
-            }
-            string gpuName;
-            if (const err = gpuDevice.getDriverNameNew(gpuName))
-            {
-                uservices.logger.error("Error reading GPU driver name: ", err.toString);
-            }
-            else
-            {
-                version (EnableTrace)
-                {
-                    uservices.logger.trace("Create GPU device: ", gpuName);
-                }
-            }
-        }
-
-        version (EnableTrace)
-        {
-            uservices.logger.trace("SDL systems initialized");
-        }
-
-        if (onInitializedSystems)
-        {
-            onInitializedSystems();
-        }
-
-        if (!setMetadata(appname, appver, appid))
-        {
-            assert(sdlLib);
-            uservices.logger.error("Error setting app metadata: ", sdlLib.getError);
-        }
-
-        assert(mainLoop);
-        initLoop(mainLoop);
-
-        //TODO extract dependency
-        import api.dm.back.sdl3.sdl_keyboard : SdlKeyboard;
-
-        auto sdlKeyboard = new SdlKeyboard;
-
-        auto keyboard = new Keyboard(sdlKeyboard);
-
-        import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
-        import api.dm.back.sdl3.sdl_clipboard;
-
-        auto sdlClipboard = new SdlClipboard;
-        auto clipboard = new Clipboard(sdlClipboard, uservices.logging);
-
-        import api.dm.kit.inputs.cursors.cursor : Cursor;
-        import api.dm.back.sdl3.sdl_cursor : SDLCursor;
-
-        Cursor cursor;
         try
         {
-            import api.dm.back.sdl3.sdl_cursor : SDLCursor;
-
-            auto sdlCursor = new SDLCursor;
-            if (auto err = sdlCursor.createDefault)
+            if (!super.initialize(args))
             {
-                uservices.logger.errorf("Cursor creating error. ", err);
-            }
-            else
-            {
-                import api.dm.kit.inputs.cursors.system_cursor : SystemCursor;
-
-                cursor = new SystemCursor(sdlCursor);
-                cursor.cursorFactory = () {
-                    auto newCursor = new SDLCursor;
-                    return newCursor;
-                };
+                return false;
             }
 
-        }
-        catch (Exception e)
-        {
-            uservices.logger.warning("Cursor error: ", e);
-        }
+            if (isHeadless)
+            {
+                import std.process : environment;
 
-        if (!cursor)
-        {
-            import api.dm.kit.inputs.cursors.empty_cursor : EmptyCursor;
+                environment["SDL_VIDEODRIVER"] = "dummy";
+                uservices.logger.infof("Headless mode enabled");
+            }
 
-            uservices.logger.warning("Create empty cursor");
-            cursor = new EmptyCursor;
-        }
+            uint flags = 0;
 
-        SdlJoystick currentJoy = sdlCurrentJoystick.isNull ? null : sdlCurrentJoystick.get;
-        _input = new Input(uservices.logging, keyboard, clipboard, cursor, currentJoy);
+            flags |= SDL_INIT_VIDEO;
 
-        auto audioClip = new AudioMixer(sdlAudioMixer.get);
-
-        _media = new MultiMedia(audioClip, audioOut.get);
-        _media.chunkFromBufferProvider = (buff) { return new SdlMixerChunk(buff); };
-        _media.initialize;
-
-        gservices.platform.cap.isVectorGraphics = true;
-        if (uservices.config.hasKey(KitConfigKeys.graphicsUseVector))
-        {
-            gservices.platform.cap.isVectorGraphics = uservices.config.getBool(
-                KitConfigKeys.graphicsUseVector);
-        }
-
-        if (gservices.platform.cap.isVectorGraphics)
-        {
-            auto cairoLibForLoad = new CairoLib;
-
-            cairoLibForLoad.onLoad = () {
-                cairoLib = cairoLibForLoad;
-                theme.isUseVectorGraphics = gservices.platform.cap.isVectorGraphics;
+            if (isAudioEnabled)
+            {
+                flags |= SDL_INIT_AUDIO;
+                gservices.platform.cap.isAudio = true;
                 version (EnableTrace)
                 {
-                    uservices.logger.trace("Load Cairo library.");
+                    uservices.logger.trace("Audio enabled");
                 }
-            };
-
-            cairoLibForLoad.onLoadErrors = (err) {
-                uservices.logger.error("Cairo loading error: ", err);
-                cairoLibForLoad.unload;
-                cairoLib = null;
-            };
-
-            cairoLibForLoad.load;
-        }
-
-        //TODO config flag
-        auto ffmpegLibForLoad = new FfmpegLib;
-
-        //TODO from config
-        import std.path: buildPath;
-
-        ffmpegLibForLoad.workDirPath = buildPath(uservices.context.app.workDir, "libs/ffmpeg/lib");
-
-        ffmpegLibForLoad.onLoad = () {
-            ffmpegLib = ffmpegLibForLoad;
-            uservices.logger.trace("Load FFMPEG library.");
-        };
-
-        ffmpegLibForLoad.onLoadErrors = (err) {
-            uservices.logger.error("FFMPEG loading error: ", err);
-            ffmpegLibForLoad.unload;
-            ffmpegLib = null;
-        };
-
-        ffmpegLibForLoad.load;
-
-        if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
-        {
-            uservices.logger.errorf("Error screensaver: " ~ err.toString);
-        }
-
-        comScreen = new SDLScreen;
-
-        _screening = new Screening(comScreen, uservices.logging);
-
-        import api.dm.kit.windows.windowing : Windowing;
-
-        _windowing = new Windowing(uservices.logging);
-
-        eventProcessor = new SdlEventProcessor(sdlKeyboard);
-
-        eventManager = new KitEventManager;
-
-        eventManager.windowProviderById = (windowId) {
-            auto mustBeCurrentWindow = windowing.byFirstIdOrNull(windowId);
-            if (mustBeCurrentWindow && (mustBeCurrentWindow.isShowing && mustBeCurrentWindow
-                    .isFocus))
-            {
-                return mustBeCurrentWindow;
             }
-            return null;
-        };
 
-        eventManager.currentWindowProvider = () { return windowing.currentOrNull; };
-
-        eventProcessor.onWindow = (ref windowEvent) {
-            if (eventManager.onWindow)
+            if (isJoystickEnabled)
             {
-                eventManager.onWindow(windowEvent);
-            }
-            eventManager.dispatchEvent(windowEvent);
-        };
+                flags |= SDL_INIT_JOYSTICK;
+                gservices.platform.cap.isJoystick = true;
 
-        eventProcessor.onPointer = (ref pointerEvent) {
-            if (eventManager.onPointer)
-            {
-                eventManager.onPointer(pointerEvent);
-            }
-            eventManager.dispatchEvent(pointerEvent);
-        };
-
-        eventProcessor.onJoystick = (ref joystickEvent) {
-            if (eventManager.onJoystick)
-            {
-                eventManager.onJoystick(joystickEvent);
-            }
-            eventManager.dispatchEvent(joystickEvent);
-        };
-
-        eventProcessor.onKey = (ref keyEvent) {
-            if (eventManager.onKey)
-            {
-                eventManager.onKey(keyEvent);
-            }
-            eventManager.dispatchEvent(keyEvent);
-        };
-
-        eventProcessor.onTextInput = (ref keyEvent) {
-            if (eventManager.onTextInput)
-            {
-                eventManager.onTextInput(keyEvent);
-            }
-            eventManager.dispatchEvent(keyEvent);
-        };
-
-        eventManager.onKey = (ref key) {
-            final switch (key.event) with (KeyEvent.Event)
-            {
-                case none:
-                    break;
-                case press:
-                    _input.addKeyPress(key.keyName);
-                    break;
-                case release:
-                    _input.addKeyRelease(key.keyName);
-                    break;
-            }
-        };
-
-        eventManager.onJoystick = (ref joystickEvent) {
-
-            if (joystickEvent.event == JoystickEvent.Event.axis)
-            {
-                if (_input.isJoystickActive)
+                version (EnableTrace)
                 {
-                    _input.isJoystickChangeAxis = joystickEvent.axis != _input
-                        .lastJoystickEvent.axis;
-                    _input.isJoystickChangeAxisValue = _input.lastJoystickEvent.axisValue != joystickEvent
-                        .axisValue;
-                    _input.joystickAxisDelta = joystickEvent.axisValue - _input
-                        .lastJoystickEvent.axisValue;
+                    uservices.logger.trace("Joystick enabled");
                 }
             }
-            else if (joystickEvent.event == JoystickEvent.Event.press)
+
+            if (onCreatedInitFlags)
             {
-                _input.isJoystickPressed = true;
-            }
-            else if (joystickEvent.event == JoystickEvent.Event.release)
-            {
-                _input.isJoystickPressed = false;
+                flags = onCreatedInitFlags(flags);
             }
 
-            _input.lastJoystickEvent = joystickEvent;
-            if (!_input.isJoystickActive)
+            if (const err = createSystems(gservices.platform.cap))
             {
-                _input.isJoystickActive = true;
+                uservices.logger.errorf("SDL systems creation error: " ~ err.toString);
+                return false;
             }
-        };
 
-        eventManager.onWindow = (ref e) {
-            switch (e.event) with (WindowEvent.Event)
+            if (onCreatedSystems)
             {
-                case focusIn:
-                    windowing.onWindowsById(e.ownerId, (win) {
-                        win.isFocus = true;
-                        e.isConsumed = true;
-                        version (EnableTrace)
-                        {
-                            uservices.logger.tracef("Window focus on window '%s' with id %d", win.title, win
-                                .id);
-                        }
-                        return true;
-                    });
-                    break;
-                case focusOut:
-                    windowing.onWindowsById(e.ownerId, (win) {
-                        win.isFocus = false;
-                        e.isConsumed = true;
-                        version (EnableTrace)
-                        {
-                            uservices.logger.tracef("Window focus out on window '%s' with id %d", win.title, win
-                                .id);
-                        }
-                        return true;
-                    });
-                    break;
-                case show:
-                    windowing.onWindowsById(e.ownerId, (win) {
-                        win.isShowing = true;
-                        e.isConsumed = true;
-                        if (win.onShow.length > 0)
-                        {
-                            foreach (dg; win.onShow)
-                            {
-                                dg();
-                            }
-                        }
-                        if (win.isStopping || win.isPausing)
-                        {
-                            win.run;
-                        }
-                        version (EnableTrace)
-                        {
-                            uservices.logger.tracef("Show window '%s' with id %d, state: %s", win.title, win.id, win
-                                .state);
-                        }
-                        return true;
-                    });
-                    break;
-                case hide:
-                    windowing.onWindowsById(e.ownerId, (win) {
-                        win.isShowing = false;
-                        if (win.onHide.length > 0)
-                        {
-                            foreach (dg; win.onHide)
-                            {
-                                dg();
-                            }
-                        }
-                        if (win.isRunning)
-                        {
-                            win.pause;
-                        }
-                        version (EnableTrace)
-                        {
-                            uservices.logger.tracef("Hide window '%s' with id %d, state: %s", win.title, win.id, win
-                                .state);
-                        }
-                        return true;
-                    });
-                    break;
-                case resize:
-                    windowing.onWindowsById(e.ownerId, (win) {
-                        win.confirmResize(e.width, e.height);
-                        e.isConsumed = true;
-                        return true;
-                    });
-                    break;
-                case minimize:
-                    windowing.onWindowsById(e.ownerId, (win) {
-                        if (win.onMinimize.length > 0)
-                        {
-                            foreach (dg; win.onMinimize)
-                            {
-                                dg();
-                            }
-                        }
-                        version (EnableTrace)
-                        {
-                            uservices.logger.tracef("Minimize window '%s' with id %d", win.title, win
-                                .id);
-                        }
-                        return true;
-                    });
-                    break;
-                case maximize:
-                    windowing.onWindowsById(e.ownerId, (win) {
-                        if (win.onMaximize.length > 0)
-                        {
-                            foreach (dg; win.onMaximize)
-                            {
-                                dg();
-                            }
-                        }
-                        version (EnableTrace)
-                        {
-                            uservices.logger.tracef("Maximize window '%s' with id %d", win.title, win
-                                .id);
-                        }
-                        return true;
-                    });
-                    break;
-                case close:
-                    windowing.onWindowsById(e.ownerId, (win) {
-                        if (win.onClose.length > 0)
-                        {
-                            foreach (dg; win.onClose)
-                            {
-                                dg();
-                            }
-                        }
-                        return true;
-                    });
-                    auto winId = e.ownerId;
-                    windowing.destroyWindowById(winId);
-                    if (windowing.count == 0)
+                onCreatedSystems();
+            }
+
+            if (const err = initializeSystems(flags, gservices.platform.cap))
+            {
+                uservices.logger.errorf("SDL systems initialization error: " ~ err.toString);
+                return false;
+            }
+
+            //TODO move to systems
+            import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+            gpuDevice = new SdlGPUDevice;
+            if (uservices.config.hasKey(KitConfigKeys.backendIsGPU) && uservices.config.getBool(
+                    KitConfigKeys.backendIsGPU))
+            {
+                if (const err = gpuDevice.create)
+                {
+                    throw new Exception(err.toString);
+                }
+                string gpuName;
+                if (const err = gpuDevice.getDriverNameNew(gpuName))
+                {
+                    uservices.logger.error("Error reading GPU driver name: ", err.toString);
+                }
+                else
+                {
+                    version (EnableTrace)
                     {
-                        if (windowing.count == 0 && isQuitOnCloseAllWindows)
-                        {
+                        uservices.logger.trace("Create GPU device: ", gpuName);
+                    }
+                }
+            }
+
+            version (EnableTrace)
+            {
+                uservices.logger.trace("SDL systems initialized");
+            }
+
+            if (onInitializedSystems)
+            {
+                onInitializedSystems();
+            }
+
+            if (!setMetadata(appname, appver, appid))
+            {
+                assert(sdlLib);
+                uservices.logger.error("Error setting app metadata: ", sdlLib.getError);
+            }
+
+            assert(mainLoop);
+            initLoop(mainLoop);
+
+            //TODO extract dependency
+            import api.dm.back.sdl3.sdl_keyboard : SdlKeyboard;
+
+            auto sdlKeyboard = new SdlKeyboard;
+
+            auto keyboard = new Keyboard(sdlKeyboard);
+
+            import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
+            import api.dm.back.sdl3.sdl_clipboard;
+
+            auto sdlClipboard = new SdlClipboard;
+            auto clipboard = new Clipboard(sdlClipboard, uservices.logging);
+
+            import api.dm.kit.inputs.cursors.cursor : Cursor;
+            import api.dm.back.sdl3.sdl_cursor : SDLCursor;
+
+            Cursor cursor;
+            try
+            {
+                import api.dm.back.sdl3.sdl_cursor : SDLCursor;
+
+                auto sdlCursor = new SDLCursor;
+                if (auto err = sdlCursor.createDefault)
+                {
+                    uservices.logger.errorf("Cursor creating error. ", err);
+                }
+                else
+                {
+                    import api.dm.kit.inputs.cursors.system_cursor : SystemCursor;
+
+                    cursor = new SystemCursor(sdlCursor);
+                    cursor.cursorFactory = () {
+                        auto newCursor = new SDLCursor;
+                        return newCursor;
+                    };
+                }
+
+            }
+            catch (Exception e)
+            {
+                uservices.logger.warning("Cursor error: ", e);
+            }
+
+            if (!cursor)
+            {
+                import api.dm.kit.inputs.cursors.empty_cursor : EmptyCursor;
+
+                uservices.logger.warning("Create empty cursor");
+                cursor = new EmptyCursor;
+            }
+
+            SdlJoystick currentJoy = sdlCurrentJoystick.isNull ? null : sdlCurrentJoystick.get;
+            _input = new Input(uservices.logging, keyboard, clipboard, cursor, currentJoy);
+
+            auto audioClip = new AudioMixer(sdlAudioMixer.get);
+
+            _media = new MultiMedia(audioClip, audioOut.get);
+            _media.chunkFromBufferProvider = (buff) {
+                return new SdlMixerChunk(buff);
+            };
+            _media.initialize;
+
+            gservices.platform.cap.isVectorGraphics = true;
+            if (uservices.config.hasKey(KitConfigKeys.graphicsUseVector))
+            {
+                gservices.platform.cap.isVectorGraphics = uservices.config.getBool(
+                    KitConfigKeys.graphicsUseVector);
+            }
+
+            if (gservices.platform.cap.isVectorGraphics)
+            {
+                auto cairoLibForLoad = new CairoLib;
+
+                cairoLibForLoad.onLoad = () {
+                    cairoLib = cairoLibForLoad;
+                    theme.isUseVectorGraphics = gservices.platform.cap.isVectorGraphics;
+                    version (EnableTrace)
+                    {
+                        uservices.logger.trace("Load Cairo library.");
+                    }
+                };
+
+                cairoLibForLoad.onLoadErrors = (err) {
+                    uservices.logger.error("Cairo loading error: ", err);
+                    cairoLibForLoad.unload;
+                    cairoLib = null;
+                };
+
+                cairoLibForLoad.load;
+            }
+
+            //TODO config flag
+            auto ffmpegLibForLoad = new FfmpegLib;
+
+            //TODO from config
+            import std.path : buildPath;
+
+            ffmpegLibForLoad.workDirPath = buildPath(uservices.context.app.workDir, "libs/ffmpeg/lib");
+
+            ffmpegLibForLoad.onLoad = () {
+                ffmpegLib = ffmpegLibForLoad;
+                uservices.logger.trace("Load FFMPEG library.");
+            };
+
+            ffmpegLibForLoad.onLoadErrors = (err) {
+                uservices.logger.error("FFMPEG loading error: ", err);
+                ffmpegLibForLoad.unload;
+                ffmpegLib = null;
+            };
+
+            ffmpegLibForLoad.load;
+
+            auto audioLib = new PortAudioLib;
+            audioLib.workDirPath = buildPath(uservices.context.app.workDir, "libs/portaudio/lib");
+
+            audioLib.onLoad = () {
+                audioLib.initialize;
+                portaudioLib = audioLib;
+                uservices.logger.tracef("Load PortAudio library: %s, dev: %s", portaudioLib.libVersionStr, portaudioLib
+                        .deviceInfoNew);
+            };
+
+            audioLib.onLoadErrors = (err) {
+                uservices.logger.error("PortAudio loading error: ", err);
+                audioLib.unload;
+                portaudioLib = null;
+            };
+
+            audioLib.load;
+
+            if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
+            {
+                uservices.logger.errorf("Error screensaver: " ~ err.toString);
+            }
+
+            comScreen = new SDLScreen;
+
+            _screening = new Screening(comScreen, uservices.logging);
+
+            import api.dm.kit.windows.windowing : Windowing;
+
+            _windowing = new Windowing(uservices.logging);
+
+            eventProcessor = new SdlEventProcessor(sdlKeyboard);
+
+            eventManager = new KitEventManager;
+
+            eventManager.windowProviderById = (windowId) {
+                auto mustBeCurrentWindow = windowing.byFirstIdOrNull(windowId);
+                if (mustBeCurrentWindow && (mustBeCurrentWindow.isShowing && mustBeCurrentWindow
+                        .isFocus))
+                {
+                    return mustBeCurrentWindow;
+                }
+                return null;
+            };
+
+            eventManager.currentWindowProvider = () {
+                return windowing.currentOrNull;
+            };
+
+            eventProcessor.onWindow = (ref windowEvent) {
+                if (eventManager.onWindow)
+                {
+                    eventManager.onWindow(windowEvent);
+                }
+                eventManager.dispatchEvent(windowEvent);
+            };
+
+            eventProcessor.onPointer = (ref pointerEvent) {
+                if (eventManager.onPointer)
+                {
+                    eventManager.onPointer(pointerEvent);
+                }
+                eventManager.dispatchEvent(pointerEvent);
+            };
+
+            eventProcessor.onJoystick = (ref joystickEvent) {
+                if (eventManager.onJoystick)
+                {
+                    eventManager.onJoystick(joystickEvent);
+                }
+                eventManager.dispatchEvent(joystickEvent);
+            };
+
+            eventProcessor.onKey = (ref keyEvent) {
+                if (eventManager.onKey)
+                {
+                    eventManager.onKey(keyEvent);
+                }
+                eventManager.dispatchEvent(keyEvent);
+            };
+
+            eventProcessor.onTextInput = (ref keyEvent) {
+                if (eventManager.onTextInput)
+                {
+                    eventManager.onTextInput(keyEvent);
+                }
+                eventManager.dispatchEvent(keyEvent);
+            };
+
+            eventManager.onKey = (ref key) {
+                final switch (key.event) with (KeyEvent.Event)
+                {
+                    case none:
+                        break;
+                    case press:
+                        _input.addKeyPress(key.keyName);
+                        break;
+                    case release:
+                        _input.addKeyRelease(key.keyName);
+                        break;
+                }
+            };
+
+            eventManager.onJoystick = (ref joystickEvent) {
+
+                if (joystickEvent.event == JoystickEvent.Event.axis)
+                {
+                    if (_input.isJoystickActive)
+                    {
+                        _input.isJoystickChangeAxis = joystickEvent.axis != _input
+                            .lastJoystickEvent.axis;
+                        _input.isJoystickChangeAxisValue = _input.lastJoystickEvent.axisValue != joystickEvent
+                            .axisValue;
+                        _input.joystickAxisDelta = joystickEvent.axisValue - _input
+                            .lastJoystickEvent.axisValue;
+                    }
+                }
+                else if (joystickEvent.event == JoystickEvent.Event.press)
+                {
+                    _input.isJoystickPressed = true;
+                }
+                else if (joystickEvent.event == JoystickEvent.Event.release)
+                {
+                    _input.isJoystickPressed = false;
+                }
+
+                _input.lastJoystickEvent = joystickEvent;
+                if (!_input.isJoystickActive)
+                {
+                    _input.isJoystickActive = true;
+                }
+            };
+
+            eventManager.onWindow = (ref e) {
+                switch (e.event) with (WindowEvent.Event)
+                {
+                    case focusIn:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            win.isFocus = true;
+                            e.isConsumed = true;
                             version (EnableTrace)
                             {
-                                uservices.logger.tracef("All windows are closed, exit request");
+                                uservices.logger.tracef("Window focus on window '%s' with id %d", win.title, win
+                                    .id);
                             }
-                            requestExit;
+                            return true;
+                        });
+                        break;
+                    case focusOut:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            win.isFocus = false;
+                            e.isConsumed = true;
+                            version (EnableTrace)
+                            {
+                                uservices.logger.tracef("Window focus out on window '%s' with id %d", win.title, win
+                                    .id);
+                            }
+                            return true;
+                        });
+                        break;
+                    case show:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            win.isShowing = true;
+                            e.isConsumed = true;
+                            if (win.onShow.length > 0)
+                            {
+                                foreach (dg; win.onShow)
+                                {
+                                    dg();
+                                }
+                            }
+                            if (win.isStopping || win.isPausing)
+                            {
+                                win.run;
+                            }
+                            version (EnableTrace)
+                            {
+                                uservices.logger.tracef("Show window '%s' with id %d, state: %s", win.title, win.id, win
+                                    .state);
+                            }
+                            return true;
+                        });
+                        break;
+                    case hide:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            win.isShowing = false;
+                            if (win.onHide.length > 0)
+                            {
+                                foreach (dg; win.onHide)
+                                {
+                                    dg();
+                                }
+                            }
+                            if (win.isRunning)
+                            {
+                                win.pause;
+                            }
+                            version (EnableTrace)
+                            {
+                                uservices.logger.tracef("Hide window '%s' with id %d, state: %s", win.title, win.id, win
+                                    .state);
+                            }
+                            return true;
+                        });
+                        break;
+                    case resize:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            win.confirmResize(e.width, e.height);
+                            e.isConsumed = true;
+                            return true;
+                        });
+                        break;
+                    case minimize:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            if (win.onMinimize.length > 0)
+                            {
+                                foreach (dg; win.onMinimize)
+                                {
+                                    dg();
+                                }
+                            }
+                            version (EnableTrace)
+                            {
+                                uservices.logger.tracef("Minimize window '%s' with id %d", win.title, win
+                                    .id);
+                            }
+                            return true;
+                        });
+                        break;
+                    case maximize:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            if (win.onMaximize.length > 0)
+                            {
+                                foreach (dg; win.onMaximize)
+                                {
+                                    dg();
+                                }
+                            }
+                            version (EnableTrace)
+                            {
+                                uservices.logger.tracef("Maximize window '%s' with id %d", win.title, win
+                                    .id);
+                            }
+                            return true;
+                        });
+                        break;
+                    case close:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            if (win.onClose.length > 0)
+                            {
+                                foreach (dg; win.onClose)
+                                {
+                                    dg();
+                                }
+                            }
+                            return true;
+                        });
+                        auto winId = e.ownerId;
+                        windowing.destroyWindowById(winId);
+                        if (windowing.count == 0)
+                        {
+                            if (windowing.count == 0 && isQuitOnCloseAllWindows)
+                            {
+                                version (EnableTrace)
+                                {
+                                    uservices.logger.tracef("All windows are closed, exit request");
+                                }
+                                exit;
+                            }
                         }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        };
+                        break;
+                    default:
+                        break;
+                }
+            };
+        }
+        catch (Throwable e)
+        {
+            consumeThrowable(e);
+            exit;
+        }
 
         return true;
     }
@@ -797,7 +829,7 @@ class SdlApp : GuiApp
 
     protected void initLoop(Loop loop)
     {
-        loop.onExit = () => exit;
+        loop.onExit = () => dispose;
         loop.timestampMsProvider = () => ticksMs;
 
         if (uservices.config.hasKey(KitConfigKeys.loopIsDelayFrame) && uservices.config.getBool(
@@ -846,12 +878,28 @@ class SdlApp : GuiApp
         }
 
         loop.onLoopUpdate = (startMs, deltaTimeMs, accumRest, fixedUpdatesCount) {
-            updateEvents;
-            updateRender(accumRest);
-            updateEndFrame(startMs, deltaTimeMs, fixedUpdatesCount);
+            try
+            {
+                updateEvents;
+                updateRender(accumRest);
+                updateEndFrame(startMs, deltaTimeMs, fixedUpdatesCount);
+            }
+            catch (Throwable e)
+            {
+                consumeThrowable(e);
+                exit;
+            }
         };
         loop.onLoopUpdateFixed = (startMs, deltaTimeMs, updateFixedDeltaSec) {
-            updateWindows(startMs, deltaTimeMs, updateFixedDeltaSec);
+            try
+            {
+                updateWindows(startMs, deltaTimeMs, updateFixedDeltaSec);
+            }
+            catch (Throwable e)
+            {
+                consumeThrowable(e);
+                exit;
+            }
         };
 
         loop.isAutoStart = isAutoStart;
@@ -1228,16 +1276,36 @@ class SdlApp : GuiApp
 
     void clearErrors()
     {
-        sdlLib.clearError;
+        if (sdlLib)
+        {
+            sdlLib.clearError;
+        }
     }
 
-    override void exit(int code = 0)
+    override void dispose()
     {
-        super.exit(code);
+        if (uservices)
+        {
+            uservices.logger.trace("Dispose SDL app");
+        }
 
-        clearErrors;
+        if (portaudioLib)
+        {
+            try
+            {
+                if (portaudioLib.isInit)
+                {
+                    portaudioLib.close;
+                    uservices.logger.trace("Close audiodevice");
+                }
+            }
+            catch (Exception e)
+            {
+                uservices.logger.error(e);
+            }
+        }
 
-        if (windowing)
+        if (hasWindowing)
         {
             windowing.onWindows((win) {
                 if (win.isRunning)
@@ -1279,7 +1347,10 @@ class SdlApp : GuiApp
         //     vipsLib.unload;
         // }
 
-        sdlFont.quit;
+        if (sdlFont)
+        {
+            sdlFont.quit;
+        }
 
         if (gpuDevice)
         {
@@ -1291,10 +1362,15 @@ class SdlApp : GuiApp
             gpuDevice = null;
         }
 
-        if (const err = sdlLib.quit)
+        if (sdlLib)
         {
-            uservices.logger.error("Unable to quit");
+            if (const err = sdlLib.quit)
+            {
+                uservices.logger.error("Unable to quit");
+            }
         }
+
+        super.dispose;
     }
 
     void updateEvents()
@@ -1387,7 +1463,7 @@ class SdlApp : GuiApp
         if (event.type == SDL_EVENT_QUIT)
         {
             windowing.destroyAll;
-            requestExit;
+            exit;
         }
     }
 }

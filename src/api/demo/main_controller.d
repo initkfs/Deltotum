@@ -41,7 +41,7 @@ class MainController
         application.create;
 
         import api.demo.demo1.scenes.start : Start;
-        import api.demo.scenes.planet: Planet;
+        import api.demo.scenes.planet : Planet;
         import api.demo.demo1.scenes.game : Demo1;
         import api.demo.demo1.scenes.settings : Settings;
         import api.demo.demo1.scenes.about : About;
@@ -52,9 +52,18 @@ class MainController
         import api.dm.kit.windows.window : Window;
 
         Window win1 = application.newWindow(windowTitle, gameWidth, gameHeight);
-        win1.add(startScene, new Demo1, new Settings, new Help, new About);
-        win1.change(startScene);
-        win1.show;
+        try
+        {
+            win1.add(startScene, new Demo1, new Settings, new Help, new About);
+            win1.change(startScene);
+            win1.show;
+        }
+        catch (Throwable e)
+        {
+            application.consumeThrowable(e);
+            application.exit;
+            return -1;
+        }
 
         //win1.support.printReport;
 

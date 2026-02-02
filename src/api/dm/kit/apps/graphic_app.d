@@ -261,7 +261,7 @@ abstract class GraphicApp : CliApp
         });
     }
 
-    override void exit(int code = 0)
+    override void dispose()
     {
         if (_media && !_media.isDisposing)
         {
@@ -292,16 +292,22 @@ abstract class GraphicApp : CliApp
         // if(eventManager){
         //     eventManager.dispose;
         // }
+        super.dispose;
     }
 
-    void requestExit()
+    void exit()
     {
         if (uservices && uservices.logging)
         {
             uservices.logger.tracef("Request quit");
         }
 
-        exit;
+        if (isRunning)
+        {
+            stop;
+        }
+
+        dispose;
     }
 
     Graphic createGraphics(Logging logging, ComRenderer renderer)
@@ -623,6 +629,8 @@ abstract class GraphicApp : CliApp
         }
         _graphicServices = services;
     }
+
+    bool hasWindowing() => _windowing !is null;
 
     Windowing windowing()
     {
