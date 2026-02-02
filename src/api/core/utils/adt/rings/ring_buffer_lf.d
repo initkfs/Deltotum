@@ -1,4 +1,4 @@
-module api.core.utils.adt.rings.ring_buffer_lfu;
+module api.core.utils.adt.rings.ring_buffer_lf;
 
 import api.core.utils.adt.container_result : ContainerResult;
 import api.core.utils.adt.buffers.dense_buffer : DenseBuffer;
@@ -18,7 +18,14 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
         enum BufferSize = Math.nextPowerOfTwo(RequestBufferSize);
         enum BufferSizeBitMask = BufferSize - 1;
 
-        DenseBuffer!(BufferType, BufferSize, false, isStaticArray) _buffer;
+        static if (isStaticArray)
+        {
+            BufferType[BufferSize] _buffer;
+        }
+        else
+        {
+            BufferType[] _buffer;
+        }
 
         static if (isLockFree)
         {
@@ -44,7 +51,19 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
             _writeIndex.atomicStore(0);
         }
 
-        _buffer.initialize(true);
+        static if (!isStaticArray)
+        {
+            _buffer = new BufferType[](BufferSize);
+        }
+
+        static if (__traits(isFloating, BufferType))
+        {
+            _buffer[] = 0;
+        }
+        else
+        {
+            _buffer[] = BufferType.init;
+        }
     }
 
     static if (isLockFree)
@@ -61,7 +80,7 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
         return (writeIdx - readIdx) & ((BufferSizeBitMask << 1) | 1);
     }
 
-    size_t write(ubyte[] buf)
+    size_t write(BufferType[] buf)
     {
         static if (isLockFree)
         {
@@ -101,11 +120,11 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
 
         size_t startIdx = writeIdx & BufferSizeBitMask;
         size_t endIdx = startIdx + currPosToEnd;
-        _buffer.raw[startIdx .. endIdx] = buf[0 .. currPosToEnd];
+        _buffer[startIdx .. endIdx] = buf[0 .. currPosToEnd];
 
         if (fromStart)
         {
-            _buffer.raw[0 .. fromStart] = buf[currPosToEnd .. (currPosToEnd + fromStart)];
+            _buffer[0 .. fromStart] = buf[currPosToEnd .. (currPosToEnd + fromStart)];
         }
 
         writeIdx = writeIdx + write;
@@ -122,7 +141,7 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
         return write;
     }
 
-    size_t read(ubyte[] buf)
+    size_t read(BufferType[] buf)
     {
         static if (isLockFree)
         {
@@ -156,7 +175,7 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
             }
 
             size_t startIdx = readIdx & BufferSizeBitMask;
-            buf[0 .. currToEnd] = _buffer.raw[startIdx .. startIdx + currToEnd];
+            buf[0 .. currToEnd] = _buffer[startIdx .. startIdx + currToEnd];
 
             if (fromStartAround)
             {
@@ -177,7 +196,7 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
         return 0;
     }
 
-    inout(BufferType[]) raw() inout => _buffer.raw;
+    inout(BufferType[]) raw() inout => _buffer;
 
 }
 

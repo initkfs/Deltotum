@@ -23,8 +23,8 @@ __gshared extern (C) nothrow
     const(PaDeviceInfo)* function(PaDeviceIndex device) Pa_GetDeviceInfo;
     PaError function(const(PaStreamParameters)* inputParameters, const(PaStreamParameters)* outputParameters, double sampleRate) Pa_IsFormatSupported;
 
-    PaError function(PaStream** stream, const(PaStreamParameters)* inputParameters, const(PaStreamParameters)* outputParameters, double sampleRate, c_ulong framesPerBuffer, PaStreamFlags streamFlags, PaStreamCallback* streamCallback, void* userData) Pa_OpenStream;
-    PaError function(PaStream** stream, int numInputChannels, int numOutputChannels, PaSampleFormat sampleFormat, double sampleRate, c_ulong framesPerBuffer, PaStreamCallback* streamCallback, void* userData) Pa_OpenDefaultStream;
+    PaError function(PaStream** stream, const(PaStreamParameters*) inputParameters, const(PaStreamParameters*) outputParameters, double sampleRate, c_ulong framesPerBuffer, PaStreamFlags streamFlags, PaStreamCallback streamCallback, void* userData) Pa_OpenStream;
+    PaError function(PaStream** stream, int numInputChannels, int numOutputChannels, PaSampleFormat sampleFormat, double sampleRate, c_ulong framesPerBuffer, PaStreamCallback streamCallback, void* userData) Pa_OpenDefaultStream;
     PaError function(PaStream* stream) Pa_CloseStream;
     PaError function(PaStream* stream) Pa_StartStream;
     PaError function(PaStream* stream) Pa_StopStream;

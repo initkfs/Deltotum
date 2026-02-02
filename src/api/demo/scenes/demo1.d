@@ -19,6 +19,7 @@ import api.dm.kit.factories.uda;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.sims.phys.rigids2d.movings.gravity;
+import api.dm.kit.media.buffers.audio_buffer: AudioBuffer;
 import api.sims.phys.rigids2d.fk;
 import api.sims.phys.rigids2d.ik;
 import std.stdio;
@@ -37,6 +38,8 @@ class Demo1 : GuiScene
         name = "game";
     }
 
+    AudioBuffer!(float, 16384, true) audio;
+
     private
     {
     }
@@ -50,8 +53,20 @@ class Demo1 : GuiScene
 
         segment.toCenter;
 
+        audio = new typeof(audio);
+        audio.create;
+
         //segment.isPhysics = true;
         //segment.angularVelocity = 10;
+
+        onPointerPress ~= (ref e){
+            audio.writeTestTone(500, 5);
+        };
+    }
+
+    override void dispose(){
+        super.dispose;
+        audio.close;
     }
 
 

@@ -302,10 +302,11 @@ alias paContinue = PaStreamCallbackResult.paContinue;
 alias paComplete = PaStreamCallbackResult.paComplete;
 alias paAbort = PaStreamCallbackResult.paAbort;
 
-alias PaStreamCallback = int function(
-    const void* input, void* output,
-    ulong frameCount,
-    const PaStreamCallbackTimeInfo* timeInfo,
+alias PaStreamCallback = extern(C) int function(
+    const(void*) input, 
+    void* output,
+    c_ulong frameCount,
+    const(PaStreamCallbackTimeInfo*) timeInfo,
     PaStreamCallbackFlags statusFlags,
     void* userData);
 
