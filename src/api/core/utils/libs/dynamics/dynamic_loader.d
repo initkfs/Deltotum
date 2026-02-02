@@ -127,10 +127,10 @@ class DynamicLoader
         return bindT(funcPtr, name, isCheckError);
     }
 
-    bool bind(shared void* funcPtr, const(char)[] name, bool isCheckError = true)
-    {
-        return bindT(funcPtr, name, isCheckError);
-    }
+    // bool bind(shared void* funcPtr, const(char)[] name, bool isCheckError = true)
+    // {
+    //     return bindT(funcPtr, name, isCheckError);
+    // }
 
     bool bindT(T)(T funcPtr, const(char)[] name, bool isCheckError = true)
     {

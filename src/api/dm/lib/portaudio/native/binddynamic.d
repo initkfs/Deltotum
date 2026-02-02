@@ -9,7 +9,7 @@ import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 import std.stdint;
 import core.stdc.config : c_long, c_ulong;
 
-shared extern (C) nothrow
+__gshared extern (C) nothrow
 {
     const(PaVersionInfo*) function() Pa_GetVersionInfo;
     const(char*) function(PaError errorCode) Pa_GetErrorText;

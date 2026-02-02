@@ -62,10 +62,10 @@ class MultiDynamicLoader
         return bindT(lib, funcPtr, name, isCheckError);
     }
 
-    bool bind(ref DynLib lib, shared void* funcPtr, const(char)[] name, bool isCheckError = true)
-    {
-        return bindT(lib, funcPtr, name, isCheckError);
-    }
+    // bool bind(ref DynLib lib, shared void* funcPtr, const(char)[] name, bool isCheckError = true)
+    // {
+    //     return bindT(lib, funcPtr, name, isCheckError);
+    // }
 
     bool bindT(T)(ref DynLib lib, T funcPtr, const(char)[] name, bool isCheckError = true)
     {
