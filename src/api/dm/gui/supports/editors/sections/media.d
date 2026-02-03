@@ -111,6 +111,7 @@ class Media : Control
         super.create;
 
         player = new AudioPlayer;
+        player.start;
 
         sampleFreq = media.audioOutSpec.freqHz;
 

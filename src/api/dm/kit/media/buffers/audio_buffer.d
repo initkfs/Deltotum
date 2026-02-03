@@ -52,6 +52,8 @@ class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
         return Pa_GetErrorText(err).fromStringz.idup;
     }
 
+    size_t size() => buffer.size;
+
     void start()
     {
         if (_isPlaying)
