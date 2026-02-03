@@ -141,11 +141,6 @@ class Media : Control
         piano.height = 200;
         root.addCreate(piano);
 
-        if (const err = media.mixer.mixer.allocChannels(32))
-        {
-            throw new Exception(err.toString);
-        }
-
         synt = new FMSynthesizer!short(sampleFreq);
 
         piano.settings.adsr(synt.adsr);
@@ -284,12 +279,12 @@ class Media : Control
             //noteChunk.play;
         };
 
-        if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
-                .signal_callback, cast(void*)&dspProcessor
-                .dspBuffer))
-        {
-            throw new Exception(err.toString);
-        }
+        // if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
+        //         .signal_callback, cast(void*)&dspProcessor
+        //         .dspBuffer))
+        // {
+        //     throw new Exception(err.toString);
+        // }
 
         level = new RectLevel((i) {
             if (i < equalizer.bandValues.length)
@@ -352,11 +347,6 @@ class Media : Control
 
         tp.addCreate([rField, gField, bField]);
         tp.alignFields;
-    }
-
-    AudioChunk!short newChunk()
-    {
-        return media.newHeapChunk!short(noteTimeMs(120, NoteType.note1_4));
     }
 
     override void pause()

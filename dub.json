@@ -74,8 +74,7 @@
     ],
     "importPaths": [
         "./src",
-        "./libs/sdl3",
-        "./libs/ffmpeg"
+        "./libs/sdl3"
     ],
     "cImportPaths": [
         "./libs/sdl3/SDL_lib"
@@ -89,21 +88,12 @@
     ],
     "lflags": [
         "-L./libs/sdl3",
-        "-L./libs/ffmpeg/lib",
         "-rpath=./libs/sdl3"
     ],
     "libs": [
         "SDL3",
         "SDL3_image",
-        "SDL3_mixer",
-        "SDL3_ttf",
-        "avcodec",
-        "avdevice",
-        "avfilter",
-        "avformat",
-        "avutil",
-        "swresample",
-        "swscale"
+        "SDL3_ttf"
     ],
     "versions": []
 }

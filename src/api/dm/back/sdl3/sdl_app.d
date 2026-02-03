@@ -20,7 +20,6 @@ import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.back.sdl3.sdl_lib : SdlLib;
-import api.dm.back.sdl3.mixers.sdl_mixer_lib : SdlMixerLib;
 import api.dm.com.audio.com_audio_device;
 import api.dm.back.sdl3.sounds.sdl_audio_device : SdlAudioDevice;
 import api.dm.back.sdl3.fonts.sdl_ttf_lib : SdlTTFLib;
@@ -38,7 +37,6 @@ import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 import api.dm.back.sdl3.fonts.sdl_ttf_font : SdlTTFFont;
 import api.dm.back.sdl3.images.sdl_image : SdlImage;
-import api.dm.back.sdl3.mixers.sdl_mixer_chunk : SdlMixerChunk;
 import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_screen : ComScreenId;
@@ -93,7 +91,6 @@ class SdlApp : GuiApp
         SdlTTFLib sdlFont;
 
         Nullable!SdlAudioDevice audioOut;
-        Nullable!SdlMixerLib sdlAudioMixer;
         Nullable!SdlJoystickLib sdlJoystick;
 
         Nullable!SdlJoystick sdlCurrentJoystick;
@@ -284,12 +281,7 @@ class SdlApp : GuiApp
             SdlJoystick currentJoy = sdlCurrentJoystick.isNull ? null : sdlCurrentJoystick.get;
             _input = new Input(uservices.logging, keyboard, clipboard, cursor, currentJoy);
 
-            auto audioClip = new AudioMixer(sdlAudioMixer.get);
-
-            _media = new MultiMedia(audioClip, audioOut.get);
-            _media.chunkFromBufferProvider = (buff) {
-                return new SdlMixerChunk(buff);
-            };
+            _media = new MultiMedia(audioOut.get);
             _media.initialize;
 
             gservices.platform.cap.isVectorGraphics = true;
@@ -645,11 +637,6 @@ class SdlApp : GuiApp
             {
                 audioOut = newSdlAudio;
             }
-
-            if (sdlAudioMixer.isNull)
-            {
-                sdlAudioMixer = newSdlAudioMixer;
-            }
         }
 
         if (sdlJoystick.isNull && caps.isJoystick)
@@ -725,35 +712,6 @@ class SdlApp : GuiApp
                 return err;
             }
             uservices.logger.tracef("Open audio %s", audio.spec);
-
-            if (!sdlAudioMixer.isNull)
-            {
-                auto mixer = sdlAudioMixer.get;
-                if (const err = mixer.initialize)
-                {
-                    return err;
-                }
-
-                if (const err = mixer.open(audio.id, audio.spec))
-                {
-                    return err;
-                }
-
-                string chunkDecoders;
-                if (const err = mixer.chunkDecoders(chunkDecoders))
-                {
-                    return err;
-                }
-
-                ComAudioSpec spec;
-                if (const err = mixer.query(spec))
-                {
-                    return err;
-                }
-
-                string mixerVersion = mixer.versionString;
-                uservices.logger.infof("Init SDL mixer %s, audio: %s, decoders: %s", mixerVersion, spec, chunkDecoders);
-            }
         }
 
         if (gservices.platform.cap.isJoystick)
@@ -817,7 +775,6 @@ class SdlApp : GuiApp
 
     SdlLib newSdlLib() => new SdlLib;
     SdlAudioDevice newSdlAudio() => new SdlAudioDevice;
-    SdlMixerLib newSdlAudioMixer() => new SdlMixerLib;
     SdlTTFLib newSdlFont() => new SdlTTFLib;
     SdlJoystickLib newSdlJoystickLib() => new SdlJoystickLib;
 
@@ -1329,10 +1286,6 @@ class SdlApp : GuiApp
         }
 
         //TODO process EXIT event
-        if (!sdlAudioMixer.isNull)
-        {
-            sdlAudioMixer.get.quit;
-        }
 
         if (!audioOut.isNull)
         {

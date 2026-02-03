@@ -4,8 +4,6 @@ import api.dm.gui.controls.control : Control;
 import api.dm.addon.media.audio.gui.players.audio_player_panel : AudioPlayerPanel;
 import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 
-import api.dm.com.audio.com_audio_clip : ComAudioClip;
-
 /**
  * Authors: initkfs
  */
@@ -28,7 +26,6 @@ class AudioPlayer : Control
 
     protected
     {
-        ComAudioClip audio;
         string _path;
 
         float audioFullTime = 0;
@@ -80,13 +77,13 @@ class AudioPlayer : Control
         panel.onStop = () { stop; };
 
         panel.onVolume01 = (v) {
-            if (audio)
-            {
-                if (const err = audio.setVolume(v))
-                {
-                    logger.error(err);
-                }
-            }
+            //if (audio)
+            //{
+            // if (const err = audio.setVolume(v))
+            // {
+            //     logger.error(err);
+            // }
+            //}
         };
 
         checkPosTween = new PauseTween(1100);
@@ -94,11 +91,11 @@ class AudioPlayer : Control
         checkPosTween.isInfinite = true;
         checkPosTween.onEnd ~= () {
 
-            if (isRunning && audio && !audio.isPlaying)
-            {
-                stop;
-                return;
-            }
+            // if (isRunning && audio && !audio.isPlaying)
+            // {
+            //     stop;
+            //     return;
+            // }
 
             if (audioFullTime == 0)
             {
@@ -108,27 +105,27 @@ class AudioPlayer : Control
 
             assert(panel);
             float pos;
-            if (const err = audio.getPosTimeMs(pos))
-            {
-                logger.error(err);
-                return;
-            }
+            // if (const err = audio.getPosTimeMs(pos))
+            // {
+            //     logger.error(err);
+            //     return;
+            // }
             auto panelPos = pos / audioFullTime;
             panel.setPos(panelPos);
             panel.setPosTimeText(pos);
         };
 
         panel.onSetPos = (v) {
-            if (audio && audioFullTime > 0)
-            {
-                auto pos = v * audioFullTime;
-                if (const err = audio.setPos(pos))
-                {
-                    logger.error("Error setting music position: ", err);
-                    return;
-                }
-                //logger.trace("Set position: ", pos, " full time: ", audioFullTime);
-            }
+            //if (audio && audioFullTime > 0)
+            //{
+            //    auto pos = v * audioFullTime;
+            // if (const err = audio.setPos(pos))
+            // {
+            //     logger.error("Error setting music position: ", err);
+            //     return;
+            // }
+            //logger.trace("Set position: ", pos, " full time: ", audioFullTime);
+            //}
         };
     }
 
@@ -147,46 +144,46 @@ class AudioPlayer : Control
             return;
         }
 
-        if (!audio)
-        {
-            try
-            {
-                audio = media.newClip(_path);
-                if (const err = audio.setVolume(volume))
-                {
-                    logger.error(err);
-                }
+        // if (!audio)
+        // {
+        //     try
+        //     {
+        //         audio = media.newClip(_path);
+        //         if (const err = audio.setVolume(volume))
+        //         {
+        //             logger.error(err);
+        //         }
 
-                float timeMs;
-                if (const err = audio.getDurationTimeMs(timeMs))
-                {
-                    logger.error("Error getting audio duration: ", err);
-                }
-                else
-                {
-                    audioFullTime = timeMs;
-                    assert(panel);
-                    panel.setFullTimeText(audioFullTime);
-                }
+        //         float timeMs;
+        //         if (const err = audio.getDurationTimeMs(timeMs))
+        //         {
+        //             logger.error("Error getting audio duration: ", err);
+        //         }
+        //         else
+        //         {
+        //             audioFullTime = timeMs;
+        //             assert(panel);
+        //             panel.setFullTimeText(audioFullTime);
+        //         }
 
-                version (EnableTrace)
-                {
-                    logger.trace("Create new audio: ", _path);
-                }
-            }
-            catch (Exception e)
-            {
-                logger.error("Audio player exception ", e);
-                return;
-            }
-        }
+        //         version (EnableTrace)
+        //         {
+        //             logger.trace("Create new audio: ", _path);
+        //         }
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         logger.error("Audio player exception ", e);
+        //         return;
+        //     }
+        // }
 
         assert(panel);
-        if (const err = audio.play)
-        {
-            logger.error("Error playing audio: ", err.toString);
-            return;
-        }
+        // if (const err = audio.play)
+        // {
+        //     logger.error("Error playing audio: ", err.toString);
+        //     return;
+        // }
 
         _state = AudioPlayerState.play;
         panel.setPause;
@@ -203,11 +200,11 @@ class AudioPlayer : Control
 
     void resume()
     {
-        if (const err = audio.resume)
-        {
-            logger.error("Error resume audio: ", err.toString);
-            return;
-        }
+        // if (const err = audio.resume)
+        // {
+        //     logger.error("Error resume audio: ", err.toString);
+        //     return;
+        // }
         _state = AudioPlayerState.play;
         panel.setPause;
         checkPosTween.run;
@@ -230,14 +227,14 @@ class AudioPlayer : Control
 
         super.pause;
 
-        if (audio)
-        {
-            if (const err = audio.pause)
-            {
-                logger.error("Audio pause error: ", err);
-                return;
-            }
-        }
+        // if (audio)
+        // {
+        //     if (const err = audio.pause)
+        //     {
+        //         logger.error("Audio pause error: ", err);
+        //         return;
+        //     }
+        // }
 
         _state = AudioPlayerState.pause;
         panel.setPlay;
@@ -261,14 +258,14 @@ class AudioPlayer : Control
 
         super.stop;
 
-        if (audio)
-        {
-            if (const err = audio.stop)
-            {
-                logger.error(err);
-                return;
-            }
-        }
+        // if (audio)
+        // {
+        //     if (const err = audio.stop)
+        //     {
+        //         logger.error(err);
+        //         return;
+        //     }
+        // }
 
         _state = AudioPlayerState.stop;
         panel.setPlay;
@@ -288,10 +285,10 @@ class AudioPlayer : Control
     override void dispose()
     {
         super.dispose;
-        if (audio)
-        {
-            audio.dispose;
-        }
+        // if (audio)
+        // {
+        //     audio.dispose;
+        // }
     }
 
 }
