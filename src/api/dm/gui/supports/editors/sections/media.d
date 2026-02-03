@@ -12,7 +12,8 @@ import api.dm.gui.controls.control : Control;
 
 import api.dm.addon.dsp.signals.analog_signal : AnalogSignal;
 import api.dm.addon.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
-
+import api.dm.kit.media.audio.audio_player : AudioPlayer;
+import api.dm.kit.media.mixers.sound : Sound;
 import api.dm.addon.media.audio.music_notes;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -53,6 +54,8 @@ class Media : Control
 
     Piano piano;
 
+    AudioPlayer player;
+
     this()
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
@@ -89,6 +92,8 @@ class Media : Control
     import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
     import api.math.numericals.interp;
 
+    Sound[] sounds;
+
     AudioChunk!short[] chunks;
     FMSynthesizer!short synt;
     FMSynthesizer!short drumSynt;
@@ -104,6 +109,8 @@ class Media : Control
     override void create()
     {
         super.create;
+
+        player = new AudioPlayer;
 
         sampleFreq = media.audioOutSpec.freqHz;
 
@@ -207,30 +214,41 @@ class Media : Control
             synt.index = piano.settings.fmIndex;
             synt.isFcMulFm = piano.settings.isFcMulFm;
 
-            AudioChunk!short noteChunk;
+            Sound sound;
 
             synt.note(MusicNote(freq, noteType, 120), amp, (data, time) {
-                foreach (chunk; chunks)
+                foreach (chunk; sounds)
                 {
-                    if (chunk.data.buffer.length == data.length)
+                    if (!sound.playing && sound.samples.length == data.length)
                     {
-                        const lastChannel = chunk.lastChannel;
-                        if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
+                        // const lastChannel = chunk.lastChannel;
+                        // if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
+                        // {
+                        //     noteChunk = chunk;
+                        //     break;
+                        // }
+                        foreach (i, d; data)
                         {
-                            noteChunk = chunk;
-                            break;
+                            sound.samples[i] = (cast(float) d) / short.max;
                         }
+                        break;
                     }
                 }
 
-                if (!noteChunk)
+                if (sound.samples.length == 0)
                 {
-                    noteChunk = media.newHeapChunk!short(time);
-                    chunks ~= noteChunk;
+                    auto heapBuff = new float[data.length];
+                    foreach (i, d; data)
+                    {
+                        heapBuff[i] = (cast(float) d) / short.max;
+                    }
+                    sound.samples = heapBuff;
+                    sounds ~= sound;
                 }
-                assert(noteChunk.data.buffer.length == data.length);
-                noteChunk.data.buffer[] = data;
+                assert(sound.samples.length == data.length);
             });
+
+            player.play(sound);
 
             // synt.note(MusicNote(freq, NoteType.note1_4), (buff, time) {
             //     if(noteChunk.data.buffer.length != buff.length){
@@ -246,17 +264,15 @@ class Media : Control
 
             //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
 
-            assert(noteChunk);
+            // if (noteChunk.lastChannel >= 0)
+            // {
+            //     media.mixer.mixer.stopChannel(noteChunk.lastChannel);
+            // }
 
-            if (noteChunk.lastChannel >= 0)
-            {
-                media.mixer.mixer.stopChannel(noteChunk.lastChannel);
-            }
-
-            if (noteChunk.lastChannel >= 0)
-            {
-                media.mixer.mixer.fadeOut(noteChunk.lastChannel, 5);
-            }
+            // if (noteChunk.lastChannel >= 0)
+            // {
+            //     media.mixer.mixer.fadeOut(noteChunk.lastChannel, 5);
+            // }
 
             // context.platform.sleep(5);
             // if (const err = noteChunk.comChunk.playFadeIn(400))
@@ -264,7 +280,7 @@ class Media : Control
             //     logger.error(err.toString);
             // }
 
-            noteChunk.play;
+            //noteChunk.play;
         };
 
         if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
@@ -297,7 +313,7 @@ class Media : Control
         addCreate(level);
 
         import api.dm.addon.media.video.gui.video_player : mediaPlayer;
-        import api.dm.gui.controls.containers.hbox: HBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         auto playerBox = new HBox;
         playerBox.isAlignY = true;
@@ -305,7 +321,8 @@ class Media : Control
 
         import api.dm.addon.media.video.gui.video_player : mediaPlayer, VideoPlayer;
 
-        auto player = mediaPlayer("https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678/ndtv24x7/master.m3u8");
+        auto player = mediaPlayer(
+            "https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678/ndtv24x7/master.m3u8");
         playerBox.addCreate(player);
 
         player.onPointerPress ~= (ref e) {

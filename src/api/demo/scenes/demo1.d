@@ -38,7 +38,7 @@ class Demo1 : GuiScene
         name = "game";
     }
 
-    AudioBuffer!(float, 16384, true) audio;
+    AudioBuffer!(16384, true) audio;
 
     private
     {

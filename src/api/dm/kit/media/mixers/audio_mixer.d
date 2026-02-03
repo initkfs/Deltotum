@@ -1,25 +1,11 @@
 module api.dm.kit.media.mixers.audio_mixer;
 
 import api.dm.kit.media.buffers.audio_buffer : AudioBuffer;
+import api.dm.kit.media.mixers.sound : Sound, SoundHandle;
 
 import api.dm.lib.portaudio.native;
 import api.math.geom3.vec3 : Vec3f;
 import Math = api.math;
-
-struct Sound
-{
-    float[] samples;
-
-    size_t position;
-    float volume = 1; //[0..1]
-    float pan = 0; // [-1..1]
-    bool loop; //
-    bool playing; //
-    bool active;
-    Vec3f geomPosition;
-}
-
-alias SoundHandle = size_t;
 
 /**
  * Authors: initkfs
@@ -67,6 +53,19 @@ class AudioMixer
         {
             play(s);
         }
+    }
+
+    bool isPlaying()
+    {
+        foreach (ref Sound sound; _sounds)
+        {
+            if (sound.playing)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     void reset(SoundHandle id)
@@ -150,7 +149,11 @@ class AudioMixer
             ptrdiff_t framesAvailable = (sound.samples.length - sound.position) / chanCount;
             if (framesAvailable <= 0)
             {
-                throw new Exception("Samples negative");
+                //throw new Exception("Samples negative");
+                sound.position = 0;
+                sound.playing = false;
+                sound.active = false;
+                continue;
             }
 
             size_t framesToProcess = Math.min(numFrames, framesAvailable);

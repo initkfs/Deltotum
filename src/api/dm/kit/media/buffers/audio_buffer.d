@@ -32,10 +32,10 @@ enum
     TOTAL_BYTES = BUFFER_SAMPLES * CHANNELS * float.sizeof
 }
 
-class AudioBuffer(alias Type = float, size_t Size = TOTAL_BYTES, bool isStaticArray = false)
+class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
 {
     //TODO shared
-    __gshared RingBufferLF!(Type, Size, isStaticArray, true) buffer;
+    __gshared RingBufferLF!(float, Size, isStaticArray, true) buffer;
 
     PaStream* _stream;
     bool _isPlaying;
