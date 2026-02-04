@@ -13,6 +13,8 @@ extern (C) nothrow
     FT_Error function(FT_Library* alibrary) FT2_FT_Init_FreeType;
     FT_Error function(FT_Library library) FT2_FT_Done_FreeType;
 
+    FT_Error function(FT_Library library, FT_LcdFilter filter) FT2_FT_Library_SetLcdFilter;
+
     FT_Error function(FT_Library library, const char* filepathname, FT_Long face_index, FT_Face* aface) FT2_FT_New_Face;
     FT_Error function(FT_Face face) FT2_FT_Done_Face;
 
@@ -26,9 +28,11 @@ extern (C) nothrow
     FT_Error function(FT_Glyph source,
         FT_Glyph* target) FT2_FT_Glyph_Copy;
     FT_Error function(FT_Glyph) FT2_FT_Done_Glyph;
+    FT_Error function(FT_GlyphSlot slot, FT_Render_Mode render_mode) FT2_FT_Render_Glyph;
 
     FT_UInt function(FT_Face face, FT_ULong charcode) FT2_FT_Get_Char_Index;
     FT_Error function(FT_Face face, FT_Encoding encoding) FT2_FT_Select_Charmap;
+
 }
 
 class FreeTypeLib : DynamicLoader
@@ -46,6 +50,8 @@ class FreeTypeLib : DynamicLoader
         bind(&FT2_FT_Init_FreeType, "FT_Init_FreeType");
         bind(&FT2_FT_Done_FreeType, "FT_Done_FreeType");
 
+        bind(&FT2_FT_Library_SetLcdFilter, "FT_Library_SetLcdFilter");
+
         bind(&FT2_FT_New_Face, "FT_New_Face");
         bind(&FT2_FT_Done_Face, "FT_Done_Face");
 
@@ -58,6 +64,7 @@ class FreeTypeLib : DynamicLoader
         bind(&FT2_FT_Get_Glyph, "FT_Get_Glyph");
         bind(&FT2_FT_Glyph_Copy, "FT_Glyph_Copy");
         bind(&FT2_FT_Done_Glyph, "FT_Done_Glyph");
+        bind(&FT2_FT_Render_Glyph, "FT_Render_Glyph");
 
         bind(&FT2_FT_Get_Char_Index, "FT_Get_Char_Index");
         bind(&FT2_FT_Select_Charmap, "FT_Select_Charmap");

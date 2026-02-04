@@ -360,3 +360,22 @@ struct FT_BitmapGlyphRec
     FT_Int top;
     FT_Bitmap bitmap;
 }
+
+enum FT_LcdFilter
+{
+    FT_LCD_FILTER_NONE = 0,
+    FT_LCD_FILTER_DEFAULT = 1,
+    FT_LCD_FILTER_LIGHT = 2,
+    FT_LCD_FILTER_LEGACY1 = 3,
+    FT_LCD_FILTER_LEGACY = 16,
+
+    FT_LCD_FILTER_MAX /* do not remove */
+}
+
+int FT_LOAD_TARGET_(int x) => (cast(FT_Int32)(x & 15)) << 16;
+
+enum FT_LOAD_TARGET_NORMAL = FT_LOAD_TARGET_(FT_Render_Mode.FT_RENDER_MODE_NORMAL);
+enum FT_LOAD_TARGET_LIGHT = FT_LOAD_TARGET_(FT_Render_Mode.FT_RENDER_MODE_LIGHT);
+enum FT_LOAD_TARGET_MONO = FT_LOAD_TARGET_(FT_Render_Mode.FT_RENDER_MODE_MONO);
+enum FT_LOAD_TARGET_LCD = FT_LOAD_TARGET_(FT_Render_Mode.FT_RENDER_MODE_LCD);
+enum FT_LOAD_TARGET_LCD_V = FT_LOAD_TARGET_(FT_Render_Mode.FT_RENDER_MODE_LCD_V);
