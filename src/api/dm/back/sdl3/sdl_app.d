@@ -67,6 +67,7 @@ import KitConfigKeys = api.dm.kit.kit_config_keys;
 import api.dm.lib.cairo : CairoLib;
 import api.dm.lib.ffmpeg.native.binddynamic : FfmpegLib;
 import api.dm.lib.portaudio.native.binddynamic : PortAudioLib;
+import api.dm.lib.freetype.native.binddynamic : FreeTypeLib;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -98,6 +99,7 @@ class SdlApp : GuiApp
         CairoLib cairoLib;
         FfmpegLib ffmpegLib;
         PortAudioLib portaudioLib;
+        FreeTypeLib freetypeLib;
 
         SDLScreen comScreen;
 
@@ -334,23 +336,38 @@ class SdlApp : GuiApp
 
             ffmpegLibForLoad.load;
 
-            auto audioLib = new PortAudioLib;
-            audioLib.workDirPath = buildPath(uservices.context.app.workDir, "libs/portaudio/lib");
+            // auto audioLib = new PortAudioLib;
+            // audioLib.workDirPath = buildPath(uservices.context.app.workDir, "libs/portaudio/lib");
 
-            audioLib.onLoad = () {
-                audioLib.initialize;
-                portaudioLib = audioLib;
-                uservices.logger.tracef("Load PortAudio library: %s, dev: %s", portaudioLib.libVersionStr, portaudioLib
-                        .deviceInfoNew);
+            // audioLib.onLoad = () {
+            //     audioLib.initialize;
+            //     portaudioLib = audioLib;
+            //     uservices.logger.tracef("Load PortAudio library: %s, dev: %s", portaudioLib.libVersionStr, portaudioLib
+            //             .deviceInfoNew);
+            // };
+
+            // audioLib.onLoadErrors = (err) {
+            //     uservices.logger.error("PortAudio loading error: ", err);
+            //     audioLib.unload;
+            //     portaudioLib = null;
+            // };
+
+            // audioLib.load;
+
+            auto ftLib = new FreeTypeLib;
+
+            ftLib.onLoad = () {
+                freetypeLib = ftLib;
+                uservices.logger.trace("Load FreeType library.");
             };
 
-            audioLib.onLoadErrors = (err) {
-                uservices.logger.error("PortAudio loading error: ", err);
-                audioLib.unload;
-                portaudioLib = null;
+            ftLib.onLoadErrors = (err) {
+                uservices.logger.error("FreeType loading error: ", err);
+                ftLib.unload;
+                freetypeLib = null;
             };
 
-            audioLib.load;
+            ftLib.load;
 
             if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
             {
@@ -691,6 +708,7 @@ class SdlApp : GuiApp
         {
             throw new Exception(err.toString);
         }
+
         uservices.logger.infof("SDL ", sdlLib.linkedVersionString);
 
         //TODO move to hal layer
@@ -700,6 +718,11 @@ class SdlApp : GuiApp
         if (const err = sdlFont.initialize)
         {
             return err;
+        }
+
+        version (EnableTrace)
+        {
+            uservices.logger.trace("Init SDL font");
         }
 
         if (!audioOut.isNull)
@@ -798,7 +821,7 @@ class SdlApp : GuiApp
                 loop.onStartFrame = () => sdlLib.delayMs(delayMs);
                 version (EnableTrace)
                 {
-                    logger.trace("Enable loop start delay: ", delayMs);
+                    uservices.logger.trace("Enable loop start delay: ", delayMs);
                 }
             }
         }
@@ -812,7 +835,7 @@ class SdlApp : GuiApp
             loop.isControlFixedUpdate = true;
             version (EnableTrace)
             {
-                logger.trace("Enable fixed updates control in loop");
+                uservices.logger.trace("Enable fixed updates control in loop");
             }
         }
 
@@ -830,7 +853,7 @@ class SdlApp : GuiApp
             };
             version (EnableTrace)
             {
-                logger.trace("Enable loop delay on rest frame: ");
+                uservices.logger.trace("Enable loop delay on rest frame: ");
             }
         }
 
@@ -1260,6 +1283,11 @@ class SdlApp : GuiApp
             {
                 uservices.logger.error(e);
             }
+        }
+
+        if (freetypeLib)
+        {
+            //freetypeLib.unload;
         }
 
         if (hasWindowing)

@@ -48,20 +48,37 @@ class Demo1 : GuiScene
     {
         super.create;
 
-        auto segment = new SegmentDrag;
-        addCreate(segment);
+        import api.dm.gui.controls.containers.hbox: HBox;
 
-        segment.toCenter;
+        auto root = new HBox;
+        addCreate(root);
 
-        audio = new typeof(audio);
-        audio.create;
+        auto defaultFontTexture = asset.fontBitmap.copy;
+        defaultFontTexture.isDrawBounds = true;
+        root.add(defaultFontTexture);
 
-        //segment.isPhysics = true;
-        //segment.angularVelocity = 10;
+        auto fontSmallTexture = asset.fontBitmapSmall.copy;
+        fontSmallTexture.isDrawBounds = true;
+        root.add(fontSmallTexture);
 
-        onPointerPress ~= (ref e){
-            audio.writeTestTone(500, 5);
-        };
+        auto fontLargeTexture = asset.fontBitmapLarge.copy;
+        fontLargeTexture.isDrawBounds = true;
+        root.add(fontLargeTexture);
+
+        // auto segment = new SegmentDrag;
+        // addCreate(segment);
+
+        // segment.toCenter;
+
+        // audio = new typeof(audio);
+        // audio.create;
+
+        // //segment.isPhysics = true;
+        // //segment.angularVelocity = 10;
+
+        // onPointerPress ~= (ref e){
+        //     audio.writeTestTone(500, 5);
+        // };
     }
 
     override void dispose(){

@@ -682,6 +682,10 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     string getLastErrorNew() => getError;
 
+    void* nativePtrUnsafe(){
+        return ptr;
+    }
+
     override protected bool disposePtr() nothrow
     {
         if (ptr)

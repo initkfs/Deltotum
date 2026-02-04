@@ -74,4 +74,5 @@ nothrow:
     ComResult loadBMP(const(char)[] file);
 
     ComResult nativePtr(out ComNativePtr ptr);
+    void* nativePtrUnsafe();
 }
