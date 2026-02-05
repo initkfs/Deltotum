@@ -1183,23 +1183,15 @@ class Control : GuiComponent
 
         const string iconData = mustBeIconData.get;
 
-        auto icon = new Image;
-        build(icon);
-
-        if (onColor)
-        {
-            icon.onColor = onColor;
-        }
-
-        import std.conv : to;
-
-        icon.loadRaw(iconData.to!(const(void[])), cast(int) iconSize, cast(int) iconSize);
+        import api.dm.kit.assets.svg.svg_icon: SvgIcon;
 
         auto style = createStyle;
         auto color = style.lineColor;
 
-        icon.color = color;
-        icon.create;
+        auto icon = new SvgIcon(iconSize, iconData, color);
+        buildInitCreate(icon);
+        icon.bestScaleMode;
+        icon.blendModeBlend;
         return icon;
     }
 

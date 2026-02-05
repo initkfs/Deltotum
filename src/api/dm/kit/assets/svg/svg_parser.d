@@ -1,4 +1,4 @@
-module api.dm.kit.assets.xml.svg.svg_dom_reader;
+module api.dm.kit.assets.svg.svg_parser;
 
 import api.dm.kit.assets.xml.xml_elements : XmlAttr, XmlElement, XmlException;
 import api.dm.kit.assets.xml.xml_dom_parser : DomParser;

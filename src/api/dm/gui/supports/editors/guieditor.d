@@ -58,6 +58,12 @@ class GuiEditor : GuiScene
         fontsTab.content = new Fonts;
         root.addCreate(fontsTab);
 
+        import api.dm.gui.supports.editors.sections.icons: Icons;
+
+        auto iconsTab = new Tab("Icons");
+        iconsTab.content = new Icons;
+        root.addCreate(iconsTab);
+
         import api.dm.gui.supports.editors.sections.animations : Animations;
 
         auto animTab = new Tab("Animations");
@@ -97,7 +103,7 @@ class GuiEditor : GuiScene
             root.addCreate(fractalsTab);
         }
 
-        root.changeTab(controlsTab);
+        root.changeTab(iconsTab);
 
         // createDebugger;
     }
