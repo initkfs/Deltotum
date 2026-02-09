@@ -29,6 +29,7 @@ nothrow:
     ComResult createARGB32(int width, int height);
     ComResult createABGR32(int width, int height);
     ComResult createBGRA32(int width, int height);
+    ComResult createRGB24(int width, int height);
     ComResult createUnsafe(void* ptr) nothrow;
     ComResult create(ComNativePtr ptr) nothrow;
 
@@ -58,6 +59,8 @@ nothrow:
 
     ComResult setBlendMode(ComBlendMode mode);
     ComResult getBlendMode(out ComBlendMode mode);
+
+    void* pixels();
 
     ComResult getPixel(int x, int y, out uint* pixel);
     ComResult getPixels(out void* pixels);

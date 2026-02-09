@@ -34,6 +34,11 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return setWithDispose(cast(SDL_Surface*) ptr);
     }
 
+    ComResult createRGB24(int width, int height) nothrow
+    {
+        return create(width, height, SDL_PIXELFORMAT_RGB24);
+    }
+
     ComResult createRGBA32(int width, int height) nothrow
     {
         return create(width, height, SDL_PIXELFORMAT_RGBA32);
@@ -428,6 +433,12 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
+    void* pixels()
+    {
+        assert(ptr);
+        return ptr.pixels;
+    }
+
     ComResult getPixels(out void* pixPtr) nothrow
     {
         assert(ptr);
@@ -614,6 +625,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
+    alias pitch = getPixelRowLenBytes;
+
     int getPixelRowLenBytes() nothrow
     {
         assert(ptr);
@@ -682,7 +695,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     string getLastErrorNew() => getError;
 
-    void* nativePtrUnsafe(){
+    void* nativePtrUnsafe()
+    {
         return ptr;
     }
 

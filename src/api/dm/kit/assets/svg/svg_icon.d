@@ -1008,7 +1008,7 @@ class SvgIcon : VectorTexture
                 {
                     result ~= token.to!float();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     throw new Exception("Invalid point ", e);
                 }

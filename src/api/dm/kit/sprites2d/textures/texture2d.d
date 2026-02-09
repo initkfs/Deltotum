@@ -9,7 +9,7 @@ import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.pos2.flip : Flip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.vec2: Vec2f;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
@@ -82,6 +82,10 @@ class Texture2d : Sprite2d
         auto newTexture = texture;
         if (!newTexture)
         {
+            if (!hasGraphic)
+            {
+                throw new Exception("Graphic is null");
+            }
             newTexture = graphic.comTextureProvider.getNew();
         }
 
@@ -423,7 +427,8 @@ class Texture2d : Sprite2d
     void fillColor(RGBA color)
     {
         lock;
-        scope(exit){
+        scope (exit)
+        {
             unlock;
         }
         if (const err = texture.fill(color.r, color.g, color.b, color.aByte))
