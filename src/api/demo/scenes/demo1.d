@@ -28,6 +28,10 @@ import api.math.geom2.vec2 : Vec2f;
 import std.string : toStringz, fromStringz;
 import Math = api.math;
 
+import api.dm.gui.webs.web_engine: WebEngine;
+
+import api.dm.lib.wpe.native;
+
 import std;
 
 /**
@@ -41,32 +45,20 @@ class Demo1 : GuiScene
         name = "game";
     }
 
-    AudioBuffer!(16384, true) audio;
+    WebEngine engine;
 
-    private
-    {
-    }
+    bool isRun;
 
     override void create()
     {
         super.create;
 
-        import api.dm.gui.controls.containers.hbox : HBox;
+        engine = new WebEngine;
+        addCreate(engine);
+        import std.path: buildPath;
 
-        auto root = new HBox;
-        addCreate(root);
-
-
-
-
-
-
-
-
-
-
-
-        
+        auto textFile = buildPath(context.app.userDir, "test.html");
+        engine.loadUri("file://" ~ textFile);
 
         // import api.dm.lib.libjpeg.native;
 
@@ -262,7 +254,6 @@ class Demo1 : GuiScene
     override void dispose()
     {
         super.dispose;
-        //audio.close;
     }
 
     override void update(float delta)

@@ -111,4 +111,5 @@ nothrow:
     bool getProgressState(out ComWindowProgressState newState);
     bool setProgressState(ComWindowProgressState state);
 
+    ComResult getPixelDensity(ref float density);
 }

@@ -1845,7 +1845,9 @@ class Sprite2d : EventKitTarget
     alias halfW = halfWidth;
 
     float width() @safe pure nothrow => _width;
-    float halfWidth() @safe pure nothrow => _width / 2;
+    int widthi() @safe pure nothrow => cast(int) width;
+    uint widthu() @safe pure nothrow => cast(uint) width;
+    float halfWidth() @safe pure nothrow => width / 2;
 
     bool canChangeWidth(float value)
     {
@@ -1974,7 +1976,9 @@ class Sprite2d : EventKitTarget
     alias halfH = halfHeight;
 
     float height() @safe pure nothrow => _height;
-    float halfHeight() @safe pure nothrow => _height / 2;
+    int heighti() @safe pure nothrow => cast(int) height;
+    int heightu() @safe pure nothrow => cast(uint) height;
+    float halfHeight() @safe pure nothrow => height / 2;
 
     bool canChangeHeight(float value)
     {

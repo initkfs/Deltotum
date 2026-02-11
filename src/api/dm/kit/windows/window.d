@@ -939,6 +939,16 @@ class Window : GraphicComponent
 
     bool progressState(ComWindowProgressState state) => comWindow.setProgressState(state);
 
+    float pixelDensity()
+    {
+        float density;
+        if (const err = comWindow.getPixelDensity(density))
+        {
+            logger.error(err);
+        }
+        return density;
+    }
+
     bool nativePtr(out ComNativePtr ptr)
     {
         if (const err = comWindow.nativePtr(ptr))

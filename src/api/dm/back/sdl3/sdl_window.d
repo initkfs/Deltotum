@@ -799,6 +799,18 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
+    ComResult getPixelDensity(ref float density) nothrow
+    {
+        float newDensity = SDL_GetWindowPixelDensity(ptr);
+        if (newDensity == 0)
+        {
+            density = 0;
+            return getErrorRes("Error getting pixel density");
+        }
+        density = newDensity;
+        return ComResult.success;
+    }
+
     override protected bool disposePtr()
     {
         if (ptr)

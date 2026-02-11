@@ -248,9 +248,12 @@ struct RGBA
         return rgba;
     }
 
-    float colorNorm(float colorValue) const pure @safe
+    float colorNorm(float colorValue) const pure @safe => colorValue / maxColor;
+    static ubyte fromColorNorm(float colorValue) pure @safe => to!ubyte(colorValue * maxColor);
+
+    static RGBA fromColorNorm(float r, float g, float b, float a)
     {
-        return colorValue / maxColor;
+        return RGBA(fromColorNorm(r), fromColorNorm(g), fromColorNorm(b), a);
     }
 
     float rNorm() const pure @safe => colorNorm(r);

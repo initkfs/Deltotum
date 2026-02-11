@@ -30,6 +30,7 @@ class MultiDynamicLoader
     }
 
     bool isLoad;
+    bool isLocalPath;
 
     abstract
     {
@@ -157,9 +158,9 @@ class MultiDynamicLoader
         foreach (path; libPaths)
         {
             string loadPath = path.to!string;
-            if (!loadPath.isAbsolute)
+            if (!loadPath.isAbsolute && isLocalPath)
             {
-                auto cwdDir = workDirPath ? workDirPath : lastWorkDir;
+                auto cwdDir = workDirPath.length > 0 ? workDirPath : lastWorkDir;
                 auto cwdPath = buildPath(cwdDir, path);
 
                 if (isChangeCwd)

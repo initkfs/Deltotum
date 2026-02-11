@@ -117,6 +117,18 @@ class Texture2d : Sprite2d
         }
     }
 
+    void createMutBGRA32()
+    {
+        assert(width > 0);
+        assert(height > 0);
+
+        texture = graphic.comTextureProvider.getNew();
+        if (const err = texture.createMutBGRA32(cast(int) width, cast(int) height))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
     void createTargetRGBA32()
     {
         assert(width > 0);
@@ -448,6 +460,19 @@ class Texture2d : Sprite2d
     void changeColor(uint x, uint y, RGBA color)
     {
         if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
+    void updateTexture(void* pixels, int pitch)
+    {
+        updateTexture(boundsRectGeom, pixels, pitch);
+    }
+
+    void updateTexture(Rect2f rect, void* pixels, int pitch)
+    {
+        if (const err = texture.update(rect, pixels, pitch))
         {
             throw new Exception(err.toString);
         }

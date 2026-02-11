@@ -41,6 +41,7 @@ nothrow:
     ComResult createARGB32(int width, int height);
 
     ComResult createMutRGBA32(int width, int height);
+    ComResult createMutBGRA32(int width, int height);
     ComResult createMutABGR32(int width, int height);
     ComResult createMutARGB32(int width, int height);
 

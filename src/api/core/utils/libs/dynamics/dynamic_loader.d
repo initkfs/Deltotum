@@ -214,7 +214,7 @@ class DynamicLoader
         {
             if (!path.isAbsolute)
             {
-                auto cwdDir = workDirPath ? workDirPath : lastWorkDir;
+                auto cwdDir = workDirPath.length > 0 ? workDirPath : lastWorkDir;
                 auto cwdPath = buildPath(cwdDir, path);
 
                 if (isChangeCwd)
