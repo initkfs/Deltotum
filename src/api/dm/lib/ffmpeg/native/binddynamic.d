@@ -124,7 +124,7 @@ class FfmpegLib : MultiDynamicLoader
 {
     override void bindAll(const(char)[] libName, ref DynLib lib)
     {
-        if (libName == "libavutil.so")
+        if (libName == "libavutil")
         {
             bind(lib, &av_strerror, "av_strerror");
             bind(lib, &av_frame_alloc, "av_frame_alloc");
@@ -154,7 +154,7 @@ class FfmpegLib : MultiDynamicLoader
             return;
         }
 
-        if (libName == "libavcodec.so")
+        if (libName == "libavcodec")
         {
             bind(lib, &av_packet_alloc, "av_packet_alloc");
             bind(lib, &av_packet_free, "av_packet_free");
@@ -171,7 +171,7 @@ class FfmpegLib : MultiDynamicLoader
             return;
         }
 
-        if (libName == "libavformat.so")
+        if (libName == "libavformat")
         {
             bind(lib, &av_read_frame, "av_read_frame");
             bind(lib, &avformat_alloc_context, "avformat_alloc_context");
@@ -181,14 +181,14 @@ class FfmpegLib : MultiDynamicLoader
             return;
         }
 
-        if (libName == "libswscale.so")
+        if (libName == "libswscale")
         {
             bind(lib, &sws_getContext, "sws_getContext");
             bind(lib, &sws_freeContext, "sws_freeContext");
             bind(lib, &sws_scale, "sws_scale");
         }
 
-        if (libName == "libavfilter.so")
+        if (libName == "libavfilter")
         {
             bind(lib, &avfilter_graph_alloc, "avfilter_graph_alloc");
             bind(lib, &avfilter_graph_free, "avfilter_graph_free");
@@ -204,7 +204,7 @@ class FfmpegLib : MultiDynamicLoader
             bind(lib, &av_buffersink_get_frame, "av_buffersink_get_frame");
         }
 
-        if (libName == "libswresample.so")
+        if (libName == "libswresample")
         {
             bind(lib, &swr_alloc_set_opts2, "swr_alloc_set_opts2");
             bind(lib, &swr_free, "swr_free");

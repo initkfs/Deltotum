@@ -253,8 +253,18 @@ class MultiDynamicLoader
         libs ~= newLib;
 
         import std.path : baseName;
+        import std.string : lastIndexOf;
 
-        bindAll(libPath.baseName, newLib);
+        //TODO libnames cache
+        auto libName = libPath.baseName;
+
+        auto extPos = libName.lastIndexOf('.');
+        if (extPos >= 0)
+        {
+            libName = libName[0..extPos];
+        }
+
+        bindAll(libName, newLib);
 
         return true;
     }

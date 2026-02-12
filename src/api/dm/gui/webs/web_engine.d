@@ -48,6 +48,11 @@ class WebEngine : Sprite2d
 
     __gshared RingBufferLF!(PixelBufferData, 10) pixelBuffer;
 
+    protected
+    {
+        bool isLoadLib;
+    }
+
     extern (C)
     {
         static void export_shm_buffer(void* data, wpe_fdo_shm_exported_buffer* ebuff)
@@ -67,10 +72,10 @@ class WebEngine : Sprite2d
             wl_shm_buffer* buffer = wpe_fdo_shm_exported_buffer_get_shm_buffer(ebuff);
             if (buffer)
             {
-                int stride = wl_shm_buffer_get_stride(buffer);
-                ubyte* pixels = cast(ubyte*) wl_shm_buffer_get_data(buffer);
-                auto width = wl_shm_buffer_get_width(buffer);
-                auto height = wl_shm_buffer_get_height(buffer);
+                int stride = wl_wl_shm_buffer_get_stride(buffer);
+                ubyte* pixels = cast(ubyte*) wl_wl_shm_buffer_get_data(buffer);
+                auto width = wl_wl_shm_buffer_get_width(buffer);
+                auto height = wl_wl_shm_buffer_get_height(buffer);
 
                 //TODO check format, BGRA32 
                 auto buffSize = stride * height;
@@ -81,7 +86,11 @@ class WebEngine : Sprite2d
                 }
 
                 auto storeBuff = buffPtr[0 .. buffSize];
-                storeBuff[] = pixels[0 .. buffSize];
+                //storeBuff[] = pixels[0 .. buffSize];
+
+                import core.stdc.string : memmove;
+
+                memmove(storeBuff.ptr, pixels, buffSize);
 
                 PixelBufferData[1] buff = [
                     PixelBufferData(width, height, stride, storeBuff)
@@ -196,7 +205,7 @@ class WebEngine : Sprite2d
 
         webView = newWebView;
 
-        g_signal_connect(
+        go_g_signal_connect(
             webView,
             cast(char*) "load-changed".toStringz,
             cast(void*)&onEngineChangeState,
@@ -204,14 +213,14 @@ class WebEngine : Sprite2d
         );
 
         //TODO load-failed-with-tls-errors
-        g_signal_connect(
+        go_g_signal_connect(
             webView,
             cast(char*) "load-failed".toStringz,
             cast(void*)&onLoadFailed,
             null
         );
 
-        g_signal_connect(webView, cast(char*) "web-process-terminated".toStringz, cast(void*)&onEngineTerminate, null);
+        go_g_signal_connect(webView, cast(char*) "web-process-terminated".toStringz, cast(void*)&onEngineTerminate, null);
 
         auto settings = webkit_web_view_get_settings(webView);
         if (!settings)
@@ -278,6 +287,8 @@ class WebEngine : Sprite2d
             wpe_input_keyboard_event event = createKeyEvent(false, e);
             wpe_view_backend_dispatch_keyboard_event(webViewWpeBackend, &event);
         };
+
+        isLoadLib = true;
     }
 
     wpe_input_keyboard_event createKeyEvent(bool isPressed, KeyEvent e)
@@ -286,47 +297,37 @@ class WebEngine : Sprite2d
         event.time = cast(uint) platform.timer.ticksMs;
         event.pressed = isPressed ? 1 : 0;
         event.hardware_key_code = e.scanCode;
+        
+        import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-        //Private Use Area (PUA) Unicode
-        /*
-        Backspace	0xFF08	Private Use
-        Enter	0xFF0D	Private Use
-        Tab	0xFF09	Private Use
-        Escape	0xFF1B	Private Use
-        Delete	0xFFFF	Private Use
-        Arrow left	0xFF51	Private Use
-        Arrow up	0xFF52	Private Use
-        Arrow right	0xFF53	Private Use
-        Arrow down  0xFF54	Private Use
-        */
-        switch (e.keyCode)
+        switch (e.keyName)
         {
-            case 8: // Backspace
-                event.key_code = 0xFF08;
+            case ComKeyName.key_backspace:
+                event.key_code = WPE_KEY_BackSpace;
                 break;
-            case 9: // Tab
-                event.key_code = 0xFF09;
+            case ComKeyName.key_tab:
+                event.key_code = WPE_KEY_Tab;
                 break;
-            case 13: // Enter
-                event.key_code = 0xFF0D;
+            case ComKeyName.key_return:
+                event.key_code = WPE_KEY_Return;
                 break;
-            case 27: // Escape
-                event.key_code = 0xFF1B;
+            case ComKeyName.key_escape:
+                event.key_code = WPE_KEY_Escape;
                 break;
-            case 127: // Delete
-                event.key_code = 0xFFFF;
+            case ComKeyName.key_delete:
+                event.key_code = WPE_KEY_Delete;
                 break;
-            case 37: // Arrow left
-                event.key_code = 0xFF51;
+            case ComKeyName.key_left:
+                event.key_code = WPE_KEY_Left;
                 break;
-            case 38: // Arrow up
-                event.key_code = 0xFF52;
+            case ComKeyName.key_up:
+                event.key_code = WPE_KEY_Up;
                 break;
-            case 39: // Arrow right
-                event.key_code = 0xFF53;
+            case ComKeyName.key_right:
+                event.key_code = WPE_KEY_Right;
                 break;
-            case 40: // Arrow down
-                event.key_code = 0xFF54;
+            case ComKeyName.key_down:
+                event.key_code = WPE_KEY_Down;
                 break;
             default:
                 event.key_code = e.keyCode;
@@ -369,11 +370,6 @@ class WebEngine : Sprite2d
         auto dx = (x - canvas.x) * pixelDensity;
         auto dy = (y - canvas.y) * pixelDensity;
         return Vec2i(cast(int) dx, cast(int) dy);
-    }
-
-    private uint sdlTimeToWPE(ulong ns)
-    {
-        return cast(uint)(ns / 1_000_000);
     }
 
     protected void dispatchPointerEvent(wpe_input_pointer_event* e)
@@ -434,17 +430,22 @@ class WebEngine : Sprite2d
         return format("WPE %d:%d:%d, FDO: %d:%d:%d", wpe_get_major_version(), wpe_get_minor_version(), wpe_get_micro_version(), wpe_fdo_get_major_version(), wpe_fdo_get_minor_version(), wpe_fdo_get_micro_version());
     }
 
-    override void update(float dt)
+    override bool draw(float dt)
     {
-        super.update(dt);
+        super.draw(dt);
 
-        g_main_context_iteration(null, false);
+        if (!isLoadLib)
+        {
+            return false;
+        }
+
+        go_g_main_context_iteration(null, false);
 
         PixelBufferData[1] readBuff;
         size_t isRead = pixelBuffer.read(readBuff);
         if (isRead == 0)
         {
-            return;
+            return false;
         }
 
         PixelBufferData data = readBuff[0];
@@ -462,8 +463,19 @@ class WebEngine : Sprite2d
             }
 
             //TODO check texture size == data.size
-            ubyte[] pixels = (cast(ubyte*) canvas.pixels)[0 .. data.pixels.length];
-            pixels[] = data.pixels;
+            //ubyte[] pixels = (cast(ubyte*) canvas.pixels)[0 .. data.pixels.length];
+            //pixels[] = data.pixels;
+
+            import core.stdc.string : memmove;
+
+            memmove(canvas.pixels, data.pixels.ptr, data.pixels.length);
         }
+
+        return true;
+    }
+
+    override void update(float dt)
+    {
+        super.update(dt);
     }
 }

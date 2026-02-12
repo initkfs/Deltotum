@@ -53,13 +53,6 @@ class Demo1 : GuiScene
     {
         super.create;
 
-        engine = new WebEngine;
-        addCreate(engine);
-        import std.path: buildPath;
-
-        auto textFile = buildPath(context.app.userDir, "test.html");
-        engine.loadUri("file://" ~ textFile);
-
         // import api.dm.lib.libjpeg.native;
 
         // auto lib = new LibjpegLib();

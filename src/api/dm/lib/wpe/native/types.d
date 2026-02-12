@@ -28,6 +28,7 @@ alias guint32 = uint;
 alias gint = int;
 struct GMainContext;
 struct GMainLoop;
+struct GObject;
 
 alias GQuark = guint32;
 
@@ -155,10 +156,22 @@ enum wpe_input_modifier
     wpe_input_pointer_modifier_button5 = 1 << 24,
 }
 
-struct wpe_input_keyboard_event {
+struct wpe_input_keyboard_event
+{
     uint32_t time;
     uint32_t key_code;
     uint32_t hardware_key_code;
     bool pressed;
     uint32_t modifiers;
 }
+
+enum WPE_KEY_Left = 0xff51; /* Move left, left arrow */
+enum WPE_KEY_Up = 0xff52; /* Move up, up arrow */
+enum WPE_KEY_Right = 0xff53; /* Move right, right arrow */
+enum WPE_KEY_Down = 0xff54; /* Move down, down arrow */
+
+enum WPE_KEY_BackSpace = 0xff08; /* Back space, back char */
+enum WPE_KEY_Tab = 0xff09;
+enum WPE_KEY_Return = 0xff0d; /* Return, enter */
+enum WPE_KEY_Escape = 0xff1b;
+enum WPE_KEY_Delete = 0xffff; /* Delete, rubout */

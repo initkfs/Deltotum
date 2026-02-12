@@ -9,9 +9,9 @@ import api.core.utils.libs.dynamics.multi_dynamic_loader : MultiDynamicLoader;
 import api.core.utils.libs.dynamics.dynamic_loader : DynLib;
 import api.dm.lib.wpe.native.types;
 
-gulong g_signal_connect(void* instance, char* sig, void* handler, void* data)
+gulong go_g_signal_connect(void* instance, char* sig, void* handler, void* data)
 {
-    return g_signal_connect_data(instance, sig, handler, data, null, 0);
+    return go_g_signal_connect_data(instance, sig, handler, data, null, 0);
 }
 
 __gshared extern (C) nothrow
@@ -62,10 +62,8 @@ __gshared extern (C) nothrow
     /** 
      * Gobject
      */
-    void function() g_type_init;
-    void function(GMainLoop*) g_main_loop_run;
-    gboolean function(GMainContext* context, gboolean may_block) g_main_context_iteration;
-    GMainLoop* function(GMainContext* context, gboolean is_running) g_main_loop_new;
+    void function() go_g_type_init;
+    gboolean function(GMainContext* context, gboolean may_block) go_g_main_context_iteration;
     gulong function(
         void* instance,
         char* signalName,
@@ -73,15 +71,15 @@ __gshared extern (C) nothrow
         void* data,
         void* destroy_data,
         int connect_flags
-    ) g_signal_connect_data;
+    ) go_g_signal_connect_data;
 
     /** 
      * Wayland
      */
-    int32_t function(wl_shm_buffer* buffer) wl_shm_buffer_get_stride;
-    void* function(wl_shm_buffer* buffer) wl_shm_buffer_get_data;
-    int32_t function(wl_shm_buffer* buffer) wl_shm_buffer_get_width;
-    int32_t function(wl_shm_buffer* buffer) wl_shm_buffer_get_height;
+    int32_t function(wl_shm_buffer* buffer) wl_wl_shm_buffer_get_stride;
+    void* function(wl_shm_buffer* buffer) wl_wl_shm_buffer_get_data;
+    int32_t function(wl_shm_buffer* buffer) wl_wl_shm_buffer_get_width;
+    int32_t function(wl_shm_buffer* buffer) wl_wl_shm_buffer_get_height;
 }
 
 class WpeWebkitLib : MultiDynamicLoader
@@ -95,7 +93,7 @@ class WpeWebkitLib : MultiDynamicLoader
 
     override void bindAll(const(char[]) name, ref DynLib lib)
     {
-        if (name == "libwpe-1.0.so")
+        if (name == "libwpe-1.0")
         {
             bind(lib, &wpe_loader_init, "wpe_loader_init");
             bind(lib, &wpe_view_backend_dispatch_set_size, "wpe_view_backend_dispatch_set_size");
@@ -108,7 +106,7 @@ class WpeWebkitLib : MultiDynamicLoader
             bind(lib, &wpe_view_backend_dispatch_keyboard_event, "wpe_view_backend_dispatch_keyboard_event");
         }
 
-        if (name == "libWPEWebKit-1.0.so")
+        if (name == "libWPEWebKit-1.0")
         {
             bind(lib, &webkit_web_context_get_default, "webkit_web_context_get_default");
             bind(lib, &webkit_web_view_backend_new, "webkit_web_view_backend_new");
@@ -125,7 +123,7 @@ class WpeWebkitLib : MultiDynamicLoader
             bind(lib, &webkit_web_view_get_settings, "webkit_web_view_get_settings");
         }
 
-        if (name == "libWPEBackend-fdo-1.0.so")
+        if (name == "libWPEBackend-fdo-1.0")
         {
             bind(lib, &wpe_view_backend_exportable_fdo_create, "wpe_view_backend_exportable_fdo_create");
             bind(lib, &wpe_view_backend_exportable_fdo_get_view_backend, "wpe_view_backend_exportable_fdo_get_view_backend");
@@ -140,21 +138,19 @@ class WpeWebkitLib : MultiDynamicLoader
             bind(lib, &wpe_fdo_get_micro_version, "wpe_fdo_get_micro_version");
         }
 
-        if (name == "libgobject-2.0.so")
+        if (name == "libgobject-2.0")
         {
-            bind(lib, &g_type_init, "g_type_init");
-            bind(lib, &g_main_context_iteration, "g_main_context_iteration");
-            bind(lib, &g_main_loop_run, "g_main_loop_run");
-            bind(lib, &g_main_loop_new, "g_main_loop_new");
-            bind(lib, &g_signal_connect_data, "g_signal_connect_data");
+            bind(lib, &go_g_type_init, "g_type_init");
+            bind(lib, &go_g_main_context_iteration, "g_main_context_iteration");
+            bind(lib, &go_g_signal_connect_data, "g_signal_connect_data");
         }
 
-        if (name == "libwayland-server.so")
+        if (name == "libwayland-server")
         {
-            bind(lib, &wl_shm_buffer_get_stride, "wl_shm_buffer_get_stride");
-            bind(lib, &wl_shm_buffer_get_data, "wl_shm_buffer_get_data");
-            bind(lib, &wl_shm_buffer_get_width, "wl_shm_buffer_get_width");
-            bind(lib, &wl_shm_buffer_get_height, "wl_shm_buffer_get_height");
+            bind(lib, &wl_wl_shm_buffer_get_stride, "wl_shm_buffer_get_stride");
+            bind(lib, &wl_wl_shm_buffer_get_data, "wl_shm_buffer_get_data");
+            bind(lib, &wl_wl_shm_buffer_get_width, "wl_shm_buffer_get_width");
+            bind(lib, &wl_wl_shm_buffer_get_height, "wl_shm_buffer_get_height");
         }
 
     }
