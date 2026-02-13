@@ -23,7 +23,7 @@ import std.conv : to;
 
 import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.graphics.com_image : ComImage;
+import api.dm.com.graphics.com_image_codec : ComImageCodec;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 
 /**
@@ -46,7 +46,8 @@ class Graphic : LoggableUnit
 
     ProviderFactory!ComTexture comTextureProvider;
     ProviderFactory!ComSurface comSurfaceProvider;
-    ProviderFactory!ComImage comImageProvider;
+
+    ComImageCodec[] comImageCodecs;
 
     this(Logging logging, ComRenderer renderer)
     {

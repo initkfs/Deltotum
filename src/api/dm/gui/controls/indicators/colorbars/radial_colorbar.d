@@ -116,7 +116,7 @@ class RadialColorBar : BaseMonoColorBar
     {
         auto style = createStyle;
 
-        if (!platform.cap.isVectorGraphics)
+        if (!platform.cap.isVector)
         {
             import api.dm.kit.sprites2d.shapes.circle : Circle;
 

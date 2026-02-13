@@ -75,7 +75,7 @@ class Curves : Control
         container.addCreate(label);
 
         Sprite2d shape;
-        if (platform.cap.isVectorGraphics)
+        if (platform.cap.isVector)
         {
             import api.dm.kit.sprites2d.textures.vectors.shapes.vpoints_shape : VPointsShape;
 

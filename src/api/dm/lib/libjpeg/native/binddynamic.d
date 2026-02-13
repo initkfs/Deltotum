@@ -27,10 +27,8 @@ extern (C) nothrow
     void function(ubyte *buffer) tjFree;
 }
 
-class LibjpegLib : DynamicLoader
+class JpegLib : DynamicLoader
 {
-    bool isInit;
-
     protected
     {
 
@@ -86,10 +84,4 @@ class LibjpegLib : DynamicLoader
     {
         return null;
     }
-
-    bool initialize(out string error)
-    {
-        return false;
-    }
-
 }

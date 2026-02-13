@@ -2463,7 +2463,7 @@ class Sprite2d : EventKitTarget
             im.dispose;
         }
 
-        im.savePNG(surf, path);
+        im.save(surf, path);
     }
 
     bool canEnablePadding()

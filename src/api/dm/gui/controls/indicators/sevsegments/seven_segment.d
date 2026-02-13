@@ -244,7 +244,7 @@ class SevenSegment : Control
 
         auto segmentStyle = createSegmentStyle;
 
-        if (!platform.cap.isVectorGraphics)
+        if (!platform.cap.isVector)
         {
             return theme.rectShape(vSegmentWidth, vSegmentHeight, segmentAngle, segmentStyle);
         }

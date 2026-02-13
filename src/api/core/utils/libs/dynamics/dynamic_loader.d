@@ -83,6 +83,7 @@ class DynamicLoader
     void delegate() onLoad;
 
     void delegate(string) onLoadErrors;
+    void delegate(string[]) onLoadAllErrors;
 
     void delegate() onBeforeUnload;
     void delegate() onAfterUnload;
@@ -260,6 +261,11 @@ class DynamicLoader
 
         if (errors.length > 0)
         {
+            if (onLoadAllErrors)
+            {
+                onLoadAllErrors(errors);
+            }
+
             if (onLoadErrors)
             {
                 foreach (err; errors)
@@ -273,7 +279,7 @@ class DynamicLoader
 
                 throw new Exception(text("Library loading error: ", errors));
             }
-            
+
             return isLoad;
         }
 

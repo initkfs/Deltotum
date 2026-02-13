@@ -114,12 +114,45 @@ abstract class GraphicApp : CliApp
 
         if (uservices.config.hasKey(KitConfigKeys.backendIsAudio))
         {
+            //TODO remove
             isAudioEnabled = uservices.config.getBool(KitConfigKeys.backendIsAudio);
+            _graphicServices.platform.cap.isAudio = isAudioEnabled;
         }
 
         if (uservices.config.hasKey(KitConfigKeys.backendIsJoystick))
         {
             isJoystickEnabled = uservices.config.getBool(KitConfigKeys.backendIsJoystick);
+            _graphicServices.platform.cap.isJoystick = isJoystickEnabled;
+        }
+
+        if (uservices.config.hasKey(KitConfigKeys.graphicsIsImage))
+        {
+            _graphicServices.platform.cap.isImage = uservices.config.getBool(
+                KitConfigKeys.graphicsIsImage);
+        }
+
+        if (uservices.config.hasKey(KitConfigKeys.graphicsIsVector))
+        {
+            _graphicServices.platform.cap.isVector = uservices.config.getBool(
+                KitConfigKeys.graphicsIsVector);
+        }
+
+        if (uservices.config.hasKey(KitConfigKeys.graphicsIsIconPack))
+        {
+            _graphicServices.platform.cap.isIconPack = uservices.config.getBool(
+                KitConfigKeys.graphicsIsIconPack);
+        }
+
+        if (uservices.config.hasKey(KitConfigKeys.backendIsPointer))
+        {
+            _graphicServices.platform.cap.isPointer = uservices.config.getBool(
+                KitConfigKeys.backendIsPointer);
+        }
+
+        if (uservices.config.hasKey(KitConfigKeys.backendIsGPU))
+        {
+            _graphicServices.platform.cap.is3d = uservices.config.getBool(
+                KitConfigKeys.backendIsGPU);
         }
     }
 

@@ -30,60 +30,61 @@ class Texture3d : Sprite3d
 
     void create(string path)
     {
-        import api.dm.back.sdl3.images.sdl_image : SdlImage;
+        throw new Exception("Need rewrite");
+        // import api.dm.back.sdl3.images.sdl_image : SdlImage;
 
-        scope image = new SdlImage();
-        scope(exit){
-            image.dispose;
-        }
+        // scope image = new SdlImage();
+        // scope(exit){
+        //     image.dispose;
+        // }
 
-        if (const err = image.create(path))
-        {
-            throw new Exception(err.toString);
-        }
+        // if (const err = image.create(path))
+        // {
+        //     throw new Exception(err.toString);
+        // }
 
-        if (image.getFormat != SDL_PIXELFORMAT_ABGR8888)
-        {
-            if (const err = image.convert(SDL_PIXELFORMAT_ABGR8888))
-            {
-                throw new Exception(err.toString);
-            }
-        }
+        // if (image.getFormat != SDL_PIXELFORMAT_ABGR8888)
+        // {
+        //     if (const err = image.convert(SDL_PIXELFORMAT_ABGR8888))
+        //     {
+        //         throw new Exception(err.toString);
+        //     }
+        // }
 
-        int w = image.getWidth;
-        int h = image.getHeight;
+        // int w = image.getWidth;
+        // int h = image.getHeight;
 
-        void* rawImagePtr;
-        if (const err = image.getPixels(rawImagePtr))
-        {
-            throw new Exception(err.toString);
-        }
+        // void* rawImagePtr;
+        // if (const err = image.getPixels(rawImagePtr))
+        // {
+        //     throw new Exception(err.toString);
+        // }
 
-        size_t imageLen = w * h * 4;
+        // size_t imageLen = w * h * 4;
 
-        ubyte[] imagePtr = (cast(ubyte*) rawImagePtr)[0 .. imageLen];
+        // ubyte[] imagePtr = (cast(ubyte*) rawImagePtr)[0 .. imageLen];
 
-        auto newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
-        assert(newTexture);
+        // auto newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
+        // assert(newTexture);
 
-        _texture = newTexture;
+        // _texture = newTexture;
 
-        _transferBuffer = gpu.dev.newTransferUploadBuffer(cast(uint) imageLen);
+        // _transferBuffer = gpu.dev.newTransferUploadBuffer(cast(uint) imageLen);
 
-        auto transBuffMap = gpu.dev.mapTransferBuffer(_transferBuffer, false);
-        ubyte[] transBuffSlice = (cast(ubyte*) transBuffMap)[0 .. imageLen];
-        transBuffSlice[0 .. imageLen] = imagePtr[];
+        // auto transBuffMap = gpu.dev.mapTransferBuffer(_transferBuffer, false);
+        // ubyte[] transBuffSlice = (cast(ubyte*) transBuffMap)[0 .. imageLen];
+        // transBuffSlice[0 .. imageLen] = imagePtr[];
 
-        width = w;
-        height = h;
+        // width = w;
+        // height = h;
 
-        gpu.dev.unmapTransferBuffer(_transferBuffer);
+        // gpu.dev.unmapTransferBuffer(_transferBuffer);
 
-        createSampler;
+        // createSampler;
 
-        import std.string : toStringz;
+        // import std.string : toStringz;
 
-        SDL_SetGPUTextureName(gpu.dev.getObject, _texture, id.toStringz);
+        // SDL_SetGPUTextureName(gpu.dev.getObject, _texture, id.toStringz);
     }
 
     override void create()

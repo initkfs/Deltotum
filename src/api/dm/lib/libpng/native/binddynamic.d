@@ -9,6 +9,7 @@ import api.dm.lib.libpng.native.types;
 extern (C) nothrow
 {
     int function(png_imagep image, const char* file_name) png_image_begin_read_from_file;
+    int function(png_imagep image, png_const_voidp memory, size_t size) png_image_begin_read_from_memory;
     int function(png_imagep image,
         png_const_colorp background, void* buffer, png_int_32 row_stride,
         void* colormap) png_image_finish_read;
@@ -18,10 +19,8 @@ extern (C) nothrow
         png_int_32 row_stride, const void* colormap) png_image_write_to_file;
 }
 
-class LibpngLib : DynamicLoader
+class PngLib : DynamicLoader
 {
-    bool isInit;
-
     protected
     {
 
@@ -30,6 +29,7 @@ class LibpngLib : DynamicLoader
     override void bindAll()
     {
         bind(&png_image_begin_read_from_file, "png_image_begin_read_from_file");
+        bind(&png_image_begin_read_from_memory, "png_image_begin_read_from_memory");
         bind(&png_image_finish_read, "png_image_finish_read");
         bind(&png_image_free, "png_image_free");
         bind(&png_image_write_to_file, "png_image_write_to_file");
@@ -72,10 +72,4 @@ class LibpngLib : DynamicLoader
     {
         return null;
     }
-
-    bool initialize(out string error)
-    {
-        return false;
-    }
-
 }

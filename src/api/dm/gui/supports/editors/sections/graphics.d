@@ -155,7 +155,7 @@ class Graphics : Control
         auto vContainer = new HBox(5);
         addCreate(vContainer);
 
-        if (platform.cap.isVectorGraphics)
+        if (platform.cap.isVector)
         {
             import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 

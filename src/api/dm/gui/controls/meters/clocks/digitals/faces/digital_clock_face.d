@@ -275,7 +275,7 @@ class DigitalClockFace : Control
         auto dot2Center = dot1Center;
         dot2Center.y += hOffset;
 
-        if (!platform.cap.isVectorGraphics)
+        if (!platform.cap.isVector)
         {
             graphic.color(theme.colorAccent);
             scope (exit)

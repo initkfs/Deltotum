@@ -571,6 +571,6 @@ class Scene2d : EventKitTarget
         {
             im.dispose;
         }
-        im.savePNG(surf, path);
+        im.save(surf, path);
     }
 }

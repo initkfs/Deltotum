@@ -34,12 +34,11 @@ import api.dm.kit.windows.events.window_event : WindowEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
-import api.dm.back.sdl3.images.sdl_image : SdlImage;
 import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_screen : ComScreenId;
 import api.dm.com.graphics.com_font : ComFont;
-import api.dm.com.graphics.com_image : ComImage;
+import api.dm.com.graphics.com_image_codec : ComImageCodec;
 import api.dm.com.platforms.com_platform : ComPlatform;
 
 import api.dm.kit.windows.window : Window;
@@ -66,7 +65,14 @@ import api.dm.lib.cairo : CairoLib;
 import api.dm.lib.ffmpeg.native.binddynamic : FfmpegLib;
 import api.dm.lib.portaudio.native.binddynamic : PortAudioLib;
 import api.dm.lib.freetype.native.binddynamic : FreeTypeLib;
-import api.dm.lib.freetype.freetype_font: FreeTypeFont;
+import api.dm.lib.freetype.freetype_font : FreeTypeFont;
+
+import api.dm.lib.libjpeg.native.binddynamic : JpegLib;
+import api.dm.kit.sprites2d.images.codecs.jpeg_image_codec : JpegImageCodec;
+
+import api.dm.lib.libpng.native.binddynamic : PngLib;
+import api.dm.kit.sprites2d.images.codecs.png_image_codec : PngImageCodec;
+import api.dm.kit.sprites2d.images.codecs.bmp_image_codec: BmpImageCodec;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -101,6 +107,9 @@ class SdlApp : GuiApp
         SDLScreen comScreen;
 
         SdlGPUDevice gpuDevice;
+
+        JpegLib jpegLib;
+        PngLib pngLib;
     }
 
     protected
@@ -283,20 +292,13 @@ class SdlApp : GuiApp
             _media = new MultiMedia(audioOut.get);
             _media.initialize;
 
-            gservices.platform.cap.isVectorGraphics = true;
-            if (uservices.config.hasKey(KitConfigKeys.graphicsUseVector))
-            {
-                gservices.platform.cap.isVectorGraphics = uservices.config.getBool(
-                    KitConfigKeys.graphicsUseVector);
-            }
-
-            if (gservices.platform.cap.isVectorGraphics)
+            if (gservices.platform.cap.isVector)
             {
                 auto cairoLibForLoad = new CairoLib;
 
                 cairoLibForLoad.onLoad = () {
                     cairoLib = cairoLibForLoad;
-                    theme.isUseVectorGraphics = gservices.platform.cap.isVectorGraphics;
+                    theme.isUseVectorGraphics = gservices.platform.cap.isVector;
                     version (EnableTrace)
                     {
                         uservices.logger.trace("Load Cairo library.");
@@ -655,6 +657,12 @@ class SdlApp : GuiApp
             sdlJoystick = newSdlJoystickLib;
         }
 
+        if (caps.isImage)
+        {
+            jpegLib = new JpegLib;
+            pngLib = new PngLib;
+        }
+
         return ComResult.success;
     }
 
@@ -725,7 +733,7 @@ class SdlApp : GuiApp
             uservices.logger.tracef("Open audio %s", audio.spec);
         }
 
-        if (gservices.platform.cap.isJoystick)
+        if (caps.isJoystick)
         {
             assert(!sdlJoystick.isNull);
             if (const err = sdlJoystick.get.initialize)
@@ -779,6 +787,45 @@ class SdlApp : GuiApp
                 }
             }
 
+        }
+
+        if (caps.isImage)
+        {
+            if (jpegLib)
+            {
+                version (EnableTrace)
+                {
+                    jpegLib.onLoad = () {
+                        uservices.logger.trace("Load libjpeg");
+                    };
+                }
+
+                jpegLib.onLoadAllErrors = (allerr) {
+                    uservices.logger.error("libjpeg errors: ", allerr);
+                    gservices.platform.cap.isImage = false;
+                    jpegLib.unload;
+                    jpegLib = null;
+                };
+
+                jpegLib.load;
+            }
+
+            if (pngLib)
+            {
+                version (EnableTrace)
+                {
+                    pngLib.onLoad = () { uservices.logger.trace("Load libpng"); };
+                }
+
+                pngLib.onLoadAllErrors = (allerr) {
+                    uservices.logger.error("libpng errors: ", allerr);
+                    gservices.platform.cap.isImage = false;
+                    pngLib.unload;
+                    pngLib = null;
+                };
+
+                pngLib.load;
+            }
         }
 
         return ComResult.success;
@@ -932,16 +979,9 @@ class SdlApp : GuiApp
         return new FreeTypeFont(freetypeLib);
     }
 
-    ComImage newComImage()
-    {
-        return new SdlImage;
-    }
-
-    void newComImageScoped(scope void delegate(ComImage) onNew)
-    {
-        scope image = new SdlImage();
-        onNew(image);
-    }
+    ComImageCodec newComBmpLoader() => new BmpImageCodec;
+    ComImageCodec newComJpegLoader() => new JpegImageCodec;
+    ComImageCodec newComPngLoader() => new PngImageCodec;
 
     Window newWindow(
         dstring title = "Window",
@@ -1149,12 +1189,17 @@ class SdlApp : GuiApp
             &newComSurfaceScoped
         );
 
-        windowBuilder.graphic.comImageProvider = ProviderFactory!ComImage(
+        windowBuilder.graphic.comImageCodecs ~= newComBmpLoader;
 
-            &newComImage,
+        if (jpegLib)
+        {
+            windowBuilder.graphic.comImageCodecs ~= newComJpegLoader;
+        }
 
-            &newComImageScoped
-        );
+        if (pngLib)
+        {
+            windowBuilder.graphic.comImageCodecs ~= newComPngLoader;
+        }
 
         windowBuilder.isBuilt = true;
 

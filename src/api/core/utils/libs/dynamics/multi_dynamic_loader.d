@@ -15,6 +15,7 @@ class MultiDynamicLoader
     void delegate() onLoad;
 
     void delegate(string) onLoadErrors;
+    void delegate(string[]) onLoadAllErrors;
 
     void delegate() onBeforeUnload;
     void delegate() onAfterUnload;
@@ -207,6 +208,11 @@ class MultiDynamicLoader
 
         if (errors.length > 0)
         {
+            if (onLoadAllErrors)
+            {
+                onLoadAllErrors(errors);
+            }
+
             if (onLoadErrors)
             {
                 foreach (err; errors)
@@ -261,7 +267,7 @@ class MultiDynamicLoader
         auto extPos = libName.lastIndexOf('.');
         if (extPos >= 0)
         {
-            libName = libName[0..extPos];
+            libName = libName[0 .. extPos];
         }
 
         bindAll(libName, newLib);

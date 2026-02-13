@@ -111,7 +111,7 @@ class Fractals : Control
 
         auto container = createVTextContainer(name);
 
-        if (platform.cap.isVectorGraphics)
+        if (platform.cap.isVector)
         {
             auto shape = createShape(fractal, style, false, isDrawFromCenter, translateX, translateY);
             shape.angle = rotateAngle;

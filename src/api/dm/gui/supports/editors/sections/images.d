@@ -98,7 +98,7 @@ class Images : Control
             return color;
         };
 
-        original.loadRaw(originalImage);
+        original.loadRaw(cast(const(ubyte[])) originalImage);
         container.addCreate(createImageInfo("Original", original));
 
         const size_t imageWidth = cast(size_t) original.width;

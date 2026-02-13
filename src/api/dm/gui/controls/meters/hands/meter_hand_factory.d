@@ -124,7 +124,7 @@ class MeterHandFactory : Control
 
         Sprite2d hand;
 
-        if (platform.cap.isVectorGraphics)
+        if (platform.cap.isVector)
         {
             auto newHand = new VHand(newWidth, newHeight , handWidth, handHeight, coneWidth, coneHeight, handStyle);
             hand = newHand;

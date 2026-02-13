@@ -17,11 +17,13 @@ string backendIsGPU = "backendIsGPU";
 
 string backendJoystickIndex = "backendJoystickIndex";
 string backendJoystickIsClassic = "backendJoystickIsClassic";
+string backendIsPointer = "backendIsPointer";
 
 string backendCheckRendererScale = "backendCheckRendererScale";
 
-string graphicsUseVector = "graphicsUseVector";
+string graphicsIsVector = "graphicsIsVector";
 string graphicsIsIconPack = "graphicsIsIconPack";
+string graphicsIsImage = "graphicsIsImage";
 
 string fontDir = "fontDir";
 string fontTTFFile = "fontTTFFile";

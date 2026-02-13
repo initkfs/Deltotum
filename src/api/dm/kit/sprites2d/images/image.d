@@ -3,7 +3,7 @@ module api.dm.kit.sprites2d.images.image;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 import api.dm.com.graphics.com_texture : ComTexture;
-import api.dm.com.graphics.com_image : ComImage;
+import api.dm.com.graphics.com_image_codec : ComImageCodec;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.rect2 : Rect2f;
@@ -27,6 +27,9 @@ class Image : Texture2d
     float dwidth = 0;
     float dheight = 0;
     float dsizeDelta = 15;
+
+    bool isKeepSurface;
+    ComSurface surface;
 
     this()
     {
@@ -185,6 +188,23 @@ class Image : Texture2d
 
         forceWidth = width;
         forceHeight = height;
+
+        if (isKeepSurface)
+        {
+            if (surface)
+            {
+                surface.dispose;
+            }
+            else
+            {
+                this.surface = graphic.comSurfaceProvider.getNew();
+            }
+
+            if (const err = image.copyTo(surface))
+            {
+                throw new Exception(err.toString);
+            }
+        }
     }
 
     void load(string path, int requestWidth = -1, int requestHeight = -1)
@@ -200,46 +220,63 @@ class Image : Texture2d
             throw new Exception("Unable to load image, empty path or not a file: " ~ imagePath);
         }
 
-        ComImage image = graphic.comImageProvider.getNew();
-        if (const err = image.create(path))
-        {
-            throw new Exception("Unable to load image: "~ err);
-        }
-
         ComSurface comSurf;
-        if (const err = image.toSurface(comSurf))
+
+        foreach (codec; graphic.comImageCodecs)
         {
-            throw new Exception("Cannot convert image to surface from path ", path);
+            if (codec.isSupport(path))
+            {
+                comSurf = graphic.comSurfaceProvider.getNew();
+                if (const err = codec.load(path, comSurf))
+                {
+                    throw new Exception(err.toString);
+                }
+                break;
+            }
         }
 
-        scope(exit){
+        if (!comSurf)
+        {
+            throw new Exception("Image not loaded: ", path);
+        }
+
+        scope (exit)
+        {
             comSurf.dispose;
         }
 
         load(comSurf, requestWidth, requestHeight);
     }
 
-    void loadRaw(const(void[]) content, int requestWidth = -1, int requestHeight = -1)
+    void loadRaw(const(ubyte[]) buff, int requestWidth = -1, int requestHeight = -1)
     {
-        auto image = graphic.comImageProvider.getNew();
-        import std.conv : to;
+        //TODO remove duplication with load
+        ComSurface comSurf;
 
-        if (const err = image.create(content))
+        foreach (codec; graphic.comImageCodecs)
         {
-            throw new Exception("Cannot load image from raw data: " ~ err);
+            if (codec.isSupport(buff))
+            {
+                comSurf = graphic.comSurfaceProvider.getNew();
+                if (const err = codec.load(buff, comSurf))
+                {
+                    throw new Exception(err.toString);
+                }
+                break;
+            }
         }
 
-        ComSurface surf;
-        if (const err = image.toSurface(surf))
+        if (!comSurf)
         {
-            throw new Exception("Cannot convert image to surface from raw data: " ~ err);
+            throw new Exception("Image not loaded from memory buffer");
         }
 
-        scope(exit){
-            surf.dispose;
+        scope (exit)
+        {
+            comSurf.dispose;
         }
 
-        load(surf, requestWidth, requestHeight);
+        load(comSurf, requestWidth, requestHeight);
     }
 
     void load(RGBA[][] colorBuf, bool isKeepColorBuffer = false)
@@ -282,13 +319,47 @@ class Image : Texture2d
         }
     }
 
-    void savePNG(ComSurface surf, string path)
+    void save(ComSurface surf, string path)
     {
-        auto image = graphic.comImageProvider.getNew();
-        if (const err = image.savePNG(surf, path))
+        bool isSave;
+
+        foreach (codec; graphic.comImageCodecs)
         {
-            throw new Exception(err.toString);
+            if (codec.isSupport(path))
+            {
+                if (const err = codec.save(path, surf))
+                {
+                    throw new Exception(err.toString);
+                }
+                isSave = true;
+                break;
+            }
         }
+
+        if (!isSave)
+        {
+            throw new Exception("Image not saved: ", path);
+        }
+    }
+
+    void save(string path)
+    {
+        //TODO texture must be streaming
+        // graphic.comSurfaceProvider.getNewScoped((surface) {
+        //     if (const err = texture.lockToSurface(surface))
+        //     {
+        //         throw new Exception(err.toString);
+        //     }
+
+        //     save(surface, path);
+        // });
+
+        if (!surface)
+        {
+            throw new Exception("Surface is null");
+        }
+
+        save(surface, path);
     }
 
     alias width = Texture2d.width;
