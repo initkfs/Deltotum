@@ -33,7 +33,6 @@ class NullAsset : Asset
     {
         import api.dm.com.com_result : ComResult;
         import api.dm.com.graphics.com_surface : ComSurface;
-        import api.dm.com.graphics.com_font: ComFontHinting;
 
         return new class ComFont
         {
@@ -50,7 +49,6 @@ class NullAsset : Asset
             string getFontPath() => null;
             uint getFontSize() => 0;
             uint getMaxHeight() => 0;
-            ComResult setHinting(ComFontHinting hinting) => ComResult.success;
         };
     }
 }

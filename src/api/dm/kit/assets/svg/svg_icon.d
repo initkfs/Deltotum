@@ -915,6 +915,9 @@ class SvgIcon : VectorTexture
                     canvas.lineWidth(parseLength(value, 1));
                 }
                 break;
+            case "stroke-miterlimit":
+                canvas.miterLimit = value.to!double;
+                break;
             case "stroke-linecap":
                 if (value == "round")
                     canvas.lineEnd(GraphicCanvas.LineEnd.round);

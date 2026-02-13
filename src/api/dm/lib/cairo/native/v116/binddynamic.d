@@ -111,6 +111,8 @@ extern (C)  nothrow
     void function(cairo_t *cr, const char *family, cairo_font_slant_t slant, cairo_font_weight_t weight) cairo_select_font_face;
     void function(cairo_t *cr, const char *utf8) cairo_text_path;
 
+    void function(cairo_t *cr, double limit) cairo_set_miter_limit;
+
 }
 
 class CairoLib : DynamicLoader
@@ -178,6 +180,8 @@ class CairoLib : DynamicLoader
         bind(&cairo_set_font_size, "cairo_set_font_size");
         bind(&cairo_select_font_face, "cairo_select_font_face");
         bind(&cairo_text_path, "cairo_text_path");
+
+        bind(&cairo_set_miter_limit, "cairo_set_miter_limit");
     }
 
     version (Windows)

@@ -7,17 +7,10 @@ import api.dm.com.graphics.com_surface : ComSurface;
 /**
  * Authors: initkfs
  */
-enum ComFontHinting
-{
-    none,
-    normal,
-    light,
-    mono
-}
 
 interface ComFont : ComDestroyable
 {
-    
+
 nothrow:
 
     ComResult renderFont(
@@ -27,8 +20,7 @@ nothrow:
         ubyte br, ubyte bg, ubyte bb, ubyte ba);
 
     ComResult create(string path, uint size);
-    ComResult setHinting(ComFontHinting hinting);
-    
+
     string getFontPath();
     uint getFontSize();
     uint getMaxHeight();

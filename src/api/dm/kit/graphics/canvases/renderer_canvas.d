@@ -179,4 +179,8 @@ class RendererCanvas : StateCanvas
         
     }
 
+    void miterLimit(double size){
+        
+    }
+
 }

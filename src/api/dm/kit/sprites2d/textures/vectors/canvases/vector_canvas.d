@@ -325,4 +325,9 @@ class VectorCanvas : GraphicCanvas
     {
         cairo_set_font_size(cr, size);
     }
+
+    void miterLimit(double size)
+    {
+        cairo_set_miter_limit(cr, size);
+    }
 }

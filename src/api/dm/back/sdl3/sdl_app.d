@@ -22,7 +22,6 @@ import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.back.sdl3.sdl_lib : SdlLib;
 import api.dm.com.audio.com_audio_device;
 import api.dm.back.sdl3.sounds.sdl_audio_device : SdlAudioDevice;
-import api.dm.back.sdl3.fonts.sdl_ttf_lib : SdlTTFLib;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_window : SdlWindowMode;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
@@ -35,7 +34,6 @@ import api.dm.kit.windows.events.window_event : WindowEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
-import api.dm.back.sdl3.fonts.sdl_ttf_font : SdlTTFFont;
 import api.dm.back.sdl3.images.sdl_image : SdlImage;
 import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
@@ -68,6 +66,7 @@ import api.dm.lib.cairo : CairoLib;
 import api.dm.lib.ffmpeg.native.binddynamic : FfmpegLib;
 import api.dm.lib.portaudio.native.binddynamic : PortAudioLib;
 import api.dm.lib.freetype.native.binddynamic : FreeTypeLib;
+import api.dm.lib.freetype.freetype_font: FreeTypeFont;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -88,8 +87,6 @@ class SdlApp : GuiApp
     private
     {
         SdlLib sdlLib;
-
-        SdlTTFLib sdlFont;
 
         Nullable!SdlAudioDevice audioOut;
         Nullable!SdlJoystickLib sdlJoystick;
@@ -358,6 +355,8 @@ class SdlApp : GuiApp
 
             ftLib.onLoad = () {
                 freetypeLib = ftLib;
+                freetypeLib.initialize;
+                freetypeLib.setLCDFilter;
                 uservices.logger.trace("Load FreeType library.");
             };
 
@@ -643,11 +642,6 @@ class SdlApp : GuiApp
             sdlLib = newSdlLib;
         }
 
-        if (!sdlFont)
-        {
-            sdlFont = newSdlFont;
-        }
-
         if (caps.isAudio)
         {
             if (audioOut.isNull)
@@ -713,12 +707,6 @@ class SdlApp : GuiApp
 
         //TODO move to hal layer
         SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
-
-        assert(sdlFont);
-        if (const err = sdlFont.initialize)
-        {
-            return err;
-        }
 
         version (EnableTrace)
         {
@@ -798,7 +786,6 @@ class SdlApp : GuiApp
 
     SdlLib newSdlLib() => new SdlLib;
     SdlAudioDevice newSdlAudio() => new SdlAudioDevice;
-    SdlTTFLib newSdlFont() => new SdlTTFLib;
     SdlJoystickLib newSdlJoystickLib() => new SdlJoystickLib;
 
     override ulong ticksMs()
@@ -942,7 +929,7 @@ class SdlApp : GuiApp
 
     ComFont newComFont()
     {
-        return new SdlTTFFont;
+        return new FreeTypeFont(freetypeLib);
     }
 
     ComImage newComImage()
@@ -1287,7 +1274,7 @@ class SdlApp : GuiApp
 
         if (freetypeLib)
         {
-            //freetypeLib.unload;
+            freetypeLib.dispose;
         }
 
         if (hasWindowing)
@@ -1327,11 +1314,6 @@ class SdlApp : GuiApp
         // {
         //     vipsLib.unload;
         // }
-
-        if (sdlFont)
-        {
-            sdlFont.quit;
-        }
 
         if (gpuDevice)
         {

@@ -37,11 +37,9 @@ extern (C) nothrow
 
 class FreeTypeLib : DynamicLoader
 {
-    bool isInit;
-
     protected
     {
-
+        FT_Library _library;
     }
 
     override void bindAll()
@@ -108,9 +106,44 @@ class FreeTypeLib : DynamicLoader
         return null;
     }
 
-    bool initialize(out string error)
+    bool isInit() => _library !is null;
+
+    bool initialize()
     {
-        return false;
+        //TODO dispose when reinit
+        if (const err = FT2_FT_Init_FreeType(&_library))
+        {
+            _library = null;
+            return false;
+        }
+        return true;
+    }
+
+    bool setLCDFilter()
+    {
+        assert(library);
+        if (const error = FT2_FT_Library_SetLcdFilter(library, FT_LcdFilter.FT_LCD_FILTER_LIGHT))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool dispose()
+    {
+        if (!_library)
+        {
+            return false;
+        }
+        FT2_FT_Done_FreeType(_library);
+        _library = null;
+        return true;
+    }
+
+    FT_Library library() nothrow
+    {
+        assert(_library);
+        return _library;
     }
 
 }

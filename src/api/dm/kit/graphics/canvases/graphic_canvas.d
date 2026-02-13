@@ -158,4 +158,6 @@ interface GraphicCanvas
     void fillText(string text, float x, float y);
     void fontFace(string name);
     void fontSize(double size);
+
+    void miterLimit(double size);
 }
