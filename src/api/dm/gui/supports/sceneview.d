@@ -19,7 +19,7 @@ import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.switches.checks.check : Check;
 
-import IconNames = api.dm.gui.themes.icons.icon_name;
+import IconNames = api.dm.gui.icons.icon_name;
 
 import std.conv : to;
 
@@ -198,7 +198,7 @@ class SceneView : VBox
         auto controlSettings = new TabBox;
         addCreate(controlSettings);
 
-        import IconNames = api.dm.gui.themes.icons.icon_name;
+        import IconNames = api.dm.gui.icons.icon_name;
 
         auto controlTab = new Tab("", IconNames.options_outline);
         controlTab.content = createControlTab;

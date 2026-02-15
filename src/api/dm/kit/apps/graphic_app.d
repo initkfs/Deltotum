@@ -14,7 +14,7 @@ import api.dm.kit.graphics.gpu.gpu_graphic : GPUGraphic;
 import api.dm.kit.assets.asset : Asset;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.assets.fonts.factories.bitmap_font_factory : BitmapFontFactory;
+import api.dm.kit.assets.fonts.bitmaps.alphabet_font_factory : AlphabetFontFactory;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.core.utils.factories : ProviderFactory;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
@@ -528,9 +528,9 @@ abstract class GraphicApp : CliApp
         return asset;
     }
 
-    BitmapFontFactory newFontGenerator(ProviderFactory!ComSurface comSurfaceProvider)
+    AlphabetFontFactory newFontGenerator()
     {
-        return new BitmapFontFactory(comSurfaceProvider);
+        return new AlphabetFontFactory;
     }
 
     Alphabet[] createMediumFontAlphabets()
@@ -588,7 +588,7 @@ abstract class GraphicApp : CliApp
     }
 
     //TODO split function
-    void createFontBitmaps(BitmapFontFactory generator, Asset assets, RGBA colorText, RGBA colorTextBackground, scope void delegate(
+    void createFontBitmaps(AlphabetFontFactory generator, Asset assets, RGBA colorText, RGBA colorTextBackground, scope void delegate(
             BitmapFont) onBitmap)
     {
         //TODO from config

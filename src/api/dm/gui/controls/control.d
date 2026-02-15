@@ -1161,7 +1161,7 @@ class Control : GuiComponent
     {
         assert(isCreated, "Sprite2d not created");
 
-        import api.dm.gui.themes.icons.icon_name;
+        import api.dm.gui.icons.icon_name;
         import api.dm.kit.sprites2d.images.image : Image;
 
         import std.conv : to;

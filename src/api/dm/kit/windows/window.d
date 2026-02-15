@@ -21,7 +21,6 @@ import api.dm.kit.screens.single_screen : SingleScreen;
 import api.core.loggers.logging : Logging;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
-import api.dm.gui.themes.icons.icon_name;
 
 import std.stdio : File;
 

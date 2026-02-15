@@ -236,7 +236,7 @@ class ConfigAggregator : Config
         {
             return config.setFloat(key, value);
         }
-        
+
         if (isThrowOnFailSetter)
         {
             import std.conv : text;
@@ -261,7 +261,7 @@ class ConfigAggregator : Config
         {
             return config.setDouble(key, value);
         }
-        
+
         if (isThrowOnFailSetter)
         {
             import std.conv : text;
@@ -269,6 +269,15 @@ class ConfigAggregator : Config
             throw new Exception(text("Not found config for key ", key, " and double value ", value));
         }
         return false;
+    }
+
+    override string[] getList(string key, char sep = ',') const
+    {
+        if (auto config = searchConfigOrNull(key))
+        {
+            return config.getList(key, sep);
+        }
+        throw new Exception("Not found string list in configs with key: " ~ key);
     }
 
     inout(Config[]) configs() inout => _configs;

@@ -31,6 +31,36 @@ class Demo1 : GuiScene
     override void create()
     {
         super.create;
+
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        if (config.hasKey(KitConfigKeys.fontIconsList))
+        {
+            uint fontIconSize = 12;
+            if (config.hasKey(KitConfigKeys.fontIconsSize))
+            {
+                fontIconSize = cast(uint) config.getPositiveInt(KitConfigKeys.fontIconsSize);
+            }
+
+            auto fontListPaths = config.getList(KitConfigKeys.fontIconsList);
+            foreach (fontListPath; fontListPaths)
+            {
+                import api.dm.gui.icons.fonts.icon_pack : syms;
+
+                auto font = asset.newFont(fontListPath, fontIconSize);
+
+                import api.dm.gui.icons.fonts.icon_bitmap_generator : IconBitmapGenerator;
+
+                auto gen = new IconBitmapGenerator();
+                build(gen);
+
+                auto bitmap = gen.generate(syms, font);
+                bitmap.isDrawBounds = true;
+
+                addCreate(bitmap);
+            }
+        }
+
     }
 
     override void dispose()

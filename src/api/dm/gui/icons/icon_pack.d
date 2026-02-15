@@ -1,4 +1,4 @@
-module api.dm.gui.themes.icons.icon_pack;
+module api.dm.gui.icons.icon_pack;
 
 import api.dm.kit.sprites2d.images.image : Image;
 

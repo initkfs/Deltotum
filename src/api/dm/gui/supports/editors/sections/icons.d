@@ -35,7 +35,7 @@ class Icons : Control
         //auto root = new HBox;
         //addCreate(root);
 
-        import IconName = api.dm.gui.themes.icons.icon_name;
+        import IconName = api.dm.gui.icons.icon_name;
 
         float nextX = 0;
         float nextY = 0;

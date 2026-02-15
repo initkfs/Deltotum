@@ -153,7 +153,7 @@ class Controls : Control
         import api.dm.gui.controls.switches.switch_group : SwitchGroup;
         import api.dm.gui.controls.switches.checks.check : Check;
         import api.dm.gui.controls.selects.choices.choice : Choice;
-        import Icons = api.dm.gui.themes.icons.icon_name;
+        import Icons = api.dm.gui.icons.icon_name;
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
         import api.dm.gui.controls.switches.buttons.triangle_button : TriangleButton;
@@ -833,7 +833,7 @@ class Controls : Control
         ledContainer2.enablePadding;
 
         import api.dm.gui.controls.indicators.leds.led_icon : LedIcon;
-        import IconNames = api.dm.gui.themes.icons.icon_name;
+        import IconNames = api.dm.gui.icons.icon_name;
 
         auto ledIcon1 = new LedIcon(IconNames.flash_outline, RGBA.red);
         ledContainer2.addCreate(ledIcon1);
@@ -855,7 +855,7 @@ class Controls : Control
         import api.dm.gui.controls.switches.buttons.button : Button;
         import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
         import api.dm.gui.controls.switches.checks.check : Check;
-        import IconName = api.dm.gui.themes.icons.icon_name;
+        import IconName = api.dm.gui.icons.icon_name;
 
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.hbox : HBox;

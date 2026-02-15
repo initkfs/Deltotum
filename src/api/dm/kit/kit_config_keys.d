@@ -34,6 +34,8 @@ string fontIsCreateLarge = "fontIsCreateLarge";
 string fontSizeMedium = "fontSizeMedium";
 string fontSizeLarge = "fontSizeLarge";
 string fontSizeSmall = "fontSizeSmall";
+string fontIconsList = "fontIconsList";
+string fontIconsSize = "fontIconsSize";
 
 string engineIsVsync="engineIsVsync";
 string engineVsyncInterval="engineVsyncInterval";

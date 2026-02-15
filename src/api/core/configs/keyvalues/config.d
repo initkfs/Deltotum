@@ -35,6 +35,32 @@ abstract class Config
         immutable(Config) idup() const;
     }
 
+    int getPositiveInt(string key) const
+    {
+        auto value = getInt(key);
+        if (value <= 0)
+        {
+            import std.format : format;
+
+            throw new Exception(format(
+                    "Expected positive integer value from config with key '%s', but received %s", key, value));
+        }
+
+        return value;
+    }
+
+    bool setPositiveInt(string key, int value)
+    {
+        if (value <= 0)
+        {
+            import std.format : format;
+
+            throw new Exception(format(
+                    "Expected positive integer value for config with key '%s', but received %s", key, value));
+        }
+        return setInt(key, value);
+    }
+
     long getPositiveLong(string key) const
     {
         auto value = getLong(key);
@@ -142,5 +168,18 @@ abstract class Config
                 "String must not be empty for config with key: " ~ key);
         }
         return setString(key, value);
+    }
+
+    string[] getList(string key, char sep = ',') const
+    {
+        auto value = getString(key);
+        if (value.length == 0)
+        {
+            return null;
+        }
+
+        import std.array : split;
+
+        return value.split(sep);
     }
 }

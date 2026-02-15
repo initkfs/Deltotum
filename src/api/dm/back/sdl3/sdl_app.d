@@ -1206,7 +1206,7 @@ class SdlApp : GuiApp
         //TODO from locale\config;
         if (mode == SdlWindowMode.none)
         {
-            import api.dm.kit.assets.fonts.factories.bitmap_font_factory : BitmapFontFactory;
+            import api.dm.kit.assets.fonts.bitmaps.alphabet_font_factory : AlphabetFontFactory;
 
             //TODO build and run services after all
             import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
@@ -1215,7 +1215,7 @@ class SdlApp : GuiApp
                 &newComSurface,
                 &newComSurfaceScoped
             );
-            auto fontGenerator = newFontGenerator(comSurfProvider);
+            auto fontGenerator = newFontGenerator;
             windowBuilder.build(fontGenerator);
 
             import api.dm.kit.graphics.colors.rgba : RGBA;
