@@ -10,7 +10,6 @@ import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.math.pos2.insets : Insets;
-import IconName = api.dm.gui.icons.icon_name;
 import api.dm.kit.sprites2d.images.image : Image;
 
 import std.conv : to;
@@ -22,9 +21,9 @@ import ColorProcessor = api.dm.kit.graphics.colors.processings.processing;
  */
 class LedIcon : BaseLed
 {
-    string iconName;
+    dchar iconName;
 
-    this(string iconName, RGBA colorHue = RGBA.red, float width = 0, float height = 0)
+    this(dchar iconName, RGBA colorHue = RGBA.red, float width = 0, float height = 0)
     {
         super(colorHue, width, height);
         this.iconName = iconName;
@@ -55,26 +54,29 @@ class LedIcon : BaseLed
         auto buffSize = iconSize.to!size_t;
         RGBA[][] buff = new RGBA[][](buffSize, buffSize);
 
-        auto icon = createIcon(iconName, iconSize, (x, y, color) {
-            color.r = style.fillColor.r;
-            color.g = style.fillColor.g;
-            color.b = style.fillColor.b;
-            buff[y][x] = color;
-            return color;
-        });
+        // auto icon = createIcon(iconName, iconSize, (x, y, color) {
+        //     color.r = style.fillColor.r;
+        //     color.g = style.fillColor.g;
+        //     color.b = style.fillColor.b;
+        //     buff[y][x] = color;
+        //     return color;
+        // });
 
-        import api.dm.kit.sprites2d.images.image : Image;
 
-        if (auto image = cast(Image) icon)
-        {
-            auto blurBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
-            image.load(blurBuff);
-            image.blendModeBlend;
-        }
-        else
-        {
-            logger.error("Invalid icon received, expected image: " ~ icon.toString);
-        }
+        auto icon = createIcon(iconName);
+
+        // import api.dm.kit.sprites2d.images.image : Image;
+
+        // if (auto image = cast(Image) icon)
+        // {
+        //     auto blurBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
+        //     image.load(blurBuff);
+        //     image.blendModeBlend;
+        // }
+        // else
+        // {
+        //     logger.error("Invalid icon received, expected image: " ~ icon.toString);
+        // }
 
         return icon;
     }

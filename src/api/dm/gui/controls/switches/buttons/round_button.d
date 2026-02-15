@@ -24,7 +24,7 @@ class RoundButton : BaseRoundButton
     this(
         dstring text,
         float diameter = 0,
-        string iconName = null,
+        dchar iconName = dchar.init,
         float graphicsGap = 0,
     )
     {

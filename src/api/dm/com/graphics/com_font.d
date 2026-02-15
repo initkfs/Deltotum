@@ -13,7 +13,9 @@ interface ComFont : ComDestroyable
 
 nothrow:
 
-    ComResult renderFont(
+    bool hasChar(ulong code);
+
+    ComResult render(
         ComSurface targetSurface,
         const(dchar[]) text,
         ubyte fr, ubyte fg, ubyte fb, ubyte fa,

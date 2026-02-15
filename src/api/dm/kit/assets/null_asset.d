@@ -36,10 +36,11 @@ class NullAsset : Asset
 
         return new class ComFont
         {
+            bool hasChar(ulong code) => false;
             bool dispose() nothrow => false;
             bool isDisposed() => false;
 
-            ComResult renderFont(
+            ComResult render(
                 ComSurface targetSurface,
                 const(dchar[]) text,
                 ubyte fr, ubyte fg, ubyte fb, ubyte fa,

@@ -48,13 +48,13 @@ class BaseToggle : BaseBiswitch
 
     bool isCreatePointerListeners = true;
 
-    this(dstring label, float width, float height, string iconName = null, float graphicsGap = 5, bool isCreateLayout = true)
+    this(dstring label, float width, float height, dchar iconName = dchar.init, float graphicsGap = 5, bool isCreateLayout = true)
     {
         super(label, iconName, graphicsGap, isCreateLayout);
         initSize(width, height);
     }
 
-    this(dstring label = "Toggle", string iconName = null, float graphicsGap = 5)
+    this(dstring label = "Toggle", dchar iconName = dchar.init, float graphicsGap = 5)
     {
         this(label, 0, 0, iconName, graphicsGap);
     }

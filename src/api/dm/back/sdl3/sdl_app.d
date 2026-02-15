@@ -72,7 +72,7 @@ import api.dm.kit.sprites2d.images.codecs.jpeg_image_codec : JpegImageCodec;
 
 import api.dm.lib.libpng.native.binddynamic : PngLib;
 import api.dm.kit.sprites2d.images.codecs.png_image_codec : PngImageCodec;
-import api.dm.kit.sprites2d.images.codecs.bmp_image_codec: BmpImageCodec;
+import api.dm.kit.sprites2d.images.codecs.bmp_image_codec : BmpImageCodec;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -959,8 +959,11 @@ class SdlApp : GuiApp
 
     void newComTextureScoped(scope void delegate(ComTexture) onNew, SdlRenderer renderer)
     {
-        scope surf = new SdlTexture(renderer);
-        onNew(surf);
+        scope text = new SdlTexture(renderer);
+        scope(exit){
+            text.dispose;
+        }
+        onNew(text);
     }
 
     ComSurface newComSurface()
@@ -971,6 +974,9 @@ class SdlApp : GuiApp
     void newComSurfaceScoped(scope void delegate(ComSurface) onNew)
     {
         scope surf = new SdlSurface;
+        scope(exit){
+            surf.dispose;
+        }
         onNew(surf);
     }
 
@@ -1156,6 +1162,34 @@ class SdlApp : GuiApp
         version (EnableTrace)
         {
             uservices.logger.trace("Build assets for window: ", window.id);
+        }
+
+        if (uservices.config.hasKey(KitConfigKeys.fontIconsList))
+        {
+            uint fontIconSize = 12;
+            if (uservices.config.hasKey(KitConfigKeys.fontIconsSize))
+            {
+                fontIconSize = cast(uint) uservices.config.getPositiveInt(KitConfigKeys.fontIconsSize);
+            }
+
+            auto fontListPaths = uservices.config.getList(KitConfigKeys.fontIconsList);
+            foreach (fontListPath; fontListPaths)
+            {
+                import api.dm.gui.icons.fonts.icon_pack : syms;
+
+                auto font = asset.newFont(fontListPath, fontIconSize);
+                //TODO check exists
+                theme.iconPack.iconFonts ~= font;
+
+                if (!gservices.platform.cap.isIconPack)
+                {
+                    gservices.platform.cap.isIconPack = true;
+                }
+                //version (EnableTrace)
+                //{
+                uservices.logger.tracef("Load icon font, size:%d: %s", fontIconSize, fontListPath);
+                //}
+            }
         }
 
         windowBuilder.asset = asset;

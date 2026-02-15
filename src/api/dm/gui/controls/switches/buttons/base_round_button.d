@@ -18,12 +18,12 @@ class BaseRoundButton : BaseButton
 
     this(dstring text = defaultButtonText)
     {
-        this(text, 0, null, 0);
+        this(text, 0, dchar.init, 0);
     }
 
     this(dstring text, void delegate(ref ActionEvent) onAction)
     {
-        this(text, 0, null, 0);
+        this(text, 0, dchar.init, 0);
         if (onAction)
         {
             this.onAction ~= onAction;
@@ -33,7 +33,7 @@ class BaseRoundButton : BaseButton
     this(
         dstring text,
         float diameter = 0,
-        string iconName = null,
+        dchar iconName = dchar.init,
         float graphicsGap = 0,
     )
     {

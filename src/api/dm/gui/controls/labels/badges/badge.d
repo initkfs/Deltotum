@@ -11,7 +11,7 @@ import std.conv : to;
  */
 class Badge : Label
 {
-    this(dstring text = "Badge", string iconName = null, float graphicsGap = 0)
+    this(dstring text = "Badge", dchar iconName = dchar.init, float graphicsGap = 0)
     {
         super(text, iconName, graphicsGap);
 

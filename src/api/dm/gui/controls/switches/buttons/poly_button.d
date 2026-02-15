@@ -18,17 +18,17 @@ class PolyButton : BaseRoundButton
 
     this(dstring text = defaultButtonText, size_t sides)
     {
-        this(text, sides, 0, null, 0);
+        this(text, sides, 0, dchar.init, 0);
     }
 
-    this(dstring text = defaultButtonText, string iconName, size_t sides)
+    this(dstring text = defaultButtonText, dchar iconName, size_t sides)
     {
         this(text, sides, 0, iconName, 0);
     }
 
     this(dstring text, void delegate(ref ActionEvent) onAction, size_t sides = 0)
     {
-        this(text, sides, 0, null, 0);
+        this(text, sides, 0, dchar.init, 0);
         if (onAction)
         {
             this.onAction ~= onAction;
@@ -39,7 +39,7 @@ class PolyButton : BaseRoundButton
         dstring text,
         size_t sides = 0,
         float diameter = 0,
-        string iconName = null,
+        dchar iconName = dchar.init,
         float graphicsGap = 0,
     )
     {

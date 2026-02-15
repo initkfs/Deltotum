@@ -30,7 +30,7 @@ class Hyperlink : Labeled
     void delegate(BaseTooltip) onConfiguredUrlTooltip;
     void delegate(BaseTooltip) onCreatedUrlTooltip;
 
-    this(dstring text = "Hyperlink", string iconName = null, float graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring text = "Hyperlink", dchar iconName = dchar.init, float graphicsGap = 0, bool isCreateLayout = true)
     {
         super(text, iconName, graphicsGap, isCreateLayout);
         _labelText = text;

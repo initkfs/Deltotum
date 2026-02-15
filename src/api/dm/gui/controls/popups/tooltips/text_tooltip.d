@@ -7,7 +7,7 @@ import api.dm.gui.controls.popups.tooltips.base_tooltip: BaseTooltip;
  */
 class TextTooltip : BaseTooltip
 {
-    this(dstring text = "Tooltip", string iconName = null, float graphicsGap = 0)
+    this(dstring text = "Tooltip", dchar iconName = dchar.init, float graphicsGap = 0)
     {
         super(text, iconName, graphicsGap);
     }

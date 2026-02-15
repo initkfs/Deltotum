@@ -67,7 +67,19 @@ class FreeTypeFont : ComFont
         return ComResult.success;
     }
 
-    ComResult renderFont(
+    bool hasChar(ulong code)
+    {
+        assert(_face);
+        int res = FT2_FT_Get_Char_Index(_face, code);
+        if (res != 0)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    ComResult render(
         ComSurface targetSurface,
         const(dchar[]) text,
         ubyte fr = 0, ubyte fg = 0, ubyte fb = 0, ubyte fa = 255,
@@ -159,7 +171,8 @@ class FreeTypeFont : ComFont
                     int x = drawX + col;
                     int y = drawY + row;
 
-                    if (x < 0 || x >= targetSurface.getWidth || y < 0 || y >= targetSurface.getHeight)
+                    if (x < 0 || x >= targetSurface.getWidth || y < 0 || y >= targetSurface
+                        .getHeight)
                         continue;
 
                     // const ubyte ALPHA_THRESHOLD = 100;

@@ -1,62 +1,39 @@
 module api.dm.gui.icons.icon_pack;
 
+import api.dm.com.graphics.com_font : ComFont;
+import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.sprites2d.images.image : Image;
+import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.com.com_result : ComResult;
 
 /**
  * Authors: initkfs
  */
 class IconPack
 {
-    protected
+
+    ComFont[] iconFonts;
+
+    ComResult render(dchar code, ComSurface surface, RGBA fg, RGBA bg = RGBA.transparent)
     {
-        string[string] iconData;
-    }
-
-    string icon(string iconName)
-    {
-        if (iconName !in iconData)
+        foreach (ComFont font; iconFonts)
         {
-            throw new Exception("Not found icon: " ~ iconName);
-        }
-        string iconContent = iconData[iconName];
-        return iconContent;
-    }
-
-    //TODO optimizations
-    void load(string iconPath)
-    {
-        import std.stdio: File;
-        import std.file : isFile, exists;
-        import std.string : splitLines;
-        import std.algorithm.searching : startsWith;
-
-        if (!iconPath.exists || !iconPath.isFile)
-        {
-            throw new Exception("Icon path is not a file: " ~ iconPath);
-        }
-
-        string currentIconName;
-        string currentIconContent;
-        enum iconPrefix = "icon:";
-        foreach (lineBuff; File(iconPath).byLine)
-        {
-            auto line = lineBuff.idup;
-            if (line.startsWith(iconPrefix))
+            if (!font.hasChar(code))
             {
-                if (currentIconContent)
-                {
-                    iconData[currentIconName] = currentIconContent;
-                    currentIconContent = null;
-                }
-
-                currentIconName = line[iconPrefix.length .. $];
                 continue;
             }
 
-            if (currentIconName)
+            dchar[1] codes = [code];
+            if (const err = font.render(surface, codes[], fg.r, fg.g, fg.b, fg.aByte, bg.r, bg.g, bg.b, bg
+                    .aByte))
             {
-                currentIconContent ~= line;
+                return err;
             }
+
+            return ComResult.success;
         }
+
+        return ComResult.error("Not found");
     }
+
 }

@@ -7,6 +7,7 @@ import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
  */
 class SpecialAlphabet : Alphabet
 {
+    //TODO cache
     override immutable(dchar)[] allLetters() pure
     {
         dchar[] letters = "∙𑑛!×\"—«»#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r\t\b"d.dup;

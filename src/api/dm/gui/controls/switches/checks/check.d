@@ -31,7 +31,7 @@ class Check : BaseBiswitch
 
     bool isCreateMarkerListeners = true;
 
-    this(dstring text = "Check", float width, float height, string iconName = null, float graphicsGap = 5)
+    this(dstring text = "Check", float width, float height, dchar iconName = dchar.init, float graphicsGap = 5)
     {
         super(text, iconName, graphicsGap, isCreateLayout:
             true);
@@ -42,7 +42,7 @@ class Check : BaseBiswitch
         isCreateMarker = true;
     }
 
-    this(dstring text = "Check", string iconName = null, float graphicsGap = 5)
+    this(dstring text = "Check", dchar iconName = dchar.init, float graphicsGap = 5)
     {
         this(text, 0, 0, iconName, graphicsGap);
     }

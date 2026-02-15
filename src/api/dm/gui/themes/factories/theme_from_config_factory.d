@@ -8,7 +8,6 @@ import api.dm.gui.themes.theme : Theme;
 import api.dm.com.graphics.com_font: ComFont;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.pos2.insets : Insets;
-import api.dm.gui.icons.icon_pack : IconPack;
 
 import api.core.loggers.logging : Logging;
 
@@ -19,14 +18,12 @@ class ThemeFromConfigFactory : ApplicationUnit
 {
     private
     {
-        IconPack iconPack;
         Resourcing resources;
     }
-    this(Logging logging, Config config, Context context, Resourcing resources, IconPack iconPack) pure @safe
+    this(Logging logging, Config config, Context context, Resourcing resources) pure @safe
     {
         super(logging, config, context);
         //TODO check null
-        this.iconPack = iconPack;
         this.resources = resources;
     }
 
@@ -100,7 +97,7 @@ class ThemeFromConfigFactory : ApplicationUnit
 
     Theme createTheme()
     {
-        auto theme = new Theme(iconPack);
+        auto theme = new Theme;
 
         if (!resources.local.resourcesDir.isNull)
         {

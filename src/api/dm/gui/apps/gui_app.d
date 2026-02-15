@@ -17,7 +17,6 @@ abstract class GuiApp : LoopApp
 
     protected
     {
-        IconPack iconPack;
         Theme theme;
         Interact interact;
     }
@@ -31,25 +30,6 @@ abstract class GuiApp : LoopApp
 
         mainLoop = newMainLoop;
         assert(mainLoop);
-
-        if (isIconPackEnabled)
-        {
-            auto newIconPack = new IconPack;
-            //TODO config
-            auto mustBeIconPath = uservices.reslocal.fileResource("icons/packs/ionicons.txt");
-            if (mustBeIconPath.isNull)
-            {
-                throw new Exception("Not found icons");
-            }
-            auto iconPath = mustBeIconPath.get;
-            newIconPack.load(iconPath);
-            iconPack = newIconPack;
-            gservices.platform.cap.isIconPack = true;
-            version (EnableTrace)
-            {
-                uservices.logger.trace("Load icon pack: ", iconPath);
-            }
-        }
 
         theme = createTheme(uservices.logging, uservices.config, uservices
                 .context, uservices
@@ -96,11 +76,16 @@ abstract class GuiApp : LoopApp
     {
         import api.dm.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(logging, config, context, resources, iconPack);
+        auto themeLoader = new ThemeFromConfigFactory(logging, config, context, resources);
 
         auto theme = themeLoader.createTheme;
+
+        theme.iconPack = newIconPack;
+
         return theme;
     }
+
+    IconPack newIconPack() => new IconPack;
 
     Interact createInteract(Logging logging, Config config, Context context)
     {

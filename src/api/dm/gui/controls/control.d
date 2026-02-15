@@ -1148,7 +1148,7 @@ class Control : GuiComponent
         }
     }
 
-    void addCreateIcon(string iconName, long index = -1)
+    void addCreateIcon(dchar iconName, long index = -1)
     {
         auto icon = createIcon(iconName);
         addCreate(icon, index);
@@ -1157,42 +1157,52 @@ class Control : GuiComponent
     import api.dm.kit.sprites2d.images.image : Image;
 
     //TODO or move to scene factory?
-    Sprite2d createIcon(string iconName, float newIconSize = 0, RGBA delegate(int x, int y, RGBA color) onColor = null)
+    Sprite2d createIcon(dchar iconCode)
     {
         assert(isCreated, "Sprite2d not created");
 
-        import api.dm.gui.icons.icon_name;
         import api.dm.kit.sprites2d.images.image : Image;
 
-        import std.conv : to;
+        RGBA fgColor = createFillStyle.fillColor;
 
-        const iconSize = newIconSize == 0 ? theme.iconSize : newIconSize;
-        assert(iconSize > 0);
-
-        const mustBeIconData = theme.iconData(iconName);
-        if (mustBeIconData.isNull)
+        Image icon;
+        try
         {
-            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-            import api.dm.kit.graphics.colors.rgba : RGBA;
-
-            auto placeholder = new Rectangle(iconSize, iconSize, GraphicStyle(1, RGBA.red, true, RGBA
-                    .red));
-            return placeholder;
+            graphic.comSurfaceProvider.getNewScoped((surface) {
+                const err = theme.iconPack.render(iconCode, surface, fgColor);
+                if (!err)
+                {
+                    icon = new Image;
+                    buildInit(icon);
+                    icon.loadFromSurface(surface);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            logger.error(e.toString);
         }
 
-        const string iconData = mustBeIconData.get;
+        if (icon)
+        {
+            return icon;
+        }
 
-        import api.dm.kit.assets.svg.svg_icon: SvgIcon;
+        import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        auto style = createStyle;
-        auto color = style.lineColor;
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        auto icon = new SvgIcon(iconSize, iconData, color);
-        buildInitCreate(icon);
-        icon.bestScaleMode;
-        icon.blendModeBlend;
-        return icon;
+        auto iconSize = 12;
+        if (config.hasKey(KitConfigKeys.fontIconsSize))
+        {
+            iconSize = config.getPositiveInt(KitConfigKeys.fontIconsSize);
+        }
+
+        auto placeholder = new Rectangle(iconSize, iconSize, GraphicStyle(1, RGBA.red, true, RGBA
+                .red));
+        return placeholder;
     }
 
     void applyStyle(Control control)

@@ -11,7 +11,7 @@ class BaseOrientToggle : BaseToggle
 {
     Orientation orientation = Orientation.horizontal;
 
-    this(dstring label, float width, float height, string iconName = null, Orientation orientation, float graphicsGap = 5)
+    this(dstring label, float width, float height, dchar iconName = dchar.init, Orientation orientation, float graphicsGap = 5)
     {
         super(label, width, height, iconName, graphicsGap, isCreateLayout:
             false);

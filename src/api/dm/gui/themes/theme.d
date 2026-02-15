@@ -1,7 +1,7 @@
 module api.dm.gui.themes.theme;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.com.graphics.com_font: ComFont;
+import api.dm.com.graphics.com_font : ComFont;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.icons.icon_pack : IconPack;
@@ -18,10 +18,11 @@ import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle;
  */
 class Theme
 {
+    IconPack iconPack;
+
     private
     {
         ComFont _defaultMediumFont;
-        IconPack iconPack;
     }
 
     @ConfigKey
@@ -66,7 +67,7 @@ class Theme
 
     @ConfigKey
     int lineThickness = 3;
-    
+
     Insets controlPadding = Insets(5, 5, 5, 5);
     float controlSpacing = 5;
     float controlCornersBevel = 8;
@@ -141,11 +142,6 @@ class Theme
     @ConfigKey
     float dividerSize = 2;
 
-    this(IconPack iconPack = null)
-    {
-        this.iconPack = iconPack;
-    }
-
     void defaultMediumFont(ComFont font)
     {
         assert(font);
@@ -156,16 +152,6 @@ class Theme
     {
         assert(_defaultMediumFont, "Default medium font is null");
         return _defaultMediumFont;
-    }
-
-    Nullable!string iconData(string id)
-    {
-        if (!iconPack)
-        {
-            return Nullable!(string).init;
-        }
-        Nullable!string data = iconPack.icon(id);
-        return data;
     }
 
     GraphicStyle* newDefaultStyle()
@@ -247,11 +233,13 @@ class Theme
         Sprite2d shape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle: VRectangle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle : VRectangle;
 
             shape = new VRectangle(width, height, style);
-        }else {
-            import api.dm.kit.sprites2d.shapes.rectangle: Rectangle;
+        }
+        else
+        {
+            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 
             shape = new Rectangle(width, height, style);
         }

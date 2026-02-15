@@ -18,11 +18,11 @@ class BaseTextPopup : BasePopup
     protected
     {
         dstring _labelText;
-        string _iconName;
+        dchar _iconName;
         float _graphicsGap = 0;
     }
 
-    this(dstring text = "Popup", string iconName = null, float graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring text = "Popup", dchar iconName = dchar.init, float graphicsGap = 0, bool isCreateLayout = true)
     {
         super(isCreateLayout);
 
@@ -58,7 +58,7 @@ class BaseTextPopup : BasePopup
         enablePadding;
     }
 
-    Labeled newLabel(float width = 0, float height = 0, dstring labelText = null, string iconName = null, float graphicsGap = 0)
+    Labeled newLabel(float width = 0, float height = 0, dstring labelText = null, dchar iconName = dchar.init, float graphicsGap = 0)
     {
         auto label = new Labeled(labelText, iconName, graphicsGap);
         label.resize(width, height);

@@ -33,7 +33,7 @@ class NavigateButton : Button
         dstring text,
         float width = 0,
         float height = 0,
-        string iconName = null,
+        dchar iconName = dchar.init,
         float graphicsGap = 0
     )
     {

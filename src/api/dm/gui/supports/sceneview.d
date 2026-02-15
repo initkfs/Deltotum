@@ -19,7 +19,7 @@ import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.switches.checks.check : Check;
 
-import IconNames = api.dm.gui.icons.icon_name;
+import IconNames = api.dm.gui.icons.fonts.icon_pack;
 
 import std.conv : to;
 
@@ -171,13 +171,13 @@ class SceneView : VBox
 
         };
 
-        tb.addCreateIcon(IconNames.locate_outline);
+        //tb.addCreateIcon(IconNames.locate_outline);
         tb.text = "";
 
         auto fillStruct = new Button("");
         fillStruct.onAction ~= (ref e) { fillStructure; };
         btnContainer.addCreate(fillStruct);
-        fillStruct.addCreateIcon(IconNames.enter_outline);
+        //fillStruct.addCreateIcon(IconNames.enter_outline);
 
         auto fillScene = new Button("Scene2d");
         fillScene.onAction ~= (ref e) { fillFullScene; };
@@ -198,21 +198,19 @@ class SceneView : VBox
         auto controlSettings = new TabBox;
         addCreate(controlSettings);
 
-        import IconNames = api.dm.gui.icons.icon_name;
+        // auto controlTab = new Tab("", IconNames.options_outline);
+        // controlTab.content = createControlTab;
+        // controlSettings.addCreate(controlTab);
 
-        auto controlTab = new Tab("", IconNames.options_outline);
-        controlTab.content = createControlTab;
-        controlSettings.addCreate(controlTab);
+        // auto layoutTab = new Tab("", IconNames.grid_outline);
+        // layoutTab.content = createLayoutTab;
+        // controlSettings.addCreate(layoutTab);
 
-        auto layoutTab = new Tab("", IconNames.grid_outline);
-        layoutTab.content = createLayoutTab;
-        controlSettings.addCreate(layoutTab);
+        // auto dumpTab = new Tab("", IconNames.construct_outline);
+        // dumpTab.content = createDumpTab;
+        // controlSettings.addCreate(dumpTab);
 
-        auto dumpTab = new Tab("", IconNames.construct_outline);
-        dumpTab.content = createDumpTab;
-        controlSettings.addCreate(dumpTab);
-
-        controlSettings.changeTab(controlTab);
+        // controlSettings.changeTab(controlTab);
 
         // controlStructure.onChangeOldNew = (oldSprite, newSprite) {
 
@@ -388,7 +386,7 @@ class SceneView : VBox
             }
         };
         controlInfo.addCreate(invalidBtn);
-        invalidBtn.addCreateIcon(IconNames.copy_outline);
+        //invalidBtn.addCreateIcon(IconNames.copy_outline);
 
         auto updateBtn = new Button("Update");
         updateBtn.onAction ~= (ref e) {

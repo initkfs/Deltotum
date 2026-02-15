@@ -153,7 +153,7 @@ class Controls : Control
         import api.dm.gui.controls.switches.switch_group : SwitchGroup;
         import api.dm.gui.controls.switches.checks.check : Check;
         import api.dm.gui.controls.selects.choices.choice : Choice;
-        import Icons = api.dm.gui.icons.icon_name;
+        import Icons = api.dm.gui.icons.fonts.icon_pack;
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
         import api.dm.gui.controls.switches.buttons.triangle_button : TriangleButton;
@@ -166,14 +166,14 @@ class Controls : Control
 
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        auto tbtn1 = new TriangleButton(null, Icons.arrow_up_outline, (ref e) {});
+        auto tbtn1 = new TriangleButton(null, Icons.arrow_up, (ref e) {});
         tbtn1.styleId = DefaultStyle.warning;
         tbtn1.isFixedButton = true;
         tbtn1.isOn = true;
         //.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn1);
 
-        auto tbtn2 = new TriangleButton(null, Icons.arrow_down_outline, (ref e) {
+        auto tbtn2 = new TriangleButton(null, Icons.arrow_down, (ref e) {
 
         });
         tbtn2.isFixedButton = true;
@@ -187,7 +187,7 @@ class Controls : Control
         checkBoxContainer.layout.isAutoResize = true;
         root.addCreate(checkBoxContainer);
 
-        auto check1 = new Check("Check1", Icons.bug_outline);
+        auto check1 = new Check("Check1", Icons.bug_fill);
         check1.isCreateIndeterminate = true;
         checkBoxContainer.addCreate(check1);
         check1.onPointerRelease ~= (ref e) {
@@ -197,7 +197,7 @@ class Controls : Control
             }
         };
 
-        auto check2 = new Check("Check2", Icons.bug_outline);
+        auto check2 = new Check("Check2", Icons.bug_fill);
         check2.isBorder = true;
         checkBoxContainer.addCreate(check2);
         check2.layout.isFillStartToEnd = false;
@@ -211,11 +211,11 @@ class Controls : Control
         import api.dm.gui.controls.switches.toggles.toggle : Toggle;
         import api.math.pos2.orientation : Orientation;
 
-        auto switch1 = new Toggle(null, Icons.flash_outline);
+        auto switch1 = new Toggle(null, Icons.flask_fill);
         toggleContainer.addCreate(switch1);
         switch1.isOn = true;
 
-        auto switch2 = new Toggle(null, Icons.flash_outline);
+        auto switch2 = new Toggle(null, Icons.flask_fill);
         switch2.isBorder = true;
         toggleContainer.addCreate(switch2);
 
@@ -224,12 +224,12 @@ class Controls : Control
         htoggleContainer.layout.isAutoResize = true;
         root.addCreate(htoggleContainer);
 
-        auto switch1h = new Toggle(null, Icons.analytics_outline, Orientation.vertical);
+        auto switch1h = new Toggle(null, Icons.circle_fill, Orientation.vertical);
         htoggleContainer.addCreate(switch1h);
         switch1h.isOn = true;
         switch1h.isSwitchContent = true;
 
-        auto switch2h = new Toggle(null, Icons.apps_outline, Orientation.vertical);
+        auto switch2h = new Toggle(null, Icons.circle_fill, Orientation.vertical);
         switch2h.isSwitchContent = true;
         htoggleContainer.addCreate(switch2h);
     }
@@ -833,15 +833,15 @@ class Controls : Control
         ledContainer2.enablePadding;
 
         import api.dm.gui.controls.indicators.leds.led_icon : LedIcon;
-        import IconNames = api.dm.gui.icons.icon_name;
+        import IconNames = api.dm.gui.icons.fonts.icon_pack;
 
-        auto ledIcon1 = new LedIcon(IconNames.flash_outline, RGBA.red);
+        auto ledIcon1 = new LedIcon(IconNames.clock_fill, RGBA.red);
         ledContainer2.addCreate(ledIcon1);
 
-        auto ledIcon2 = new LedIcon(IconNames.battery_charging_outline, RGBA.yellow);
+        auto ledIcon2 = new LedIcon(IconNames.battery_full, RGBA.yellow);
         ledContainer2.addCreate(ledIcon2);
 
-        auto ledIcon3 = new LedIcon(IconNames.thermometer_outline, RGBA.green);
+        auto ledIcon3 = new LedIcon(IconNames.thermometer_high, RGBA.green);
         ledContainer2.addCreate(ledIcon3);
 
         import api.dm.gui.controls.viewers.magnifiers.window_magnifier : WindowMagnifier;
@@ -855,7 +855,7 @@ class Controls : Control
         import api.dm.gui.controls.switches.buttons.button : Button;
         import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
         import api.dm.gui.controls.switches.checks.check : Check;
-        import IconName = api.dm.gui.icons.icon_name;
+        import IconName = api.dm.gui.icons.fonts.icon_pack;
 
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.hbox : HBox;
@@ -864,12 +864,12 @@ class Controls : Control
         root.addCreate(winRoot1);
         winRoot1.layout.isDecreaseRootWidth = true;
 
-        auto winMin = new ParallelogramButton("Min", IconName.arrow_down_outline, (ref e) {
+        auto winMin = new ParallelogramButton("Min", IconName.arrow_down, (ref e) {
             window.minimize;
         });
         winRoot1.addCreate(winMin);
 
-        auto winMax = new ParallelogramButton("Max", IconName.arrow_up_outline, (ref e) {
+        auto winMax = new ParallelogramButton("Max", IconName.arrow_up, (ref e) {
             window.maximize;
         });
         winRoot1.addCreate(winMax);
@@ -881,7 +881,7 @@ class Controls : Control
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        auto winRestore = new Button("Restore", IconName.push_outline, (ref e) {
+        auto winRestore = new Button("Restore", IconName.r_square, (ref e) {
             window.restore;
         });
         winRestore.styleId = DefaultStyle.success;
@@ -891,7 +891,7 @@ class Controls : Control
 
         winRoot2.addCreate(winRestore);
 
-        auto winFull = new Button("FullScr", IconName.expand_outline, (ref e) {
+        auto winFull = new Button("FullScr", IconName.sourceforge, (ref e) {
             auto oldValue = window.isFullScreen;
             window.isFullScreen = !oldValue;
         });
@@ -907,7 +907,7 @@ class Controls : Control
         root.addCreate(winRoot3);
         winRoot3.layout.isDecreaseRootWidth = true;
 
-        auto winDec = new ParallelogramButton(null, IconName.image_outline, (ref e) {
+        auto winDec = new ParallelogramButton(null, IconName.image_fill, (ref e) {
             auto oldValue = window.isDecorated;
             window.isDecorated = !oldValue;
         });
@@ -915,7 +915,7 @@ class Controls : Control
         winDec.isInverted = true;
         winRoot3.addCreate(winDec);
 
-        auto winResize = new ParallelogramButton(null, IconName.resize_outline, (ref e) {
+        auto winResize = new ParallelogramButton(null, IconName.file_lock, (ref e) {
             auto oldValue = window.isResizable;
             window.isResizable = !oldValue;
         });

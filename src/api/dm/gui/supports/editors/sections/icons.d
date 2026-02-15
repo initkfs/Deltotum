@@ -35,23 +35,16 @@ class Icons : Control
         //auto root = new HBox;
         //addCreate(root);
 
-        import IconName = api.dm.gui.icons.icon_name;
+        import IconName = api.dm.gui.icons.fonts.icon_pack;
 
         float nextX = 0;
         float nextY = 0;
 
         import std: replace;
 
-        foreach (iconName; __traits(allMembers, IconName))
+        foreach (i, iconCode; IconName.syms)
         {
-            if (iconName == "object" || iconName == "tablet_portrait_outline")
-            {
-                continue;
-            }
-
-            auto name = iconName.replace("_", "-");
-
-            auto icon = createIcon(name);
+            auto icon = createIcon(iconCode);
             icon.isLayoutManaged = false;
             addCreate(icon);
             auto newX = nextX + icon.width;

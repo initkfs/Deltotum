@@ -19,7 +19,7 @@ class ParallelogramButton : BaseButton
         this(text, 0, 0, iconName, 0, angleDeg);
     }
 
-    this(dstring text = defaultButtonText, string iconName, void delegate(ref ActionEvent) onAction, float angleDeg = 0)
+    this(dstring text = defaultButtonText, dchar iconName, void delegate(ref ActionEvent) onAction, float angleDeg = 0)
     {
         this(text, 0, 0, iconName, 0, angleDeg);
         if(onAction){
@@ -29,7 +29,7 @@ class ParallelogramButton : BaseButton
 
     this(dstring text, void delegate(ref ActionEvent) onAction, float angleDeg = 0)
     {
-        this(text, 0, 0, null, 0, angleDeg);
+        this(text, 0, 0, dchar.init, 0, angleDeg);
         if(onAction){
             this.onAction ~= onAction;
         }
@@ -39,7 +39,7 @@ class ParallelogramButton : BaseButton
         dstring text,
         float width = 0,
         float height = 0,
-        string iconName = null,
+        dchar iconName = dchar.init,
         float graphicsGap = 0,
         float angleDeg = 0
     )

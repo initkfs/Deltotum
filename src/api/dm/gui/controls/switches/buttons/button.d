@@ -9,12 +9,12 @@ import api.dm.gui.events.action_event : ActionEvent;
 class Button : BaseButton
 {
     
-    this(dstring text = defaultButtonText, string iconName = null)
+    this(dstring text = defaultButtonText, dchar iconName = dchar.init)
     {
         super(text, iconName);
     }
 
-    this(dstring text = defaultButtonText, string iconName, void delegate(ref ActionEvent) onAction)
+    this(dstring text = defaultButtonText, dchar iconName, void delegate(ref ActionEvent) onAction)
     {
         this(text, iconName);
         this.onAction ~= onAction;
@@ -29,7 +29,7 @@ class Button : BaseButton
         dstring text,
         float width,
         float height,
-        string iconName = null,
+        dchar iconName = dchar.init,
         float graphicsGap = 0,
     )
     {

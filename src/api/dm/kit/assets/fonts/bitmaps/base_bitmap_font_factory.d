@@ -20,7 +20,7 @@ class BaseBitmapFontFactory : GraphicComponent
 {
     //TODO correct size?
     enum size_t defaultFontTextureWidth = 400;
-    enum size_t defaultFontTextureHeight = 400;
+    enum size_t defaultFontTextureHeight = 100;
 
     void generateToSurface(
         const(dchar)[] allLetters,
@@ -38,7 +38,7 @@ class BaseBitmapFontFactory : GraphicComponent
             //TODO does SDL keep a reference?
             graphic.comSurfaceProvider.getNewScoped((glyphRepresentation) {
 
-                const isErr = font.renderFont(glyphRepresentation, letters[], foregroundColor.r, foregroundColor.g, foregroundColor
+                const isErr = font.render(glyphRepresentation, letters[], foregroundColor.r, foregroundColor.g, foregroundColor
                     .b, foregroundColor
                     .aByte, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor
                     .aByte);

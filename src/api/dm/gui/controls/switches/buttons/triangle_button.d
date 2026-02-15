@@ -16,7 +16,7 @@ class TriangleButton : BaseButton
         this(text, 0, 0, iconName, 0);
     }
 
-    this(dstring text = defaultButtonText, string iconName, void delegate(ref ActionEvent) onAction)
+    this(dstring text = defaultButtonText, dchar iconName, void delegate(ref ActionEvent) onAction)
     {
         this(text, 0, 0, iconName, 0);
         if (onAction)
@@ -27,7 +27,7 @@ class TriangleButton : BaseButton
 
     this(dstring text, void delegate(ref ActionEvent) onAction)
     {
-        this(text, 0, 0, null, 0);
+        this(text, 0, 0, dchar.init, 0);
         if (onAction)
         {
             this.onAction ~= onAction;
@@ -38,7 +38,7 @@ class TriangleButton : BaseButton
         dstring text,
         float width = 0,
         float height = 0,
-        string iconName = null,
+        dchar iconName = dchar.init,
         float graphicsGap = 0
     )
     {

@@ -24,14 +24,14 @@ class BaseButton : BaseBiswitch
     bool isAutolockButton;
     bool isLongPressButton;
 
-    this(dstring text, string iconName, bool isCreateLayout = true)
+    this(dstring text, dchar iconName, bool isCreateLayout = true)
     {
         this(text, 0, 0, iconName, 0, isCreateLayout);
     }
 
     this(dstring text, void delegate(ref ActionEvent) onAction, bool isCreateLayout = true)
     {
-        this(text, 0, 0, null, 0, isCreateLayout);
+        this(text, 0, 0, dchar.init, 0, isCreateLayout);
         if (onAction)
         {
             this.onAction ~= onAction;
@@ -42,7 +42,7 @@ class BaseButton : BaseBiswitch
         dstring text,
         float width = 0,
         float height = 0,
-        string iconName = null,
+        dchar iconName = dchar.init,
         float graphicsGap = 0,
         bool isCreateLayout = true
     )

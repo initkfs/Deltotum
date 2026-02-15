@@ -18,7 +18,7 @@ class Labeled : Control
         Sprite2d _icon;
         Text _label;
 
-        string _iconName;
+        dchar _iconName;
         dstring _labelText;
 
         float _graphicsGap = 0;
@@ -36,7 +36,7 @@ class Labeled : Control
     void delegate() onPreTextCreate;
     void delegate() onPostTextCreated;
 
-    this(dstring labelText = null, string iconName = null, float graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring labelText = null, dchar iconName = dchar.init, float graphicsGap = 0, bool isCreateLayout = true)
     {
         this._iconName = iconName;
         this._labelText = labelText;
@@ -82,7 +82,7 @@ class Labeled : Control
     {
         super.create;
 
-        if (isCreateLabelIcon && _iconName && platform.cap.isIconPack)
+        if (isCreateLabelIcon && (iconName != dchar.init) && platform.cap.isIconPack)
         {
             if (onPreIconCreate)
             {
@@ -156,9 +156,8 @@ class Labeled : Control
 
     Sprite2d newLabelIcon()
     {
-        assert(_iconName.length > 0);
         auto newIcon = createIcon(_iconName);
-        _iconName = null;
+        _iconName = dchar.init;
         return newIcon;
     }
 
@@ -243,12 +242,9 @@ class Labeled : Control
         return _labelText;
     }
 
-    string iconName()
-    {
-        return _iconName;
-    }
+    dchar iconName() => _iconName;
 
-    bool iconName(string name)
+    bool iconName(dchar name)
     {
         if (_icon)
         {
@@ -278,7 +274,7 @@ class Labeled : Control
         return true;
     }
 
-    override void addCreateIcon(string iconName, long index = -1)
+    override void addCreateIcon(dchar iconName, long index = -1)
     {
         super.addCreateIcon(iconName, index);
         if (_label && _label.text.length == 0)
@@ -292,7 +288,7 @@ class Labeled : Control
     override void dispose()
     {
         super.dispose;
-        _iconName = null;
+        _iconName = dchar.init;
         _labelText = null;
     }
 

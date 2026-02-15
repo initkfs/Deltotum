@@ -17,7 +17,7 @@ class Tab : Container
     protected
     {
         dstring labelButtonText;
-        string labelButtonIconName;
+        dchar labelButtonIconName;
     }
 
     Sprite2d content;
@@ -28,15 +28,15 @@ class Tab : Container
 
     this(dstring text)
     {
-       this(text, null, null);
+       this(text, null, dchar.init);
     }
 
-    this(dstring text, string iconName)
+    this(dstring text, dchar iconName)
     {
        this(text, null, iconName);
     }
 
-    this(dstring text = "Tab", Sprite2d content = null, string iconName = null)
+    this(dstring text = "Tab", Sprite2d content = null, dchar iconName = dchar.init)
     {
         labelButtonText = text;
         labelButtonIconName = iconName;
@@ -83,7 +83,7 @@ class Tab : Container
         }
     }
 
-    Button newLabelButton(dstring text, string iconName) => new Button(text, iconName);
+    Button newLabelButton(dstring text, dchar iconName) => new Button(text, iconName);
 
     void isSelected(bool isSelected, bool isTriggerListeners = true)
     {
