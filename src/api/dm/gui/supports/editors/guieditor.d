@@ -103,7 +103,7 @@ class GuiEditor : GuiScene
             root.addCreate(fractalsTab);
         }
 
-        root.changeTab(iconsTab);
+        root.changeTab(controlsTab);
 
         // createDebugger;
     }

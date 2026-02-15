@@ -1,4 +1,4 @@
-module api.dm.gui.icons.fonts.icon_bitmap_generator;
+module api.dm.gui.themes.icons.icon_bitmap_generator;
 
 import api.dm.kit.assets.fonts.bitmaps.base_bitmap_font_factory : BaseBitmapFontFactory;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;

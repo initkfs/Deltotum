@@ -9,7 +9,7 @@ import api.dm.kit.apps.loops.loop : Loop;
 import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.interacts.interact : Interact;
-import api.dm.gui.icons.icon_pack : IconPack;
+import api.dm.gui.themes.icons.icon_pack : IconPack;
 
 abstract class GuiApp : LoopApp
 {

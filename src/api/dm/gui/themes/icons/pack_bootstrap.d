@@ -1,4 +1,4 @@
-module api.dm.gui.icons.fonts.icon_pack;
+module api.dm.gui.themes.icons.pack_bootstrap;
 
 /**
  * Authors: initkfs

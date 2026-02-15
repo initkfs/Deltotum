@@ -4,7 +4,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.com.graphics.com_font : ComFont;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.gui.icons.icon_pack : IconPack;
+import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.sprites2d.images.image : Image;
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

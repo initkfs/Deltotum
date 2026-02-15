@@ -1175,7 +1175,7 @@ class SdlApp : GuiApp
             auto fontListPaths = uservices.config.getList(KitConfigKeys.fontIconsList);
             foreach (fontListPath; fontListPaths)
             {
-                import api.dm.gui.icons.fonts.icon_pack : syms;
+                import api.dm.gui.themes.icons.pack_bootstrap : syms;
 
                 auto font = asset.newFont(fontListPath, fontIconSize);
                 //TODO check exists

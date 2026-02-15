@@ -1,4 +1,4 @@
-module api.dm.gui.icons.icon_pack;
+module api.dm.gui.themes.icons.icon_pack;
 
 import api.dm.com.graphics.com_font : ComFont;
 import api.dm.com.graphics.com_surface : ComSurface;

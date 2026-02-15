@@ -19,7 +19,7 @@ import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.switches.checks.check : Check;
 
-import IconNames = api.dm.gui.icons.fonts.icon_pack;
+import IconNames = api.dm.gui.themes.icons.pack_bootstrap;
 
 import std.conv : to;
 
