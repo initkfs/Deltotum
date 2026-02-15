@@ -1,4 +1,4 @@
-module api.core.utils.adt.container_result;
+module api.core.utils.container_result;
 
 import core.attribute : mustuse;
 

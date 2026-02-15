@@ -4,7 +4,7 @@ module api.dm.lib.freetype.native.binddynamic;
  * Authors: initkfs
  */
 import api.dm.lib.freetype.native.types;
-import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
+import api.core.utils.libs.dynamic_loader : DynamicLoader;
 
 extern (C) nothrow
 {

@@ -4,7 +4,7 @@ module api.dm.lib.cairo.native.v116.binddynamic;
  * Authors: initkfs
  */
 import api.dm.lib.cairo.native.v116.types;
-import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
+import api.core.utils.libs.dynamic_loader : DynamicLoader;
 
 alias cairo_write_func_t = extern (C) cairo_status_t function(void* closure, const ubyte* data, uint length);
 

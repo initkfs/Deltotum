@@ -11,26 +11,6 @@ import std.traits : isSomeString, isSomeChar, isIntegral, Unqual;
  */
 enum hasOverloads(alias type, string symbol) = __traits(getOverloads, type, symbol).length != 0;
 
-enum isNamedEnumValidMemberName(alias T) = isSomeString!(typeof(T));
-
-mixin template NamedStrEnum(string enumName, enumMembersNames...)
-        if (allSatisfy!(isNamedEnumValidMemberName, enumMembersNames))
-{
-    mixin(
-        "enum ", enumName, " : string { ",
-        [enumMembersNames].map!(name => format("%s=\"%s\"", name, name)).join(","),
-        " }");
-}
-
-@safe unittest
-{
-    mixin NamedStrEnum!("En", "a", "b");
-    enum a = En.a;
-    assert(a == "a");
-    enum b = En.b;
-    assert(b == "b");
-}
-
 string enumNameByIndex(E)(size_t index = 0) if (is(E == enum))
 {
     import std.traits : EnumMembers;

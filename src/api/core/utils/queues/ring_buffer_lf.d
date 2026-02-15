@@ -1,7 +1,7 @@
-module api.core.utils.adt.rings.ring_buffer_lf;
+module api.core.utils.queues.ring_buffer_lf;
 
-import api.core.utils.adt.container_result : ContainerResult;
-import api.core.utils.adt.buffers.dense_buffer : DenseBuffer;
+import api.core.utils.container_result : ContainerResult;
+import api.core.utils.buffers.dense_buffer : DenseBuffer;
 
 import core.atomic;
 

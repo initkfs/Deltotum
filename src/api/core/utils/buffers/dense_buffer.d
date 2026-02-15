@@ -1,7 +1,7 @@
 /**
  * Authors: initkfs
  */
-module api.core.utils.adt.buffers.dense_buffer;
+module api.core.utils.buffers.dense_buffer;
 
 struct DenseBuffer(T, size_t Capacity = 256,
     bool isAppendable = true,

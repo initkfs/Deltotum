@@ -4,7 +4,7 @@ module api.dm.lib.portaudio.native.binddynamic;
  * Authors: initkfs
  */
 import api.dm.lib.portaudio.native.types;
-import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
+import api.core.utils.libs.dynamic_loader : DynamicLoader;
 
 import std.stdint;
 import core.stdc.config : c_long, c_ulong;

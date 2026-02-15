@@ -4,8 +4,8 @@ module api.dm.lib.ffmpeg.native.binddynamic;
  * Authors: initkfs
  */
 import api.dm.lib.ffmpeg.native.types;
-import api.core.utils.libs.dynamics.multi_dynamic_loader : MultiDynamicLoader;
-import api.core.utils.libs.dynamics.dynamic_loader : DynLib;
+import api.core.utils.libs.multi_dynamic_loader : MultiDynamicLoader;
+import api.core.utils.libs.dynamic_loader : DynLib;
 
 import std.stdint;
 

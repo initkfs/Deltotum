@@ -1,13 +1,81 @@
-module api.core.utils.libs.dynamics.multi_dynamic_loader;
+module api.core.utils.libs.dynamic_loader;
 
-import api.core.utils.libs.dynamics.dynamic_loader;
+struct DynLib
+{
+    void* handlePtr;
+    const(char)[] name;
+    int loadVersion;
+    bool _load;
+
+    bool isLoad() const pure @safe => _load && handlePtr;
+
+    string toString() const
+    {
+        import std.format : format;
+
+        return format("'%s', %s, is load: %s", name, loadVersion, isLoad);
+    }
+}
+
+version (linux)
+{
+    import core.sys.posix.dlfcn;
+
+    bool libLoad(const(char)* name, out void* handle)
+    {
+        //void* handle = dlmopen(LM_ID_NEWLM, "libfoo.so", RTLD_NOW);
+        //RTLD_DEEPBIND
+        if (void* handlePtr = dlopen(name, RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND))
+        {
+            handle = handlePtr;
+            return true;
+        }
+        return false;
+    }
+
+    bool libUnload(void* lib)
+    {
+        int ret = dlclose(lib);
+        if (ret != 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool libBind(void* lib, const(char)* symbolName, out void* symbolPtr)
+    {
+        if (void* ptr = dlsym(lib, symbolName))
+        {
+            symbolPtr = ptr;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool libError(out string errorText)
+    {
+        const char* errPtr = dlerror();
+        if (!errPtr)
+        {
+            return false;
+        }
+        import std.string : fromStringz;
+
+        errorText = errPtr.fromStringz.idup;
+        return true;
+    }
+}
+else
+{
+    static assert(0, "Not supported shared loaders");
+}
 
 /**
  * Authors: initkfs
  */
-
-//TODO : DynamicLoader
-class MultiDynamicLoader
+class DynamicLoader
 {
     string workDirPath;
 
@@ -26,17 +94,13 @@ class MultiDynamicLoader
 
     protected
     {
-        DynLib[] libs;
-
+        DynLib lib;
     }
-
-    bool isLoad;
-    bool isLocalPath;
 
     abstract
     {
         const(char[][]) libPaths();
-        void bindAll(const(char)[] name, ref DynLib lib);
+        void bindAll();
     }
 
     int libVersion() => 0;
@@ -59,30 +123,27 @@ class MultiDynamicLoader
         return false;
     }
 
-    bool bind(ref DynLib lib, void* funcPtr, const(char)[] name, bool isCheckError = true)
+    bool bind(void* funcPtr, const(char)[] name, bool isCheckError = true)
     {
-        return bindT(lib, funcPtr, name, isCheckError);
+        return bindT(funcPtr, name, isCheckError);
     }
 
-    // bool bind(ref DynLib lib, shared void* funcPtr, const(char)[] name, bool isCheckError = true)
+    // bool bind(shared void* funcPtr, const(char)[] name, bool isCheckError = true)
     // {
-    //     return bindT(lib, funcPtr, name, isCheckError);
+    //     return bindT(funcPtr, name, isCheckError);
     // }
 
-    bool bindT(T)(ref DynLib lib, T funcPtr, const(char)[] name, bool isCheckError = true)
+    bool bindT(T)(T funcPtr, const(char)[] name, bool isCheckError = true)
     {
+        if (!isLoad)
+        {
+            return false;
+        }
+
         void* mustBePtr;
         if (libBind(lib.handlePtr, name.ptr, mustBePtr))
         {
             //TODO or cast(shared(...))?
-            if (!mustBePtr)
-            {
-                import std.conv : text;
-
-                errors ~= text("Bind null pointer: ", name);
-                return false;
-            }
-
             *(cast(void**) funcPtr) = mustBePtr;
             return true;
         }
@@ -102,7 +163,7 @@ class MultiDynamicLoader
 
     bool unload()
     {
-        if (!isLoad)
+        if (!lib.isLoad)
         {
             return false;
         }
@@ -112,13 +173,10 @@ class MultiDynamicLoader
             onAfterUnload();
         }
 
-        foreach (ref DynLib l; libs)
+        if (!libUnload(lib.handlePtr))
         {
-            if (!libUnload(l.handlePtr))
-            {
-                errors ~= "Error unloading library: " ~ l.toString;
-                return false;
-            }
+            checkError("Error unloading library: " ~ lib.toString);
+            return false;
         }
 
         if (onAfterUnload)
@@ -128,6 +186,8 @@ class MultiDynamicLoader
 
         return true;
     }
+
+    bool isLoad() => lib.isLoad;
 
     bool load()
     {
@@ -151,15 +211,9 @@ class MultiDynamicLoader
             }
         }
 
-        const needLoad = libPaths.length;
-        size_t currentLoad;
-
-        import std.conv : to;
-
         foreach (path; libPaths)
         {
-            string loadPath = path.to!string;
-            if (!loadPath.isAbsolute && isLocalPath)
+            if (!path.isAbsolute)
             {
                 auto cwdDir = workDirPath.length > 0 ? workDirPath : lastWorkDir;
                 auto cwdPath = buildPath(cwdDir, path);
@@ -186,24 +240,23 @@ class MultiDynamicLoader
                     }
                 }
 
-                loadPath = cwdPath;
+                if (loadFromPath(cwdPath))
+                {
+                    break;
+                }
             }
 
-            if (!loadFromPath(loadPath))
+            if (loadFromPath(path))
             {
-                import std.conv : text;
-
-                errors ~= text("Not found library ", loadPath);
-            }
-            else
-            {
-                currentLoad++;
+                break;
             }
         }
 
-        if (currentLoad == needLoad)
+        if (!isLoad)
         {
-            isLoad = true;
+            import std.conv : text;
+
+            errors ~= text("Not found library ", libPaths);
         }
 
         if (errors.length > 0)
@@ -243,6 +296,8 @@ class MultiDynamicLoader
         import std.string : toStringz;
         import std.conv : to;
 
+        lib = DynLib.init;
+
         void* handle;
         if (!libLoad(libPath.toStringz, handle))
         {
@@ -255,23 +310,11 @@ class MultiDynamicLoader
             return false;
         }
 
-        auto newLib = DynLib(handle, libPath, 0, true);
-        libs ~= newLib;
+        lib = DynLib(handle, libPath, 0, true);
 
-        import std.path : baseName;
-        import std.string : lastIndexOf;
-
-        //TODO libnames cache
-        auto libName = libPath.baseName;
-
-        auto extPos = libName.lastIndexOf('.');
-        if (extPos >= 0)
-        {
-            libName = libName[0 .. extPos];
-        }
-
-        bindAll(libName, newLib);
+        bindAll;
 
         return true;
     }
+
 }

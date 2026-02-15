@@ -1,7 +1,7 @@
 module api.dm.addon.media.video.gui.media_demuxer;
 
-import api.core.utils.adt.rings.ring_buffer : RingBuffer;
-import api.core.utils.adt.container_result : ContainerResult;
+import api.core.utils.queues.ring_buffer : RingBuffer;
+import api.core.utils.container_result : ContainerResult;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 import api.dm.addon.media.video.gui.video_decoder : UVFrame;
 

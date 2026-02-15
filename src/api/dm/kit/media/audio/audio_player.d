@@ -3,7 +3,7 @@ module api.dm.kit.media.audio.audio_player;
 import api.dm.kit.media.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.media.buffers.audio_buffer : AudioBuffer;
 import api.dm.kit.media.mixers.sound : Sound, SoundHandle;
-import api.core.utils.adt.rings.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
 
 import core.thread.osthread : Thread;
 import core.sync.mutex : Mutex;

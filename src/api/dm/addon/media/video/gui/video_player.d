@@ -7,8 +7,8 @@ import api.dm.com.audio.com_audio_device : ComAudioSpec, ComAudioFormat;
 
 import core.sync.mutex : Mutex;
 import core.sync.condition : Condition;
-import api.core.utils.adt.rings.ring_buffer : RingBuffer;
-import api.core.utils.adt.container_result : ContainerResult;
+import api.core.utils.queues.ring_buffer : RingBuffer;
+import api.core.utils.container_result : ContainerResult;
 import api.core.utils.sync : MutexLock;
 
 import std.concurrency : spawn, send, receiveTimeout, Tid;
@@ -460,7 +460,7 @@ class VideoPlayer(
                     }();
                 }, additional_amount);
 
-                import api.core.utils.adt.container_result : ContainerResult;
+                import api.core.utils.container_result : ContainerResult;
 
                 if (isRead != ContainerResult.success)
                 {

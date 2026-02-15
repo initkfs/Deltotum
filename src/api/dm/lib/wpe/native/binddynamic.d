@@ -5,8 +5,8 @@ import core.stdc.stdint;
 /**
  * Authors: initkfs
  */
-import api.core.utils.libs.dynamics.multi_dynamic_loader : MultiDynamicLoader;
-import api.core.utils.libs.dynamics.dynamic_loader : DynLib;
+import api.core.utils.libs.multi_dynamic_loader : MultiDynamicLoader;
+import api.core.utils.libs.dynamic_loader : DynLib;
 import api.dm.lib.wpe.native.types;
 
 gulong go_g_signal_connect(void* instance, char* sig, void* handler, void* data)

@@ -1,6 +1,6 @@
 module api.dm.addon.dsp.dsp_processor;
 
-import api.core.utils.adt.rings.ring_buffer : RingBuffer;
+import api.core.utils.queues.ring_buffer : RingBuffer;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
 import api.dm.addon.dsp.signals.analog_signal : AnalogSignal;

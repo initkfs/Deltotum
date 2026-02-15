@@ -3,7 +3,7 @@ module api.dm.lib.libpng.native.binddynamic;
 /**
  * Authors: initkfs
  */
-import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
+import api.core.utils.libs.dynamic_loader : DynamicLoader;
 import api.dm.lib.libpng.native.types;
 
 extern (C) nothrow

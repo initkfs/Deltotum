@@ -1,6 +1,6 @@
 module api.dm.kit.media.buffers.audio_buffer;
 
-import api.core.utils.adt.rings.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
 
 import api.dm.lib.portaudio.native;
 import Math = api.math;

@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.core.utils.adt.rings.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.geom2.vec2 : Vec2f, Vec2i;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;

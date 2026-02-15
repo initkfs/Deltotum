@@ -1,9 +1,9 @@
 module api.dm.addon.media.video.gui.audio_decoder;
 
 import api.dm.com.audio.com_audio_device : ComAudioSpec, ComAudioFormat;
-import api.core.utils.adt.rings.ring_buffer : RingBuffer;
+import api.core.utils.queues.ring_buffer : RingBuffer;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
-import api.core.utils.adt.container_result : ContainerResult;
+import api.core.utils.container_result : ContainerResult;
 
 import std.logger : Logger;
 import std.string : toStringz, fromStringz;

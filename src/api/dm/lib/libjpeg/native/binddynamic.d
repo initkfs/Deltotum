@@ -3,7 +3,7 @@ module api.dm.lib.libjpeg.native.binddynamic;
 /**
  * Authors: initkfs
  */
-import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
+import api.core.utils.libs.dynamic_loader : DynamicLoader;
 import api.dm.lib.libjpeg.native.types;
 
 import core.stdc.config : c_long, c_ulong;
