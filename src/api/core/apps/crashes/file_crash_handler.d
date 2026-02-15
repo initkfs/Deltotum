@@ -22,10 +22,7 @@ class FileCrashHandler : TimeCrashHandler
         this.fileExtension = fileExtension;
     }
 
-    string createCrashFileName() inout @safe
-    {
-        return createCrashFileName(createCrashName);
-    }
+    string createCrashFileName() inout @safe => createCrashFileName(createCrashName);
 
     string createCrashFileName(string crashName) inout @safe
     {

@@ -15,7 +15,7 @@ version (D_BetterC)
 }
 else
 {
-    class NullAllocator : Allocator!ubyte
+    class NullAllocator : Allocator
     {
         this() pure nothrow @safe
         {

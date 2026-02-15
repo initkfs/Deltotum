@@ -609,12 +609,12 @@ class CliApp : SimpleUnit
         return new Mallocator;
     }
 
-    Allocator!ubyte createAllocator(Logging logging, Config config, Context context)
+    Allocator createAllocator(Logging logging, Config config, Context context)
     {
         return newMallocator;
     }
 
-    Memory newMemory(Allocator!ubyte allocator)
+    Memory newMemory(Allocator allocator)
     {
         return new Memory(allocator);
     }

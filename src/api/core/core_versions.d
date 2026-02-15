@@ -1,4 +1,4 @@
-module api.core.versions;
+module api.core.core_versions;
 
 version (EnableTrace)
 {

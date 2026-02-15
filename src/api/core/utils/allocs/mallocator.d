@@ -1,39 +1,53 @@
 module api.core.utils.allocs.mallocator;
 
-import api.core.utils.ptrs.unique_ptr : UniqPtr;
-
 /**
  * Authors: initkfs
  */
 
 import core.stdc.stdlib : malloc, realloc, free;
 
-bool allocateBytes(T)(size_t size, scope ref T[] ptr)  nothrow @trusted
+bool allocate(size_t size, scope ref ubyte[] ptr) nothrow @trusted
 {
-    void* newPtr = malloc(size * T.sizeof);
+    if (size == 0)
+    {
+        return true;
+    }
+
+    ubyte* newPtr = cast(ubyte*) malloc(size);
     if (!newPtr)
     {
         return false;
     }
-    ptr = (cast(T*) newPtr)[0 .. size];
+    ptr = newPtr[0 .. size];
     return true;
 }
 
-bool reallocateBytes(T)(size_t newSize, scope ref T[] ptr)  nothrow @trusted
+bool reallocate(size_t newSize, scope ref ubyte[] ptr) nothrow @trusted
 {
-    const newSizeBytes = newSize * T.sizeof;
-    void* newPtr = realloc(ptr.ptr, newSizeBytes);
+    if (!ptr.ptr)
+    {
+        return allocate(newSize, ptr);
+    }
+    else
+    {
+        if (newSize == 0)
+        {
+            return deallocate(ptr);
+        }
+    }
+
+    ubyte* newPtr = cast(ubyte*) realloc(ptr.ptr, newSize);
     if (!newPtr)
     {
         return false;
     }
-    ptr = (cast(T*) newPtr)[0 .. newSize];
+    ptr = newPtr[0 .. newSize];
     return true;
 }
 
-bool deallocateBytes(T)(scope T[] ptr)  nothrow @trusted
+bool deallocate(scope ubyte[] ptr) nothrow @trusted
 {
-    if (!ptr)
+    if (!ptr.ptr)
     {
         return false;
     }
@@ -48,13 +62,13 @@ else
 {
     import api.core.utils.allocs.allocator : Allocator;
 
-    class Mallocator : Allocator!ubyte
+    class Mallocator : Allocator
     {
         this() pure nothrow @safe
         {
-            allocFunPtr = &allocateBytes!ubyte;
-            reallocFunPtr = &reallocateBytes!ubyte;
-            freeFunPtr = &deallocateBytes!ubyte;
+            allocFunPtr = &allocate;
+            reallocFunPtr = &reallocate;
+            freeFunPtr = &deallocate;
         }
     }
 }
@@ -63,21 +77,23 @@ unittest
 {
     version (D_BetterC)
     {
-        import MemAllocator = api.core.utils.allocs.allocator;
 
-        MemAllocator.allocFunPtr = &allocate;
-        MemAllocator.reallocFunPtr = &reallocate;
-        MemAllocator.freeFunPtr = &deallocate;
-
-        UniqPtr!int intPtr1 = MemAllocator.uniqptr!int;
-        intPtr1 = 5;
-        assert(intPtr1.value == 5);
     }
     else
     {
-        auto mCl2 = new Mallocator;
-        auto intPtr2 = mCl2.uniqptr!int;
-        intPtr2 = 5;
-        assert(intPtr2.value);
+        auto alloc = new Mallocator;
+
+        int[] intPtr1 = alloc.array!int(5);
+        assert(intPtr1.length == 5);
+        intPtr1[] = [1, 2, 3, 4, 5];
+        assert(intPtr1 == [1, 2, 3, 4, 5]);
+
+        int[] intPtr2 = alloc.realloc(10, intPtr1);
+        assert(intPtr2.length == 10);
+
+        intPtr2[5 .. $] = [6, 7, 8, 9, 10];
+        assert(intPtr2 == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+        assert(alloc.free(intPtr2));
     }
 }

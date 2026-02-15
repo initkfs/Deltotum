@@ -8,21 +8,21 @@ import api.core.utils.allocs.allocator : Allocator;
  */
 class Memory : ComponentService
 {
-    Allocator!ubyte alloc;
+    Allocator alloc;
 
-    this(Allocator!ubyte allocator) pure @safe
+    this(Allocator allocator) pure @safe
     {
         assert(allocator);
         this.alloc = allocator;
     }
 
-    this(const Allocator!ubyte allocator) const pure @safe
+    this(const Allocator allocator) const pure @safe
     {
         assert(allocator);
         this.alloc = allocator;
     }
 
-    this(immutable Allocator!ubyte allocator) immutable pure @safe
+    this(immutable Allocator allocator) immutable pure @safe
     {
         assert(allocator);
         this.alloc = allocator;

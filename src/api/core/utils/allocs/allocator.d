@@ -1,73 +1,46 @@
 module api.core.utils.allocs.allocator;
 
-import api.core.utils.ptrs.unique_ptr : UniqPtr;
-import api.core.utils.ptrs.shared_ptr : SharedPtr;
-
 /**
  * Authors: initkfs
  */
 
-alias AllocFuncType(T) = bool function(size_t size, scope ref T[] ptr) nothrow @safe;
-alias ReallocFuncType(T) = bool function(size_t newSize, scope ref T[]) nothrow @safe;
-alias FreeFuncType(T) = bool function(scope T[] ptr)  nothrow @safe;
+alias AllocFuncType = bool function(size_t size, scope ref ubyte[] ptr) nothrow @safe;
+alias ReallocFuncType = bool function(size_t newSize, scope ref ubyte[]) nothrow @safe;
+alias FreeFuncType = bool function(scope ubyte[] ptr) nothrow @safe;
 
-mixin template MemFuncs(T = ubyte)
+mixin template MemFuncs()
 {
     version (D_BetterC)
     {
         __gshared
         {
-            AllocFuncType!T allocFunPtr;
-            ReallocFuncType!T reallocFunPtr;
-            FreeFuncType!T freeFunPtr;
+            AllocFuncType allocFunPtr;
+            ReallocFuncType reallocFunPtr;
+            FreeFuncType freeFunPtr;
         }
     }
     else
     {
-        AllocFuncType!T allocFunPtr;
-        ReallocFuncType!T reallocFunPtr;
-        FreeFuncType!T freeFunPtr;
+        AllocFuncType allocFunPtr;
+        ReallocFuncType reallocFunPtr;
+        FreeFuncType freeFunPtr;
     }
 
-    U[] rawptr(U)(size_t capacity = 1, bool isErrorOnFail = true)
+    T[] array(T)(size_t capacity = 1, bool isErrorOnFail = true)
     in (allocFunPtr)
     {
         if (capacity == 0)
         {
-            enum message = "Capacity must not be zero";
-            version (D_Exceptions)
-            {
-                throw new Exception(message);
-            }
-            else
-            {
-                assert(false, message);
-            }
+            return null;
         }
 
-        const size = capacity * U.sizeof;
+        const size = capacity * T.sizeof;
 
-        if ((size / capacity) != U.sizeof)
+        if ((size / capacity) != T.sizeof)
         {
-            enum message = "Allocation size overflow";
-            version (D_Exceptions)
+            if (isErrorOnFail)
             {
-                throw new Exception(message);
-            }
-            else
-            {
-                assert(false, message);
-            }
-
-        }
-
-        static if (T.sizeof != 1)
-        {
-            size = size / T.sizeof;
-
-            if (size == 0)
-            {
-                enum message = "Allocation native size is zero";
+                enum message = "Allocation size overflow";
                 version (D_Exceptions)
                 {
                     throw new Exception(message);
@@ -77,9 +50,13 @@ mixin template MemFuncs(T = ubyte)
                     assert(false, message);
                 }
             }
+            else
+            {
+                return null;
+            }
         }
 
-        T[] ptr;
+        ubyte[] ptr;
         if (!allocFunPtr(size, ptr) && isErrorOnFail)
         {
             enum message = "Allocation failed";
@@ -93,35 +70,72 @@ mixin template MemFuncs(T = ubyte)
             }
         }
 
-        U[] newPtr = cast(U[]) ptr;
-        assert(newPtr.length == capacity);
-
-        return newPtr;
+        return cast(T[]) ptr;
     }
 
-    UniqPtr!(U, T) uniqptr(U)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
-    in (allocFunPtr)
+    T[] realloc(T)(size_t newCapacity = 1, T[] ptr, bool isErrorOnFail = true)
+    in (reallocFunPtr)
     {
+        const newSize = newCapacity * T.sizeof;
 
-        return UniqPtr!(U, T)(rawptr!U(capacity, isErrorOnFail), isAutoFree, freeFunPtr, reallocFunPtr);
+        if ((newSize / newCapacity) != T.sizeof)
+        {
+            if (isErrorOnFail)
+            {
+                enum message = "Reallocation size overflow";
+                version (D_Exceptions)
+                {
+                    throw new Exception(message);
+                }
+                else
+                {
+                    assert(false, message);
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        ubyte[] newPtr = cast(ubyte[]) ptr;
+        if (!reallocFunPtr(newSize, newPtr) && isErrorOnFail)
+        {
+            enum message = "Reallocation failed";
+            version (D_Exceptions)
+            {
+                throw new Exception(message);
+            }
+            else
+            {
+                assert(false, message);
+            }
+        }
+
+        return cast(T[]) newPtr;
     }
 
-    UniqPtr!(U, T) sharedptr(U)(size_t capacity = 1, bool isErrorOnFail = true)
-    in (allocFunPtr)
+    bool free(void[] ptr)
+    in (freeFunPtr)
     {
-        return SharedPtr!(U, T)(rawptr!U(capacity, isErrorOnFail), allocFunPtr, freeFunPtr, reallocFunPtr);
+        if (freeFunPtr(cast(ubyte[]) ptr))
+        {
+            return true;
+        }
+
+        return false;
     }
 }
 
 version (D_BetterC)
 {
-    mixin MemFuncs!ubyte;
+    mixin MemFuncs;
 }
 else
 {
-    abstract class Allocator(T = ubyte)
+    abstract class Allocator
     {
-        mixin MemFuncs!T;
+        mixin MemFuncs;
 
         bool canAlloc() const nothrow pure @safe => true;
     }
