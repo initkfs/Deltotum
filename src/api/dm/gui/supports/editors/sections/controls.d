@@ -267,19 +267,13 @@ class Controls : Control
 
         auto popBtn = new Button("Popup", (ref e) {
             import std.conv : to;
-            import std.datetime;
-
-            auto curt = Clock.currTime();
-            interact.popup.notify("Popup: " ~ curt.toISOExtString.to!dstring);
+            interact.popup.notify("Popup");
         });
         root3.addCreate(popBtn);
 
         auto popUrgBtn = new Button("Urgent", (ref e) {
             import std.conv : to;
-            import std.datetime;
-
-            auto curt = Clock.currTime();
-            interact.popup.urgent("Popup: " ~ curt.toISOExtString.to!dstring);
+            interact.popup.urgent("Popup urgent");
         });
         root3.addCreate(popUrgBtn);
     }

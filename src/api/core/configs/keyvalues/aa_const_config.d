@@ -8,21 +8,21 @@ import std.conv : to;
  * Authors: initkfs
  * TODO remove code duplications
  */
-class AAConstConfig(V = string) : Config
+class AAConstConfig : Config
 {
-    V[string] config;
+    string[string] config;
 
-    this(V[string] config) pure @safe
+    this(string[string] config) pure @safe
     {
         this.config = config;
     }
 
-    this(const V[string] config) const pure @safe
+    this(const string[string] config) const pure @safe
     {
         this.config = config;
     }
 
-    this(immutable V[string] config) immutable
+    this(immutable string[string] config) immutable
     {
         this.config = config;
     }
@@ -33,13 +33,13 @@ class AAConstConfig(V = string) : Config
 
     override bool hasKey(string key) const => containsPtr(key) !is null;
 
-    const(V*) containsPtr(string key) const
+    const(string*) containsPtr(string key) const
     {
         assert(key.length > 0);
         return key in config;
     }
 
-    T getValue(T)(const(V*) valuePtr) const
+    T getValue(T)(const(string*) valuePtr) const
     {
         return (*valuePtr).to!T;
     }
@@ -146,7 +146,7 @@ class AAConstConfig(V = string) : Config
     override immutable(AAConstConfig) idup() const
     {
         //TODO unsafe hack        
-        immutable newConfig = cast(immutable(V[string])) config;
+        immutable newConfig = cast(immutable(string[string])) config;
         return new immutable AAConstConfig(newConfig);
     }
 }
@@ -162,7 +162,7 @@ unittest
         "value4": "true"
     ];
 
-    immutable config = new immutable AAConstConfig!string(aa);
+    immutable config = new immutable AAConstConfig(aa);
 
     assert(aa == config.config);
 

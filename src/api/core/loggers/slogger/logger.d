@@ -3,7 +3,6 @@ module api.core.loggers.slogger.logger;
 import api.core.loggers.slogger.logger_level : LogLevel, levelToStr;
 
 import core.sync.mutex : Mutex;
-import std.datetime.systime : Clock;
 import std.format : format;
 import std.conv : to;
 
@@ -123,14 +122,22 @@ class Logger : BaseLogger
     {
         import std.format : format;
 
-        auto timestamp = Clock.currTime.toUTC;
-
         import Mem = api.core.utils.mem;
 
         auto memSize = Mem.memBytes;
 
+        //import std.datetime.systime : Clock;
+        //auto timestamp = Clock.currTime.toUTC;
+        //string timestampStr = timestamp.toSimpleString;
+
+        import api.core.utils.time: utcTimeBuff;
+
+        char[64] buffer = void;
+        auto res = utcTimeBuff(buffer[], "%Y-%m-%d %H:%M:%S");
+        char[] timeStr = (res > 0 && res < buffer.length) ? buffer[0 .. res] : null;
+
         auto result = format("%s [%s] %s:%d %s [%s]",
-            timestamp.toSimpleString,
+            timeStr,
             levelToStr(level),
             file,
             line,

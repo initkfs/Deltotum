@@ -75,15 +75,6 @@ class CliApp : SimpleUnit
             uservices.cli = cli;
 
             auto cliResult = parseCli(uservices.cli);
-            if (!isSilentMode)
-            {
-                import std.stdio : writeln, writefln;
-
-                writeln("Received cli: ", cli.parser.cliArgs);
-                writefln("Config dir: '%s', data dir: '%s', debug: %s, silent: %s, wait ms: %s",
-                    cliConfigDir, cliDataDir, isDebugMode, isSilentMode, cliStartupDelayMs);
-            }
-
             cli.printer.isSilentMode = isSilentMode;
 
             if (cliResult.helpWanted)
@@ -315,8 +306,16 @@ class CliApp : SimpleUnit
         import api.core.configs.keyvalues.aa_const_config : AAConstConfig;
         import std.process : environment;
 
-        auto envAA = environment.toAA;
-        return new AAConstConfig!string(envAA);
+        try
+        {
+            auto envAA = environment.toAA;
+            return new AAConstConfig(envAA);
+        }
+        catch (Exception e)
+        {
+            uservices.logger.error(e.toString);
+            return new AAConstConfig(new string[string]);
+        }
     }
 
     protected Config createConfig(Context context)
