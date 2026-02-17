@@ -679,7 +679,7 @@ class BaseMonoText : Control
 
         if (!_textBuffer.create(t))
         {
-            logger.error("Error creating buffer text: '", t, "'");
+            logger.errorf("Error creating buffer text: %s", t);
             return;
         }
 

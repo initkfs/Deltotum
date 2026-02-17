@@ -5,7 +5,7 @@ import api.core.utils.queues.ring_buffer : RingBuffer;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 import api.core.utils.container_result : ContainerResult;
 
-import std.logger : Logger;
+import api.core.loggers.slogger.logger : Logger;
 import std.string : toStringz, fromStringz;
 
 import api.dm.lib.ffmpeg.native;
@@ -192,7 +192,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                     const isPacketRead = packetQueue.peek(pkt);
                     if (isPacketRead != ContainerResult.success)
                     {
-                        logger.error("Error peek audio packet from queue: ", isPacketRead);
+                        logger.errorf("Error peek audio packet from queue: %s", isPacketRead);
                         continue;
                     }
 
@@ -214,7 +214,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                         //TODO drop packet?
                         packetQueue.removeStrict;
                         av_packet_free(&pkt);
-                        logger.error("Error sending packet in audio decoder: ", errorText(
+                        logger.errorf("Error sending packet in audio decoder: %s", errorText(
                                 isSend));
                         continue;
                     }
@@ -227,7 +227,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
                     if (isReceive < 0)
                     {
-                        logger.error("Error receiving frame in audio decoder: ", errorText(
+                        logger.errorf("Error receiving frame in audio decoder: %s", errorText(
                                 isReceive));
                         continue;
                     }
@@ -271,7 +271,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
                 if (audioBuffSize < 0)
                 {
-                    logger.error("Error allocating audio frame buffer: ", errorText(
+                    logger.errorf("Error allocating audio frame buffer: %s", errorText(
                             audioBuffSize));
                     continue;
                 }
@@ -308,7 +308,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                         destFormat);
                     if (dataSize != audioBuffSize)
                     {
-                        logger.error("Audiobuffer size %s, but audio data size %s, is planar: %s", audioBuffSize, dataSize, isPlanar);
+                        logger.errorf("Audiobuffer size %s, but audio data size %s, is planar: %s", audioBuffSize, dataSize, isPlanar);
                         continue;
                     }
                     audioBuff[0 .. audioBuffSize] = frame.data[0][0 .. dataSize];
@@ -337,11 +337,11 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
         }
         catch (Exception e)
         {
-            logger.error("Exception in audio decoder: ", e);
+            logger.error("Exception in audio decoder: " ~ e.toString);
         }
         catch (Throwable th)
         {
-            logger.error("Error in audio decoder: ", th);
+            logger.error("Error in audio decoder: " ~ th.toString);
             throw th;
         }
     }

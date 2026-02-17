@@ -4,7 +4,7 @@ import api.core.utils.queues.ring_buffer : RingBuffer;
 import api.core.utils.container_result : ContainerResult;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 
-import std.logger : Logger;
+import api.core.loggers.slogger.logger : Logger;
 import std.string : fromStringz, toStringz;
 
 import api.dm.lib.ffmpeg.native;
@@ -360,7 +360,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                     const isPacketRead = packetQueue.peek(pkt);
                     if (isPacketRead != ContainerResult.success)
                     {
-                        logger.error("Error peek video packet from queue: ", isPacketRead);
+                        logger.errorf("Error peek video packet from queue: %s", isPacketRead);
                         continue;
                     }
 
@@ -385,7 +385,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                         //TODO drop packet?
                         packetQueue.removeStrict;
                         av_packet_free(&pkt);
-                        logger.error("Error sending packet in video decoder: ", errorText(isSend));
+                        logger.errorf("Error sending packet in video decoder: %s", errorText(isSend));
                         continue;
                     }
 
@@ -399,7 +399,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
                     if (isReceive < 0)
                     {
-                        logger.error("Error receiving frame in video decoder: ", errorText(
+                        logger.errorf("Error receiving frame in video decoder: %s", errorText(
                                 isReceive));
                         continue;
                     }
@@ -438,7 +438,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 const isOutBuffer = av_frame_get_buffer(outFrame, 1);
                 if (isOutBuffer < 0)
                 {
-                    logger.error("Error getting out frame buffer: ", errorText(isOutBuffer));
+                    logger.errorf("Error getting out frame buffer: %s", errorText(isOutBuffer));
                     av_frame_free(&outFrame);
                     continue;
                 }
@@ -457,7 +457,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 const isSinkFilterRet = av_buffersink_get_frame(sinkFilter, filterFrame);
                 if (isSinkFilterRet < 0)
                 {
-                    logger.error("Error sink filter: ", isSinkFilterRet);
+                    logger.errorf("Error sink filter: %s", isSinkFilterRet);
                     continue;
                 }
 
@@ -521,7 +521,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 const isWriteUvFrame = buffer.writeSync(frames);
                 if (isWriteUvFrame != ContainerResult.success)
                 {
-                    logger.error("Error writing video frame to buffer: ", isWriteUvFrame);
+                    logger.errorf("Error writing video frame to buffer: %s", isWriteUvFrame);
                 }
             }
 
@@ -561,12 +561,12 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
         catch (Exception e)
         {
-            logger.error("Exception in video decoder: ", e);
+            logger.error("Exception in video decoder: " ~ e.toString);
         }
 
         catch (Throwable th)
         {
-            logger.error("Error in video decoder: ", th);
+            logger.error("Error in video decoder: " ~ th.toString);
             throw th;
         }
     }

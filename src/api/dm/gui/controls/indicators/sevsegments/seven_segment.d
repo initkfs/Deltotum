@@ -400,7 +400,7 @@ class SevenSegment : Control
         if (value > 9)
         {
             showErr;
-            logger.error("The number exceeds the indicator's capabilities: ", value);
+            logger.errorf("The number exceeds the indicator's capabilities: %d", value);
             return;
         }
 

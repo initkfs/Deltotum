@@ -68,7 +68,7 @@ class ImageFactory : GraphicComponent
         }
         catch (Exception e)
         {
-            logger.error(e);
+            logger.error(e.toString);
         }
 
         initCreate(newAnimated);

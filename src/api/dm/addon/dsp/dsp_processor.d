@@ -146,7 +146,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize, size_t SignalChannels = 
         {
             if (!readDspRes.isNoFilled && !readDspRes.isLocked && !readDspRes.isEmpty)
             {
-                logger.warning("Warn. Cannot read from dsp buffer, reason: ", readDspRes);
+                logger.warningf("Warn. Cannot read from dsp buffer, reason: %d", readDspRes);
                 return;
             }
         }

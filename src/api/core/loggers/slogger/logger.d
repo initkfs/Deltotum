@@ -99,7 +99,7 @@ class FileHandler : BaseLoggerHandler
     }
 }
 
-class MultiLogger : BaseLogger
+class Logger : BaseLogger
 {
     protected
     {
@@ -108,8 +108,9 @@ class MultiLogger : BaseLogger
         shared Mutex _mutex;
     }
 
-    this()
+    this(LogLevel level = LogLevel.all) @safe
     {
+        _level = level;
         _mutex = new shared Mutex;
     }
 
@@ -118,19 +119,22 @@ class MultiLogger : BaseLogger
         handlers ~= handler;
     }
 
-    protected void writeLog(LogLevel level, const(char)[] msg, string file, ulong line, string funcName)
+    protected void writeLog(LogLevel level, const(char)[] msg, string file, ulong line)
     {
         import std.format : format;
 
         auto timestamp = Clock.currTime.toUTC;
 
-        auto result = format("%s [%s] %s:%d:%s %s",
+        import Mem = api.core.utils.mem;
+
+        auto memSize = Mem.memBytes;
+
+        auto result = format("%s [%s] %s:%d %s [%s]",
             timestamp.toSimpleString,
             levelToStr(level),
             file,
             line,
-            funcName,
-            msg);
+            msg, Mem.formatBytes(memSize));
 
         foreach (h; handlers)
         {
@@ -138,7 +142,7 @@ class MultiLogger : BaseLogger
         }
     }
 
-    void log(LogLevel level, const(char)[] msg, string file, ulong line, string funcName)
+    void log(LogLevel level, const(char)[] msg, string file, ulong line)
     {
         synchronized (_mutex)
         {
@@ -147,41 +151,36 @@ class MultiLogger : BaseLogger
                 return;
             }
 
-            writeLog(level, msg, file, line, funcName);
+            writeLog(level, msg, file, line);
         }
     }
 
-    void log(const(char)[] message, string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__)
+    void log(const(char)[] message, string file = __FILE__, size_t line = __LINE__)
     {
-        log(_level, message, file, line, func);
+        log(_level, message, file, line);
     }
 
-    void trace(const(char)[] message, string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__)
+    void trace(const(char)[] message, string file = __FILE__, size_t line = __LINE__)
     {
-        log(LogLevel.trace, message, file, line, func);
+        log(LogLevel.trace, message, file, line);
     }
 
-    void info(const(char)[] message, string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__)
+    void info(const(char)[] message, string file = __FILE__, size_t line = __LINE__)
     {
-        log(LogLevel.info, message, file, line, func);
+        log(LogLevel.info, message, file, line);
     }
 
-    void warning(const(char)[] message, string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__)
+    void warning(const(char)[] message, string file = __FILE__, size_t line = __LINE__)
     {
-        log(LogLevel.warning, message, file, line, func);
+        log(LogLevel.warning, message, file, line);
     }
 
-    void error(const(char)[] message, string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__)
+    void error(const(char)[] message, string file = __FILE__, size_t line = __LINE__)
     {
-        log(LogLevel.error, message, file, line, func);
+        log(LogLevel.error, message, file, line);
     }
 
-    void logf(string file, size_t line, string func, Args...)(LogLevel level, const(char)[] formatMsg, Args args)
+    void logf(string file, size_t line, Args...)(LogLevel level, const(char)[] formatMsg, Args args)
     {
         synchronized (_mutex)
         {
@@ -193,43 +192,33 @@ class MultiLogger : BaseLogger
             import std.format : format;
 
             auto result = format(formatMsg, args);
-            writeLog(level, result, file, line, func);
+            writeLog(level, result, file, line);
         }
 
     }
 
-    void tracef(string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__, Args...)(Args args)
+    void tracef(string file = __FILE__, size_t line = __LINE__, Args...)(Args args)
     {
-        logf!(file, line, func)(LogLevel.trace, args);
+        logf!(file, line)(LogLevel.trace, args);
     }
 
-    void infof(string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__, Args...)(Args args)
+    void infof(string file = __FILE__, size_t line = __LINE__, Args...)(Args args)
     {
-        logf!(file, line, func)(LogLevel.info, args);
+        logf!(file, line)(LogLevel.info, args);
     }
 
-    void warningf(string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__, Args...)(Args args)
+    void warningf(string file = __FILE__, size_t line = __LINE__, Args...)(Args args)
     {
-        logf!(file, line, func)(LogLevel.warning, args);
+        logf!(file, line)(LogLevel.warning, args);
     }
 
-    void errorf(string file = __FILE__, size_t line = __LINE__,
-        string func = __PRETTY_FUNCTION__, Args...)(Args args)
+    void errorf(string file = __FILE__, size_t line = __LINE__, Args...)(Args args)
     {
-        logf!(file, line, func)(LogLevel.error, args);
+        logf!(file, line)(LogLevel.error, args);
     }
 }
 
 unittest
 {
-    auto handler = new MultiLogger;
 
-    auto logger = new Logger;
-    logger.add(handler);
-    logger.level = LogLevel.warning;
-
-    logger.warningf("This is info: %s", 5);
 }

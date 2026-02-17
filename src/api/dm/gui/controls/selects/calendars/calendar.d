@@ -248,7 +248,7 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
                             }
                             catch (Exception e)
                             {
-                                logger.trace("Error setting year from text field", e);
+                                logger.trace("Error setting year from text field: " ~ e.toString);
                             }
                         }
                     };

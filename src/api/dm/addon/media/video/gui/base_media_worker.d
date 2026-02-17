@@ -1,7 +1,7 @@
 module api.dm.addon.media.video.gui.base_media_worker;
 
 import core.thread.osthread : Thread;
-import std.logger : Logger;
+import api.core.loggers.slogger.logger : Logger;
 
 import api.dm.lib.ffmpeg.native;
 

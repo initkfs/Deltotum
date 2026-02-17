@@ -24,7 +24,7 @@ import api.core.supports.decisions.decision_system : DecisionSystem;
 
 import CoreEnvKeys = api.core.core_env_keys;
 
-import std.logger : Logger;
+import api.core.loggers.slogger.logger : Logger;
 import std.typecons : Nullable;
 import std.getopt : GetoptResult;
 
@@ -181,7 +181,7 @@ class CliApp : SimpleUnit
         {
             if (uservices && uservices.logging)
             {
-                uservices.logger.error("Error from application. ", ex);
+                uservices.logger.error("Error from application. " ~ ex.toString);
             }
 
             if (isRethrow)
@@ -435,75 +435,43 @@ class CliApp : SimpleUnit
     {
         assert(support);
 
-        import std.logger : MultiLogger, FileLogger, LogLevel, Logger;
+        import api.core.loggers.slogger.logger_level : LogLevel;
+        import api.core.loggers.slogger.logger : Logger, FileHandler, ConsoleHandler, BaseLoggerHandler;
         import CoreConfigKeys = api.core.core_config_keys;
 
-        auto multiLogger = new MultiLogger(
-            LogLevel.trace);
-        import std.stdio : stdout;
+        //TODO from config
+        auto multiLogger = new Logger;
+        multiLogger.level = LogLevel.trace;
 
         enum consoleLoggerLevel = LogLevel.trace;
-        FileLogger consoleLogger;
-        if (!CoreConfigKeys.loggerIsShowMemory)
+        BaseLoggerHandler consoleLogger = new ConsoleHandler;
+        consoleLogger.level = consoleLoggerLevel;
+        if (CoreConfigKeys.loggerIsShowMemory)
         {
-            consoleLogger = new FileLogger(stdout, consoleLoggerLevel);
-        }
-        else
-        {
-            consoleLogger = new class FileLogger
-            {
-                this()
-                {
-                    super(stdout, consoleLoggerLevel);
-                }
-
-                override protected void logMsgPart(scope const(char)[] msg)
-                {
-                    if (CoreConfigKeys.loggerIsShowMemory)
-                    {
-                        import Mem = api.core.utils.mem;
-
-                        auto memSize = Mem.memBytes;
-                        if (memSize > 0)
-                        {
-                            import std.format : format;
-
-                            msg ~= format("[%s]", Mem.formatBytes(memSize));
-                        }
-                    }
-
-                    super.logMsgPart(msg);
-                }
-            };
+            //TODO flag   
         }
 
-        const string consoleLoggerName = "logger_stdout";
-        multiLogger.insertLogger(consoleLoggerName, consoleLogger);
+        multiLogger.add(consoleLogger);
 
-        import std.format : format;
+        // auto errLogger = new class Logger
+        // {
+        //     this()
+        //     {
+        //         super(LogLevel.warning);
+        //     }
 
-        auto errLogger = new class Logger
-        {
-            this()
-            {
-                super(LogLevel.warning);
-            }
-
-            override void writeLogMsg(ref LogEntry payload) @trusted
-            {
-                auto logLevel = payload.logLevel;
-                auto dt = payload.timestamp;
-                string message = format("%02d:%02d %s %s(%d): %s", dt.hour(), dt.minute(),
-                    payload.logLevel, payload.moduleName, payload.line, payload.msg);
-                support.errStatus.error(message);
-            }
-        };
-
-        multiLogger.insertLogger("Error logging", errLogger);
+        //     override void writeLogMsg(ref LogEntry payload) @trusted
+        //     {
+        //         auto logLevel = payload.logLevel;
+        //         auto dt = payload.timestamp;
+        //         string message = format("%02d:%02d %s %s(%d): %s", dt.hour(), dt.minute(),
+        //             payload.logLevel, payload.moduleName, payload.line, payload.msg);
+        //         support.errStatus.error(message);
+        //     }
+        // };
 
         multiLogger.tracef(
-            "Create stdout logging, name '%s', level '%s'",
-            consoleLoggerName, consoleLoggerLevel);
+            "Create stdout logging, level '%s'", consoleLoggerLevel);
 
         return multiLogger;
     }

@@ -2,7 +2,7 @@ module api.core.loggers.logging;
 
 import api.core.components.component_service : ComponentService;
 
-import std.logger.core : Logger;
+import api.core.loggers.slogger.logger : Logger;
 
 /**
  * Authors: initkfs

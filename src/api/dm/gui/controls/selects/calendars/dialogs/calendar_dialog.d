@@ -158,13 +158,13 @@ class CalendarDialog : Control
                         auto pos = selected.countUntil(dayContainer);
                         if (pos == -1)
                         {
-                            logger.trace("Not found day container in selected: ", dayContainer);
+                            logger.trace("Not found day container in selected: " ~ dayContainer.toString);
                             return;
                         }
                         selected = selected.remove(pos);
                         version (EnableTrace)
                         {
-                            logger.trace("Remove day container from selected: ", dayContainer);
+                            logger.trace("Remove day container from selected: " ~ dayContainer.toString);
                         }
                         return;
                     }

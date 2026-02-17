@@ -57,7 +57,8 @@ import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.platforms.screens.screening : Screening;
 
-import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
+import api.core.loggers.slogger.logger_level: LogLevel;
+import api.core.loggers.slogger.logger : Logger, FileHandler;
 import std.stdio;
 import KitConfigKeys = api.dm.kit.kit_config_keys;
 
@@ -275,7 +276,7 @@ class SdlApp : GuiApp
             }
             catch (Exception e)
             {
-                uservices.logger.warning("Cursor error: ", e);
+                uservices.logger.warning("Cursor error: " ~ e.toString);
             }
 
             if (!cursor)
@@ -696,11 +697,11 @@ class SdlApp : GuiApp
                     //"1": Use /dev/input/js*
                     if (const err = sdlLib.setHint(SDL_HINT_JOYSTICK_LINUX_CLASSIC.ptr, "1".ptr))
                     {
-                        uservices.logger.error("Error change joystick interface: ", err);
+                        uservices.logger.errorf("Error change joystick interface: %d", err);
                     }
                     else
                     {
-                        uservices.logger.infof("Set joystick classic interface");
+                        uservices.logger.info("Set joystick classic interface");
                     }
                 }
             }
@@ -711,7 +712,7 @@ class SdlApp : GuiApp
             throw new Exception(err.toString);
         }
 
-        uservices.logger.infof("SDL ", sdlLib.linkedVersionString);
+        uservices.logger.infof("SDL: %s", sdlLib.linkedVersionString);
 
         //TODO move to hal layer
         SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
@@ -739,7 +740,7 @@ class SdlApp : GuiApp
             if (const err = sdlJoystick.get.initialize)
             {
                 gservices.platform.cap.isJoystick = false;
-                uservices.logger.error(err);
+                uservices.logger.error(err.toString);
             }
             else
             {
@@ -801,7 +802,7 @@ class SdlApp : GuiApp
                 }
 
                 jpegLib.onLoadAllErrors = (allerr) {
-                    uservices.logger.error("libjpeg errors: ", allerr);
+                    uservices.logger.errorf("libjpeg errors: %s", allerr);
                     gservices.platform.cap.isImage = false;
                     jpegLib.unload;
                     jpegLib = null;
@@ -818,7 +819,7 @@ class SdlApp : GuiApp
                 }
 
                 pngLib.onLoadAllErrors = (allerr) {
-                    uservices.logger.error("libpng errors: ", allerr);
+                    uservices.logger.errorf("libpng errors: %s", allerr);
                     gservices.platform.cap.isImage = false;
                     pngLib.unload;
                     pngLib = null;
@@ -1036,7 +1037,7 @@ class SdlApp : GuiApp
         ComScreenId screenId;
         if (const err = comScreen.getScreenForWindow(sdlWindow, screenId))
         {
-            uservices.logger.error("Error getting display for window: ", window.title);
+            uservices.logger.errorf("Error getting display for window: %s", window.title);
         }
 
         if (gpuDevice.isCreated)
@@ -1148,7 +1149,7 @@ class SdlApp : GuiApp
             }
             catch (Exception e)
             {
-                uservices.logger.error(e);
+                uservices.logger.error(e.toString);
             }
         }
 
@@ -1347,7 +1348,7 @@ class SdlApp : GuiApp
             }
             catch (Exception e)
             {
-                uservices.logger.error(e);
+                uservices.logger.error(e.toString);
             }
         }
 

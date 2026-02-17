@@ -1,8 +1,7 @@
 module api.core.loggers.null_logging;
 
 import api.core.loggers.logging : Logging;
-
-import std.logger : NullLogger;
+import api.core.loggers.slogger.logger: Logger;
 
 /**
  * Authors: initkfs
@@ -11,18 +10,18 @@ class NullLogging : Logging
 {
     this() @safe
     {
-        super(new NullLogger);
+        super(new Logger);
     }
 
     this() const @safe
     {
-        super(new NullLogger);
+        super(new Logger);
     }
 
     this() immutable @safe
     {
         super(() @trusted {
-            return cast(immutable(NullLogger)) new NullLogger;
+            return cast(immutable(Logger)) new Logger;
         }());
     }
 }

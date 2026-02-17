@@ -17,7 +17,7 @@ import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
 import api.core.utils.allocs.allocator : Allocator;
 
-import std.logger : Logger;
+import api.core.loggers.slogger.logger : Logger;
 
 /**
  * Authors: initkfs

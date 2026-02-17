@@ -171,7 +171,7 @@ class Windowing : LoggableUnit
         auto mustBeWindow = byFirstId(winId);
         if (mustBeWindow.isNull)
         {
-            logger.error("No window found to destroy with id ", winId);
+            logger.errorf("No window found to destroy with id %d", winId);
             return;
         }
         destroyWindow(mustBeWindow.get, isRemove);

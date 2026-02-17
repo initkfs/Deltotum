@@ -5,7 +5,7 @@ import api.core.utils.container_result : ContainerResult;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 import api.dm.addon.media.video.gui.video_decoder : UVFrame;
 
-import std.logger : Logger;
+import api.core.loggers.slogger.logger : Logger;
 import core.sync.mutex : Mutex;
 
 import Math = api.math;
@@ -182,7 +182,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                         const isWrite = videoPacketQueue.write(packets);
                         if (isWrite != ContainerResult.success)
                         {
-                            logger.error("Error sending video packet to queue: ", isWrite);
+                            logger.errorf("Error sending video packet to queue: %s", isWrite);
                         }
                     }
                 }
@@ -215,7 +215,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
 
                         if (isWrite != ContainerResult.success)
                         {
-                            logger.error("Error sending audio packet to queue", isWrite);
+                            logger.errorf("Error sending audio packet to queue: %s", isWrite);
                         }
                     }
                 }
@@ -230,11 +230,11 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
         }
         catch (Exception e)
         {
-            logger.error("Exception in demuxer: ", e);
+            logger.error("Exception in demuxer: " ~ e.toString);
         }
         catch (Throwable th)
         {
-            logger.error("Error in demuxer: ", th);
+            logger.error("Error in demuxer: " ~ th.toString);
             throw th;
         }
     }

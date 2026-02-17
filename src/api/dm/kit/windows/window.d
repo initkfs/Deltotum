@@ -383,7 +383,7 @@ class Window : GraphicComponent
 
         if (const err = comWindow.close)
         {
-            logger.error("Window closing error. ", err.toString);
+            logger.error("Window closing error: " ~ err.toString);
             //WARNING return
             return;
         }
@@ -411,7 +411,7 @@ class Window : GraphicComponent
                     scene.dispose;
                     version (EnableTrace)
                     {
-                        logger.trace("Dispose created scene in window with name: ", sceneName);
+                        logger.trace("Dispose created scene in window with name: " ~ sceneName);
                     }
                 }
             }
@@ -421,7 +421,7 @@ class Window : GraphicComponent
         comWindow.dispose;
         version (EnableTrace)
         {
-            logger.trace("Dispose native window with id: ", windowId);
+            logger.tracef("Dispose native window with id: %d", windowId);
         }
 
         //TODO all fields
@@ -943,7 +943,7 @@ class Window : GraphicComponent
         float density;
         if (const err = comWindow.getPixelDensity(density))
         {
-            logger.error(err);
+            logger.error(err.toString);
         }
         return density;
     }

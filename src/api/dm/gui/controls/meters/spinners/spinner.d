@@ -164,7 +164,7 @@ class Spinner(T) : MinMaxValueMeter!T
                 }
                 catch (Exception e)
                 {
-                    logger.error(e);
+                    logger.error(e.toString);
                     initInc = T.init;
                     incLabel.text = initInc.to!dstring;
                 }
@@ -221,7 +221,7 @@ class Spinner(T) : MinMaxValueMeter!T
                 }
                 catch (Exception e)
                 {
-                    logger.error(e);
+                    logger.error(e.toString);
                     initDec = T.init;
                     decLabel.text = initDec.to!dstring;
                 }

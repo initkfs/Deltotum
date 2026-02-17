@@ -145,7 +145,7 @@ class Graphic : LoggableUnit
         ComBlendMode mustBePrevMode;
         if (const err = renderer.getBlendMode(mustBePrevMode))
         {
-            logger.error("Error getting renderer blending mode: ", err);
+            logger.error("Error getting renderer blending mode: " ~ err.toString);
             return ComBlendMode.none;
         }
 
@@ -165,7 +165,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.setBlendMode(mode))
         {
-            logger.error("Error setting blending mode for the renderer: ", err);
+            logger.error("Error setting blending mode for the renderer: " ~ err.toString);
         }
     }
 
@@ -977,7 +977,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.setScale(scaleX, scaleY))
         {
-            logger.error(err);
+            logger.error(err.toString);
         }
     }
 
@@ -996,7 +996,7 @@ class Graphic : LoggableUnit
 
         if (const err = renderer.getOutputSize(outputWidth, outputHeight))
         {
-            logger.error("Error getting renderer output size: ", err);
+            logger.error("Error getting renderer output size: " ~ err.toString);
             return Rect2f.init;
         }
 

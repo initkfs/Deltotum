@@ -319,7 +319,7 @@ class VideoPlayer(
         const isPeek = videoBuffer.peek(vframe);
         if (!isPeek)
         {
-            logger.error("Error peek videoframe from buffer: ", isPeek);
+            logger.errorf("Error peek videoframe from buffer: %s", isPeek);
             return;
         }
 

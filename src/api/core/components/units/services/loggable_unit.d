@@ -4,7 +4,7 @@ import api.core.components.units.simple_unit : SimpleUnit;
 
 import api.core.loggers.logging : Logging;
 
-import std.logger : Logger;
+import api.core.loggers.slogger.logger : Logger;
 
 /**
  * Authors: initkfs
@@ -53,17 +53,17 @@ class LoggableUnit : SimpleUnit
 unittest
 {
     import api.core.loggers.logging : Logging;
-    import std.logger : NullLogger, LogLevel;
+    import api.core.loggers.slogger.logger_level: LogLevel;
     import std.traits : isMutable;
     import std.conv : to;
 
-    const(Logger) nlc = new NullLogger(LogLevel.all);
+    const(Logger) nlc = new Logger(LogLevel.all);
     const logging = new const Logging(nlc);
     const(LoggableUnit) lc = new const LoggableUnit(logging);
     assert(!isMutable!(typeof(lc.logging)));
     assert(!isMutable!(typeof(lc.logger)));
 
-    immutable nli = cast(immutable(NullLogger)) new NullLogger(LogLevel.all);
+    immutable nli = cast(immutable(Logger)) new Logger(LogLevel.all);
     immutable loggingi = new immutable Logging(nli);
     auto li = new immutable LoggableUnit(loggingi);
     assert(!isMutable!(typeof(li.logging)));

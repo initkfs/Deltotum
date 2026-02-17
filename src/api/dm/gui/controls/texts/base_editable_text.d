@@ -303,7 +303,7 @@ class BaseEditableText : BaseMonoText
                                     .glyphIndexAbs + 1 : cursorPos.glyphIndexAbs;
                                 if (!_textBuffer.insert(insertIndex, newText))
                                 {
-                                    logger.error("Error text inserting from clipboard: ", newText);
+                                    logger.errorf("Error text inserting from clipboard: %s", newText);
                                 }
                                 else
                                 {
@@ -311,14 +311,14 @@ class BaseEditableText : BaseMonoText
 
                                     version (EnableTrace)
                                     {
-                                        logger.trace("Paste text to clipboard: ", text);
+                                        logger.tracef("Paste text to clipboard: %s", text);
                                     }
 
                                     auto offset = newText.length;
                                     size_t newIndex = cursorPos.glyphIndexAbs + offset;
                                     if (newIndex >= lastGlyphIndex || !setCursorPos(newIndex, false))
                                     {
-                                        logger.error("Error setting cursor index after insert: ", newIndex);
+                                        logger.errorf("Error setting cursor index after insert: %d", newIndex);
 
                                     }
 
@@ -396,7 +396,7 @@ class BaseEditableText : BaseMonoText
                                     false, isChangeCursorState:
                                     false))
                             {
-                                logger.error("Invalid cursor pos: ", cursorPos);
+                                logger.errorf("Invalid cursor pos: %s", cursorPos);
                             }
 
                         }
@@ -408,7 +408,7 @@ class BaseEditableText : BaseMonoText
                     }
                     else
                     {
-                        logger.error("Error removing buffer text: ", text);
+                        logger.errorf("Error removing buffer text: %s", text);
                     }
 
                     return;
@@ -753,7 +753,7 @@ class BaseEditableText : BaseMonoText
 
             if (needRow.length == 0)
             {
-                logger.error("Empty row for cursor: ", prevBreakLine, " ", lineBreak + 1);
+                logger.errorf("Empty row for cursor: %d:%d", prevBreakLine, lineBreak + 1);
                 return CursorPos.init;
             }
 
