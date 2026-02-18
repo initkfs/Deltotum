@@ -4,11 +4,12 @@ module api.core.utils.allocs.allocator;
  * Authors: initkfs
  */
 
+//Windows API: _aligned_malloc and _aligned_free
 alias AllocFailHandler = void function() nothrow @trusted;
 alias AllocFuncType = bool function(size_t size, scope ref ubyte[] ptr) nothrow @trusted;
 alias AllocAlignFuncType = bool function(size_t size, scope ref ubyte[] ptr, ulong alignSize) nothrow @trusted;
 alias ReallocFuncType = bool function(size_t newSize, scope ref ubyte[]) nothrow @trusted;
-alias FreeFuncType = bool function(scope ubyte[] ptr) nothrow @trusted;
+alias FreeFuncType = bool function(scope void* ptr) nothrow @trusted;
 
 mixin template MemFuncs()
 {
@@ -156,10 +157,10 @@ mixin template MemFuncs()
         return cast(T[]) newPtr;
     }
 
-    bool free(void[] ptr)
+    bool free(void* ptr)
     in (freeFunPtr)
     {
-        if (freeFunPtr(cast(ubyte[]) ptr))
+        if (freeFunPtr(ptr))
         {
             return true;
         }

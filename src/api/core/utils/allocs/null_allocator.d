@@ -9,7 +9,7 @@ import api.core.utils.allocs.allocator : Allocator;
 bool null_allocate(size_t sizeBytes, scope ref ubyte[] ptr)  nothrow @trusted => false;
 bool null_align_allocate(size_t sizeBytes, scope ref ubyte[] ptr, ulong alignSize)  nothrow @trusted => false;
 bool null_reallocate(size_t newBytes, scope ref ubyte[] ptr)  nothrow @trusted => false;
-bool null_deallocate(scope ubyte[] ptr)  nothrow @trusted => false;
+bool null_deallocate(scope void* ptr)  nothrow @trusted => false;
 
 version (D_BetterC)
 {

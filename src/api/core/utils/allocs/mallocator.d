@@ -31,12 +31,18 @@ bool allocateAlign(size_t size, scope ref ubyte[] ptr, size_t alignSize) nothrow
 
     import core.stdc.stdlib : aligned_alloc;
 
-    ubyte* newPtr = cast(ubyte*) aligned_alloc(alignSize, size);
+    size_t adjustedSize = size;
+    if (size % alignSize != 0)
+    {
+        adjustedSize = ((size + alignSize - 1) / alignSize) * alignSize;
+    }
+
+    ubyte* newPtr = cast(ubyte*) aligned_alloc(alignSize, adjustedSize);
     if (!newPtr)
     {
         return false;
     }
-    ptr = newPtr[0 .. size];
+    ptr = newPtr[0 .. adjustedSize];
     return true;
 }
 
@@ -50,7 +56,7 @@ bool reallocate(size_t newSize, scope ref ubyte[] ptr) nothrow @trusted
     {
         if (newSize == 0)
         {
-            return deallocate(ptr);
+            return deallocate(ptr.ptr);
         }
     }
 
@@ -63,13 +69,13 @@ bool reallocate(size_t newSize, scope ref ubyte[] ptr) nothrow @trusted
     return true;
 }
 
-bool deallocate(scope ubyte[] ptr) nothrow @trusted
+bool deallocate(scope void* ptr) nothrow @trusted
 {
-    if (!ptr.ptr)
+    if (!ptr)
     {
         return false;
     }
-    free(ptr.ptr);
+    free(ptr);
     return true;
 }
 
@@ -79,6 +85,14 @@ version (D_BetterC)
 else
 {
     import api.core.utils.allocs.allocator : Allocator;
+
+    void initMallocator(Allocator allocator) pure nothrow @safe
+    {
+        allocator.allocFunPtr = &allocate;
+        allocator.allocAlignFunPtr = &allocateAlign;
+        allocator.reallocFunPtr = &reallocate;
+        allocator.freeFunPtr = &deallocate;
+    }
 
     class Mallocator : Allocator
     {
@@ -113,6 +127,6 @@ unittest
         intPtr2[5 .. $] = [6, 7, 8, 9, 10];
         assert(intPtr2 == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
-        assert(alloc.free(intPtr2));
+        assert(alloc.free(intPtr2.ptr));
     }
 }
