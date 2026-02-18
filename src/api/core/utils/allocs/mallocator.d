@@ -22,6 +22,24 @@ bool allocate(size_t size, scope ref ubyte[] ptr) nothrow @trusted
     return true;
 }
 
+bool allocateAlign(size_t size, scope ref ubyte[] ptr, size_t alignSize) nothrow @trusted
+{
+    if (size == 0)
+    {
+        return true;
+    }
+
+    import core.stdc.stdlib : aligned_alloc;
+
+    ubyte* newPtr = cast(ubyte*) aligned_alloc(alignSize, size);
+    if (!newPtr)
+    {
+        return false;
+    }
+    ptr = newPtr[0 .. size];
+    return true;
+}
+
 bool reallocate(size_t newSize, scope ref ubyte[] ptr) nothrow @trusted
 {
     if (!ptr.ptr)
@@ -67,6 +85,7 @@ else
         this() pure nothrow @safe
         {
             allocFunPtr = &allocate;
+            allocAlignFunPtr = &allocateAlign;
             reallocFunPtr = &reallocate;
             freeFunPtr = &deallocate;
         }

@@ -4,9 +4,11 @@ module api.core.utils.allocs.allocator;
  * Authors: initkfs
  */
 
-alias AllocFuncType = bool function(size_t size, scope ref ubyte[] ptr) nothrow @safe;
-alias ReallocFuncType = bool function(size_t newSize, scope ref ubyte[]) nothrow @safe;
-alias FreeFuncType = bool function(scope ubyte[] ptr) nothrow @safe;
+alias AllocFailHandler = void function() nothrow @trusted;
+alias AllocFuncType = bool function(size_t size, scope ref ubyte[] ptr) nothrow @trusted;
+alias AllocAlignFuncType = bool function(size_t size, scope ref ubyte[] ptr, ulong alignSize) nothrow @trusted;
+alias ReallocFuncType = bool function(size_t newSize, scope ref ubyte[]) nothrow @trusted;
+alias FreeFuncType = bool function(scope ubyte[] ptr) nothrow @trusted;
 
 mixin template MemFuncs()
 {
@@ -15,19 +17,29 @@ mixin template MemFuncs()
         __gshared
         {
             AllocFuncType allocFunPtr;
+            AllocAlignFuncType allocAlignFunPtr;
             ReallocFuncType reallocFunPtr;
             FreeFuncType freeFunPtr;
+            AllocFailHandler allocFailFunPtr;
         }
     }
     else
     {
         AllocFuncType allocFunPtr;
+        AllocAlignFuncType allocAlignFunPtr;
         ReallocFuncType reallocFunPtr;
         FreeFuncType freeFunPtr;
+        AllocFailHandler allocFailFunPtr;
     }
 
-    T[] array(T)(size_t capacity = 1, bool isErrorOnFail = true)
-    in (allocFunPtr)
+    bool allocBytes(size_t size, scope ref ubyte[] ptr, size_t alignSize)
+    {
+        assert(allocFunPtr);
+        assert(allocAlignFunPtr);
+        return alignSize == 0 ? allocFunPtr(size, ptr) : allocAlignFunPtr(size, ptr, alignSize);
+    }
+
+    T[] array(T)(size_t capacity = 1, size_t alignSize = 0, bool isErrorOnFail = true, bool isCheckSizeOverflow = true)
     {
         if (capacity == 0)
         {
@@ -36,7 +48,7 @@ mixin template MemFuncs()
 
         const size = capacity * T.sizeof;
 
-        if ((size / capacity) != T.sizeof)
+        if (isCheckSizeOverflow && (size / capacity) != T.sizeof)
         {
             if (isErrorOnFail)
             {
@@ -48,6 +60,7 @@ mixin template MemFuncs()
                 else
                 {
                     assert(false, message);
+                    return null;
                 }
             }
             else
@@ -57,28 +70,47 @@ mixin template MemFuncs()
         }
 
         ubyte[] ptr;
-        if (!allocFunPtr(size, ptr) && isErrorOnFail)
+        bool isAlloc = allocBytes(size, ptr, alignSize);
+        if (!isAlloc)
         {
-            enum message = "Allocation failed";
-            version (D_Exceptions)
+            if (isErrorOnFail)
             {
-                throw new Exception(message);
+                enum message = "Allocation failed";
+                version (D_Exceptions)
+                {
+                    throw new Exception(message);
+                }
+                else
+                {
+                    assert(false, message);
+                    return null;
+                }
             }
             else
             {
-                assert(false, message);
+                while (allocFailFunPtr && !isAlloc)
+                {
+                    allocFailFunPtr();
+                    isAlloc = allocBytes(size, ptr, alignSize);
+                }
+
+                if (!isAlloc || ptr.length == 0)
+                {
+                    return null;
+                }
             }
+
         }
 
         return cast(T[]) ptr;
     }
 
-    T[] realloc(T)(size_t newCapacity = 1, T[] ptr, bool isErrorOnFail = true)
+    T[] realloc(T)(size_t newCapacity = 1, T[] ptr, bool isErrorOnFail = true, bool isCheckSizeOverflow = true)
     in (reallocFunPtr)
     {
         const newSize = newCapacity * T.sizeof;
 
-        if ((newSize / newCapacity) != T.sizeof)
+        if (isCheckSizeOverflow && (newSize / newCapacity) != T.sizeof)
         {
             if (isErrorOnFail)
             {
@@ -90,6 +122,7 @@ mixin template MemFuncs()
                 else
                 {
                     assert(false, message);
+                    return null;
                 }
             }
             else
@@ -99,16 +132,24 @@ mixin template MemFuncs()
         }
 
         ubyte[] newPtr = cast(ubyte[]) ptr;
-        if (!reallocFunPtr(newSize, newPtr) && isErrorOnFail)
+        if (!reallocFunPtr(newSize, newPtr))
         {
-            enum message = "Reallocation failed";
-            version (D_Exceptions)
+            if (isErrorOnFail)
             {
-                throw new Exception(message);
+                enum message = "Reallocation failed";
+                version (D_Exceptions)
+                {
+                    throw new Exception(message);
+                }
+                else
+                {
+                    assert(false, message);
+                    return null;
+                }
             }
             else
             {
-                assert(false, message);
+                return null;
             }
         }
 
