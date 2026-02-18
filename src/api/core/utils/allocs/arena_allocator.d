@@ -51,8 +51,8 @@ struct Block
     void resetHistory()
     {
         offset = 0;
-        maxOffset= 0;
-        totalUsed= 0 ;
+        maxOffset = 0;
+        totalUsed = 0;
     }
 }
 
@@ -65,14 +65,21 @@ struct Stats
     size_t allocations;
 }
 
-class ArenaAllocator : Allocator
+struct ArenaAllocator
 {
+    Allocator base;
+
     size_t pageSize;
     size_t allocations;
     Block* firstBlock;
     Block* currentBlock;
 
     bool isUseAlignAlloc;
+
+    this(Allocator base) pure nothrow @safe
+    {
+        this.base = base;
+    }
 
     void create(size_t initialSize, size_t pageSize = 16) @trusted
     {
@@ -108,11 +115,11 @@ class ArenaAllocator : Allocator
 
     Block* createBlock(size_t initialSize)
     {
-        assert(allocFunPtr);
-        assert(allocAlignFunPtr);
+        assert(base.allocFunPtr);
+        assert(base.allocAlignFunPtr);
 
         ubyte[] blockBuff;
-        if (!allocFunPtr(Block.sizeof, blockBuff))
+        if (!base.allocFunPtr(Block.sizeof, blockBuff))
         {
             return null;
         }
@@ -123,14 +130,15 @@ class ArenaAllocator : Allocator
         newBlock.offset = 0;
 
         ubyte[] blockData;
-        bool isAlloc = !isUseAlignAlloc ? allocFunPtr(roundToPageSize(initialSize), blockData) : allocAlignFunPtr(
-            roundToPageSize(initialSize), blockData, pageSize);
+        bool isAlloc = !isUseAlignAlloc ? base.allocFunPtr(roundToPageSize(initialSize), blockData)
+            : base.allocAlignFunPtr(
+                roundToPageSize(initialSize), blockData, pageSize);
         if (!isAlloc)
         {
             if (blockBuff.length > 0)
             {
-                assert(freeFunPtr);
-                freeFunPtr(blockBuff.ptr);
+                assert(base.freeFunPtr);
+                base.freeFunPtr(blockBuff.ptr);
             }
             return null;
         }
@@ -191,15 +199,15 @@ class ArenaAllocator : Allocator
 
     void freeAll() @trusted
     {
-        assert(freeFunPtr);
+        assert(base.freeFunPtr);
         auto block = firstBlock;
         while (block)
         {
             auto blockPtr = block;
             block = block.next;
 
-            freeFunPtr(blockPtr.buffer.ptr);
-            freeFunPtr(blockPtr);
+            base.freeFunPtr(blockPtr.buffer.ptr);
+            base.freeFunPtr(blockPtr);
         }
 
         firstBlock = null;
@@ -267,7 +275,7 @@ unittest
     import api.core.utils.allocs.mallocator : initMallocator;
 
     auto allocator = new ArenaAllocator;
-    initMallocator(allocator);
+    initMallocator(cast(Allocator*) allocator);
     allocator.create(16, 32);
 
     auto bytes1 = allocator.array!ubyte(4);
@@ -323,7 +331,7 @@ unittest
 
     //Test align
     auto aallocator = new ArenaAllocator;
-    initMallocator(aallocator);
+    initMallocator(cast(Allocator*) aallocator);
     aallocator.isUseAlignAlloc = true;
     aallocator.create(64, 64);
 
@@ -333,7 +341,7 @@ unittest
 
     allocator = new ArenaAllocator;
     allocator.isUseAlignAlloc = true;
-    initMallocator(allocator);
+    initMallocator(cast(Allocator*) allocator);
     allocator.create(32, 64);
 
     struct Align16

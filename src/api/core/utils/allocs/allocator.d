@@ -11,27 +11,13 @@ alias AllocAlignFuncType = bool function(size_t size, scope ref ubyte[] ptr, ulo
 alias ReallocFuncType = bool function(size_t newSize, scope ref ubyte[]) nothrow @trusted;
 alias FreeFuncType = bool function(scope void* ptr) nothrow @trusted;
 
-mixin template MemFuncs()
+struct Allocator
 {
-    version (D_BetterC)
-    {
-        __gshared
-        {
-            AllocFuncType allocFunPtr;
-            AllocAlignFuncType allocAlignFunPtr;
-            ReallocFuncType reallocFunPtr;
-            FreeFuncType freeFunPtr;
-            AllocFailHandler allocFailFunPtr;
-        }
-    }
-    else
-    {
-        AllocFuncType allocFunPtr;
-        AllocAlignFuncType allocAlignFunPtr;
-        ReallocFuncType reallocFunPtr;
-        FreeFuncType freeFunPtr;
-        AllocFailHandler allocFailFunPtr;
-    }
+    AllocFuncType allocFunPtr;
+    AllocAlignFuncType allocAlignFunPtr;
+    ReallocFuncType reallocFunPtr;
+    FreeFuncType freeFunPtr;
+    AllocFailHandler allocFailFunPtr;
 
     bool allocBytes(size_t size, scope ref ubyte[] ptr, size_t alignSize)
     {
@@ -166,19 +152,5 @@ mixin template MemFuncs()
         }
 
         return false;
-    }
-}
-
-version (D_BetterC)
-{
-    mixin MemFuncs;
-}
-else
-{
-    abstract class Allocator
-    {
-        mixin MemFuncs;
-
-        bool canAlloc() const nothrow pure @safe => true;
     }
 }

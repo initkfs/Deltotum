@@ -5,5 +5,5 @@ module api.core.utils.allocs;
 public:
 
 import api.core.utils.allocs.allocator;
+import api.core.utils.allocs.arena_allocator;
 import api.core.utils.allocs.mallocator;
-import api.core.utils.allocs.null_allocator;

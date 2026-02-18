@@ -19,6 +19,7 @@ import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
 import api.core.utils.allocs.allocator : Allocator;
 import api.core.utils.allocs.mallocator : Mallocator;
+import api.core.utils.allocs.arena_allocator : ArenaAllocator;
 import api.core.supports.errors.err_status : ErrStatus;
 import api.core.supports.decisions.decision_system : DecisionSystem;
 
@@ -571,25 +572,37 @@ class CliApp : SimpleUnit
         return new Resourcing(locals);
     }
 
-    Mallocator newMallocator()
+    Mallocator* newMallocator() => new Mallocator(Allocator.init);
+
+    Allocator* createAllocator(Logging logging, Config config, Context context)
     {
-        return new Mallocator;
+        return cast(Allocator*) newMallocator;
     }
 
-    Allocator createAllocator(Logging logging, Config config, Context context)
+    ArenaAllocator* newArenaAllocator()
     {
-        return newMallocator;
+        import api.core.utils.allocs.mallocator : initMallocator;
+        Allocator alloc;
+        initMallocator(&alloc);
+
+        return new ArenaAllocator(alloc);
     }
 
-    Memory newMemory(Allocator allocator)
+    ArenaAllocator* createArenaAllocator(Logging logging, Config config, Context context)
     {
-        return new Memory(allocator);
+        return newArenaAllocator;
+    }
+
+    Memory newMemory(Allocator* allocator, ArenaAllocator* arena)
+    {
+        return new Memory(allocator, arena);
     }
 
     Memory createMemory(Logging logging, Config config, Context context)
     {
         auto alloc = createAllocator(logging, config, context);
-        return newMemory(alloc);
+        auto arena = createArenaAllocator(logging, config, context);
+        return newMemory(alloc, arena);
     }
 
     protected Cli createCli(string[] args)

@@ -20,7 +20,6 @@ class NullUniComponent : UniComponent
         _context = new NullContext;
         _logging = new NullLogging;
         _configs = new NullConfiguration;
-        //TODO NullAllocator?
         _memory = new NullMemory;
         _cli = new NullCli;
         _resources = new NullResourcing;

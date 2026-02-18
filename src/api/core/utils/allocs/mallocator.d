@@ -5,6 +5,28 @@ module api.core.utils.allocs.mallocator;
  */
 
 import core.stdc.stdlib : malloc, realloc, free;
+import api.core.utils.allocs.allocator : Allocator;
+
+void initMallocator(scope Allocator* allocator) pure nothrow @safe
+{
+    allocator.allocFunPtr = &allocate;
+    allocator.allocAlignFunPtr = &allocateAlign;
+    allocator.reallocFunPtr = &reallocate;
+    allocator.freeFunPtr = &deallocate;
+}
+
+struct Mallocator
+{
+    Allocator base;
+
+    this(Allocator base) pure nothrow @safe
+    {
+        initMallocator(&base);
+        this.base = base;
+    }
+
+    alias base this;
+}
 
 bool allocate(size_t size, scope ref ubyte[] ptr) nothrow @trusted
 {
@@ -79,54 +101,20 @@ bool deallocate(scope void* ptr) nothrow @trusted
     return true;
 }
 
-version (D_BetterC)
-{
-}
-else
-{
-    import api.core.utils.allocs.allocator : Allocator;
-
-    void initMallocator(Allocator allocator) pure nothrow @safe
-    {
-        allocator.allocFunPtr = &allocate;
-        allocator.allocAlignFunPtr = &allocateAlign;
-        allocator.reallocFunPtr = &reallocate;
-        allocator.freeFunPtr = &deallocate;
-    }
-
-    class Mallocator : Allocator
-    {
-        this() pure nothrow @safe
-        {
-            allocFunPtr = &allocate;
-            allocAlignFunPtr = &allocateAlign;
-            reallocFunPtr = &reallocate;
-            freeFunPtr = &deallocate;
-        }
-    }
-}
-
 unittest
 {
-    version (D_BetterC)
-    {
+    Mallocator alloc = Mallocator(Allocator.init);
 
-    }
-    else
-    {
-        auto alloc = new Mallocator;
+    int[] intPtr1 = alloc.array!int(5);
+    assert(intPtr1.length == 5);
+    intPtr1[] = [1, 2, 3, 4, 5];
+    assert(intPtr1 == [1, 2, 3, 4, 5]);
 
-        int[] intPtr1 = alloc.array!int(5);
-        assert(intPtr1.length == 5);
-        intPtr1[] = [1, 2, 3, 4, 5];
-        assert(intPtr1 == [1, 2, 3, 4, 5]);
+    int[] intPtr2 = alloc.realloc(10, intPtr1);
+    assert(intPtr2.length == 10);
 
-        int[] intPtr2 = alloc.realloc(10, intPtr1);
-        assert(intPtr2.length == 10);
+    intPtr2[5 .. $] = [6, 7, 8, 9, 10];
+    assert(intPtr2 == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
-        intPtr2[5 .. $] = [6, 7, 8, 9, 10];
-        assert(intPtr2 == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-
-        assert(alloc.free(intPtr2.ptr));
-    }
+    assert(alloc.free(intPtr2.ptr));
 }

@@ -266,7 +266,7 @@ class UniComponent : SimpleUnit
     }
 
     bool hasMemory() const nothrow pure @safe => _memory !is null;
-    inout(Allocator) alloc() inout nothrow pure @safe => memory.alloc;
+    inout(Allocator*) alloc() inout nothrow pure @safe => memory.alloc;
 
     inout(Memory) memory() inout nothrow pure @safe
     out (_memory; _memory !is null)
