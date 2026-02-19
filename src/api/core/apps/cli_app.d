@@ -25,7 +25,7 @@ import api.core.supports.decisions.decision_system : DecisionSystem;
 
 import CoreEnvKeys = api.core.core_env_keys;
 
-import api.core.loggers.slogger.logger : Logger;
+import api.core.loggers.builtins.logger : Logger;
 import std.typecons : Nullable;
 import std.getopt : GetoptResult;
 
@@ -435,8 +435,9 @@ class CliApp : SimpleUnit
     {
         assert(support);
 
-        import api.core.loggers.slogger.logger_level : LogLevel;
-        import api.core.loggers.slogger.logger : Logger, FileHandler, ConsoleHandler, BaseLoggerHandler;
+        import api.core.loggers.builtins.base_logger : LogLevel;
+        import api.core.loggers.builtins.logger : Logger;
+        import api.core.loggers.builtins.handlers.console_handler: ConsoleHandler;
         import CoreConfigKeys = api.core.core_config_keys;
 
         //TODO from config
@@ -444,7 +445,7 @@ class CliApp : SimpleUnit
         multiLogger.level = LogLevel.trace;
 
         enum consoleLoggerLevel = LogLevel.trace;
-        BaseLoggerHandler consoleLogger = new ConsoleHandler;
+        auto consoleLogger = new ConsoleHandler;
         consoleLogger.level = consoleLoggerLevel;
         if (CoreConfigKeys.loggerIsShowMemory)
         {

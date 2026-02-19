@@ -4,7 +4,7 @@ import api.core.utils.queues.ring_buffer : RingBuffer;
 import api.core.utils.container_result : ContainerResult;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 
-import api.core.loggers.slogger.logger : Logger;
+import api.core.loggers.builtins.logger : Logger;
 import std.string : fromStringz, toStringz;
 
 import api.dm.lib.ffmpeg.native;

@@ -57,9 +57,10 @@ import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.platforms.screens.screening : Screening;
 
-import api.core.loggers.slogger.logger_level: LogLevel;
-import api.core.loggers.slogger.logger : Logger, FileHandler;
-import std.stdio;
+import api.core.loggers.builtins.base_logger: LogLevel;
+import api.core.loggers.builtins.logger : Logger;
+import api.core.loggers.builtins.handlers.file_handler: FileHandler;
+
 import KitConfigKeys = api.dm.kit.kit_config_keys;
 
 import api.dm.lib.cairo : CairoLib;

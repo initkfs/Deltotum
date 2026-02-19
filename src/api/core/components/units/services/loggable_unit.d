@@ -4,7 +4,7 @@ import api.core.components.units.simple_unit : SimpleUnit;
 
 import api.core.loggers.logging : Logging;
 
-import api.core.loggers.slogger.logger : Logger;
+import api.core.loggers.builtins.logger : Logger;
 
 /**
  * Authors: initkfs
@@ -53,7 +53,7 @@ class LoggableUnit : SimpleUnit
 unittest
 {
     import api.core.loggers.logging : Logging;
-    import api.core.loggers.slogger.logger_level: LogLevel;
+    import api.core.loggers.builtins.log_level: LogLevel;
     import std.traits : isMutable;
     import std.conv : to;
 

@@ -5,7 +5,7 @@ import api.core.utils.container_result : ContainerResult;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 import api.dm.addon.media.video.gui.video_decoder : UVFrame;
 
-import api.core.loggers.slogger.logger : Logger;
+import api.core.loggers.builtins.logger : Logger;
 import core.sync.mutex : Mutex;
 
 import Math = api.math;

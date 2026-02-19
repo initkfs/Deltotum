@@ -1,7 +1,7 @@
 module api.core.loggers.null_logging;
 
 import api.core.loggers.logging : Logging;
-import api.core.loggers.slogger.logger: Logger;
+import api.core.loggers.builtins.logger: Logger;
 
 /**
  * Authors: initkfs

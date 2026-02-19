@@ -1,6 +1,8 @@
-module api.core.loggers.slogger.logger;
+module api.core.loggers.builtins.logger;
 
-import api.core.loggers.slogger.logger_level : LogLevel, levelToStr;
+import api.core.loggers.builtins.base_logger: BaseLogger;
+import api.core.loggers.builtins.base_logger : LogLevel, levelToStr;
+import api.core.loggers.builtins.handlers.base_log_handler: BaseLogHandler;
 
 import core.sync.mutex : Mutex;
 import std.format : format;
@@ -9,100 +11,11 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-
-abstract class BaseLogger
-{
-    protected
-    {
-        LogLevel _level = LogLevel.all;
-    }
-
-    bool isForLevel(LogLevel mustBeLevel)
-    {
-        return mustBeLevel <= _level;
-    }
-
-    LogLevel level() => _level;
-    void level(LogLevel newLavel)
-    {
-        _level = newLavel;
-    }
-}
-
-abstract class BaseLoggerHandler : BaseLogger
-{
-    abstract
-    {
-        void output(LogLevel level, const(char)[] message);
-    }
-}
-
-class ConsoleHandler : BaseLoggerHandler
-{
-    override void output(LogLevel level, const(char)[] message)
-    {
-        if (!isForLevel(level))
-        {
-            return;
-        }
-
-        import std.stdio : writeln;
-
-        if (level <= LogLevel.error)
-        {
-            import std.stdio : stderr;
-
-            stderr.writeln(message);
-        }
-        else
-        {
-            writeln(message);
-        }
-    }
-}
-
-class FileHandler : BaseLoggerHandler
-{
-    import std.stdio : File, writeln;
-
-    protected
-    {
-        File* _logFile;
-        string path;
-    }
-
-    bool isFlush = true;
-
-    this(string path)
-    {
-        this.path = path;
-    }
-
-    override void output(LogLevel level, const(char)[] message)
-    {
-        if (!isForLevel(level))
-        {
-            return;
-        }
-
-        if (!_logFile)
-        {
-            _logFile = new File(path, "a+");
-        }
-
-        _logFile.writeln(message);
-        if (isFlush)
-        {
-            _logFile.flush;
-        }
-    }
-}
-
 class Logger : BaseLogger
 {
     protected
     {
-        BaseLoggerHandler[] handlers;
+        BaseLogHandler[] handlers;
 
         shared Mutex _mutex;
     }
@@ -113,7 +26,7 @@ class Logger : BaseLogger
         _mutex = new shared Mutex;
     }
 
-    void add(BaseLoggerHandler handler)
+    void add(BaseLogHandler handler)
     {
         handlers ~= handler;
     }

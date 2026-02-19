@@ -1,4 +1,4 @@
-module api.core.loggers.slogger.logger_level;
+module api.core.loggers.builtins.base_logger;
 
 /**
  * Authors: initkfs
@@ -12,6 +12,25 @@ enum LogLevel : ubyte
     info,
     trace,
     all
+}
+
+abstract class BaseLogger
+{
+    protected
+    {
+        LogLevel _level = LogLevel.all;
+    }
+
+    bool isForLevel(LogLevel mustBeLevel)
+    {
+        return mustBeLevel <= _level;
+    }
+
+    LogLevel level() => _level;
+    void level(LogLevel newLavel)
+    {
+        _level = newLavel;
+    }
 }
 
 string levelToStr(LogLevel v)
