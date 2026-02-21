@@ -106,7 +106,7 @@ class ConfigAggregator : Config
         return false;
     }
 
-    inout(Config) searchConfigOrNull(string key) inout
+    inout(Config) findConfig(string key) inout
     {
         foreach (config; _configs)
         {
@@ -121,7 +121,7 @@ class ConfigAggregator : Config
 
     override bool getBool(string key) const
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.getBool(key);
         }
@@ -131,7 +131,7 @@ class ConfigAggregator : Config
 
     override bool setBool(string key, bool value)
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.setBool(key, value);
         }
@@ -147,7 +147,7 @@ class ConfigAggregator : Config
 
     override string getString(string key) const
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.getString(key);
         }
@@ -156,7 +156,7 @@ class ConfigAggregator : Config
 
     override bool setString(string key, string value)
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.setString(key, value);
         }
@@ -173,7 +173,7 @@ class ConfigAggregator : Config
 
     override int getInt(string key) const
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.getInt(key);
         }
@@ -182,7 +182,7 @@ class ConfigAggregator : Config
 
     override bool setInt(string key, int value)
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.setInt(key, value);
         }
@@ -198,7 +198,7 @@ class ConfigAggregator : Config
 
     override long getLong(string key) const
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.getLong(key);
         }
@@ -207,7 +207,7 @@ class ConfigAggregator : Config
 
     override bool setLong(string key, long value)
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.setLong(key, value);
         }
@@ -223,7 +223,7 @@ class ConfigAggregator : Config
 
     override float getFloat(string key) const
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.getFloat(key);
         }
@@ -232,7 +232,7 @@ class ConfigAggregator : Config
 
     override bool setFloat(string key, float value)
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.setFloat(key, value);
         }
@@ -248,7 +248,7 @@ class ConfigAggregator : Config
 
     override double getDouble(string key) const
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.getDouble(key);
         }
@@ -257,7 +257,7 @@ class ConfigAggregator : Config
 
     override bool setDouble(string key, double value)
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.setDouble(key, value);
         }
@@ -273,7 +273,7 @@ class ConfigAggregator : Config
 
     override string[] getList(string key, char sep = ',') const
     {
-        if (auto config = searchConfigOrNull(key))
+        if (auto config = findConfig(key))
         {
             return config.getList(key, sep);
         }

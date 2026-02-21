@@ -386,7 +386,7 @@ class SdlApp : GuiApp
             eventManager = new KitEventManager;
 
             eventManager.windowProviderById = (windowId) {
-                auto mustBeCurrentWindow = windowing.byFirstIdOrNull(windowId);
+                auto mustBeCurrentWindow = windowing.findByFirstId(windowId);
                 if (mustBeCurrentWindow && (mustBeCurrentWindow.isShowing && mustBeCurrentWindow
                         .isFocus))
                 {
@@ -396,7 +396,7 @@ class SdlApp : GuiApp
             };
 
             eventManager.currentWindowProvider = () {
-                return windowing.currentOrNull;
+                return windowing.findCurrent;
             };
 
             eventProcessor.onWindow = (ref windowEvent) {
@@ -1414,7 +1414,7 @@ class SdlApp : GuiApp
     {
         SDL_Event event;
 
-        auto currWindow = windowing.currentOrNull;
+        auto currWindow = windowing.findCurrent;
 
         if (currWindow)
         {
@@ -1457,7 +1457,7 @@ class SdlApp : GuiApp
 
         const endStateTime = SDL_GetTicks();
 
-        auto mustBeWindow = windowing.currentOrNull;
+        auto mustBeWindow = windowing.findCurrent;
 
         if (mustBeWindow)
         {
@@ -1467,7 +1467,7 @@ class SdlApp : GuiApp
 
     void updateRender(float accumMsRest)
     {
-        auto currWindow = windowing.currentOrNull;
+        auto currWindow = windowing.findCurrent;
 
         if (!currWindow || !currWindow.isShowing)
         {
@@ -1482,7 +1482,7 @@ class SdlApp : GuiApp
     void updateEndFrame(float startMs, float deltaMs, size_t fixedUpdateCount)
     {
 
-        auto currWindow = windowing.currentOrNull;
+        auto currWindow = windowing.findCurrent;
 
         if (!currWindow)
         {

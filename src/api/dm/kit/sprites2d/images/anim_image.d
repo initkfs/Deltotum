@@ -164,7 +164,7 @@ class AnimImage : Image
 
     bool addOnEndFrame(string name, void delegate() dg)
     {
-        auto anim = animationOrNull(name);
+        auto anim = findAnimation(name);
         if (!anim)
         {
             return false;
@@ -193,7 +193,7 @@ class AnimImage : Image
             stop;
         }
 
-        auto mustBeAnim = animationOrNull(name);
+        auto mustBeAnim = findAnimation(name);
         if (!mustBeAnim)
         {
             return;
@@ -277,7 +277,7 @@ class AnimImage : Image
         drawFrame(frameIndex, frameRow, newFlip);
     }
 
-    ImageAnimation animationOrNull(string name)
+    ImageAnimation findAnimation(string name)
     {
         foreach (anim; animations)
         {
@@ -290,7 +290,7 @@ class AnimImage : Image
         return null;
     }
 
-    bool hasAnimation(string name) => animationOrNull(name) !is null;
+    bool hasAnimation(string name) => findAnimation(name) !is null;
 
     override void drawContent()
     {

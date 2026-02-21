@@ -49,7 +49,7 @@ class Windowing : LoggableUnit
         });
     }
 
-    Window byFirstIdOrNull(long id)
+    Window findByFirstId(long id)
     {
         Window mustBeWindow;
         onWindowsById(id, (win) { mustBeWindow = win; return false; });
@@ -57,7 +57,7 @@ class Windowing : LoggableUnit
         return mustBeWindow;
     }
 
-    Window currentOrNull()
+    Window findCurrent()
     {
         Window mustBeWindow;
         onWindows((window) {
@@ -145,7 +145,7 @@ class Windowing : LoggableUnit
 
     void destroyWindowById(long winId, bool isRemove = true)
     {
-        auto mustBeWindow = byFirstIdOrNull(winId);
+        auto mustBeWindow = findByFirstId(winId);
         if (!mustBeWindow)
         {
             logger.errorf("No window found to destroy with id %d", winId);
