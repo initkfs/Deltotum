@@ -10,7 +10,7 @@ enum defaultTimeFormat = "%Y-%m-%d %H:%M:%S";
 
 time_t nowTime() => time(null);
 
-tm* utcTime(time_t time) => gmtimeut(&time);
+tm* utcTime(time_t time) => gmtime(&time);
 tm* utcTime() => utcTime(nowTime);
 
 tm* localTime(time_t time) => localtime(&time);

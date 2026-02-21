@@ -45,7 +45,7 @@ class FontCache
         {
             return *fontPtr;
         }
-        //return nullable, but there are a lot of frequent checks
+
         import std.format : format;
 
         throw new Exception(format("Not found font '%s' with size '%s'", name, size));
@@ -74,7 +74,7 @@ class FontCache
         {
             return *fontPtr;
         }
-        //return nullable, but there are a lot of frequent checks
+        
         import std.format : format;
 
         throw new Exception(format("Not found bitmap for size '%s', color '%s', name '%s'", size, color, name));

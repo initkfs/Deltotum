@@ -2,7 +2,6 @@ module api.dm.kit.addon.utils.state_manager;
 
 import std.container.util: make;
 import std.container.dlist : DList;
-import std.typecons : Nullable;
 
 /**
  * Authors: initkfs
@@ -19,16 +18,15 @@ class StateManager(T)
         states = make!(DList!T)();
     }
 
-    Nullable!T state() nothrow pure @safe
+    T state() nothrow pure @safe
     {
-        Nullable!T last;
+        T last;
         if (isEmpty)
         {
             return last;
         }
 
-        last = states.back;
-        return last;
+        return states.back;
     }
 
     bool push(T state) pure @safe
@@ -83,7 +81,7 @@ class StateManager(T)
 unittest {
     auto fsm = new StateManager!string;
     assert(fsm.isEmpty);
-    assert(fsm.state.isNull);
+    assert(fsm.state.length == 0);
     assert(fsm.length == 0);
     
     enum state1 = "state1";

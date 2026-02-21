@@ -69,7 +69,7 @@ class BaseRoundButton : BaseButton
     {
         if (hasBackground)
         {
-            return background.get.contains(x, y);
+            return background.contains(x, y);
         }
 
         return super.contains(x, y);
@@ -79,7 +79,7 @@ class BaseRoundButton : BaseButton
     {
         if (hasBackground)
         {
-            return background.get.intersectBounds(other);
+            return background.intersectBounds(other);
         }
         return super.intersectBounds(other);
     }

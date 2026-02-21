@@ -34,7 +34,6 @@ class ThemeFromConfigFactory : ApplicationUnit
 
         import std.traits : hasUDA;
         import api.core.utils.types : hasOverloads;
-        import std.typecons : Nullable;
 
         static foreach (const fieldName; __traits(allMembers, T))
         {

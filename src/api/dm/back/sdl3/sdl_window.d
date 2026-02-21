@@ -15,7 +15,6 @@ import api.dm.back.sdl3.sdl_surface : SdlSurface;
 import api.math.geom2.rect2 : Rect2f;
 
 import std.string : toStringz, fromStringz;
-import std.typecons : Nullable;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -33,12 +32,12 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 {
     SdlWindowMode mode;
 
-    Nullable!(SDL_Renderer*) renderer;
-
     protected
     {
         int initWidth;
         int initHeight;
+
+        SDL_Renderer* _renderer;
     }
 
     this(int width, int height)
@@ -87,7 +86,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         }
 
         assert(!ptr);
-        assert(renderer.isNull);
+        assert(!_renderer);
 
         SDL_Renderer* mustBeRenderer;
 
@@ -99,7 +98,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         assert(ptr);
         assert(mustBeRenderer);
 
-        renderer = mustBeRenderer;
+        _renderer = mustBeRenderer;
 
         return ComResult.success;
     }
@@ -772,6 +771,14 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
         ptrInfo = ComNativePtr(ptr);
         return ComResult.success;
+    }
+
+    bool hasRenderer() => _renderer !is null;
+
+    SDL_Renderer* renderer()
+    {
+        assert(_renderer, "Renderer must not be null");
+        return _renderer;
     }
 
     void* rawPtr() nothrow

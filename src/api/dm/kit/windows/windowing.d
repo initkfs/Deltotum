@@ -6,7 +6,6 @@ import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.dm.kit.windows.window : Window;
 
 import api.core.loggers.logging : Logging;
-import std.typecons : Nullable;
 
 /**
  * Authors: initkfs
@@ -58,17 +57,6 @@ class Windowing : LoggableUnit
         return mustBeWindow;
     }
 
-    Nullable!Window byFirstId(long id)
-    {
-        auto window = byFirstIdOrNull(id);
-        if (!window)
-        {
-            return Nullable!Window.init;
-        }
-
-        return Nullable!Window(window);
-    }
-
     Window currentOrNull()
     {
         Window mustBeWindow;
@@ -82,17 +70,6 @@ class Windowing : LoggableUnit
         });
 
         return mustBeWindow;
-    }
-
-    Nullable!Window current()
-    {
-        auto mustBeWindow = currentOrNull;
-        if (!mustBeWindow)
-        {
-            return Nullable!Window.init;
-        }
-
-        return Nullable!Window(mustBeWindow);
     }
 
     bool add(Window window)
@@ -168,13 +145,13 @@ class Windowing : LoggableUnit
 
     void destroyWindowById(long winId, bool isRemove = true)
     {
-        auto mustBeWindow = byFirstId(winId);
-        if (mustBeWindow.isNull)
+        auto mustBeWindow = byFirstIdOrNull(winId);
+        if (!mustBeWindow)
         {
             logger.errorf("No window found to destroy with id %d", winId);
             return;
         }
-        destroyWindow(mustBeWindow.get, isRemove);
+        destroyWindow(mustBeWindow, isRemove);
     }
 
     void destroyWindow(Window window, bool isRemove = true)

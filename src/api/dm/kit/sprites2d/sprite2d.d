@@ -23,7 +23,6 @@ import std.container : DList;
 import std.math.operations : isClose;
 import std.stdio;
 import std.math.algebraic : abs;
-import std.typecons : Nullable;
 import std.variant : Variant;
 
 import api.dm.com.graphics.com_surface : ComSurface;
@@ -919,7 +918,7 @@ class Sprite2d : EventKitTarget
         setInvalid;
     }
 
-    Nullable!Sprite2d hasDirectSprite(Sprite2d obj)
+    Sprite2d hasDirectSprite(Sprite2d obj)
     {
         if (obj is null)
         {
@@ -930,10 +929,10 @@ class Sprite2d : EventKitTarget
         {
             if (obj is child)
             {
-                return Nullable!Sprite2d(obj);
+                return obj;
             }
         }
-        return Nullable!Sprite2d.init;
+        return null;
     }
 
     bool hasDirect(Sprite2d obj)
@@ -2272,7 +2271,7 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    Nullable!Sprite2d findChildRec(string id)
+    Sprite2d findChildRec(string id)
     {
         Sprite2d mustBeChild;
         onChildrenRec((child) {
@@ -2283,15 +2282,14 @@ class Sprite2d : EventKitTarget
             }
             return true;
         });
-        return mustBeChild is null ? Nullable!Sprite2d.init : Nullable!Sprite2d(mustBeChild);
+        return mustBeChild;
     }
 
-    Nullable!Sprite2d findChildRec(Sprite2d child)
+    Sprite2d findChildRec(Sprite2d child)
     {
         if (child is null)
         {
-            debug throw new Exception("Child must not be null");
-            return Nullable!Sprite2d.init;
+            throw new Exception("Child must not be null");
         }
         Sprite2d mustBeChild;
         onChildrenRec((currentChild) {
@@ -2303,7 +2301,7 @@ class Sprite2d : EventKitTarget
             return true;
         });
 
-        return mustBeChild is null ? Nullable!Sprite2d.init : Nullable!Sprite2d(mustBeChild);
+        return mustBeChild;
     }
 
     int findChildIndex(Sprite2d child)
@@ -2342,16 +2340,16 @@ class Sprite2d : EventKitTarget
         return null;
     }
 
-    Nullable!Sprite2d findChild(Sprite2d child)
+    Sprite2d findChild(Sprite2d child)
     {
         foreach (Sprite2d ch; children)
         {
             if (ch is child)
             {
-                return Nullable!Sprite2d(ch);
+                return ch;
             }
         }
-        return Nullable!Sprite2d.init;
+        return null;
     }
 
     Sprite2d findChildUnsafe(const(char)[] id)
@@ -2366,16 +2364,16 @@ class Sprite2d : EventKitTarget
         return null;
     }
 
-    Nullable!Sprite2d findChild(const(char)[] id)
+    Sprite2d findChild(const(char)[] id)
     {
         foreach (Sprite2d ch; children)
         {
             if (ch.id == id)
             {
-                return Nullable!Sprite2d(ch);
+                return ch;
             }
         }
-        return Nullable!Sprite2d.init;
+        return null;
     }
 
     import api.dm.kit.sprites2d.textures.texture2d : Texture2d;

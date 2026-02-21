@@ -10,7 +10,6 @@ import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.core.configs.uda : ConfigKey;
 
-import std.typecons : Nullable;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle;
 
 /**

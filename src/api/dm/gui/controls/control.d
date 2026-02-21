@@ -19,8 +19,6 @@ import api.dm.gui.themes.theme : Theme;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
 
-import std.typecons : Nullable;
-
 enum ControlStyle : string
 {
     background = "background",
@@ -1311,49 +1309,49 @@ class Control : GuiComponent
     bool hasBackground() => _background !is null;
     Sprite2d backgroundUnsafe() => _background;
 
-    Nullable!Sprite2d background()
+    Sprite2d background()
     {
         if (!hasBackground)
         {
-            return Nullable!Sprite2d.init;
+            throw new Exception("Background is null");
         }
-        return Nullable!Sprite2d(_background);
+        return _background;
     }
 
     bool hasHoverEffect() => _hoverEffect !is null;
     Sprite2d hoverEffectUnsafe() => _hoverEffect;
 
-    Nullable!Sprite2d hoverEffect()
+    Sprite2d hoverEffect()
     {
         if (!hasHoverEffect)
         {
-            return Nullable!Sprite2d.init;
+            return throw new Exception("Hover effect is null");
         }
-        return Nullable!Sprite2d(_hoverEffect);
+        return _hoverEffect;
     }
 
     bool hasActionEffect() => _actionEffect !is null;
     Sprite2d actionEffectUnsafe() => _actionEffect;
 
-    Nullable!Sprite2d actionEffect()
+    Sprite2d actionEffect()
     {
         if (!hasActionEffect)
         {
-            return Nullable!Sprite2d.init;
+            throw new Exception("Action effect is null");
         }
-        return Nullable!Sprite2d(_actionEffect);
+        return _actionEffect;
     }
 
     bool hasActionEffectAnimation() => _actionEffectAnimation !is null;
     Sprite2d actionEffectAnimUnsafe() => _actionEffectAnimation;
 
-    Nullable!Sprite2d actionEffectAnimation()
+    Sprite2d actionEffectAnimation()
     {
         if (!hasActionEffectAnimation)
         {
-            return Nullable!Sprite2d.init;
+            throw new Exception("Action effect animation is null");
         }
-        return Nullable!Sprite2d(_actionEffectAnimation);
+        return _actionEffectAnimation;
     }
 
     GraphicStyle* hasStyle(string id)

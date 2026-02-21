@@ -164,7 +164,7 @@ class AnimImage : Image
 
     bool addOnEndFrame(string name, void delegate() dg)
     {
-        auto anim = animationUnsafe(name);
+        auto anim = animationOrNull(name);
         if (!anim)
         {
             return false;
@@ -193,7 +193,7 @@ class AnimImage : Image
             stop;
         }
 
-        auto mustBeAnim = animationUnsafe(name);
+        auto mustBeAnim = animationOrNull(name);
         if (!mustBeAnim)
         {
             return;
@@ -277,7 +277,7 @@ class AnimImage : Image
         drawFrame(frameIndex, frameRow, newFlip);
     }
 
-    ImageAnimation animationUnsafe(string name)
+    ImageAnimation animationOrNull(string name)
     {
         foreach (anim; animations)
         {
@@ -290,15 +290,7 @@ class AnimImage : Image
         return null;
     }
 
-    bool hasAnimation(string name) => animationUnsafe(name) !is null;
-
-    import std.typecons : Nullable;
-
-    Nullable!ImageAnimation animation(string name)
-    {
-        auto mustBeAnim = animationUnsafe(name);
-        return mustBeAnim ? Nullable!ImageAnimation(mustBeAnim) : Nullable!ImageAnimation.init;
-    }
+    bool hasAnimation(string name) => animationOrNull(name) !is null;
 
     override void drawContent()
     {

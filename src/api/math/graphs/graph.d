@@ -3,7 +3,6 @@ module api.math.graphs.graph;
 import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
 
-import std.typecons : Nullable;
 import std.container.dlist : DList;
 
 /**
@@ -93,13 +92,13 @@ class Graph
         return null;
     }
 
-    Nullable!(DList!Edge*) edgesForVertex(Vertex vertex)
+    DList!Edge* edgesForVertex(Vertex vertex)
     {
         if (auto edgesPtr = hasVertexUnsafe(vertex))
         {
-            return Nullable!(DList!Edge*)(*edgesPtr);
+            return *edgesPtr;
         }
-        return Nullable!(DList!Edge*).init;
+        return null;
     }
 
     void onEdgesToVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue, bool isReverse = false)

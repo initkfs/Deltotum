@@ -13,7 +13,6 @@ import api.dm.kit.windows.window : Window;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import std.container : DList;
-import std.typecons : Nullable;
 
 /**
  * Authors: initkfs

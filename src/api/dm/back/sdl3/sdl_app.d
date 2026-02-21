@@ -50,8 +50,6 @@ import api.dm.kit.apps.loops.loop : Loop;
 import api.dm.kit.platforms.caps.cap_graphics : CapGraphics;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
-import std.typecons : Nullable;
-
 import api.dm.kit.media.multimedia : MultiMedia;
 import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
@@ -79,7 +77,6 @@ import api.dm.kit.sprites2d.images.codecs.bmp_image_codec : BmpImageCodec;
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
 import api.dm.back.sdl3.externs.csdl3;
-import std.typecons : Nullable;
 import api.dm.back.sdl3.gpu.sdl_gpu_device;
 import api.dm.kit.graphics.gpu.gpu_graphic : GPUGraphic;
 
@@ -96,10 +93,10 @@ class SdlApp : GuiApp
     {
         SdlLib sdlLib;
 
-        Nullable!SdlAudioDevice audioOut;
-        Nullable!SdlJoystickLib sdlJoystick;
+        SdlAudioDevice audioOut;
+        SdlJoystickLib sdlJoystick;
 
-        Nullable!SdlJoystick sdlCurrentJoystick;
+        SdlJoystick sdlCurrentJoystick;
 
         CairoLib cairoLib;
         FfmpegLib ffmpegLib;
@@ -288,10 +285,9 @@ class SdlApp : GuiApp
                 cursor = new EmptyCursor;
             }
 
-            SdlJoystick currentJoy = sdlCurrentJoystick.isNull ? null : sdlCurrentJoystick.get;
-            _input = new Input(uservices.logging, keyboard, clipboard, cursor, currentJoy);
+            _input = new Input(uservices.logging, keyboard, clipboard, cursor, sdlCurrentJoystick);
 
-            _media = new MultiMedia(audioOut.get);
+            _media = new MultiMedia(audioOut);
             _media.initialize;
 
             if (gservices.platform.cap.isVector)
@@ -648,13 +644,13 @@ class SdlApp : GuiApp
 
         if (caps.isAudio)
         {
-            if (audioOut.isNull)
+            if (!audioOut)
             {
                 audioOut = newSdlAudio;
             }
         }
 
-        if (sdlJoystick.isNull && caps.isJoystick)
+        if (!sdlJoystick && caps.isJoystick)
         {
             sdlJoystick = newSdlJoystickLib;
         }
@@ -723,22 +719,20 @@ class SdlApp : GuiApp
             uservices.logger.trace("Init SDL font");
         }
 
-        if (!audioOut.isNull)
+        if (audioOut)
         {
-            auto audio = audioOut.get;
-
             ComAudioSpec defaultSpec;
-            if (const err = audio.open(&defaultSpec))
+            if (const err = audioOut.open(&defaultSpec))
             {
                 return err;
             }
-            uservices.logger.tracef("Open audio %s", audio.spec);
+            uservices.logger.tracef("Open audio %s", audioOut.spec);
         }
 
         if (caps.isJoystick)
         {
-            assert(!sdlJoystick.isNull);
-            if (const err = sdlJoystick.get.initialize)
+            assert(sdlJoystick);
+            if (const err = sdlJoystick.initialize)
             {
                 gservices.platform.cap.isJoystick = false;
                 uservices.logger.error(err.toString);
@@ -756,16 +750,15 @@ class SdlApp : GuiApp
                         throw new Exception("Joystick index must be positive number");
                     }
 
-                    defaultJoystick = sdlJoystick.get.joystickByIndex(index);
+                    defaultJoystick = sdlJoystick.joystickByIndex(index);
                     if (!defaultJoystick)
                     {
-                        uservices.logger.errorf("Found joystick index %s, but joystick is null. Joystics count: %s", index, sdlJoystick
-                                .get.joystickCount);
+                        uservices.logger.errorf("Found joystick index %s, but joystick is null. Joystics count: %s", index, sdlJoystick.joystickCount);
                     }
                 }
                 else
                 {
-                    defaultJoystick = sdlJoystick.get.firstJoystick;
+                    defaultJoystick = sdlJoystick.firstJoystick;
                 }
 
                 if (!defaultJoystick)
@@ -777,7 +770,7 @@ class SdlApp : GuiApp
                 {
                     sdlCurrentJoystick = defaultJoystick;
 
-                    sdlJoystick.get.setEventsEnabled(true);
+                    sdlJoystick.setEventsEnabled(true);
 
                     bool isConnected = defaultJoystick.isConnected;
                     string gname = defaultJoystick.getNameNew;
@@ -1066,7 +1059,7 @@ class SdlApp : GuiApp
 
         window.pos(newX, newY);
 
-        SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer.get);
+        SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer);
         window.renderer = sdlRenderer;
 
         if (uservices.config.hasKey(KitConfigKeys.engineIsVsync))
@@ -1371,21 +1364,21 @@ class SdlApp : GuiApp
             });
         }
 
-        if (!sdlJoystick.isNull)
+        if (sdlJoystick)
         {
-            sdlJoystick.get.quit;
+            sdlJoystick.quit;
         }
 
-        if (!sdlCurrentJoystick.isNull)
+        if (sdlCurrentJoystick)
         {
-            sdlCurrentJoystick.get.dispose;
+            sdlCurrentJoystick.dispose;
         }
 
         //TODO process EXIT event
 
-        if (!audioOut.isNull)
+        if (audioOut)
         {
-            if (const err = (audioOut.get).close)
+            if (const err = audioOut.close)
             {
                 uservices.logger.error(err.toString);
             }
@@ -1464,11 +1457,11 @@ class SdlApp : GuiApp
 
         const endStateTime = SDL_GetTicks();
 
-        auto mustBeWindow = windowing.current;
+        auto mustBeWindow = windowing.currentOrNull;
 
-        if (!mustBeWindow.isNull)
+        if (mustBeWindow)
         {
-            mustBeWindow.get.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
+            mustBeWindow.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
         }
     }
 
