@@ -1,7 +1,6 @@
 module api.dm.kit.inputs.pointers.events.pointer_event;
 
 import api.core.events.event_base : EventBase;
-import api.core.utils.types : enumNameByIndex;
 import api.core.events.event_target : EventTarget;
 import api.core.events.event_source : EventSource;
 
@@ -53,7 +52,6 @@ struct PointerEvent
     {
         import std.format : format;
 
-        return format("{%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s,%s}", enumNameByIndex!Event(
-                event), x, y, button, movementX, movementY, ownerId, isSynthetic);
+        return format("{%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s,%s}", event, x, y, button, movementX, movementY, ownerId, isSynthetic);
     }
 }

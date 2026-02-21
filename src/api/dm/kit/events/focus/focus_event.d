@@ -1,7 +1,6 @@
 module api.dm.kit.events.focus.focus_event;
 
 import api.core.events.event_base : EventBase;
-import api.core.utils.types : enumNameByIndex;
 
 /**
  * Authors: initkfs

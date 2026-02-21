@@ -17,9 +17,9 @@ import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
-import api.core.utils.allocs.allocator : Allocator;
-import api.core.utils.allocs.mallocator : Mallocator;
-import api.core.utils.allocs.arena_allocator : ArenaAllocator;
+import api.core.mems.allocs.allocator : Allocator;
+import api.core.mems.allocs.mallocator : Mallocator;
+import api.core.mems.allocs.arena_allocator : ArenaAllocator;
 import api.core.supports.errors.err_status : ErrStatus;
 import api.core.supports.decisions.decision_system : DecisionSystem;
 
@@ -437,7 +437,6 @@ class CliApp : SimpleUnit
         import api.core.loggers.builtins.base_logger : LogLevel;
         import api.core.loggers.builtins.logger : Logger;
         import api.core.loggers.builtins.handlers.console_handler: ConsoleHandler;
-        import CoreConfigKeys = api.core.core_config_keys;
 
         //TODO from config
         auto multiLogger = new Logger;
@@ -446,10 +445,6 @@ class CliApp : SimpleUnit
         enum consoleLoggerLevel = LogLevel.trace;
         auto consoleLogger = new ConsoleHandler;
         consoleLogger.level = consoleLoggerLevel;
-        if (CoreConfigKeys.loggerIsShowMemory)
-        {
-            //TODO flag   
-        }
 
         multiLogger.add(consoleLogger);
 
@@ -581,7 +576,7 @@ class CliApp : SimpleUnit
 
     ArenaAllocator* newArenaAllocator()
     {
-        import api.core.utils.allocs.mallocator : initMallocator;
+        import api.core.mems.allocs.mallocator : initMallocator;
         Allocator alloc;
         initMallocator(&alloc);
 

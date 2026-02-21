@@ -6,7 +6,7 @@ import api.dm.com.com_result : ComResult;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
-import api.core.utils.factories : ProviderFactory;
+import api.core.utils.types : ProviderFactory;
 import api.dm.gui.apps.gui_app : GuiApp;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.events.kit_event_manager : KitEventManager;

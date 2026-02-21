@@ -16,7 +16,7 @@ import api.dm.kit.assets.asset : Asset;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.assets.fonts.bitmaps.alphabet_font_factory : AlphabetFontFactory;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
-import api.core.utils.factories : ProviderFactory;
+import api.core.utils.types : ProviderFactory;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import api.dm.kit.factories.image_factory : ImageFactory;
 import api.dm.kit.factories.shape_factory : ShapeFactory;

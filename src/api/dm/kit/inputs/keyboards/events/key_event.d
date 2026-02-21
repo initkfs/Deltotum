@@ -1,7 +1,6 @@
 module api.dm.kit.inputs.keyboards.events.key_event;
 
 import api.core.events.event_base : EventBase;
-import api.core.utils.types : enumNameByIndex;
 
 import api.dm.com.inputs.com_keyboard : ComKeyName;
 import api.dm.com.inputs.com_keyboard : ComKeyModifier;

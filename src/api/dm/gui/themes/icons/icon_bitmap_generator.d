@@ -2,7 +2,7 @@ module api.dm.gui.themes.icons.icon_bitmap_generator;
 
 import api.dm.kit.assets.fonts.bitmaps.base_bitmap_font_factory : BaseBitmapFontFactory;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
-import api.core.utils.factories : ProviderFactory;
+import api.core.utils.types : ProviderFactory;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;

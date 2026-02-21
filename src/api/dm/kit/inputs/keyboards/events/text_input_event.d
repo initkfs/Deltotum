@@ -1,7 +1,6 @@
 module api.dm.kit.inputs.keyboards.events.text_input_event;
 
 import api.core.events.event_base : EventBase;
-import api.core.utils.types : enumNameByIndex;
 
 /**
  * Authors: initkfs
@@ -31,6 +30,6 @@ struct TextInputEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,text:%s,winid:%s}", enumNameByIndex!Event(event), firstLetter, ownerId);
+        return format("{%s,%s,text:%s,winid:%s}", event, firstLetter, ownerId);
     }
 }

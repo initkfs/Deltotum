@@ -1,11 +1,11 @@
-module api.core.utils.allocs.mallocator;
+module api.core.mems.allocs.mallocator;
 
 /**
  * Authors: initkfs
  */
 
 import core.stdc.stdlib : malloc, realloc, free;
-import api.core.utils.allocs.allocator : Allocator;
+import api.core.mems.allocs.allocator : Allocator;
 
 void initMallocator(scope Allocator* allocator) pure nothrow @safe
 {

@@ -1,4 +1,4 @@
-module api.core.utils.allocs.allocator;
+module api.core.mems.allocs.allocator;
 
 /**
  * Authors: initkfs

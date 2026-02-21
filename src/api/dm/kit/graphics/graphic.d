@@ -3,7 +3,7 @@ module api.dm.kit.graphics.graphic;
 import api.dm.com.com_result : ComResult;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
-import api.core.utils.factories : ProviderFactory;
+import api.core.utils.types : ProviderFactory;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.kit.graphics.colors.rgba : RGBA;

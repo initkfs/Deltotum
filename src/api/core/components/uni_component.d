@@ -15,7 +15,7 @@ import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
-import api.core.utils.allocs.allocator : Allocator;
+import api.core.mems.allocs.allocator : Allocator;
 
 import api.core.loggers.builtins.logger : Logger;
 

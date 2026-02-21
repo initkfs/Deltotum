@@ -1,6 +1,5 @@
 module api.dm.gui.events.action_event;
 
-import api.core.utils.types : enumNameByIndex;
 import api.core.events.event_target : EventTarget;
 import api.core.events.event_source : EventSource;
 

@@ -1,9 +1,9 @@
 module api.core.mems.null_memory;
 
 import api.core.mems.memory : Memory;
-import api.core.utils.allocs.allocator : Allocator;
-import api.core.utils.allocs.mallocator : Mallocator;
-import api.core.utils.allocs.arena_allocator : ArenaAllocator;
+import api.core.mems.allocs.allocator : Allocator;
+import api.core.mems.allocs.mallocator : Mallocator;
+import api.core.mems.allocs.arena_allocator : ArenaAllocator;
 
 /**
  * Authors: initkfs

@@ -1,6 +1,6 @@
-module api.core.utils.allocs.arena_allocator;
+module api.core.mems.allocs.arena_allocator;
 
-import api.core.utils.allocs.allocator : Allocator;
+import api.core.mems.allocs.allocator : Allocator;
 
 /**
  * Authors: initkfs
@@ -235,7 +235,7 @@ struct ArenaAllocator
 
 unittest
 {
-    import api.core.utils.allocs.mallocator : initMallocator;
+    import api.core.mems.allocs.mallocator : initMallocator;
 
     Block block1;
     block1.buffer = new ubyte[12];
@@ -272,7 +272,7 @@ unittest
 
 unittest
 {
-    import api.core.utils.allocs.mallocator : initMallocator;
+    import api.core.mems.allocs.mallocator : initMallocator;
 
     auto allocator = new ArenaAllocator;
     initMallocator(cast(Allocator*) allocator);

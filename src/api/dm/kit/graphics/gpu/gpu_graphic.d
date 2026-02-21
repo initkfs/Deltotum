@@ -6,7 +6,7 @@ import api.dm.kit.windows.window : Window;
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.contexts.context : Context;
 import api.core.configs.keyvalues.config : Config;
-import api.core.utils.factories : ProviderFactory;
+import api.core.utils.types : ProviderFactory;
 
 //TODO extract COM interfaces
 import api.dm.back.sdl3.externs.csdl3;
