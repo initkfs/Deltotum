@@ -3,7 +3,6 @@ module api.core.resources.locals.local_resources;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
 import api.core.loggers.logging : Logging;
-import std.typecons : Nullable;
 
 class LocalResources : LoggableUnit
 {
@@ -34,86 +33,84 @@ class LocalResources : LoggableUnit
         this._resourcesDir = resourcesDir;
     }
 
-    Nullable!string resourcesDir() const
+    bool hasResourcesDir() => resourcesDir.length > 0;
+
+    string resourcesDir() const
     {
         if (resourceDirPathResolver)
         {
             immutable string mustBeResDir = resourceDirPathResolver(_resourcesDir);
-            return mustBeResDir.length > 0 ? Nullable!string(mustBeResDir) : Nullable!string.init;
+            return mustBeResDir.length > 0 ? mustBeResDir : null;
         }
 
-        if (!_resourcesDir)
-        {
-            return Nullable!string.init;
-        }
-
-        return Nullable!string(_resourcesDir);
+        return _resourcesDir;
     }
 
-    Nullable!string withResourceDir(string path) const
+    string withResourceDir(string path) const
     {
         import std.path : buildPath, isAbsolute;
 
         if (path.isAbsolute && !isChangeAbsolutePaths)
         {
-            return Nullable!string(path);
+            return path;
         }
 
-        Nullable!string mustBePath = buildPath(_resourcesDir, path);
-        return mustBePath;
+        if (_resourcesDir.length == 0)
+        {
+            return null;
+        }
+
+        return buildPath(_resourcesDir, path);
     }
 
-    Nullable!string withResourcePaths(string[] paths...) const
+    string withResourcePaths(string[] paths...) const
     {
-        auto mustBeResDir = resourcesDir();
-        if (mustBeResDir.isNull)
+        auto mustBeResDir = resourcesDir;
+        if (mustBeResDir.length == 0)
         {
-            return mustBeResDir;
+            return null;
         }
 
         import std.path : buildPath;
         import std.range : only, chain;
 
-        auto resourcePath = mustBeResDir.get.only.chain(paths).buildPath;
-        return resourcePath.length > 0 ? Nullable!string(resourcePath) : Nullable!string.init;
+        auto resourcePath = mustBeResDir.only.chain(paths).buildPath;
+        return resourcePath;
     }
 
-    Nullable!string fileResource(string[] paths...) const
+    string fileResource(string[] paths...) const
     {
         import std.file : exists, isFile;
 
         const mustBeResourcePath = withResourcePaths(paths);
-        if (mustBeResourcePath.isNull)
+        if (mustBeResourcePath.length == 0)
         {
             return mustBeResourcePath;
         }
 
-        const resourcePath = mustBeResourcePath.get;
-        if (resourcePath.exists && resourcePath.isFile)
+        if (mustBeResourcePath.exists && mustBeResourcePath.isFile)
         {
-            return Nullable!string(resourcePath);
+            return mustBeResourcePath;
         }
 
-        return Nullable!string.init;
+        return null;
     }
 
-    Nullable!string dirResource(string[] paths...) const
+    string dirResource(string[] paths...) const
     {
         import std.file : exists, isDir;
 
         const mustBeResourcePath = withResourcePaths(paths);
-        if (mustBeResourcePath.isNull)
+        if (mustBeResourcePath.length == 0)
         {
             return mustBeResourcePath;
         }
 
-        const resourcePath = mustBeResourcePath.get;
-
-        if (resourcePath.exists && resourcePath.isDir)
+        if (mustBeResourcePath.exists && mustBeResourcePath.isDir)
         {
-            return Nullable!string(resourcePath);
+            return mustBeResourcePath;
         }
 
-        return Nullable!string.init;
+        return null;
     }
 }

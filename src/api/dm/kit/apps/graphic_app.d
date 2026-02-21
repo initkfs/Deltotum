@@ -364,7 +364,7 @@ abstract class GraphicApp : CliApp
         import api.dm.com.graphics.com_font : ComFont;
 
         //default dir?
-        string assetsDir = !mustBeResDir.isNull ? mustBeResDir.get : null;
+        string assetsDir = mustBeResDir;
 
         Asset asset = new Asset(uservices.logging, assetsDir, comFontProvider);
 
@@ -375,9 +375,9 @@ abstract class GraphicApp : CliApp
         string fontDir;
         string fontFile;
 
-        if (!mustBeResDir.isNull)
+        if (mustBeResDir.length > 0)
         {
-            fontDir = buildPath(mustBeResDir.get, asset.defaultFontResourceDir);
+            fontDir = buildPath(mustBeResDir, asset.defaultFontResourceDir);
             version (EnableTrace)
             {
                 logging.logger.trace("Found font directory in resources: ", fontDir);

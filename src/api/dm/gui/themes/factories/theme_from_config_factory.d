@@ -99,7 +99,7 @@ class ThemeFromConfigFactory : ApplicationUnit
     {
         auto theme = new Theme;
 
-        if (!resources.local.resourcesDir.isNull)
+        if (resources.local.hasResourcesDir)
         {
             loadThemeFromConfig(theme, config);
         }

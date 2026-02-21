@@ -1,12 +1,10 @@
 module api.core.loggers.builtins.logger;
 
-import api.core.loggers.builtins.base_logger: BaseLogger;
+import api.core.loggers.builtins.base_logger : BaseLogger;
 import api.core.loggers.builtins.base_logger : LogLevel, levelToStr;
-import api.core.loggers.builtins.handlers.base_log_handler: BaseLogHandler;
+import api.core.loggers.builtins.handlers.base_log_handler : BaseLogHandler;
 
 import core.sync.mutex : Mutex;
-import std.format : format;
-import std.conv : to;
 
 /**
  * Authors: initkfs
@@ -39,9 +37,9 @@ class Logger : BaseLogger
 
         auto memSize = Mem.memBytes;
 
-        //import std.datetime.systime : Clock;
-        //auto timestamp = Clock.currTime.toUTC;
-        //string timestampStr = timestamp.toSimpleString;
+        import std.datetime.systime : Clock;
+        auto timestamp = Clock.currTime.toUTC;
+        string timestampStr = timestamp.toSimpleString;
 
         import api.core.utils.time: utcTimeBuff;
 

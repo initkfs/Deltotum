@@ -3,8 +3,6 @@ module api.core.configs.configs;
 import api.core.components.component_service : ComponentService;
 import api.core.configs.keyvalues.config : Config;
 
-import std.typecons : Nullable;
-
 /**
  * Authors: initkfs
 */

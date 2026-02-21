@@ -26,7 +26,6 @@ import api.core.supports.decisions.decision_system : DecisionSystem;
 import CoreEnvKeys = api.core.core_env_keys;
 
 import api.core.loggers.builtins.logger : Logger;
-import std.typecons : Nullable;
 import std.getopt : GetoptResult;
 
 /**

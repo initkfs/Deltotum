@@ -60,12 +60,12 @@ class Asset : LocalResources
         }
 
         auto mustBeImagePath = fileResource(defaultImagesResourceDir, imageFile);
-        if (mustBeImagePath.isNull)
+        if (mustBeImagePath.length == 0)
         {
             throw new Exception("Not found image in resources: " ~ imageFile);
         }
 
-        return mustBeImagePath.get;
+        return mustBeImagePath;
     }
 
     string fontPath(string fontFile) const
@@ -78,13 +78,13 @@ class Asset : LocalResources
         }
 
         auto mustBeFontPath = fileResource(defaultFontResourceDir, fontFile);
-        if (mustBeFontPath.isNull)
+        if (mustBeFontPath.length == 0)
         {
             import std.format : format;
 
             throw new Exception(format("Not found font file %s in resources dir %s", fontFile, defaultFontResourceDir));
         }
-        return mustBeFontPath.get;
+        return mustBeFontPath;
     }
 
     ComFont newFont(string fontFilePath, uint size)
