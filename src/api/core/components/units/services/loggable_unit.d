@@ -53,7 +53,7 @@ class LoggableUnit : SimpleUnit
 unittest
 {
     import api.core.loggers.logging : Logging;
-    import api.core.loggers.builtins.log_level: LogLevel;
+    import api.core.loggers.builtins.base_logger: LogLevel;
     import std.traits : isMutable;
     import std.conv : to;
 
