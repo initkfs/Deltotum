@@ -1,4 +1,4 @@
-module api.core.supports.errors.err_status;
+module api.core.validations.errors.err_status;
 
 /**
  * Authors: initkfs

@@ -10,7 +10,7 @@ import api.core.loggers.logging : Logging;
 import api.core.configs.configs : Configuration;
 import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
-import api.core.supports.support : Support;
+import api.core.validations.validation : Validation;
 import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
@@ -49,7 +49,7 @@ class UniComponent : SimpleUnit
         @Service Cli _cli;
         @Service Resourcing _resources;
 
-        @Service Support _support;
+        @Service Validation _validation;
         @Service Memory _memory;
     }
 
@@ -300,21 +300,21 @@ class UniComponent : SimpleUnit
         _cli = cli;
     }
 
-    bool hasSupport() const nothrow pure @safe => _support !is null;
+    bool hasValidation() const nothrow pure @safe => _validation !is null;
 
-    inout(Support) support() inout nothrow pure @safe
-    out (_support; _support !is null)
+    inout(Validation) validation() inout nothrow pure @safe
+    out (_validation; _validation !is null)
     {
-        return _support;
+        return _validation;
     }
 
-    void support(Support support) pure @safe
+    void validation(Validation newValidation) pure @safe
     {
-        if (!support)
+        if (!newValidation)
         {
-            throw new Exception("Support must not be null");
+            throw new Exception("Validation must not be null");
         }
-        _support = support;
+        _validation = newValidation;
     }
 
     bool hasResources() const nothrow pure @safe => _resources !is null;

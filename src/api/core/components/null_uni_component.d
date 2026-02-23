@@ -6,7 +6,7 @@ import api.core.contexts.null_context : NullContext;
 import api.core.configs.null_configuration: NullConfiguration;
 import api.core.clis.null_cli : NullCli;
 import api.core.resources.null_resourcing : NullResourcing;
-import api.core.supports.null_support : NullSupport;
+import api.core.validations.validation: newNullValidation;
 import api.core.mems.null_memory: NullMemory;
 
 /**
@@ -23,7 +23,7 @@ class NullUniComponent : UniComponent
         _memory = new NullMemory;
         _cli = new NullCli;
         _resources = new NullResourcing;
-        _support = new NullSupport;
+        _validation = newNullValidation;
         isBuilt = true;
     }
 }

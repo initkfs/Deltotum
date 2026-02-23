@@ -11,7 +11,7 @@ import api.core.clis.printers.cli_printer : CliPrinter;
 import api.core.clis.parsers.cli_parser : CliParser;
 import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.contexts.context : Context;
-import api.core.supports.support : Support;
+import api.core.validations.validation : Validation;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
@@ -20,8 +20,7 @@ import api.core.mems.memory : Memory;
 import api.core.mems.allocs.allocator : Allocator;
 import api.core.mems.allocs.mallocator : Mallocator;
 import api.core.mems.allocs.arena_allocator : ArenaAllocator;
-import api.core.supports.errors.err_status : ErrStatus;
-import api.core.supports.decisions.decision_system : DecisionSystem;
+import api.core.validations.errors.err_status : ErrStatus;
 
 import CoreEnvKeys = api.core.core_env_keys;
 
@@ -101,25 +100,25 @@ class CliApp : SimpleUnit
                 cli.printer.printIfNotSilent("Debug mode active");
             }
 
-            uservices.support = createSupport;
-            assert(uservices.support);
+            uservices.validation = createValidation;
+            assert(uservices.hasValidation);
 
             uservices.context = createContext;
-            assert(uservices.context);
+            assert(uservices.hasContext);
 
             uservices.configs = createConfiguration(uservices.context);
-            assert(uservices.config);
+            assert(uservices.hasConfigs);
 
-            uservices.logging = createLogging(uservices.support);
-            assert(uservices.logging);
+            uservices.logging = createLogging(uservices.validation);
+            assert(uservices.hasLogging);
 
             uservices.memory = createMemory(uservices.logging, uservices.config, uservices
                     .context);
-            assert(uservices.memory);
+            assert(uservices.hasMemory);
 
             uservices.resources = createResourcing(uservices.logging, uservices.config, uservices
                     .context);
-            assert(uservices.resources);
+            assert(uservices.hasResources);
 
             uservices.isBuilt = true;
         }
@@ -430,7 +429,7 @@ class CliApp : SimpleUnit
         return new Configuration(config);
     }
 
-    protected Logger createLogger(Support support)
+    protected Logger createLogger(Validation support)
     {
         assert(support);
 
@@ -471,7 +470,7 @@ class CliApp : SimpleUnit
         return multiLogger;
     }
 
-    protected Logging createLogging(Support support)
+    protected Logging createLogging(Validation support)
     {
         auto logger = createLogger(support);
         assert(logger);
@@ -483,20 +482,18 @@ class CliApp : SimpleUnit
         return new Logging(logger);
     }
 
-    protected Support createSupport()
+    protected Validation createValidation()
     {
         auto errStatus = newErrStatus;
-        auto decision = newDecisionSystem;
-        auto support = newSupport(errStatus, decision);
+        auto support = newValidation(errStatus);
         return support;
     }
 
     ErrStatus newErrStatus() => new ErrStatus;
-    DecisionSystem newDecisionSystem() => new DecisionSystem;
 
-    Support newSupport(ErrStatus errStatus, DecisionSystem decision)
+    Validation newValidation(ErrStatus errStatus)
     {
-        return new Support(errStatus, decision);
+        return new Validation(errStatus);
     }
 
     protected Resourcing createResourcing(Logging logging, Config config, Context context)
