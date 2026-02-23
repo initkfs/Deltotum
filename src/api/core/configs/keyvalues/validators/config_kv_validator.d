@@ -22,6 +22,8 @@ class ConfigKValidator : Validator
 
         this._config = config;
         this._keys = keys;
+
+        name = "Config key validator";
     }
 
     override void validate()

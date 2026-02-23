@@ -1,11 +1,12 @@
 module api.core.validations.validation;
 
+import api.core.loggers.builtins.logger : Logger;
 import api.core.validations.errors.err_status : ErrStatus;
 import api.core.validations.validators.validator : Validator;
 
 Validation newNullValidation() @safe
 {
-    return new Validation(new ErrStatus);
+    return new Validation(new Logger, new ErrStatus);
 }
 
 /**
@@ -13,12 +14,16 @@ Validation newNullValidation() @safe
  */
 class Validation
 {
+    Logger _logger;
+
     ErrStatus errStatus;
     Validator[] validators;
 
-    this(ErrStatus errStatus) pure @safe
+    this(Logger logger, ErrStatus errStatus) pure @safe
     {
+        assert(logger);
         assert(errStatus);
+        this._logger = logger;
         this.errStatus = errStatus;
     }
 
@@ -27,6 +32,10 @@ class Validation
         foreach (v; validators)
         {
             v.validate;
+            version (EnableTrace)
+            {
+                _logger.tracef("Run %s: %s", v.name, v.isValid);
+            }
         }
     }
 

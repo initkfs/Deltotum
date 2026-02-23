@@ -5,6 +5,8 @@ module api.core.validations.validators.validator;
  */
 abstract class Validator
 {
+    string name = "validator";
+    
     protected
     {
         bool _valid;

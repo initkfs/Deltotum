@@ -20,6 +20,24 @@ class I18n : LoggableUnit
         super(logging);
     }
 
+    bool hasMessage(string key)
+    {
+        if (key.length == 0)
+        {
+            return false;
+        }
+
+        foreach (message; langMessages)
+        {
+            if (message.hasLangKey(key, lang))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     dstring getMessage(string key, dstring defaultMessage = errorMessage)
     {
         if (key.length == 0)

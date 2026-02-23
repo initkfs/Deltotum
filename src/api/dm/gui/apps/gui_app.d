@@ -10,6 +10,7 @@ import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.interacts.interact : Interact;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
+import api.core.validations.validators.validator : Validator;
 
 abstract class GuiApp : LoopApp
 {
@@ -83,6 +84,41 @@ abstract class GuiApp : LoopApp
         theme.iconPack = newIconPack;
 
         return theme;
+    }
+
+    version (EnableValidation)
+    {
+        override Validator[] createValidators()
+        {
+            Validator[] parent = super.createValidators;
+
+            import I18nKeys = api.dm.gui.gui_i18n_keys;
+
+            string[] keys;
+            keys.reserve(10);
+
+            foreach (key; __traits(allMembers, I18nKeys))
+            {
+                if (key == "object")
+                {
+                    continue;
+                }
+
+                keys ~= key;
+            }
+
+            if (keys.length > 0)
+            {
+                assert(gservices, "Graphic services is null");
+                assert(gservices.hasI18n, "Graphics without i18n");
+
+                import api.dm.kit.i18n.langs.validators.lang_key_validator : LangKeyValidator;
+
+                parent ~= new LangKeyValidator(gservices.i18n, keys);
+            }
+
+            return parent;
+        }
     }
 
     IconPack newIconPack() => new IconPack;

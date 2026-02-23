@@ -101,17 +101,19 @@ class CliApp : SimpleUnit
                 cli.printer.printIfNotSilent("Debug mode active");
             }
 
-            uservices.validation = createValidation;
-            assert(uservices.hasValidation);
-
             uservices.context = createContext;
             assert(uservices.hasContext);
 
             uservices.configs = createConfiguration(uservices.context);
             assert(uservices.hasConfigs);
 
-            uservices.logging = createLogging(uservices.validation);
+            uservices.logging = createLogging;
             assert(uservices.hasLogging);
+
+            assert(uservices.logging.logger);
+            uservices.validation = createValidation(uservices.logging, uservices.config, uservices
+                    .context);
+            assert(uservices.hasValidation);
 
             uservices.memory = createMemory(uservices.logging, uservices.config, uservices
                     .context);
@@ -131,7 +133,7 @@ class CliApp : SimpleUnit
         return true;
     }
 
-    Validator[] createAppValidators()
+    Validator[] createValidators()
     {
         return null;
     }
@@ -161,6 +163,7 @@ class CliApp : SimpleUnit
         }
 
         validation.validate;
+
         if (!validation.isValid)
         {
             enum failMessage = "VALIDATION FAIL";
@@ -500,10 +503,8 @@ class CliApp : SimpleUnit
         return new Configuration(config);
     }
 
-    protected Logger createLogger(Validation support)
+    protected Logger createLogger()
     {
-        assert(support);
-
         import api.core.loggers.builtins.base_logger : LogLevel;
         import api.core.loggers.builtins.logger : Logger;
         import api.core.loggers.builtins.handlers.console_handler : ConsoleHandler;
@@ -541,9 +542,9 @@ class CliApp : SimpleUnit
         return multiLogger;
     }
 
-    protected Logging createLogging(Validation support)
+    protected Logging createLogging()
     {
-        auto logger = createLogger(support);
+        auto logger = createLogger;
         assert(logger);
         return newLogging(logger);
     }
@@ -553,18 +554,18 @@ class CliApp : SimpleUnit
         return new Logging(logger);
     }
 
-    protected Validation createValidation()
+    protected Validation createValidation(Logging logging, Config config, Context context)
     {
         auto errStatus = newErrStatus;
-        auto support = newValidation(errStatus);
+        auto support = newValidation(logging.logger, errStatus);
         return support;
     }
 
     ErrStatus newErrStatus() => new ErrStatus;
 
-    Validation newValidation(ErrStatus errStatus)
+    Validation newValidation(Logger logger, ErrStatus errStatus)
     {
-        auto validation = new Validation(errStatus);
+        auto validation = new Validation(logger, errStatus);
         return validation;
     }
 

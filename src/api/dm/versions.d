@@ -11,3 +11,12 @@ else
 {
     enum EnableAddon = false;
 }
+
+version (EnableValidation)
+{
+    enum EnableValidation = true;
+}
+else
+{
+    enum EnableValidation = false;
+}

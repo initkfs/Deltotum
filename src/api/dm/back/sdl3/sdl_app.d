@@ -628,7 +628,7 @@ class SdlApp : GuiApp
                 }
             };
 
-            Validator[] validators = createAppValidators;
+            Validator[] validators = createValidators;
             if (validators.length > 0)
             {
                 assert(gservices.hasValidation);

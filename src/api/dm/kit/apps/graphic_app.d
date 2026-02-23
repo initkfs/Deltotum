@@ -104,6 +104,10 @@ abstract class GraphicApp : CliApp
         loadSettings;
 
         _i18n = createI18n(uservices.logging, uservices.config, uservices.context);
+        if (!_graphicServices.hasI18n)
+        {
+            _graphicServices.i18n = _i18n;
+        }
 
         return true;
     }
@@ -158,33 +162,36 @@ abstract class GraphicApp : CliApp
         }
     }
 
-    override Validator[] createAppValidators()
+    version (EnableValidation)
     {
-        Validator[] parent = super.createAppValidators;
-
-        import KitConfigKeys = api.dm.kit.kit_config_keys;
-
-        string[] kitConfigKeys;
-        kitConfigKeys.reserve(10);
-
-        foreach (key; __traits(allMembers, KitConfigKeys))
+        override Validator[] createValidators()
         {
-            if (key == "object")
+            Validator[] parent = super.createValidators;
+
+            import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+            string[] kitConfigKeys;
+            kitConfigKeys.reserve(10);
+
+            foreach (key; __traits(allMembers, KitConfigKeys))
             {
-                continue;
+                if (key == "object")
+                {
+                    continue;
+                }
+
+                kitConfigKeys ~= key;
             }
 
-            kitConfigKeys ~= key;
-        }
+            if (kitConfigKeys.length > 0)
+            {
+                assert(_graphicServices, "Graphic services is null");
+                assert(_graphicServices.hasConfigs, "Graphics services without config");
+                parent ~= createConfigValidator(_graphicServices.config, kitConfigKeys);
+            }
 
-        if (kitConfigKeys.length > 0)
-        {
-            assert(_graphicServices, "Graphic services is null");
-            assert(_graphicServices.hasConfigs, "Graphics services without config");
-            parent ~= createConfigValidator(_graphicServices.config, kitConfigKeys);
+            return parent;
         }
-
-        return parent;
     }
 
     Platform createPlatform()

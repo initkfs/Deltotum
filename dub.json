@@ -37,7 +37,7 @@
         {
             "name": "app-dist",
             "versions": [
-                "EnableAddon"
+                "EnableAddon", "EnableValidation", "EnableTrace"
             ],
             "targetType": "executable",
             "targetName": "dm-dist",
