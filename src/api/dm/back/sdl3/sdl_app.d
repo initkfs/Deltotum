@@ -55,9 +55,9 @@ import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.platforms.screens.screening : Screening;
 
-import api.core.loggers.builtins.base_logger: LogLevel;
+import api.core.loggers.builtins.base_logger : LogLevel;
 import api.core.loggers.builtins.logger : Logger;
-import api.core.loggers.builtins.handlers.file_handler: FileHandler;
+import api.core.loggers.builtins.handlers.file_handler : FileHandler;
 
 import KitConfigKeys = api.dm.kit.kit_config_keys;
 
@@ -79,6 +79,8 @@ import api.dm.kit.sprites2d.images.codecs.bmp_image_codec : BmpImageCodec;
 import api.dm.back.sdl3.externs.csdl3;
 import api.dm.back.sdl3.gpu.sdl_gpu_device;
 import api.dm.kit.graphics.gpu.gpu_graphic : GPUGraphic;
+
+import api.core.validations.validators.validator : Validator;
 
 /**
  * Authors: initkfs
@@ -625,6 +627,15 @@ class SdlApp : GuiApp
                         break;
                 }
             };
+
+            Validator[] validators = createAppValidators;
+            if (validators.length > 0)
+            {
+                assert(gservices.hasValidation);
+                gservices.validation.validators ~= validators;
+            }
+
+            validate;
         }
         catch (Throwable e)
         {
@@ -753,7 +764,8 @@ class SdlApp : GuiApp
                     defaultJoystick = sdlJoystick.joystickByIndex(index);
                     if (!defaultJoystick)
                     {
-                        uservices.logger.errorf("Found joystick index %s, but joystick is null. Joystics count: %s", index, sdlJoystick.joystickCount);
+                        uservices.logger.errorf("Found joystick index %s, but joystick is null. Joystics count: %s", index, sdlJoystick
+                                .joystickCount);
                     }
                 }
                 else
@@ -955,7 +967,8 @@ class SdlApp : GuiApp
     void newComTextureScoped(scope void delegate(ComTexture) onNew, SdlRenderer renderer)
     {
         scope text = new SdlTexture(renderer);
-        scope(exit){
+        scope (exit)
+        {
             text.dispose;
         }
         onNew(text);
@@ -969,7 +982,8 @@ class SdlApp : GuiApp
     void newComSurfaceScoped(scope void delegate(ComSurface) onNew)
     {
         scope surf = new SdlSurface;
-        scope(exit){
+        scope (exit)
+        {
             surf.dispose;
         }
         onNew(surf);
@@ -1164,7 +1178,8 @@ class SdlApp : GuiApp
             uint fontIconSize = 12;
             if (uservices.config.hasKey(KitConfigKeys.fontIconsSize))
             {
-                fontIconSize = cast(uint) uservices.config.getPositiveInt(KitConfigKeys.fontIconsSize);
+                fontIconSize = cast(uint) uservices.config.getPositiveInt(
+                    KitConfigKeys.fontIconsSize);
             }
 
             auto fontListPaths = uservices.config.getList(KitConfigKeys.fontIconsList);
@@ -1325,7 +1340,7 @@ class SdlApp : GuiApp
 
     override void dispose()
     {
-        if (uservices)
+        if (uservices && uservices.hasLogging)
         {
             uservices.logger.trace("Dispose SDL app");
         }
@@ -1394,7 +1409,10 @@ class SdlApp : GuiApp
             gpuDevice.dispose;
             version (EnableTrace)
             {
-                uservices.logger.trace("Dispose GPU device");
+                if (uservices.hasLogging)
+                {
+                    uservices.logger.trace("Dispose GPU device");
+                }
             }
             gpuDevice = null;
         }
@@ -1403,7 +1421,10 @@ class SdlApp : GuiApp
         {
             if (const err = sdlLib.quit)
             {
-                uservices.logger.error("Unable to quit");
+                if (uservices.hasLogging)
+                {
+                    uservices.logger.error("Unable to quit");
+                }
             }
         }
 

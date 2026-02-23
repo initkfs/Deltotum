@@ -43,6 +43,8 @@ import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.windows.windowing : Windowing;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
+import api.core.validations.validators.validator : Validator;
+
 /**
  * Authors: initkfs
  */
@@ -87,7 +89,9 @@ abstract class GraphicApp : CliApp
 
         if (!_graphicServices)
         {
+            //TODO meta?
             _graphicServices = newGraphicServices;
+            uservices.build(_graphicServices);
         }
 
         _platform = createPlatform;
@@ -152,6 +156,35 @@ abstract class GraphicApp : CliApp
             _graphicServices.platform.cap.is3d = uservices.config.getBool(
                 KitConfigKeys.backendIsGPU);
         }
+    }
+
+    override Validator[] createAppValidators()
+    {
+        Validator[] parent = super.createAppValidators;
+
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        string[] kitConfigKeys;
+        kitConfigKeys.reserve(10);
+
+        foreach (key; __traits(allMembers, KitConfigKeys))
+        {
+            if (key == "object")
+            {
+                continue;
+            }
+
+            kitConfigKeys ~= key;
+        }
+
+        if (kitConfigKeys.length > 0)
+        {
+            assert(_graphicServices, "Graphic services is null");
+            assert(_graphicServices.hasConfigs, "Graphics services without config");
+            parent ~= createConfigValidator(_graphicServices.config, kitConfigKeys);
+        }
+
+        return parent;
     }
 
     Platform createPlatform()
@@ -328,7 +361,7 @@ abstract class GraphicApp : CliApp
 
     void exit()
     {
-        if (uservices && uservices.logging)
+        if (uservices && uservices.hasLogging)
         {
             uservices.logger.tracef("Request quit");
         }
@@ -383,51 +416,40 @@ abstract class GraphicApp : CliApp
         }
         else
         {
-            if (config.hasKey(KitConfigKeys.fontDir))
+            //TODO Fontconfig 
+            version (linux)
             {
-                fontDir = config.getNotEmptyString(KitConfigKeys.fontDir);
-                version (EnableTrace)
+                ///usr/share/fonts/TTF/
+                fontDir = "/usr/share/fonts/truetype/noto/";
+                if (!fontFile)
                 {
-                    logging.logger.trace("Set font directory from config: ", fontDir);
+                    fontFile = "NotoSansMono-Bold.ttf";
+                }
+            }
+            else version (Windows)
+            {
+                //TODO test separators /, \
+                fontDir = "C:\\Windows\\Fonts";
+                if (!fontFile)
+                {
+                    fontFile = "arial.ttf";
+                }
+            }
+            else version (OSX)
+            {
+                fontDir = "/Library/Fonts";
+                if (!fontFile)
+                {
+                    fontFile = "Arial.ttf";
                 }
             }
             else
             {
-                //TODO Fontconfig 
-                version (linux)
-                {
-                    ///usr/share/fonts/TTF/
-                    fontDir = "/usr/share/fonts/truetype/noto/";
-                    if (!fontFile)
-                    {
-                        fontFile = "NotoSansMono-Bold.ttf";
-                    }
-                }
-                else version (Windows)
-                {
-                    //TODO test separators /, \
-                    fontDir = "C:\\Windows\\Fonts";
-                    if (!fontFile)
-                    {
-                        fontFile = "arial.ttf";
-                    }
-                }
-                else version (OSX)
-                {
-                    fontDir = "/Library/Fonts";
-                    if (!fontFile)
-                    {
-                        fontFile = "Arial.ttf";
-                    }
-                }
-                else
-                {
-                    static assert(false, "Not supported default fonts for platform");
-                }
-                version (EnableTrace)
-                {
-                    logging.logger.tracef("Set system font directory %s and font file %s", fontDir, fontFile);
-                }
+                static assert(false, "Not supported default fonts for platform");
+            }
+            version (EnableTrace)
+            {
+                logging.logger.tracef("Set system font directory %s and font file %s", fontDir, fontFile);
             }
         }
 

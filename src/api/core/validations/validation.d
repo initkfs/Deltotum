@@ -30,4 +30,36 @@ class Validation
         }
     }
 
+    bool isValid()
+    {
+        foreach (v; validators)
+        {
+            if (!v.isValid)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    string allMessages()
+    {
+        import std.array : appender;
+
+        auto result = appender!string;
+
+        foreach (v; validators)
+        {
+            if ((!v.isError) && (!v.isFail))
+            {
+                continue;
+            }
+
+            result.put(v.allMessages);
+        }
+
+        return result.data;
+    }
+
 }

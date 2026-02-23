@@ -12,6 +12,7 @@ import api.core.clis.parsers.cli_parser : CliParser;
 import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.contexts.context : Context;
 import api.core.validations.validation : Validation;
+import api.core.validations.validators.validator : Validator;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
@@ -130,12 +131,76 @@ class CliApp : SimpleUnit
         return true;
     }
 
+    Validator[] createAppValidators()
+    {
+        return null;
+    }
+
+    Validator createConfigValidator(Config config, string[] configKeys)
+    {
+        import api.core.configs.keyvalues.validators.config_kv_validator : ConfigKValidator;
+
+        return new ConfigKValidator(config, configKeys);
+    }
+
+    Validation findAppValidation()
+    {
+        if (uservices.hasValidation)
+        {
+            return uservices.validation;
+        }
+        return null;
+    }
+
+    void validate()
+    {
+        auto validation = findAppValidation;
+        if (!validation)
+        {
+            return;
+        }
+
+        validation.validate;
+        if (!validation.isValid)
+        {
+            enum failMessage = "VALIDATION FAIL";
+            string message = validation.allMessages;
+            if (uservices.hasLogging && uservices.logging.logger)
+            {
+                uservices.logging.logger.error(failMessage);
+                if (message.length > 0)
+                {
+                    uservices.logging.logger.error(message);
+                }
+            }
+            else
+            {
+                import std.stdio : stderr, writeln;
+
+                stderr.writeln(failMessage);
+                if (message.length > 0)
+                {
+                    stderr.writeln(message);
+                }
+            }
+
+        }
+    }
+
     override void dispose()
     {
         super.dispose;
 
-        assert(uservices.context);
-        uservices.context.app.exit(exitCode);
+        if (uservices.hasContext)
+        {
+            uservices.context.app.exit(exitCode);
+        }
+        else
+        {
+            import StdcLib = core.stdc.stdlib;
+
+            StdcLib.exit(1);
+        }
     }
 
     UniComponent newUniServices() => new UniComponent;
@@ -169,9 +234,15 @@ class CliApp : SimpleUnit
         }
         finally
         {
-            if (uservices && uservices.logging)
+            if (uservices && uservices.hasLogging)
             {
                 uservices.logger.error("Error from application. " ~ ex.toString);
+            }
+            else
+            {
+                import std.stdio : stderr;
+
+                stderr.writefln("Error from application: %s", ex);
             }
 
             if (isRethrow)
@@ -435,7 +506,7 @@ class CliApp : SimpleUnit
 
         import api.core.loggers.builtins.base_logger : LogLevel;
         import api.core.loggers.builtins.logger : Logger;
-        import api.core.loggers.builtins.handlers.console_handler: ConsoleHandler;
+        import api.core.loggers.builtins.handlers.console_handler : ConsoleHandler;
 
         //TODO from config
         auto multiLogger = new Logger;
@@ -493,7 +564,8 @@ class CliApp : SimpleUnit
 
     Validation newValidation(ErrStatus errStatus)
     {
-        return new Validation(errStatus);
+        auto validation = new Validation(errStatus);
+        return validation;
     }
 
     protected Resourcing createResourcing(Logging logging, Config config, Context context)
@@ -574,6 +646,7 @@ class CliApp : SimpleUnit
     ArenaAllocator* newArenaAllocator()
     {
         import api.core.mems.allocs.mallocator : initMallocator;
+
         Allocator alloc;
         initMallocator(&alloc);
 

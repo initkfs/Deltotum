@@ -25,7 +25,6 @@ string graphicsIsVector = "graphicsIsVector";
 string graphicsIsIconPack = "graphicsIsIconPack";
 string graphicsIsImage = "graphicsIsImage";
 
-string fontDir = "fontDir";
 string fontTTFFile = "fontTTFFile";
 string fontIsOverwriteFontFile = "fontIsOverwriteFontFile";
 string fontDefaultTextureIsColorless = "fontDefaultTextureIsColorless";
