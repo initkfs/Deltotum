@@ -98,7 +98,7 @@ class ThemeFromConfigFactory : ApplicationUnit
     {
         auto theme = new Theme;
 
-        if (resources.local.hasResourcesDir)
+        if (resources.user.hasResource)
         {
             loadThemeFromConfig(theme, config);
         }

@@ -1,9 +1,9 @@
-module api.core.resources.locals.null_local_resources;
+module api.core.resources.paths.null_path_resource;
 
-import api.core.resources.locals.local_resources : LocalResources;
+import api.core.resources.paths.path_resource : PathResource;
 import api.core.loggers.null_logging : NullLogging;
 
-class NullLocalResources : LocalResources
+class NullPathResources : PathResource
 {
     this() @safe
     {

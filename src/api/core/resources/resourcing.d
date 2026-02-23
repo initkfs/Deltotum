@@ -1,29 +1,29 @@
 module api.core.resources.resourcing;
 
-import api.core.components.component_service: ComponentService;
-import api.core.resources.locals.local_resources: LocalResources;
+import api.core.components.component_service : ComponentService;
+import api.core.resources.paths.path_resource : PathResource;
 
 import api.core.loggers.logging : Logging;
 
 class Resourcing : ComponentService
 {
-    LocalResources local;
-    
-    this(LocalResources localRes) pure @safe
+    PathResource user;
+
+    this(PathResource userRes) pure @safe
     {
-        assert(localRes);
-        this.local = localRes;
+        assert(userRes);
+        this.user = userRes;
     }
 
-    this(const LocalResources localRes) const pure @safe
+    this(const PathResource userRes) const pure @safe
     {
-        assert(localRes);
-        this.local = localRes;
+        assert(userRes);
+        this.user = userRes;
     }
 
-    this(immutable LocalResources localRes) immutable pure @safe
+    this(immutable PathResource userRes) immutable pure @safe
     {
-        assert(localRes);
-        this.local = localRes;
+        assert(userRes);
+        this.user = userRes;
     }
 }

@@ -14,7 +14,7 @@ import api.core.contexts.context : Context;
 import api.core.validations.validation : Validation;
 import api.core.validations.validators.validator : Validator;
 import api.core.contexts.apps.app_context : AppContext;
-import api.core.resources.locals.local_resources : LocalResources;
+import api.core.resources.paths.path_resource : PathResource;
 import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
@@ -42,7 +42,6 @@ class CliApp : SimpleUnit
     string defaultDataDir = "data";
     string defaultConfigsDir = "configs";
     string defaultUserDataDir = "userdata";
-    string defaultResourcesDir = "resources";
 
     CrashHandler[] crashHandlers;
 
@@ -578,7 +577,7 @@ class CliApp : SimpleUnit
         import std.path : buildPath, isAbsolute;
         import std.file : exists, isDir;
 
-        string mustBeResDir = defaultResourcesDir;
+        string mustBeResDir = defaultUserDataDir;
         if (mustBeResDir.length == 0)
         {
             logging.logger.infof(
@@ -600,16 +599,15 @@ class CliApp : SimpleUnit
         }
         else
         {
-            const mustBeDataDir = context.app.dataDir;
-            if (mustBeDataDir.length == 0)
+            mustBeResDir = context.app.userDir;
+            if (mustBeResDir.length == 0)
             {
                 logging.logger.infof(
-                    "Received relative path '%s', but data directory not found", mustBeResDir);
+                    "Received relative path '%s', but user data directory not found", mustBeResDir);
                 //WARNING return
                 return newResource(logging);
             }
 
-            mustBeResDir = buildPath(mustBeDataDir, mustBeResDir);
             if (!mustBeResDir.exists || !mustBeResDir
                 .isDir)
             {
@@ -626,15 +624,15 @@ class CliApp : SimpleUnit
         return resources;
     }
 
-    LocalResources newLocalResources(Logging logging, string resourcesDir = null)
+    PathResource newPathResource(Logging logging, string resourceDir = null)
     {
-        return new LocalResources(logging, resourcesDir);
+        return new PathResource(logging, resourceDir);
     }
 
-    Resourcing newResource(Logging logging, string resourcesDir = null)
+    Resourcing newResource(Logging logging, string resourceDir = null)
     {
-        auto locals = newLocalResources(logging, resourcesDir);
-        return new Resourcing(locals);
+        auto users = newPathResource(logging, resourceDir);
+        return new Resourcing(users);
     }
 
     Mallocator* newMallocator() => new Mallocator(Allocator.init);

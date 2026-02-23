@@ -1,52 +1,52 @@
-module api.core.resources.locals.local_resources;
+module api.core.resources.paths.path_resource;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
 import api.core.loggers.logging : Logging;
 
-class LocalResources : LoggableUnit
+class PathResource : LoggableUnit
 {
     protected
     {
-        const string _resourcesDir;
+        const string _resourcePath;
     }
 
     bool isChangeAbsolutePaths;
 
     string delegate(string) resourceDirPathResolver;
 
-    this(Logging logging, string resourcesDir = null) pure @safe
+    this(Logging logging, string resourcePath = null) pure @safe
     {
         super(logging);
-        this._resourcesDir = resourcesDir;
+        this._resourcePath = resourcePath;
     }
 
-    this(const Logging logging, const string resourcesDir = null) const pure @safe
+    this(const Logging logging, const string resourcePath = null) const pure @safe
     {
         super(logging);
-        this._resourcesDir = resourcesDir;
+        this._resourcePath = resourcePath;
     }
 
-    this(immutable Logging logging, immutable string resourcesDir = null) immutable pure @safe
+    this(immutable Logging logging, immutable string resourcePath = null) immutable pure @safe
     {
         super(logging);
-        this._resourcesDir = resourcesDir;
+        this._resourcePath = resourcePath;
     }
 
-    bool hasResourcesDir() => resourcesDir.length > 0;
+    bool hasResource() => _resourcePath.length > 0;
 
-    string resourcesDir() const
+    string resourcePath() const
     {
         if (resourceDirPathResolver)
         {
-            immutable string mustBeResDir = resourceDirPathResolver(_resourcesDir);
+            immutable string mustBeResDir = resourceDirPathResolver(_resourcePath);
             return mustBeResDir.length > 0 ? mustBeResDir : null;
         }
 
-        return _resourcesDir;
+        return _resourcePath;
     }
 
-    string withResourceDir(string path) const
+    string withResourcePath(string path) const
     {
         import std.path : buildPath, isAbsolute;
 
@@ -55,17 +55,17 @@ class LocalResources : LoggableUnit
             return path;
         }
 
-        if (_resourcesDir.length == 0)
+        if (_resourcePath.length == 0)
         {
             return null;
         }
 
-        return buildPath(_resourcesDir, path);
+        return buildPath(_resourcePath, path);
     }
 
     string withResourcePaths(string[] paths...) const
     {
-        auto mustBeResDir = resourcesDir;
+        auto mustBeResDir = resourcePath;
         if (mustBeResDir.length == 0)
         {
             return null;

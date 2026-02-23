@@ -11,7 +11,7 @@ import api.core.configs.configs : Configuration;
 import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.validations.validation : Validation;
-import api.core.resources.locals.local_resources : LocalResources;
+import api.core.resources.paths.path_resource : PathResource;
 import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
@@ -318,7 +318,7 @@ class UniComponent : SimpleUnit
     }
 
     bool hasResources() const nothrow pure @safe => _resources !is null;
-    inout(LocalResources) reslocal() inout pure @safe => resources.local;
+    inout(PathResource) resuser() inout pure @safe => resources.user;
 
     inout(Resourcing) resources() inout nothrow pure @safe
     out (_resources; _resources !is null)

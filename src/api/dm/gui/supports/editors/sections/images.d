@@ -21,7 +21,7 @@ class Images : Control
 {
     private
     {
-        const originalImage = import("resources/Lenna.png");
+        const originalImage = import("Lenna.png");
 
         GraphicStyle shapeStyle = GraphicStyle.simple;
 

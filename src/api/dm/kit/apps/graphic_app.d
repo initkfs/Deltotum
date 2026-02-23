@@ -396,7 +396,7 @@ abstract class GraphicApp : CliApp
         import std.file : getcwd, exists, isDir, isFile;
         import std.path : buildPath, dirName;
 
-        auto mustBeResDir = uservices.reslocal.resourcesDir;
+        auto mustBeResDir = uservices.resuser.resourcePath;
 
         import api.dm.kit.assets.asset : Asset;
         import api.dm.com.graphics.com_font : ComFont;

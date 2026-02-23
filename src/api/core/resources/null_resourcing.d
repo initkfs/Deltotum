@@ -1,22 +1,22 @@
 module api.core.resources.null_resourcing;
 
 import api.core.resources.resourcing : Resourcing;
-import api.core.resources.locals.null_local_resources: NullLocalResources;
+import api.core.resources.paths.null_path_resource: NullPathResources;
 
 class NullResourcing : Resourcing
 {
     this() @safe
     {
-        super(new NullLocalResources);
+        super(new NullPathResources);
     }
 
     this() const @safe
     {
-        super(new const NullLocalResources);
+        super(new const NullPathResources);
     }
 
     this() immutable @safe
     {
-        super(new immutable NullLocalResources);
+        super(new immutable NullPathResources);
     }
 }

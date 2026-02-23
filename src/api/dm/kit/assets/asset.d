@@ -14,14 +14,14 @@ import api.dm.com.graphics.com_font : ComFont;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.core.resources.locals.local_resources : LocalResources;
+import api.core.resources.paths.path_resource : PathResource;
 import api.dm.kit.assets.fonts.caches.font_cache : FontCache;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 /**
  * Authors: initkfs
  */
-class Asset : LocalResources
+class Asset : PathResource
 {
     ComFont delegate() comFontProvider;
 
