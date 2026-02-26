@@ -44,10 +44,7 @@ class GuiComponent : Sprite2d
         run(component);
     }
 
-    bool hasTheme() const nothrow pure @safe
-    {
-        return _theme !is null;
-    }
+    bool hasTheme() const nothrow pure @safe => _theme !is null;
 
     inout(Theme) theme() inout nothrow pure @safe
     out (_theme; _theme !is null)
@@ -64,10 +61,7 @@ class GuiComponent : Sprite2d
         _theme = newTheme;
     }
 
-    bool hasInteract() nothrow pure @safe
-    {
-        return _interact !is null;
-    }
+    bool hasInteract() nothrow pure @safe => _interact !is null;
 
     Interact interact() nothrow pure @safe
     out (_interact; _interact !is null)
@@ -84,5 +78,4 @@ class GuiComponent : Sprite2d
 
         _interact = interact;
     }
-
 }

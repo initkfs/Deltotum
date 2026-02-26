@@ -35,23 +35,4 @@ class GuiWindow : Window
 
         super.build(scene);
     }
-
-    override void dispose()
-    {
-        if (gpuDevice && comWindow)
-        {
-            if (const err = gpuDevice.removeFromWindow(comWindow))
-            {
-                throw new Exception(err.toString);
-            }
-
-            version (EnableTrace)
-            {
-                logger.trace("Release window from GPU device");
-            }
-        }
-
-        super.dispose;
-    }
-
 }
