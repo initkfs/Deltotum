@@ -1,6 +1,6 @@
 module api.dm.kit.events.focus.focus_event;
 
-import api.core.events.event_base : EventBase;
+import api.dm.kit.events.event_base : EventBase;
 
 /**
  * Authors: initkfs

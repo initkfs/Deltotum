@@ -1,9 +1,9 @@
 module api.dm.kit.events.event_kit_target;
 
 import api.dm.kit.components.graphic_component : GraphicComponent;
-import api.core.events.event_target : EventTarget;
+import api.dm.kit.events.event_target : EventTarget;
 
-import api.core.apps.events.app_event : AppEvent;
+import api.dm.kit.apps.events.app_event : AppEvent;
 import api.dm.kit.events.focus.focus_event : FocusEvent;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -28,7 +28,7 @@ enum EventKitPhase
 mixin template EventPhaseProcesor()
 {
     //TODO remove imports
-    import api.core.apps.events.app_event : AppEvent;
+    import api.dm.kit.apps.events.app_event : AppEvent;
     import api.dm.kit.events.focus.focus_event : FocusEvent;
     import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
     import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;

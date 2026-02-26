@@ -1,4 +1,4 @@
-module api.core.events.event_target;
+module api.dm.kit.events.event_target;
 
 /**
  * Authors: initkfs

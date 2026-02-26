@@ -1,6 +1,6 @@
-module api.core.resources.paths.null_path_resource;
+module api.dm.kit.assets.paths.null_path_resource;
 
-import api.core.resources.paths.path_resource : PathResource;
+import api.dm.kit.assets.paths.path_resource : PathResource;
 import api.core.loggers.null_logging : NullLogging;
 
 class NullPathResources : PathResource

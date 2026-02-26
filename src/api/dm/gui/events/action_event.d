@@ -1,7 +1,7 @@
 module api.dm.gui.events.action_event;
 
-import api.core.events.event_target : EventTarget;
-import api.core.events.event_source : EventSource;
+import api.dm.kit.events.event_target : EventTarget;
+import api.dm.kit.events.event_source : EventSource;
 
 /**
  * Authors: initkfs

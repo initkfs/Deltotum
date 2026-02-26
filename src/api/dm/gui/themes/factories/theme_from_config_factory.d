@@ -3,9 +3,8 @@ module api.dm.gui.themes.factories.theme_from_config_factory;
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.contexts.context : Context;
 import api.core.configs.keyvalues.config : Config;
-import api.core.resources.resourcing : Resourcing;
 import api.dm.gui.themes.theme : Theme;
-import api.dm.com.graphics.com_font: ComFont;
+import api.dm.com.graphics.com_font : ComFont;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.pos2.insets : Insets;
 
@@ -16,15 +15,9 @@ import api.core.loggers.logging : Logging;
  */
 class ThemeFromConfigFactory : ApplicationUnit
 {
-    private
-    {
-        Resourcing resources;
-    }
-    this(Logging logging, Config config, Context context, Resourcing resources) pure @safe
+    this(Logging logging, Config config, Context context) pure @safe
     {
         super(logging, config, context);
-        //TODO check null
-        this.resources = resources;
     }
 
     protected void loadThemeFromConfig(T : Theme)(T newTheme, Config config)
@@ -73,7 +66,6 @@ class ThemeFromConfigFactory : ApplicationUnit
                         static assert(false, text("Not found type ", fieldType.stringof, " in theme with config key", themeConfigKey));
                     }
 
-
                     static if (is(fieldType : RGBA))
                     {
                         __traits(getMember, newTheme, fieldName) = RGBA.hex(value);
@@ -98,10 +90,7 @@ class ThemeFromConfigFactory : ApplicationUnit
     {
         auto theme = new Theme;
 
-        if (resources.user.hasResource)
-        {
-            loadThemeFromConfig(theme, config);
-        }
+        loadThemeFromConfig(theme, config);
 
         return theme;
     }

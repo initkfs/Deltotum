@@ -1,4 +1,4 @@
-module api.core.resources.paths.path_resource;
+module api.dm.kit.assets.paths.path_resource;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 

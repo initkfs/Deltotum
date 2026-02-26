@@ -11,8 +11,6 @@ import api.core.configs.configs : Configuration;
 import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.validations.validation : Validation;
-import api.core.resources.paths.path_resource : PathResource;
-import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
 import api.core.mems.allocs.allocator : Allocator;
@@ -47,7 +45,6 @@ class UniComponent : SimpleUnit
         @Service Configuration _configs;
 
         @Service Cli _cli;
-        @Service Resourcing _resources;
 
         @Service Validation _validation;
         @Service Memory _memory;
@@ -315,23 +312,5 @@ class UniComponent : SimpleUnit
             throw new Exception("Validation must not be null");
         }
         _validation = newValidation;
-    }
-
-    bool hasResources() const nothrow pure @safe => _resources !is null;
-    inout(PathResource) resuser() inout pure @safe => resources.user;
-
-    inout(Resourcing) resources() inout nothrow pure @safe
-    out (_resources; _resources !is null)
-    {
-        return _resources;
-    }
-
-    void resources(Resourcing resources) pure @safe
-    {
-        if (!resources)
-        {
-            throw new Exception("Resourcing must not be null");
-        }
-        _resources = resources;
     }
 }

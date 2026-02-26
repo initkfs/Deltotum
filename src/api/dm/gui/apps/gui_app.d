@@ -3,7 +3,6 @@ module api.dm.gui.apps.gui_app;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
-import api.core.resources.resourcing : Resourcing;
 import api.dm.kit.apps.loop_app : LoopApp;
 import api.dm.kit.apps.loops.loop : Loop;
 import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
@@ -33,8 +32,7 @@ abstract class GuiApp : LoopApp
         assert(mainLoop);
 
         theme = createTheme(uservices.logging, uservices.config, uservices
-                .context, uservices
-                .resources);
+                .context);
         assert(theme);
 
         interact = createInteract(uservices.logging, uservices.config, uservices
@@ -73,11 +71,11 @@ abstract class GuiApp : LoopApp
         }
     }
 
-    Theme createTheme(Logging logging, Config config, Context context, Resourcing resources)
+    Theme createTheme(Logging logging, Config config, Context context)
     {
         import api.dm.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(logging, config, context, resources);
+        auto themeLoader = new ThemeFromConfigFactory(logging, config, context);
 
         auto theme = themeLoader.createTheme;
 

@@ -1,8 +1,8 @@
 module api.dm.kit.inputs.pointers.events.pointer_event;
 
-import api.core.events.event_base : EventBase;
-import api.core.events.event_target : EventTarget;
-import api.core.events.event_source : EventSource;
+import api.dm.kit.events.event_base : EventBase;
+import api.dm.kit.events.event_target : EventTarget;
+import api.dm.kit.events.event_source : EventSource;
 
 /**
  * Authors: initkfs

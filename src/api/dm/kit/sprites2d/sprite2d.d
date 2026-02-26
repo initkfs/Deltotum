@@ -10,7 +10,7 @@ import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
 import api.dm.kit.scenes.scaling.scale_mode : ScaleMode;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
-import api.core.apps.events.app_event : AppEvent;
+import api.dm.kit.apps.events.app_event : AppEvent;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.events.focus.focus_event : FocusEvent;
 import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;

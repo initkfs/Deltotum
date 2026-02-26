@@ -1,6 +1,6 @@
 module api.dm.kit.events.processing.kit_event_processor;
 
-import api.core.apps.events.app_event: AppEvent;
+import api.dm.kit.apps.events.app_event: AppEvent;
 
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;

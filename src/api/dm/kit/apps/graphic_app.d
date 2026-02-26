@@ -4,7 +4,6 @@ import api.dm.com.graphics.com_font : ComFont;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
-import api.core.resources.resourcing : Resourcing;
 import api.core.apps.cli_app : CliApp;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.components.graphic_component : GraphicComponent;
@@ -396,7 +395,7 @@ abstract class GraphicApp : CliApp
         import std.file : getcwd, exists, isDir, isFile;
         import std.path : buildPath, dirName;
 
-        auto mustBeResDir = uservices.resuser.resourcePath;
+        auto mustBeResDir = uservices.context.app.userDir;
 
         import api.dm.kit.assets.asset : Asset;
         import api.dm.com.graphics.com_font : ComFont;

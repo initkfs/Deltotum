@@ -1,6 +1,6 @@
-module api.core.apps.events.app_event;
+module api.dm.kit.apps.events.app_event;
 
-import api.core.events.event_base : EventBase;
+import api.dm.kit.events.event_base : EventBase;
 
 /**
  * Authors: initkfs

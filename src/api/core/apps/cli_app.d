@@ -14,8 +14,6 @@ import api.core.contexts.context : Context;
 import api.core.validations.validation : Validation;
 import api.core.validations.validators.validator : Validator;
 import api.core.contexts.apps.app_context : AppContext;
-import api.core.resources.paths.path_resource : PathResource;
-import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
 import api.core.mems.allocs.allocator : Allocator;
@@ -117,10 +115,6 @@ class CliApp : SimpleUnit
             uservices.memory = createMemory(uservices.logging, uservices.config, uservices
                     .context);
             assert(uservices.hasMemory);
-
-            uservices.resources = createResourcing(uservices.logging, uservices.config, uservices
-                    .context);
-            assert(uservices.hasResources);
 
             uservices.isBuilt = true;
         }
@@ -566,73 +560,6 @@ class CliApp : SimpleUnit
     {
         auto validation = new Validation(logger, errStatus);
         return validation;
-    }
-
-    protected Resourcing createResourcing(Logging logging, Config config, Context context)
-    {
-        assert(logging);
-        assert(config);
-        assert(context);
-
-        import std.path : buildPath, isAbsolute;
-        import std.file : exists, isDir;
-
-        string mustBeResDir = defaultUserDataDir;
-        if (mustBeResDir.length == 0)
-        {
-            logging.logger.infof(
-                "Resourcing path is empty, empty resources manager created");
-            //WARNING return
-            return newResource(logging);
-        }
-
-        if (mustBeResDir.isAbsolute)
-        {
-            if (!mustBeResDir.exists || !mustBeResDir
-                .isDir)
-            {
-                logging.logger.error(
-                    "Absolute resources directory path does not exist or not a directory: ", mustBeResDir);
-                //WARNING return
-                return newResource(logging);
-            }
-        }
-        else
-        {
-            mustBeResDir = context.app.userDir;
-            if (mustBeResDir.length == 0)
-            {
-                logging.logger.infof(
-                    "Received relative path '%s', but user data directory not found", mustBeResDir);
-                //WARNING return
-                return newResource(logging);
-            }
-
-            if (!mustBeResDir.exists || !mustBeResDir
-                .isDir)
-            {
-                logging.logger.warning(
-                    "Resourcing directory path relative to the data does not exist or is not a directory: ", mustBeResDir);
-                //WARNING return
-                return newResource(logging);
-            }
-        }
-
-        auto resources = newResource(logging, mustBeResDir);
-        logging.logger.trace(
-            "Create resources from directory: ", mustBeResDir);
-        return resources;
-    }
-
-    PathResource newPathResource(Logging logging, string resourceDir = null)
-    {
-        return new PathResource(logging, resourceDir);
-    }
-
-    Resourcing newResource(Logging logging, string resourceDir = null)
-    {
-        auto users = newPathResource(logging, resourceDir);
-        return new Resourcing(users);
     }
 
     Mallocator* newMallocator() => new Mallocator(Allocator.init);
