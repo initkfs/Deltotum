@@ -191,7 +191,7 @@ class Controls : Control
         checkBoxContainer.layout.isAutoResize = true;
         root.addCreate(checkBoxContainer);
 
-        auto check1 = new Check("Check1", Icons.bug_fill);
+        auto check1 = new Check("Check1", Icons.database_fill_check);
         check1.isCreateIndeterminate = true;
         checkBoxContainer.addCreate(check1);
         check1.onPointerRelease ~= (ref e) {
@@ -201,7 +201,7 @@ class Controls : Control
             }
         };
 
-        auto check2 = new Check("Check2", Icons.bug_fill);
+        auto check2 = new Check("Check2", Icons.person_fill_check);
         check2.isBorder = true;
         checkBoxContainer.addCreate(check2);
         check2.layout.isFillStartToEnd = false;
@@ -215,27 +215,21 @@ class Controls : Control
         import api.dm.gui.controls.switches.toggles.toggle : Toggle;
         import api.math.pos2.orientation : Orientation;
 
-        auto switch1 = new Toggle(null, Icons.flask_fill);
+        auto switch1 = new Toggle(null, Icons.badge_hd_fill);
+        switch1.isSwitchIcon = true;
         toggleContainer.addCreate(switch1);
         switch1.isOn = true;
 
-        auto switch2 = new Toggle(null, Icons.flask_fill);
+        auto switch2 = new Toggle(null, Icons.bell_fill);
         switch2.isBorder = true;
+        switch2.isSwitchIcon = true;
         toggleContainer.addCreate(switch2);
 
-        auto htoggleContainer = new SwitchGroup;
-        htoggleContainer.layout = new HLayout;
-        htoggleContainer.layout.isAutoResize = true;
-        root.addCreate(htoggleContainer);
-
-        auto switch1h = new Toggle(null, Icons.circle_fill, Orientation.vertical);
-        htoggleContainer.addCreate(switch1h);
+        auto switch1h = new Toggle(null, Icons.brightness_high_fill, Orientation.vertical);
+        switch1h.isBorder = true;
+        root.addCreate(switch1h);
         switch1h.isOn = true;
         switch1h.isSwitchContent = true;
-
-        auto switch2h = new Toggle(null, Icons.circle_fill, Orientation.vertical);
-        switch2h.isSwitchContent = true;
-        htoggleContainer.addCreate(switch2h);
     }
 
     void createDialogs(Container root)

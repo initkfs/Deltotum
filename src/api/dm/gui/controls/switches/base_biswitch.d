@@ -83,18 +83,15 @@ class BaseBiswitch : Labeled
                 }
                 else
                 {
-                    iconTexture.color = lastLabelColor;
+                    iconTexture.color = newOffEffectIconColor(lastLabelColor);;
                 }
                 iconTexture.setInvalid;
             }
         }
     }
 
-    RGBA newOnEffectIconColor(RGBA originalColor)
-    {
-        originalColor.contrast(80);
-        return originalColor;
-    }
+    RGBA newOffEffectIconColor(RGBA originalColor) => RGBA.gray;
+    RGBA newOnEffectIconColor(RGBA originalColor) => originalColor;
 
     override Text newLabelText()
     {
