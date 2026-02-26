@@ -9,7 +9,7 @@ import api.core.validations.errors.err_status : ErrStatus;
  */
 class NullValidation : Validation
 {
-    this()
+    this() @safe
     {
         super(new Logger, new ErrStatus);
     }

@@ -6,8 +6,8 @@ public:
 
 import api.core.mems.allocs;
 import api.core.utils.buffers.dense_buffer;
-import api.core.utils.libs.dynamic_loader;
-import api.core.utils.libs.multi_dynamic_loader;
+import api.core.contexts.libs.dynamics.dynamic_loader;
+import api.core.contexts.libs.dynamics.dynamic_loader;
 import api.core.utils.queues.ring_buffer;
 import api.core.utils.queues.ring_buffer_lf;
 

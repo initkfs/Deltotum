@@ -1,78 +1,76 @@
-module api.core.utils.libs.multi_dynamic_loader;
+module api.core.contexts.libs.dynamics.dynamic_loader;
 
-import api.core.utils.libs.dynamic_loader;
+import BaseDynamic = api.core.contexts.libs.dynamics.base_dynamic;
+
+struct DynLib
+{
+    void* handle;
+    string name;
+    string path;
+    int lversion;
+}
 
 /**
  * Authors: initkfs
  */
-
-//TODO : DynamicLoader
-class MultiDynamicLoader
+class DynamicLoader
 {
     string workDirPath;
+    bool isChangeCwd = true;
+    bool isLocalPath;
 
     void delegate() onBeforeLoad;
     void delegate() onLoad;
 
-    void delegate(string) onLoadErrors;
-    void delegate(string[]) onLoadAllErrors;
+    bool isUnloadOnErrors = true;
+    bool isExceptionOnErrors;
+
+    void delegate(string[]) onErrors;
+    void delegate(string) onErrorsStr;
+
+    bool isLoadOneLib;
 
     void delegate() onBeforeUnload;
-    void delegate() onAfterUnload;
+    void delegate() onUnload;
 
     string[] errors;
-
-    bool isChangeCwd = true;
 
     protected
     {
         DynLib[] libs;
-
     }
-
-    bool isLoad;
-    bool isLocalPath;
 
     abstract
     {
-        const(char[][]) libPaths();
-        void bindAll(const(char)[] name, ref DynLib lib);
+        string[] libPaths();
     }
 
-    int libVersion() => 0;
-
-    string libVersionStr()
+    void bindAll()
     {
-        import std.conv : to;
 
-        return libVersion.to!string;
     }
 
-    bool checkError(string message = null)
+    void bindAll(ref DynLib lib)
     {
-        string err;
-        if (libError(err))
+
+    }
+
+    bool bind(void* funcPtr, const(char)[] name, bool isCheckError = true)
+    {
+        if (libs.length != 1)
         {
-            errors ~= message.length > 0 ? (message ~ err) : (err);
-            return true;
+            import std.conv : to;
+
+            throw new Exception("Bind without libs, but libs count not 1: " ~ libs
+                    .length.to!string);
         }
-        return false;
+        return bind(libs[0], funcPtr, name, isCheckError);
     }
 
     bool bind(ref DynLib lib, void* funcPtr, const(char)[] name, bool isCheckError = true)
     {
-        return bindT(lib, funcPtr, name, isCheckError);
-    }
-
-    // bool bind(ref DynLib lib, shared void* funcPtr, const(char)[] name, bool isCheckError = true)
-    // {
-    //     return bindT(lib, funcPtr, name, isCheckError);
-    // }
-
-    bool bindT(T)(ref DynLib lib, T funcPtr, const(char)[] name, bool isCheckError = true)
-    {
         void* mustBePtr;
-        if (libBind(lib.handlePtr, name.ptr, mustBePtr))
+        if (BaseDynamic.bind(lib.handle, name.ptr, mustBePtr))
         {
             //TODO or cast(shared(...))?
             if (!mustBePtr)
@@ -98,35 +96,6 @@ class MultiDynamicLoader
             checkError;
         }
         return false;
-    }
-
-    bool unload()
-    {
-        if (!isLoad)
-        {
-            return false;
-        }
-
-        if (onBeforeUnload)
-        {
-            onAfterUnload();
-        }
-
-        foreach (ref DynLib l; libs)
-        {
-            if (!libUnload(l.handlePtr))
-            {
-                errors ~= "Error unloading library: " ~ l.toString;
-                return false;
-            }
-        }
-
-        if (onAfterUnload)
-        {
-            onAfterUnload();
-        }
-
-        return true;
     }
 
     bool load()
@@ -198,36 +167,59 @@ class MultiDynamicLoader
             else
             {
                 currentLoad++;
+                if (isLoadOneLib && currentLoad >= 1)
+                {
+                    break;
+                }
             }
         }
 
-        if (currentLoad == needLoad)
+        if (currentLoad != needLoad)
         {
-            isLoad = true;
+            import std.format : format;
+
+            errors ~= format("Need count: %d, but loaded: %d", needLoad, currentLoad);
         }
+
+        if (needVersion != libVersion)
+        {
+            import std.format : format;
+
+            errors ~= format("Need version: %d, but loaded: %d", needVersion, libVersion);
+        }
+
+        bindAll;
 
         if (errors.length > 0)
         {
-            if (onLoadAllErrors)
+            if (isUnloadOnErrors)
             {
-                onLoadAllErrors(errors);
-            }
-
-            if (onLoadErrors)
-            {
-                foreach (err; errors)
+                scope (exit)
                 {
-                    onLoadErrors(err);
+                    unload;
                 }
             }
-            else
+
+            if ((!onErrors) && (!onErrorsStr) && isExceptionOnErrors)
             {
                 import std.conv : text;
 
                 throw new Exception(text("Library loading error: ", errors));
             }
 
-            return isLoad;
+            if (onErrorsStr)
+            {
+                import std.conv : text;
+
+                onErrorsStr(text(errors));
+            }
+
+            if (onErrors)
+            {
+                onErrors(errors);
+            }
+
+            return false;
         }
 
         if (onLoad)
@@ -235,16 +227,16 @@ class MultiDynamicLoader
             onLoad();
         }
 
-        return isLoad;
+        return true;
     }
 
-    bool loadFromPath(const(char)[] libPath, bool isCheckError = false)
+    bool loadFromPath(string libPath, bool isCheckError = false)
     {
         import std.string : toStringz;
         import std.conv : to;
 
         void* handle;
-        if (!libLoad(libPath.toStringz, handle))
+        if (!BaseDynamic.open(libPath.toStringz, handle))
         {
             if (isCheckError)
             {
@@ -255,13 +247,10 @@ class MultiDynamicLoader
             return false;
         }
 
-        auto newLib = DynLib(handle, libPath, 0, true);
-        libs ~= newLib;
-
+        //TODO libnames cache
         import std.path : baseName;
         import std.string : lastIndexOf;
 
-        //TODO libnames cache
         auto libName = libPath.baseName;
 
         auto extPos = libName.lastIndexOf('.');
@@ -270,8 +259,78 @@ class MultiDynamicLoader
             libName = libName[0 .. extPos];
         }
 
-        bindAll(libName, newLib);
+        auto newLib = DynLib(handle, libName, libPath, 0);
+        libs ~= newLib;
+
+        bindAll(newLib);
 
         return true;
     }
+
+    bool unload()
+    {
+        if (libs.length == 0)
+        {
+            return true;
+        }
+
+        if (onBeforeUnload)
+        {
+            onBeforeUnload();
+        }
+
+        foreach (ref DynLib l; libs)
+        {
+            if (!l.handle)
+            {
+                errors ~= "Error unloading library, handle is null: " ~ l.name;
+                continue;
+            }
+
+            if (!BaseDynamic.close(l.handle))
+            {
+                errors ~= "Error unloading library: " ~ l.name;
+                checkError;
+                continue;
+            }
+        }
+
+        if (onUnload)
+        {
+            onUnload();
+        }
+
+        libs = null;
+
+        return true;
+    }
+
+    bool checkError(string message = null)
+    {
+        string err;
+        if (BaseDynamic.error(err))
+        {
+            errors ~= message.length > 0 ? (message ~ err) : (err);
+            return true;
+        }
+        return false;
+    }
+
+    string errorsText()
+    {
+        import std.conv : text;
+
+        return errors.text;
+    }
+
+    int libVersion() => 0;
+    int needVersion() => 0;
+
+    string libVersionStr()
+    {
+        import std.conv : to;
+
+        return libVersion.to!string;
+    }
+
 }

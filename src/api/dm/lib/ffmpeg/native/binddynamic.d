@@ -4,8 +4,8 @@ module api.dm.lib.ffmpeg.native.binddynamic;
  * Authors: initkfs
  */
 import api.dm.lib.ffmpeg.native.types;
-import api.core.utils.libs.multi_dynamic_loader : MultiDynamicLoader;
-import api.core.utils.libs.dynamic_loader : DynLib;
+import api.core.contexts.libs.dynamics.dynamic_loader : DynamicLoader;
+import api.core.contexts.libs.dynamics.dynamic_loader : DynLib;
 
 import std.stdint;
 
@@ -59,18 +59,18 @@ __gshared extern (C) nothrow
     int function(AVCodecContext* avctx,
         AVFrame* frame) avcodec_receive_frame;
     int function(AVFrame* frame, int _align) av_frame_get_buffer;
-    AVCodec* function	( AVCodecID id	)avcodec_find_decoder;	
+    AVCodec* function(AVCodecID id) avcodec_find_decoder;
 
     //libavformat
     int function(AVFormatContext* s, AVPacket* pkt) av_read_frame;
     AVFormatContext* function() avformat_alloc_context;
     int function(AVFormatContext** ps, const char* url,
         const AVInputFormat* fmt, AVDictionary** options) avformat_open_input;
-    void function(AVFormatContext *ic,
-                    int index,
-                    const char *url,
-                    int is_output) av_dump_format;
-    int function(AVFormatContext *ic, AVDictionary **options) avformat_find_stream_info;
+    void function(AVFormatContext* ic,
+        int index,
+        const char* url,
+        int is_output) av_dump_format;
+    int function(AVFormatContext* ic, AVDictionary** options) avformat_find_stream_info;
 
     //libswscale
     SwsContext* function(int srcW, int srcH, AVPixelFormat srcFormat,
@@ -116,15 +116,15 @@ __gshared extern (C) nothrow
     // int function(SwrContext* s, const uint8_t* _out, int out_count,
     //     const uint8_t* _in, int in_count) swr_convert;
     int function(SwrContext* s, const uint8_t** _out, int out_count,
-         uint8_t** _in, int in_count) swr_convert;
+        uint8_t** _in, int in_count) swr_convert;
 
 }
 
-class FfmpegLib : MultiDynamicLoader
+class FfmpegLib : DynamicLoader
 {
-    override void bindAll(const(char)[] libName, ref DynLib lib)
+    override void bindAll(ref DynLib lib)
     {
-        if (libName == "libavutil")
+        if (lib.name == "libavutil")
         {
             bind(lib, &av_strerror, "av_strerror");
             bind(lib, &av_frame_alloc, "av_frame_alloc");
@@ -154,7 +154,7 @@ class FfmpegLib : MultiDynamicLoader
             return;
         }
 
-        if (libName == "libavcodec")
+        if (lib.name == "libavcodec")
         {
             bind(lib, &av_packet_alloc, "av_packet_alloc");
             bind(lib, &av_packet_free, "av_packet_free");
@@ -171,7 +171,7 @@ class FfmpegLib : MultiDynamicLoader
             return;
         }
 
-        if (libName == "libavformat")
+        if (lib.name == "libavformat")
         {
             bind(lib, &av_read_frame, "av_read_frame");
             bind(lib, &avformat_alloc_context, "avformat_alloc_context");
@@ -181,14 +181,14 @@ class FfmpegLib : MultiDynamicLoader
             return;
         }
 
-        if (libName == "libswscale")
+        if (lib.name == "libswscale")
         {
             bind(lib, &sws_getContext, "sws_getContext");
             bind(lib, &sws_freeContext, "sws_freeContext");
             bind(lib, &sws_scale, "sws_scale");
         }
 
-        if (libName == "libavfilter")
+        if (lib.name == "libavfilter")
         {
             bind(lib, &avfilter_graph_alloc, "avfilter_graph_alloc");
             bind(lib, &avfilter_graph_free, "avfilter_graph_free");
@@ -204,7 +204,7 @@ class FfmpegLib : MultiDynamicLoader
             bind(lib, &av_buffersink_get_frame, "av_buffersink_get_frame");
         }
 
-        if (libName == "libswresample")
+        if (lib.name == "libswresample")
         {
             bind(lib, &swr_alloc_set_opts2, "swr_alloc_set_opts2");
             bind(lib, &swr_free, "swr_free");
@@ -212,43 +212,38 @@ class FfmpegLib : MultiDynamicLoader
             bind(lib, &swr_alloc, "swr_alloc");
             bind(lib, &swr_convert, "swr_convert");
         }
-
     }
 
-    version (Windows)
+    override string[] libPaths()
     {
-        const(char)[][6] paths = [
-            "libavfilter.dll", "libavformat.dll",
-            "libswresample.dll", "libswscale.dll", "libavcodec.dll", "libavutil.dll"
-        ];
-    }
-    else version (OSX)
-    {
-        const(char)[][6] paths = [
-            "libavfilter.dylib", "libavformat.dylib",
-            "libswresample.dylib", "libswscale.dylib", "libavcodec.dylib", "libavutil.dylib"
-        ];
-    }
-    else version (Posix)
-    {
-        const(char)[][6] paths = [
-            "libavfilter.so", "libavformat.so",
-            "libswresample.so", "libswscale.so", "libavcodec.so", "libavutil.so"
-        ];
-    }
-    else
-    {
-        const(char)[0][0] paths;
-    }
-
-    override const(char[][]) libPaths()
-    {
+        version (Windows)
+        {
+            string[] paths = [
+                "libavfilter.dll", "libavformat.dll",
+                "libswresample.dll", "libswscale.dll", "libavcodec.dll",
+                "libavutil.dll"
+            ];
+        }
+        else version (OSX)
+        {
+            string[] paths = [
+                "libavfilter.dylib", "libavformat.dylib",
+                "libswresample.dylib", "libswscale.dylib", "libavcodec.dylib",
+                "libavutil.dylib"
+            ];
+        }
+        else version (Posix)
+        {
+            string[] paths = [
+                "libavfilter.so", "libavformat.so",
+                "libswresample.so", "libswscale.so", "libavcodec.so",
+                "libavutil.so"
+            ];
+        }
+        else
+        {
+            string[] paths;
+        }
         return paths;
     }
-
-    override int libVersion()
-    {
-        return 116;
-    }
-
 }

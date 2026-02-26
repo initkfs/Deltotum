@@ -144,10 +144,15 @@ class WebEngine : Sprite2d
         atomicStore(backClient.export_shm_buffer, &export_shm_buffer);
 
         auto wpe = new WpeWebkitLib;
-        wpe.onLoad = () { logger.trace("Load WPE library: ", versionInfo); };
-        wpe.onLoadErrors = (err) { logger.trace("WPE library errors: ", err); };
-
-        wpe.load;
+        if (wpe.load)
+        {
+            logger.trace("Load WPE library: ", versionInfo);
+        }
+        else
+        {
+            logger.trace("WPE library errors: ", wpe.errorsText);
+            return;
+        }
 
         assert(wpe_loader_init);
         if (!wpe_loader_init("libWPEBackend-fdo-1.0.so.1"))
@@ -297,7 +302,7 @@ class WebEngine : Sprite2d
         event.time = cast(uint) platform.timer.ticksMs;
         event.pressed = isPressed ? 1 : 0;
         event.hardware_key_code = e.scanCode;
-        
+
         import api.dm.com.inputs.com_keyboard : ComKeyName;
 
         switch (e.keyName)

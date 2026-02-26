@@ -4,7 +4,7 @@ module api.dm.lib.portaudio.native.binddynamic;
  * Authors: initkfs
  */
 import api.dm.lib.portaudio.native.types;
-import api.core.utils.libs.dynamic_loader : DynamicLoader;
+import api.core.contexts.libs.dynamics.dynamic_loader : DynamicLoader;
 
 import std.stdint;
 import core.stdc.config : c_long, c_ulong;
@@ -77,35 +77,30 @@ class PortAudioLib : DynamicLoader
 
     version (Windows)
     {
-        const(char)[][1] paths = [
+        string[] paths = [
             "libportaudio.dll"
         ];
     }
     else version (OSX)
     {
-        const(char)[][1] paths = [
+        string[] paths = [
             "libportaudio.dylib"
         ];
     }
     else version (Posix)
     {
-        const(char)[][1] paths = [
+        string[] paths = [
             "libportaudio.so"
         ];
     }
     else
     {
-        const(char)[0][0] paths;
+        string[] paths;
     }
 
-    override const(char[][]) libPaths()
+    override string[] libPaths()
     {
         return paths;
-    }
-
-    override int libVersion()
-    {
-        return 19;
     }
 
     override string libVersionStr()

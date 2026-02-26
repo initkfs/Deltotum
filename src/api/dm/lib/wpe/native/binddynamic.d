@@ -5,8 +5,8 @@ import core.stdc.stdint;
 /**
  * Authors: initkfs
  */
-import api.core.utils.libs.multi_dynamic_loader : MultiDynamicLoader;
-import api.core.utils.libs.dynamic_loader : DynLib;
+import api.core.contexts.libs.dynamics.dynamic_loader : DynamicLoader;
+import api.core.contexts.libs.dynamics.dynamic_loader : DynLib;
 import api.dm.lib.wpe.native.types;
 
 gulong go_g_signal_connect(void* instance, char* sig, void* handler, void* data)
@@ -40,7 +40,7 @@ __gshared extern (C) nothrow
     void function(WebKitWebView* web_view, const gchar* content, const gchar* base_uri) webkit_web_view_load_html;
     void function(WebKitWebView* web_view, const gchar* plain_text) webkit_web_view_load_plain_text;
     void function(WebKitWebView* web_view, gdouble zoom_level) webkit_web_view_set_zoom_level;
-    WebKitSettings *  function(WebKitWebView             *web_view) webkit_web_view_get_settings;
+    WebKitSettings* function(WebKitWebView* web_view) webkit_web_view_get_settings;
     /** 
      * FDO
      */
@@ -82,7 +82,7 @@ __gshared extern (C) nothrow
     int32_t function(wl_shm_buffer* buffer) wl_wl_shm_buffer_get_height;
 }
 
-class WpeWebkitLib : MultiDynamicLoader
+class WpeWebkitLib : DynamicLoader
 {
     bool isInit;
 
@@ -91,9 +91,9 @@ class WpeWebkitLib : MultiDynamicLoader
 
     }
 
-    override void bindAll(const(char[]) name, ref DynLib lib)
+    override void bindAll(ref DynLib lib)
     {
-        if (name == "libwpe-1.0")
+        if (lib.name == "libwpe-1.0")
         {
             bind(lib, &wpe_loader_init, "wpe_loader_init");
             bind(lib, &wpe_view_backend_dispatch_set_size, "wpe_view_backend_dispatch_set_size");
@@ -106,7 +106,7 @@ class WpeWebkitLib : MultiDynamicLoader
             bind(lib, &wpe_view_backend_dispatch_keyboard_event, "wpe_view_backend_dispatch_keyboard_event");
         }
 
-        if (name == "libWPEWebKit-1.0")
+        if (lib.name == "libWPEWebKit-1.0")
         {
             bind(lib, &webkit_web_context_get_default, "webkit_web_context_get_default");
             bind(lib, &webkit_web_view_backend_new, "webkit_web_view_backend_new");
@@ -123,7 +123,7 @@ class WpeWebkitLib : MultiDynamicLoader
             bind(lib, &webkit_web_view_get_settings, "webkit_web_view_get_settings");
         }
 
-        if (name == "libWPEBackend-fdo-1.0")
+        if (lib.name == "libWPEBackend-fdo-1.0")
         {
             bind(lib, &wpe_view_backend_exportable_fdo_create, "wpe_view_backend_exportable_fdo_create");
             bind(lib, &wpe_view_backend_exportable_fdo_get_view_backend, "wpe_view_backend_exportable_fdo_get_view_backend");
@@ -138,14 +138,14 @@ class WpeWebkitLib : MultiDynamicLoader
             bind(lib, &wpe_fdo_get_micro_version, "wpe_fdo_get_micro_version");
         }
 
-        if (name == "libgobject-2.0")
+        if (lib.name == "libgobject-2.0")
         {
             bind(lib, &go_g_type_init, "g_type_init");
             bind(lib, &go_g_main_context_iteration, "g_main_context_iteration");
             bind(lib, &go_g_signal_connect_data, "g_signal_connect_data");
         }
 
-        if (name == "libwayland-server")
+        if (lib.name == "libwayland-server")
         {
             bind(lib, &wl_wl_shm_buffer_get_stride, "wl_shm_buffer_get_stride");
             bind(lib, &wl_wl_shm_buffer_get_data, "wl_shm_buffer_get_data");
@@ -155,43 +155,21 @@ class WpeWebkitLib : MultiDynamicLoader
 
     }
 
-    version (Windows)
+    version (linux)
     {
-        const(char)[][1] paths = [
-            "libwpe-1.0.dll"
-        ];
-    }
-    else version (OSX)
-    {
-        const(char)[][1] paths = [
-            "libwpe-1.0.dylib"
-        ];
-    }
-    else version (Posix)
-    {
-        const(char)[][5] paths = [
+        string[] paths = [
             "libwpe-1.0.so", "libWPEWebKit-1.0.so", "libgobject-2.0.so",
             "libWPEBackend-fdo-1.0.so", "libwayland-server.so"
         ];
     }
     else
     {
-        const(char)[0][0] paths;
+        string[] paths;
     }
 
-    override const(char[][]) libPaths()
+    override string[] libPaths()
     {
         return paths;
-    }
-
-    override int libVersion()
-    {
-        return 0;
-    }
-
-    override string libVersionStr()
-    {
-        return null;
     }
 
     bool initialize(out string error)

@@ -296,25 +296,22 @@ class SdlApp : GuiApp
             {
                 auto cairoLibForLoad = new CairoLib;
 
-                cairoLibForLoad.onLoad = () {
+                if (cairoLibForLoad.load)
+                {
                     cairoLib = cairoLibForLoad;
                     theme.isUseVectorGraphics = gservices.platform.cap.isVector;
                     version (EnableTrace)
                     {
                         uservices.logger.trace("Load Cairo library.");
                     }
-                };
-
-                cairoLibForLoad.onLoadErrors = (err) {
-                    uservices.logger.error("Cairo loading error: ", err);
-                    cairoLibForLoad.unload;
-                    cairoLib = null;
-                };
-
-                cairoLibForLoad.load;
+                }
+                else
+                {
+                    gservices.platform.cap.isVector = false;
+                    uservices.logger.error(cairoLibForLoad.errorsText);
+                }
             }
 
-            //TODO config flag
             auto ffmpegLibForLoad = new FfmpegLib;
 
             //TODO from config
@@ -322,18 +319,15 @@ class SdlApp : GuiApp
 
             ffmpegLibForLoad.workDirPath = buildPath(uservices.context.app.workDir, "libs/ffmpeg/lib");
 
-            ffmpegLibForLoad.onLoad = () {
+            if (ffmpegLibForLoad.load)
+            {
                 ffmpegLib = ffmpegLibForLoad;
                 uservices.logger.trace("Load FFMPEG library.");
-            };
-
-            ffmpegLibForLoad.onLoadErrors = (err) {
-                uservices.logger.error("FFMPEG loading error: ", err);
-                ffmpegLibForLoad.unload;
-                ffmpegLib = null;
-            };
-
-            ffmpegLibForLoad.load;
+            }
+            else
+            {
+                uservices.logger.error("FFMPEG loading error: ", ffmpegLibForLoad.errorsText);
+            }
 
             // auto audioLib = new PortAudioLib;
             // audioLib.workDirPath = buildPath(uservices.context.app.workDir, "libs/portaudio/lib");
@@ -345,7 +339,7 @@ class SdlApp : GuiApp
             //             .deviceInfoNew);
             // };
 
-            // audioLib.onLoadErrors = (err) {
+            // audioLib.onErrors = (err) {
             //     uservices.logger.error("PortAudio loading error: ", err);
             //     audioLib.unload;
             //     portaudioLib = null;
@@ -354,21 +348,17 @@ class SdlApp : GuiApp
             // audioLib.load;
 
             auto ftLib = new FreeTypeLib;
-
-            ftLib.onLoad = () {
+            if (ftLib.load)
+            {
                 freetypeLib = ftLib;
                 freetypeLib.initialize;
                 freetypeLib.setLCDFilter;
                 uservices.logger.trace("Load FreeType library.");
-            };
-
-            ftLib.onLoadErrors = (err) {
-                uservices.logger.error("FreeType loading error: ", err);
-                ftLib.unload;
-                freetypeLib = null;
-            };
-
-            ftLib.load;
+            }
+            else
+            {
+                uservices.logger.error("FreeType loading error: ", ftLib.errorsText);
+            }
 
             if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
             {
@@ -800,38 +790,36 @@ class SdlApp : GuiApp
         {
             if (jpegLib)
             {
-                version (EnableTrace)
+                if (jpegLib.load)
                 {
-                    jpegLib.onLoad = () {
+                    version (EnableTrace)
+                    {
                         uservices.logger.trace("Load libjpeg");
-                    };
+                    }
                 }
-
-                jpegLib.onLoadAllErrors = (allerr) {
-                    uservices.logger.errorf("libjpeg errors: %s", allerr);
+                else
+                {
+                    uservices.logger.errorf("libjpeg errors: %s", jpegLib.errorsText);
                     gservices.platform.cap.isImage = false;
-                    jpegLib.unload;
                     jpegLib = null;
-                };
-
-                jpegLib.load;
+                }
             }
 
             if (pngLib)
             {
-                version (EnableTrace)
+                if (pngLib.load)
                 {
-                    pngLib.onLoad = () { uservices.logger.trace("Load libpng"); };
+                    version (EnableTrace)
+                    {
+                        uservices.logger.trace("Load libpng");
+                    }
                 }
-
-                pngLib.onLoadAllErrors = (allerr) {
-                    uservices.logger.errorf("libpng errors: %s", allerr);
+                else
+                {
+                    uservices.logger.errorf("libpng errors: %s", pngLib.errorText);
                     gservices.platform.cap.isImage = false;
-                    pngLib.unload;
                     pngLib = null;
-                };
-
-                pngLib.load;
+                }
             }
         }
 

@@ -21,7 +21,7 @@ class NullUniComponent : UniComponent
         _configs = new NullConfiguration;
         _memory = new NullMemory;
         _cli = new NullCli;
-        _validation = NullValidation;
+        _validation = new NullValidation;
         isBuilt = true;
     }
 }

@@ -4,7 +4,7 @@ module api.dm.lib.cairo.native.v116.binddynamic;
  * Authors: initkfs
  */
 import api.dm.lib.cairo.native.v116.types;
-import api.core.utils.libs.dynamic_loader : DynamicLoader;
+import api.core.contexts.libs.dynamics.dynamic_loader : DynamicLoader;
 
 alias cairo_write_func_t = extern (C) cairo_status_t function(void* closure, const ubyte* data, uint length);
 
@@ -186,29 +186,23 @@ class CairoLib : DynamicLoader
 
     version (Windows)
     {
-        const(char)[][2] paths = ["libcairo-2.dll", "cairo.dll"];
+        string[] paths = ["cairo.dll"];
     }
     else version (OSX)
     {
-        const(char)[][1] paths = ["libcairo.dylib"];
+        string[] paths = ["libcairo.dylib"];
     }
     else version (Posix)
     {
-        const(char)[][2] paths = ["libcairo.so.2", "libcairo.so"];
+        string[] paths = ["libcairo.so"];
     }
     else
     {
-        const(char)[0][0] paths;
+        string[] paths;
     }
 
-    override const(char[][]) libPaths()
+    override string[] libPaths()
     {
         return paths;
     }
-
-    override int libVersion()
-    {
-        return 116;
-    }
-
 }

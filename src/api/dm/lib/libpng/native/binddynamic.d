@@ -3,7 +3,7 @@ module api.dm.lib.libpng.native.binddynamic;
 /**
  * Authors: initkfs
  */
-import api.core.utils.libs.dynamic_loader : DynamicLoader;
+import api.core.contexts.libs.dynamics.dynamic_loader : DynamicLoader;
 import api.dm.lib.libpng.native.types;
 
 extern (C) nothrow
@@ -37,39 +37,29 @@ class PngLib : DynamicLoader
 
     version (Windows)
     {
-        const(char)[][1] paths = [
+        string[] paths = [
             "libpng.dll"
         ];
     }
     else version (OSX)
     {
-        const(char)[][1] paths = [
+        string[] paths = [
             "libpng.dylib"
         ];
     }
     else version (Posix)
     {
-        const(char)[][1] paths = [
+        string[] paths = [
             "libpng.so"
         ];
     }
     else
     {
-        const(char)[0][0] paths;
+        string[] paths;
     }
 
-    override const(char[][]) libPaths()
+    override string[] libPaths()
     {
         return paths;
-    }
-
-    override int libVersion()
-    {
-        return 0;
-    }
-
-    override string libVersionStr()
-    {
-        return null;
     }
 }
