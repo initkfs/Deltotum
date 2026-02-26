@@ -4,11 +4,6 @@ import api.core.loggers.builtins.logger : Logger;
 import api.core.validations.errors.err_status : ErrStatus;
 import api.core.validations.validators.validator : Validator;
 
-Validation newNullValidation() @safe
-{
-    return new Validation(new Logger, new ErrStatus);
-}
-
 /**
  * Authors: initkfs
  */
