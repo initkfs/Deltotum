@@ -32,6 +32,7 @@ class Labeled : Control
     void delegate() onPostIconCreated;
 
     bool isCreateLabelText;
+    bool isLabelMarginIsEmpty = true;
 
     void delegate() onPreTextCreate;
     void delegate() onPostTextCreated;
@@ -152,6 +153,11 @@ class Labeled : Control
         _label = newLabelText();
         assert(_label);
         addCreate(_label);
+
+        if (isLabelMarginIsEmpty && _label.margin.isEmpty)
+        {
+            _label.margin = theme.controlGraphicsGap;
+        }
     }
 
     Sprite2d newLabelIcon()

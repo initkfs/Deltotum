@@ -31,7 +31,7 @@ class VArc : VShape
     {
         auto ctx = canvas;
 
-        ctx.translate(radius, radius);
+        ctx.translate(_width / 2, _height / 2);
 
         ctx.arc(xCenter, yCenter, radius - style.lineWidth / 2, fromAngleRad, toAngleRad);
 

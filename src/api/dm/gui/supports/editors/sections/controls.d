@@ -107,8 +107,9 @@ class Controls : Control
         btnRoot2.layout.isDecreaseRootWidth = true;
 
         import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
+        import api.dm.gui.controls.switches.buttons.button: Button;
 
-        auto btn1 = new ParallelogramButton("Btn");
+        auto btn1 = new Button("Btn");
         btnRoot2.addCreate(btn1);
 
         auto btn2 = new ParallelogramButton("Btn");
@@ -120,16 +121,19 @@ class Controls : Control
 
         import api.dm.gui.controls.switches.buttons.round_button : RoundButton;
 
+        auto roundRoot = new VBox;
+        root.addCreate(roundRoot);
+
         auto circleBtn = new RoundButton("Btn");
         circleBtn.isLongPressButton = true;
-        btnRoot3.addCreate(circleBtn);
+        roundRoot.addCreate(circleBtn);
 
         import api.dm.gui.controls.switches.buttons.poly_button : PolyButton;
 
         import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 
         auto regBtn = new PolyButton("Btn");
-        btnRoot3.addCreate(regBtn);
+        roundRoot.addCreate(regBtn);
 
         auto recreateTween = new PauseTween(100);
         regBtn.addCreate(recreateTween);

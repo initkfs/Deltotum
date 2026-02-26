@@ -94,7 +94,7 @@ class VectorTexture : Texture2d
         return svgBuffer.data.to!string;
     }
 
-    private void tryCreateTempSurface()
+    protected void tryCreateTempSurface()
     {
         if (!comSurface)
         {
@@ -109,7 +109,7 @@ class VectorTexture : Texture2d
         }
     }
 
-    private void tryCreateDrawContext()
+    protected void tryCreateDrawContext()
     {
         import api.dm.lib.cairo : cairo_format_t;
 
@@ -153,7 +153,7 @@ class VectorTexture : Texture2d
         createStaticTexture;
     }
 
-    private void createStaticTexture()
+    protected void createStaticTexture()
     {
         tryCreateTempSurface;
         tryCreateDrawContext;
@@ -183,7 +183,7 @@ class VectorTexture : Texture2d
         loadStaticTexture;
     }
 
-    private void loadStaticTexture()
+    protected void loadStaticTexture()
     {
         assert(texture);
         assert(comSurface);
@@ -195,7 +195,7 @@ class VectorTexture : Texture2d
         }
     }
 
-    private void createMutTexture()
+    protected void createMutTexture()
     {
         tryCreateTempSurface;
         tryCreateDrawContext;
@@ -230,7 +230,7 @@ class VectorTexture : Texture2d
         loadMutTexture;
     }
 
-    private void loadMutTexture()
+    protected void loadMutTexture()
     {
         assert(texture);
         assert(comSurface);
