@@ -816,7 +816,7 @@ class SdlApp : GuiApp
                 }
                 else
                 {
-                    uservices.logger.errorf("libpng errors: %s", pngLib.errorText);
+                    uservices.logger.errorf("libpng errors: %s", pngLib.errorsText);
                     gservices.platform.cap.isImage = false;
                     pngLib = null;
                 }

@@ -159,6 +159,12 @@ abstract class GraphicApp : CliApp
             _graphicServices.platform.cap.is3d = uservices.config.getBool(
                 KitConfigKeys.backendIsGPU);
         }
+
+        if (uservices.config.hasKey(KitConfigKeys.graphicsIsIconPack))
+        {
+            _graphicServices.platform.cap.isIconPack = uservices.config.getBool(
+                KitConfigKeys.graphicsIsIconPack);
+        }
     }
 
     version (EnableValidation)

@@ -100,3 +100,16 @@ import std.traits : FieldNameTuple;
 import std.meta : staticMap;
 
 alias AllFieldNamesTuple(T) = staticMap!(FieldNameTuple, ChainHierarchy!T);
+
+void moduleIter(alias _module)(scope void delegate(string) onMod)
+{
+    foreach (key; __traits(allMembers, _module))
+    {
+        if (key == "object")
+        {
+            continue;
+        }
+
+        onMod(key);
+    }
+}
