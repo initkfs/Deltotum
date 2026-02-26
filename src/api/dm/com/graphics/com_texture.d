@@ -105,4 +105,5 @@ nothrow:
 
     ComResult nativePtr(out ComNativePtr ptr);
     ComResult nativePtr(out void* tptr);
+    bool hasPtr();
 }

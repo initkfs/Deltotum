@@ -63,10 +63,6 @@ class Controls : Control
 
         switchRoot.addCreate(new VSeparator);
 
-        createWindows(switchRoot);
-
-        switchRoot.addCreate(new VSeparator);
-
         createLabels(switchRoot);
 
         rootContainer.addCreate(new HSeparator);
@@ -840,80 +836,6 @@ class Controls : Control
 
         auto magn = new WindowMagnifier;
         root.addCreate(magn);
-    }
-
-    private void createWindows(Container root)
-    {
-        import api.dm.gui.controls.switches.buttons.button : Button;
-        import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
-        import api.dm.gui.controls.switches.checks.check : Check;
-        import IconName = api.dm.gui.themes.icons.pack_bootstrap;
-
-        import api.dm.gui.controls.containers.vbox : VBox;
-        import api.dm.gui.controls.containers.hbox : HBox;
-
-        auto winRoot1 = new VBox;
-        root.addCreate(winRoot1);
-        winRoot1.layout.isDecreaseRootWidth = true;
-
-        auto winMin = new ParallelogramButton("Min", IconName.arrow_down, (ref e) {
-            window.minimize;
-        });
-        winRoot1.addCreate(winMin);
-
-        auto winMax = new ParallelogramButton("Max", IconName.arrow_up, (ref e) {
-            window.maximize;
-        });
-        winRoot1.addCreate(winMax);
-        winMax.layout.isFillStartToEnd = false;
-
-        auto winRoot2 = new HBox(5);
-        root.addCreate(winRoot2);
-
-        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
-        import api.dm.kit.graphics.styles.default_style : DefaultStyle;
-
-        auto winRestore = new Button("Restore", IconName.r_square, (ref e) {
-            window.restore;
-        });
-        winRestore.styleId = DefaultStyle.success;
-        winRestore.layout = new VLayout;
-        winRestore.layout.isAutoResizeAndAlignOne = true;
-        winRestore.layout.isAlignX = true;
-
-        winRoot2.addCreate(winRestore);
-
-        auto winFull = new Button("FullScr", IconName.sourceforge, (ref e) {
-            auto oldValue = window.isFullScreen;
-            window.isFullScreen = !oldValue;
-        });
-
-        winFull.styleId = DefaultStyle.danger;
-        winFull.layout = new VLayout;
-        winFull.layout.isAutoResizeAndAlignOne = true;
-        winFull.layout.isAlignX = true;
-        winFull.layout.isFillStartToEnd = false;
-        winRoot2.addCreate(winFull);
-
-        auto winRoot3 = new VBox;
-        root.addCreate(winRoot3);
-        winRoot3.layout.isDecreaseRootWidth = true;
-
-        auto winDec = new ParallelogramButton(null, IconName.image_fill, (ref e) {
-            auto oldValue = window.isDecorated;
-            window.isDecorated = !oldValue;
-        });
-        winDec.styleId = DefaultStyle.warning;
-        winDec.isInverted = true;
-        winRoot3.addCreate(winDec);
-
-        auto winResize = new ParallelogramButton(null, IconName.file_lock, (ref e) {
-            auto oldValue = window.isResizable;
-            window.isResizable = !oldValue;
-        });
-        winResize.styleId = DefaultStyle.warning;
-        winResize.isInverted = true;
-        winRoot3.addCreate(winResize);
     }
 
     void createLabels(Container root)

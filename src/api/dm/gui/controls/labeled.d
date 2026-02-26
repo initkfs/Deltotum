@@ -25,6 +25,7 @@ class Labeled : Control
     }
 
     bool isSetNullGapFromTheme = true;
+    bool isEnablePadding = true;
 
     bool isCreateLabelIcon;
 
@@ -59,7 +60,7 @@ class Labeled : Control
     {
         super.initialize;
 
-        if (canEnablePadding)
+        if (isEnablePadding && canEnablePadding)
         {
             enablePadding;
         }

@@ -2769,26 +2769,22 @@ class Sprite2d : EventKitTarget
         return 1.0 / _invMass;
     }
 
-    float opacity()
-    {
-        return _opacity;
-    }
-
-    bool canSetOpacity(float value) => value >= 0 && value <= maxOpacity;
+    float opacity() => _opacity;
 
     bool opacity(float value)
     {
-        if (!canSetOpacity(value))
+        if (value < 0)
         {
-            if (value > maxOpacity)
-            {
-                _opacity = maxOpacity;
-            }
-
-            return false;
+            _opacity = 0;
         }
-
-        _opacity = value;
+        else if (value > maxOpacity)
+        {
+            _opacity = maxOpacity;
+        }
+        else
+        {
+            _opacity = value;
+        }
 
         if (isOpacityForChild)
         {

@@ -888,6 +888,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
     }
 
+    bool hasPtr() nothrow => ptr !is null;
+
     ComResult nativePtr(out ComNativePtr nptr) nothrow
     {
         assert(ptr);

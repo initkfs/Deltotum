@@ -24,6 +24,7 @@ class Texture2d : Sprite2d
     protected
     {
         ComTexture texture;
+        ComTextureScaleMode _scaleMode = ComTextureScaleMode.quality;
     }
 
     private
@@ -181,7 +182,16 @@ class Texture2d : Sprite2d
         {
             logger.error(err.toString);
         }
-        return mode;
+
+        if (mode != _scaleMode)
+        {
+            if (const err = texture.setScaleMode(_scaleMode))
+            {
+                logger.error(err.toString);
+            }
+        }
+
+        return _scaleMode;
     }
 
     void scaleMode(ComTextureScaleMode mode)
@@ -191,6 +201,7 @@ class Texture2d : Sprite2d
         {
             logger.error(err.toString);
         }
+        _scaleMode = mode;
     }
 
     void bestScaleMode()
@@ -597,10 +608,7 @@ class Texture2d : Sprite2d
         }
     }
 
-    override float opacity()
-    {
-        return super.opacity;
-    }
+    override float opacity() => super.opacity;
 
     override bool opacity(float value)
     {

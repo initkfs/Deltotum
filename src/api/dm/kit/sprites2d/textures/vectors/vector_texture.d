@@ -13,9 +13,13 @@ import api.dm.lib.cairo.cairo_context : CairoContext;
 //TODO remove native api
 import api.dm.lib.cairo;
 
-struct BufferWrapper {
+struct BufferWrapper
+{
     char[] data;
-    void put(const char[] slice) { data ~= slice; }
+    void put(const char[] slice)
+    {
+        data ~= slice;
+    }
 }
 
 extern (C) cairo_status_t writeSvgToBuffer(void* closure, const ubyte* data, uint length)
@@ -188,10 +192,22 @@ class VectorTexture : Texture2d
         assert(texture);
         assert(comSurface);
 
+        import api.dm.com.graphics.com_texture : ComTextureScaleMode;
+
         const createErr = texture.create(comSurface);
         if (createErr)
         {
             throw new Exception(createErr.toString);
+        }
+
+        if (auto opacityErr = texture.setOpacity(opacity))
+        {
+            logger.error(opacityErr.toString);
+        }
+
+        if (auto scaleErr = texture.setScaleMode(_scaleMode))
+        {
+            logger.error(scaleErr.toString);
         }
     }
 
@@ -225,6 +241,16 @@ class VectorTexture : Texture2d
         if (const err = texture.setBlendModeBlend)
         {
             throw new Exception(err.toString);
+        }
+
+        if (auto opacityErr = texture.setOpacity(opacity))
+        {
+            logger.error(opacityErr.toString);
+        }
+
+        if (auto scaleErr = texture.setScaleMode(_scaleMode))
+        {
+            logger.error(scaleErr.toString);
         }
 
         loadMutTexture;

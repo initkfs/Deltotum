@@ -1,6 +1,7 @@
 module api.dm.gui.controls.labels.hyperlinks.hyperlink;
 
-import api.dm.gui.controls.labeled : Labeled;
+import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.labels.label : Label;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.popups.tooltips.base_tooltip : BaseTooltip;
 import api.dm.gui.controls.popups.tooltips.text_tooltip : TextTooltip;
@@ -10,11 +11,17 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-class Hyperlink : Labeled
+class Hyperlink : Control
 {
     string url;
 
     bool isOpenBrowser;
+
+    Label label;
+    bool isCreateLabel = true;
+    Label delegate(Label) onNewLabel;
+    void delegate(Label) onConfiguredLabel;
+    void delegate(Label) onCreatedLabel;
 
     Sprite2d underline;
     float underlineHeight = 0;
@@ -30,10 +37,21 @@ class Hyperlink : Labeled
     void delegate(BaseTooltip) onConfiguredUrlTooltip;
     void delegate(BaseTooltip) onCreatedUrlTooltip;
 
-    this(dstring text = "Hyperlink", dchar iconName = dchar.init, float graphicsGap = 0, bool isCreateLayout = true)
+    float fromHoverOpacity = 0.5;
+    float toHoverOpacity = 1.0;
+
+    protected
     {
-        super(text, iconName, graphicsGap, isCreateLayout);
-        _labelText = text;
+        dstring _text;
+        dchar _iconName;
+        float _graphicsGap = 0;
+    }
+
+    this(dstring text = "Hyperlink", dchar iconName = dchar.init, float graphicsGap = 0)
+    {
+        _text = text;
+        _iconName = iconName;
+        _graphicsGap = graphicsGap;
 
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
@@ -45,19 +63,8 @@ class Hyperlink : Labeled
     {
         super.initialize;
 
-        onPointerEnter ~= (ref e) {
-            if (underline && underline.isVisible)
-            {
-                underline.isVisible = false;
-            }
-        };
-
-        onPointerExit ~= (ref e) {
-            if (underline && !underline.isVisible)
-            {
-                underline.isVisible = true;
-            }
-        };
+        onPointerEnter ~= (ref e) { linkOpacity(toHoverOpacity); };
+        onPointerExit ~= (ref e) { linkOpacity(fromHoverOpacity); };
 
         onPointerPress ~= (ref e) {
             if (!isOpenBrowser || url.length == 0)
@@ -86,6 +93,31 @@ class Hyperlink : Labeled
     {
         super.create;
 
+        if (!label && isCreateLabel)
+        {
+            auto nl = newLabel;
+            label = !onNewLabel ? nl : onNewLabel(nl);
+
+            _text = null;
+            _iconName = dchar.init;
+            _graphicsGap = 0;
+            label.isEnablePadding = false;
+
+            if (onConfiguredLabel)
+            {
+                onConfiguredLabel(label);
+            }
+
+            addCreate(label);
+
+            label.label.margin = 0;
+
+            if (onCreatedLabel)
+            {
+                onCreatedLabel(label);
+            }
+        }
+
         if (!urlTooltip && isCreateUrlTooltip)
         {
             auto p = newUrlTooltip(url.to!dstring);
@@ -110,7 +142,7 @@ class Hyperlink : Labeled
         {
             auto ul = newUnderline;
             underline = !onNewUnderline ? ul : onNewUnderline(ul);
-
+            
             underline.isHGrow = true;
             underline.width = width > 0 ? width : theme.controlDefaultWidth / 2;
 
@@ -123,11 +155,27 @@ class Hyperlink : Labeled
             }
 
             addCreate(underline);
+
+            underline.opacity = fromHoverOpacity;
+
             if (onCreatedUnderline)
             {
                 onCreatedUnderline(underline);
             }
         }
+    }
+
+    void linkOpacity(float value)
+    {
+        if (underline && underline.isVisible)
+        {
+            underline.opacity = value;
+        }
+    }
+
+    Label newLabel()
+    {
+        return new Label(_text, _iconName, _graphicsGap);
     }
 
     Sprite2d newUnderline()

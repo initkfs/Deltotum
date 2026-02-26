@@ -246,6 +246,11 @@ class FreeTypeFont : ComFont
             return false;
         }
 
+        if (!FT2_FT_Done_Face)
+        {
+            return false;
+        }
+
         FT2_FT_Done_Face(_face);
         return true;
     }
