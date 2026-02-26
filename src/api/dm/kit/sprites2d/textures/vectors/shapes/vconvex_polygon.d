@@ -29,8 +29,13 @@ class VConvexPolygon : VShape
         const lineWidth = style.lineWidth;
         canvas.lineWidth(lineWidth);
 
+        import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
+
+        // canvas.lineEnd = GraphicCanvas.LineEnd.round;
+        // canvas.lineJoin = GraphicCanvas.LineJoin.round;
+
         //TODO check corners + halfLine
-        float halfLine = lineWidth / 2;
+        float halfLine = lineWidth / 2 + 0.5;
 
         const topLineEndX = width - cornerPadding - halfLine;
         const topLineEndY = halfLine;

@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.parallelogram2 : Parallelogram2f;
-import api.math.geom2.vec2: Vec2f;
+import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
@@ -32,20 +32,22 @@ class VParallelogram : VShape
 
         auto ctx = canvas;
 
-        Vec2f prev;
+        auto strokeWidth = style.lineWidth;
+
         Vec2f first;
+        Vec2f prev;
 
-        import api.dm.kit.graphics.canvases.graphic_canvas: GraphicCanvas;
-
-        shape.draw(width, height, angleDeg, isInverted, (i, p) {
+        shape.draw(width, height, angleDeg, isInverted, strokeWidth, (i, p) {
 
             if (i == 0)
             {
                 ctx.moveTo(p);
                 first = p;
-            }else {
-                ctx.lineTo(p);
+                prev = p;
+                return true;
             }
+
+            ctx.lineTo(p);
 
             prev = p;
 
@@ -62,6 +64,7 @@ class VParallelogram : VShape
 
         ctx.color = style.lineColor;
         ctx.lineWidth = style.lineWidth;
+        ctx.closePath;
         ctx.stroke;
     }
 }

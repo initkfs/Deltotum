@@ -43,7 +43,7 @@ class Parallelogram : Shape2d
         float firstX;
         float firstY;
 
-        shape.draw(width, height, angleDeg, isInverted, (i, p) {
+        shape.draw(width, height, angleDeg, isInverted, style.lineWidth, (i, p) {
             float endX = x + p.x;
             float endY = y + p.y;
             if (i == 0)
