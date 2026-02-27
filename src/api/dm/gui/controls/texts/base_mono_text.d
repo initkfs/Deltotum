@@ -481,7 +481,7 @@ class BaseMonoText : Control
 
     protected void onViewportGlyphs(scope bool delegate(ref Glyph, size_t) onGlyphIndexIsContinue)
     {
-        if (width == 0 || height == 0 || rowHeight == 0)
+        if (rowHeight == 0)
         {
             return;
         }
@@ -535,7 +535,7 @@ class BaseMonoText : Control
 
     protected void renderText(Glyph[] glyphs, size_t startIndex)
     {
-        if (width == 0 || height == 0 || glyphs.length == 0)
+        if (glyphs.length == 0)
         {
             return;
         }
@@ -632,7 +632,6 @@ class BaseMonoText : Control
     {
         fontSize = FontSize.large;
         trySetColorTexture;
-        setInvalid;
     }
 
     void setMediumSize()

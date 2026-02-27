@@ -4,7 +4,6 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2f;
-import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
@@ -88,7 +87,7 @@ abstract class BaseCircularTable(T, TCol:
 
         assert(rowContainer);
 
-        vScroll = new VScroll;
+        vScroll = newVScroll;
         vScroll.isVGrow = true;
 
         contentContainerOrThis.addCreate(vScroll);
@@ -230,6 +229,19 @@ abstract class BaseCircularTable(T, TCol:
     {
         size_t rowItems();
         T rowItem(size_t rowIndex, size_t colIndex);
+    }
+
+    VScroll newVScroll()
+    {
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+        return new class VScroll
+        {
+            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
+            }
+        };
     }
 
     protected void moveVisibleRowsY(float dy)

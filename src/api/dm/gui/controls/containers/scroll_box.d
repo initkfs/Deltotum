@@ -43,7 +43,7 @@ class ScrollBox : Container
     ScrollBarPolicy hScrollPolicy = ScrollBarPolicy.ifneed;
 
     float clipErrorDelta = 1;
-    float clipPadding = 0;
+    float clipPadding = 2;
 
     this(float width = 100, float height = 100)
     {
@@ -91,7 +91,7 @@ class ScrollBox : Container
         contentContainer.addCreate(content);
         content.padding = Insets(0);
 
-        vslider = new VScroll;
+        vslider = newVScroll;
         vslider.id = idVscroll;
         vslider.isVGrow = true;
         contentContainer.addCreate(vslider);
@@ -116,7 +116,7 @@ class ScrollBox : Container
             contentRoot.y = contentRoot.y - dtY;
         };
 
-        hslider = new HScroll;
+        hslider = newHScroll;
         hslider.id = idHscroll;
         hslider.isHGrow = true;
         addCreate(hslider);
@@ -169,6 +169,32 @@ class ScrollBox : Container
             {
                 vslider.fireEvent(e);
                 e.isConsumed = true;
+            }
+        };
+    }
+
+    HScroll newHScroll()
+    {
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+        return new class HScroll
+        {
+            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
+            }
+        };
+    }
+
+    VScroll newVScroll()
+    {
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+        return new class VScroll
+        {
+            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
             }
         };
     }
@@ -258,7 +284,8 @@ class ScrollBox : Container
             //TODO hack for process events
         }
 
-        if(root.isResizedByParent){
+        if (root.isResizedByParent)
+        {
             root.isResizedByParent = false;
         }
 

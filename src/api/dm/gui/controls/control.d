@@ -1017,6 +1017,7 @@ class Control : GuiComponent
 
     protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
     {
+        //TODO return theme.shape
         return theme.background(w, h, angle, &style);
     }
 

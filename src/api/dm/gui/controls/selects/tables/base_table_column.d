@@ -115,7 +115,7 @@ class BaseTableColumn(TItem) : Container
             }
 
             addCreate(leftBorder);
-            
+
             if (onCreatedLeftBorder)
             {
                 onCreatedLeftBorder(leftBorder);
@@ -149,7 +149,9 @@ class BaseTableColumn(TItem) : Container
 
     Text newItemText()
     {
-        return new Text;
+        auto text = new Text;
+        //text.resize(1, 1);
+        return text;
     }
 
     Sprite2d newLeftBorder()
@@ -182,9 +184,10 @@ class BaseTableColumn(TItem) : Container
     void item(TItem item)
     {
         _item = item;
-        assert(itemText);
-        assert(itemTextProvider);
-        assert(setText);
+        if (!setText)
+        {
+            throw new Exception("Text not set");
+        }
     }
 
     protected bool setText() => text(item);
@@ -197,6 +200,7 @@ class BaseTableColumn(TItem) : Container
         }
         auto text = itemTextProvider(item);
         itemText.text = text;
+        
         return true;
     }
 }

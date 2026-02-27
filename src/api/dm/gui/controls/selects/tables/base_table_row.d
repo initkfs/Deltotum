@@ -83,10 +83,19 @@ class BaseTableRow(TItem, TCol:
 
         if (!itemTextProvider)
         {
-            itemTextProvider = (TItem item) {
-                import std.conv : to;
+            itemTextProvider = (TItem item)
+            {
+                static if (is(item : dstring))
+                {
+                    return item;
+                }
+                else
+                {
+                    import std.conv : to;
 
-                return item.to!dstring;
+                    return item.to!dstring;
+                }
+
             };
         }
     }
@@ -167,7 +176,12 @@ class BaseTableRow(TItem, TCol:
 
     Sprite2d newSelectEffect()
     {
-        return theme.shape(width, height, angle, createFillStyle);
+        return theme.rectShape(width, height, angle, createFillStyle);
+    }
+
+    override Sprite2d newHoverEffect()
+    {
+        return theme.rectShape(width, height, angle, createFillStyle);
     }
 
     Container newColumnContainer()
