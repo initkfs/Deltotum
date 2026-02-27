@@ -47,8 +47,57 @@ class TriangleButton : BaseButton
 
     override void loadTheme()
     {
-        super.loadTheme;
-        loadBaseButtonTheme;
+        import Math = api.math;
+
+        //for simplify centroid
+        auto size = Math.max(theme.buttonWidth, theme.buttonHeight);
+        if (isSetNullWidthFromTheme && width == 0)
+        {
+            initWidth = size;
+        }
+
+        if (isSetNullHeightFromTheme && height == 0)
+        {
+            initHeight = size;
+        }
+    }
+
+    override void applyLayout()
+    {
+        import Math = api.math;
+
+        super.applyLayout;
+
+        if (_icon)
+        {
+            const bounds = boundsRect;
+
+            float centroidX = 0;
+            float centroidY = 0;
+
+            if (angle == 0)
+            {
+                centroidX = bounds.halfWidth;
+                centroidY = bounds.width * 2 / 3;
+            }
+            else
+            {
+                const wc = bounds.width / 6.0;
+                centroidX = bounds.halfWidth - wc * Math.sinDeg(angle);
+                centroidY = bounds.halfWidth + wc * Math.cosDeg(angle);
+            }
+
+            _icon.x = x + centroidX - _icon.halfWidth;
+            _icon.y = y + centroidY - _icon.halfHeight;
+
+        }
+    }
+
+    override Sprite2d newLabelIcon()
+    {
+        auto newIcon = super.newLabelIcon;
+        newIcon.isLayoutManaged = false;
+        return newIcon;
     }
 
     alias createShape = Control.createShape;

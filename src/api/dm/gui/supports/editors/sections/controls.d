@@ -174,14 +174,13 @@ class Controls : Control
 
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        auto tbtn1 = new TriangleButton(null, Icons.arrow_up, (ref e) {});
+        auto tbtn1 = new TriangleButton(null, Icons.arrow_up_circle_fill, (ref e) {});
         tbtn1.styleId = DefaultStyle.warning;
         tbtn1.isFixedButton = true;
         tbtn1.isOn = true;
-        //.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn1);
 
-        auto tbtn2 = new TriangleButton(null, Icons.arrow_down, (ref e) {});
+        auto tbtn2 = new TriangleButton(null, Icons.arrow_down_circle_fill, (ref e) {});
         tbtn2.isFixedButton = true;
         tbtn2.angle = 180;
         tbtn2.styleId = DefaultStyle.danger;
@@ -884,6 +883,7 @@ class Controls : Control
         auto text = new Text("Text with\nline breaks");
         text.isBorder = true;
         fieldBox.addCreate(text);
+        text.enablePadding;
 
         auto textF1 = new TextField("0");
         textF1.defaultValue = "0";
