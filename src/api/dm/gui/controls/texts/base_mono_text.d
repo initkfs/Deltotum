@@ -139,6 +139,16 @@ class BaseMonoText : Control
         updateTextLayout;
     }
 
+    protected bool trySetColorTexture()
+    {
+        if (!hasAsset)
+        {
+            return false;
+        }
+        setColorTexture;
+        return true;
+    }
+
     protected void setColorTexture()
     {
         if (!asset.hasColorBitmap(_color, fontSize))
@@ -621,16 +631,22 @@ class BaseMonoText : Control
     void setLargeSize()
     {
         fontSize = FontSize.large;
+        trySetColorTexture;
+        setInvalid;
     }
 
     void setMediumSize()
     {
         fontSize = FontSize.medium;
+        trySetColorTexture;
+        setInvalid;
     }
 
     void setSmallSize()
     {
         fontSize = FontSize.small;
+        trySetColorTexture;
+        setInvalid;
     }
 
     auto textTo(T)() => text.to!T;

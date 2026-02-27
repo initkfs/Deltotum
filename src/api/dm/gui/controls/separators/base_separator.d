@@ -16,11 +16,11 @@ abstract class BaseSeparator : Control
 
     override Sprite2d newBackground()
     {
-        auto shape = theme.rectShape(width, height, angle, createThisStyle);
+        auto shape = theme.rectShape(width, height, angle, createBackgroundStyle);
         return shape;
     }
 
-    override GraphicStyle createThisStyle()
+    override GraphicStyle createBackgroundStyle()
     {
         auto style = createFillStyle;
         return style;

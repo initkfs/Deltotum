@@ -65,6 +65,15 @@ class Controls : Control
 
         createLabels(switchRoot);
 
+        auto sep = new VSeparator;
+        //TODO PosLayout in badges
+        sep.marginLeft = 5;
+        switchRoot.addCreate(sep);
+
+        createPickers(switchRoot);
+
+        createProgress(switchRoot);
+
         rootContainer.addCreate(new HSeparator);
 
         auto selectionContainer = new HBox;
@@ -73,7 +82,6 @@ class Controls : Control
 
         createSelects(selectionContainer);
 
-        createPickers(selectionContainer);
 
         createTexts(selectionContainer);
 
@@ -103,7 +111,7 @@ class Controls : Control
         btnRoot2.layout.isDecreaseRootWidth = true;
 
         import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
-        import api.dm.gui.controls.switches.buttons.button: Button;
+        import api.dm.gui.controls.switches.buttons.button : Button;
 
         auto btn1 = new Button("Btn");
         btnRoot2.addCreate(btn1);
@@ -173,9 +181,7 @@ class Controls : Control
         //.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn1);
 
-        auto tbtn2 = new TriangleButton(null, Icons.arrow_down, (ref e) {
-
-        });
+        auto tbtn2 = new TriangleButton(null, Icons.arrow_down, (ref e) {});
         tbtn2.isFixedButton = true;
         tbtn2.angle = 180;
         tbtn2.styleId = DefaultStyle.danger;
@@ -261,12 +267,14 @@ class Controls : Control
 
         auto popBtn = new Button("Popup", (ref e) {
             import std.conv : to;
+
             interact.popup.notify("Popup");
         });
         root3.addCreate(popBtn);
 
         auto popUrgBtn = new Button("Urgent", (ref e) {
             import std.conv : to;
+
             interact.popup.urgent("Popup urgent");
         });
         root3.addCreate(popUrgBtn);
@@ -464,10 +472,10 @@ class Controls : Control
         hscaleDyn.isHGrow = true;
         container1.addCreate(hscaleDyn);
 
-        import api.math.pos2.position : Position;
+        import api.math.pos2.position : Pos;
 
         auto hs = new HScroll;
-        hs.labelPos = Position.bottomCenter;
+        hs.labelPos = Pos.bottomCenter;
         hs.isCreateLabel = true;
         container1.addCreate(hs);
         hs.width = hs.width * 1.5;
@@ -485,7 +493,7 @@ class Controls : Control
         root.addCreate(vscaleDyn);
 
         auto vs = new VScroll;
-        vs.labelPos = Position.centerRight;
+        vs.labelPos = Pos.centerRight;
         vs.isCreateLabel = true;
         root.addCreate(vs);
 
@@ -538,7 +546,10 @@ class Controls : Control
         auto digClock = new DigitalClock;
         digClock.isAutorun = true;
         clockBox.addCreate(digClock);
+    }
 
+    void createProgress(Container root)
+    {
         auto progressContainer = new VBox;
         progressContainer.isAlignX = true;
         root.addCreate(progressContainer);
@@ -617,6 +628,8 @@ class Controls : Control
             }
         };
 
+        import api.dm.gui.controls.meters.scrolls.rscroll : RScroll;
+
         auto rscroll1 = new RScroll;
         rscroll1.onNewScale = (scale) {
             scale.multiplyInitWidth = 1.2;
@@ -635,7 +648,8 @@ class Controls : Control
 
         import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
         import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
-        import api.dm.gui.controls.meters.scrolls.rscroll : RScroll;
+         import api.dm.gui.controls.meters.scrolls.rscroll : RScroll;
+
 
         auto vScrollbar = new VScroll;
         root.addCreate(vScrollbar);
@@ -847,9 +861,9 @@ class Controls : Control
         import api.dm.gui.controls.labels.label : Label;
         import api.dm.gui.controls.labels.badges.badge : Badge;
 
-        auto label1 = new Label;
+        auto label1 = new Label("Badge");
         labelRoot.addCreate(label1);
-        label1.addCreate(new Badge);
+        label1.addCreate(new Badge("123"));
 
         import api.dm.gui.controls.labels.hyperlinks.hyperlink : Hyperlink;
 

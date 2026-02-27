@@ -1349,11 +1349,6 @@ class SdlApp : GuiApp
             }
         }
 
-        if (freetypeLib)
-        {
-            freetypeLib.dispose;
-        }
-
         if (hasWindowing)
         {
             windowing.onWindows((win) {
@@ -1365,6 +1360,12 @@ class SdlApp : GuiApp
                 win.dispose;
                 return true;
             });
+        }
+
+        //After fonts\assets in windows
+        if (freetypeLib)
+        {
+            freetypeLib.dispose;
         }
 
         if (sdlJoystick)

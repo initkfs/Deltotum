@@ -2,6 +2,7 @@ module api.math.geom2.rect2;
 
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.circle2 : Circle2f;
+import api.math.pos2.position : Pos;
 
 //TODO template from Rect2f
 struct Rect2i
@@ -30,24 +31,24 @@ struct Rect2f
     float width = 0;
     float height = 0;
 
-    bool contains(float x, float y) const  nothrow pure @safe
+    bool contains(float x, float y) const nothrow pure @safe
     {
         return x >= this.x && y >= this.y && x < right && y < bottom;
     }
 
-    bool contains(Vec2f point) const  nothrow pure @safe
+    bool contains(Vec2f point) const nothrow pure @safe
     {
         return contains(point.x, point.y);
     }
 
-    bool contains(Circle2f circle) const  nothrow pure @safe
+    bool contains(Circle2f circle) const nothrow pure @safe
     {
         return (circle.x + circle.radius <= right) && (circle.x - circle.radius >= x) && (
             circle.y + circle.radius <= bottom) && (
             circle.y - circle.radius >= y);
     }
 
-    bool contains(Rect2f rect) const  nothrow pure @safe
+    bool contains(Rect2f rect) const nothrow pure @safe
     {
         return ((rect.x >= x && rect.x <= right) && (rect.right >= x && rect.right <= right))
             && ((rect.y >= y && rect.y <= bottom) && (rect.bottom >= y && rect.bottom <= bottom));
@@ -99,42 +100,64 @@ struct Rect2f
         return (cornerDistance <= (circle.radius ^^ 2));
     }
 
-    float right() const  nothrow pure @safe
+    float halfWidth() const nothrow pure @safe => width / 2;
+    float halfHeight() const nothrow pure @safe => height / 2;
+    Vec2f halfSize() const nothrow pure @safe => Vec2f(halfWidth, halfHeight);
+
+    float right() const nothrow pure @safe => x + width;
+    float bottom() const nothrow pure @safe => y + height;
+
+    float middleX() const nothrow pure @safe => x + halfWidth;
+    float middleY() const nothrow pure @safe => y + halfHeight;
+
+    Vec2f center() const nothrow pure @safe => Vec2f(middleX, middleY);
+    Vec2f centerLeft() const nothrow pure @safe => Vec2f(x, middleY);
+    Vec2f centerRight() const nothrow pure @safe => Vec2f(right, middleY);
+    Vec2f topCenter() const nothrow pure @safe => Vec2f(middleX, y);
+    Vec2f topLeft() const nothrow pure @safe => Vec2f(x, y);
+    Vec2f topRight() const nothrow pure @safe => Vec2f(right, y);
+    Vec2f bottomLeft() const nothrow pure @safe => Vec2f(x, bottom);
+    Vec2f bottomRight() const nothrow pure @safe => Vec2f(right, bottom);
+    Vec2f bottomCenter() const nothrow pure @safe => Vec2f(middleX, bottom);
+
+    Vec2f toParentBoundsHalf(Rect2f parent, Pos pos) const nothrow pure @safe
     {
-        return x + width;
+        Vec2f newPos;
+        final switch (pos) with (Pos)
+        {
+            case topRight:
+                newPos = parent.topRight.sub(halfSize);
+                break;
+            case topLeft:
+                newPos = parent.topLeft.sub(halfSize);
+                break;
+            case topCenter:
+                newPos = parent.topCenter.sub(halfSize);
+                break;
+            case centerLeft:
+                newPos = parent.centerLeft.decXY(width, halfHeight);
+                break;
+            case center:
+                newPos = parent.center.sub(halfSize);
+                break;
+            case centerRight:
+                newPos = parent.centerRight;
+                newPos.y -= halfHeight;
+                break;
+            case bottomLeft:
+                newPos = parent.bottomLeft.sub(halfSize);
+                break;
+            case bottomCenter:
+                newPos = parent.bottomCenter.sub(halfSize);
+                break;
+            case bottomRight:
+                newPos = parent.bottomRight.sub(halfSize);
+                break;
+        }
+        return newPos;
     }
 
-    float bottom() const  nothrow pure @safe
-    {
-        return y + height;
-    }
-
-    float halfWidth() const  nothrow pure @safe
-    {
-        return width / 2;
-    }
-
-    float middleX() const  nothrow pure @safe
-    {
-        return x + halfWidth;
-    }
-
-    float middleY() const  nothrow pure @safe
-    {
-        return y + halfHeight;
-    }
-
-    float halfHeight() const  nothrow pure @safe
-    {
-        return height / 2;
-    }
-
-    Vec2f center() const  nothrow pure @safe
-    {
-        return Vec2f(middleX, middleY);
-    }
-
-    float aspectRatio() const  nothrow pure @safe
+    float aspectRatio() const nothrow pure @safe
     {
         import std.math.operations : isClose;
 
@@ -146,7 +169,7 @@ struct Rect2f
         return width / height;
     }
 
-    float diagonal() const  nothrow pure @safe
+    float diagonal() const nothrow pure @safe
     {
         import Math = api.math;
 
@@ -155,7 +178,8 @@ struct Rect2f
         return v;
     }
 
-    Rect2f withPadding(float value){
+    Rect2f withPadding(float value)
+    {
         return Rect2f(x + value, y + value, width - value, height - value);
     }
 

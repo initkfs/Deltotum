@@ -292,6 +292,36 @@ class Labeled : Control
         }
     }
 
+    bool setLargeSize()
+    {
+        if (!_label)
+        {
+            return false;
+        }
+        _label.setLargeSize;
+        return true;
+    }
+
+    bool setMediumSize()
+    {
+        if (!_label)
+        {
+            return false;
+        }
+        _label.setMediumSize;
+        return true;
+    }
+
+    bool setSmallSize()
+    {
+        if (!_label)
+        {
+            return false;
+        }
+        _label.setSmallSize;
+        return true;
+    }
+
     override void dispose()
     {
         super.dispose;

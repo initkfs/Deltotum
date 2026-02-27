@@ -677,7 +677,7 @@ class Control : GuiComponent
 
     Sprite2d newBackground()
     {
-        return newBackground(width, height, angle, createThisStyle);
+        return newBackground(width, height, angle, createBackgroundStyle);
     }
 
     Sprite2d newHoverEffectShape(float w, float h, float angle, GraphicStyle style)
@@ -691,31 +691,31 @@ class Control : GuiComponent
         return newHover;
     }
 
+    GraphicStyle newHoverStyle()
+    {
+        if (auto stylePtr = hasStyle(ControlStyle.hoverEffect))
+        {
+            return *stylePtr;
+        }
+
+        auto newStyle = createStyle;
+        if (!newStyle.isNested)
+        {
+            if (!newStyle.isDefault)
+            {
+                newStyle.lineColor = theme.colorHover;
+                newStyle.fillColor = theme.colorHover;
+            }
+
+            newStyle.isFill = true;
+        }
+        return newStyle;
+    }
+
     Sprite2d newHoverEffect()
     {
         assert(theme);
-
-        GraphicStyle newStyle;
-        if (auto stylePtr = hasStyle(ControlStyle.hoverEffect))
-        {
-            newStyle = *stylePtr;
-        }
-        else
-        {
-            newStyle = createStyle;
-            if (!newStyle.isNested)
-            {
-                if (!newStyle.isDefault)
-                {
-                    newStyle.lineColor = theme.colorHover;
-                    newStyle.fillColor = theme.colorHover;
-                }
-
-                newStyle.isFill = true;
-            }
-        }
-
-        return newHoverEffect(width, height, angle, newStyle);
+        return newHoverEffect(width, height, angle, newHoverStyle);
     }
 
     Tween2d newHoverAnimation()
@@ -992,7 +992,7 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    protected GraphicStyle createThisStyle()
+    protected GraphicStyle createBackgroundStyle()
     {
         auto newStyle = createStyle;
 
@@ -1005,9 +1005,9 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    protected Sprite2d createThisShape(float w, float h)
+    protected Sprite2d createBackgroundShape(float w, float h)
     {
-        return createShape(w, h, angle, createThisStyle);
+        return createShape(w, h, angle, createBackgroundStyle);
     }
 
     protected Sprite2d createShape(float w, float h)

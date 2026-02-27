@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.meters.scrolls.base_mono_scroll : BaseMonoScroll;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
-import api.math.pos2.position : Position;
+import api.math.pos2.position : Pos;
 
 /**
  * Authors: initkfs
@@ -16,7 +16,7 @@ abstract class BaseLabeledScroll : BaseMonoScroll
         Text label;
     }
 
-    Position labelPos = Position.topCenter;
+    Pos labelPos = Pos.topCenter;
 
     bool isCreateLabel;
     Text delegate(Text) onNewLabel;
@@ -77,7 +77,7 @@ abstract class BaseLabeledScroll : BaseMonoScroll
 
         const thumbBounds = thumb.boundsRect;
 
-        switch (labelPos) with (Position)
+        switch (labelPos) with (Pos)
         {
             case topCenter:
                 newPos = Vec2f(thumbBounds.middleX - label.halfWidth, thumbBounds.y - label

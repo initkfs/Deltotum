@@ -1,8 +1,9 @@
 module api.math.pos2.position;
+
 /**
  * Authors: initkfs
  */
-enum Position
+enum Pos
 {
     topLeft,
     topCenter,
