@@ -41,7 +41,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
     {
         if (colorCanvasSize == 0)
         {
-            colorCanvasSize = theme.iconSize;
+            colorCanvasSize = theme.iconSize / 2;
         }
     }
 
@@ -50,6 +50,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         super.create;
 
         colorValueContainer = newColorValueContainer;
+        colorValueContainer.isAlignY = true;
         colorValueContainer.isDrawAfterParent = false;
         addCreate(colorValueContainer);
 
@@ -62,6 +63,8 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         colorCanvas.isResizedByParent = false;
         colorCanvas.isRoundEvenXY = true;
         colorCanvas.isRoundEvenChildXY = true;
+        //Small margin for polygons background
+        colorCanvas.margin = 2;
 
         colorValueContainer.addCreate(colorCanvas);
 
@@ -143,7 +146,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
     {
         import api.dm.gui.controls.containers.hbox : HBox;
 
-        return new HBox;
+        return new HBox(0);
     }
 
     Sprite2d newColorValueSample(float newWidth, float newHeight)

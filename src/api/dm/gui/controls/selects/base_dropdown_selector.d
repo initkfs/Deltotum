@@ -27,12 +27,15 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
 
     void delegate() onShowPopup;
 
-    this()
+    this(bool isCreateLayout = true)
     {
-        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+        if (isCreateLayout)
+        {
+            import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
-        layout = new VLayout(0);
-        layout.isAutoResize = true;
+            layout = new VLayout(0);
+            layout.isAutoResize = true;
+        }
     }
 
     abstract D newDialog();
@@ -81,8 +84,10 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
         auto pp = newPopup;
         popup = !onNewPopup ? pp : onNewPopup(pp);
 
-        if(!popup.layout){
-            import api.dm.kit.sprites2d.layouts.managed_layout: ManagedLayout;
+        if (!popup.layout)
+        {
+            import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
+
             popup.layout = new ManagedLayout;
         }
 
@@ -146,7 +151,8 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
                 popup.focus;
             }
 
-            if(onShowPopup){
+            if (onShowPopup)
+            {
                 onShowPopup();
             }
         }
