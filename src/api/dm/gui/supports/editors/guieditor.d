@@ -29,6 +29,7 @@ class GuiEditor : GuiScene
 
         auto controlsTab = new Tab("Controls");
         controlsTab.content = new Controls;
+        controlsTab.content.width = root.width;
         root.addCreate(controlsTab);
 
         import api.dm.gui.supports.editors.sections.containers : Containers;

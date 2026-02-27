@@ -53,6 +53,7 @@ class Controls : Control
         addCreate(rootContainer);
 
         auto switchRoot = new HBox;
+        switchRoot.width = width;
         switchRoot.layout.isAlignY = true;
         rootContainer.addCreate(switchRoot);
 
@@ -70,8 +71,8 @@ class Controls : Control
         sep.marginLeft = 5;
         switchRoot.addCreate(sep);
 
+        createSimpleTexts(switchRoot);
         createPickers(switchRoot);
-
         createProgress(switchRoot);
 
         rootContainer.addCreate(new HSeparator);
@@ -81,7 +82,6 @@ class Controls : Control
         rootContainer.addCreate(selectionContainer);
 
         createSelects(selectionContainer);
-
 
         createTexts(selectionContainer);
 
@@ -505,11 +505,12 @@ class Controls : Control
 
         auto gaugeContainer = new VBox;
         gaugeContainer.isAlignX = true;
+        gaugeContainer.marginLeft = 10;
         root.addCreate(gaugeContainer);
 
         import api.dm.gui.controls.meters.gauges.hlinear_gauge : HLinearGauge;
 
-        auto hLinGauge = new HLinearGauge;
+        auto hLinGauge = new HLinearGauge(0, 1, 150);
         hLinGauge.isHGrow = true;
         gaugeContainer.addCreate(hLinGauge);
 
@@ -538,6 +539,7 @@ class Controls : Control
         import api.dm.gui.controls.meters.clocks.analogs.analog_clock : AnalogClock;
 
         auto anClock = new AnalogClock;
+        anClock.diameter = 150;
         anClock.isAutorun = true;
         clockBox.addCreate(anClock);
 
@@ -648,8 +650,7 @@ class Controls : Control
 
         import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
         import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
-         import api.dm.gui.controls.meters.scrolls.rscroll : RScroll;
-
+        import api.dm.gui.controls.meters.scrolls.rscroll : RScroll;
 
         auto vScrollbar = new VScroll;
         root.addCreate(vScrollbar);
@@ -872,29 +873,30 @@ class Controls : Control
         labelRoot.addCreate(h1);
     }
 
-    private void createTexts(Container root)
+    private void createSimpleTexts(Container root)
     {
         import api.dm.gui.controls.texts.text : Text;
-        import api.dm.gui.controls.texts.text_view : TextView;
         import api.dm.gui.controls.texts.text_field : TextField;
-        import api.dm.gui.controls.texts.text_area : TextArea;
-
-        import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
-
-        auto textBox = new HBox;
-        root.addCreate(textBox);
 
         auto fieldBox = new VBox;
-        textBox.addCreate(fieldBox);
+        root.addCreate(fieldBox);
 
         auto text = new Text("Text with\nline breaks");
-        text.padding = 5;
         text.isBorder = true;
         fieldBox.addCreate(text);
 
         auto textF1 = new TextField("0");
         textF1.isCreateClearButton = true;
         fieldBox.addCreate(textF1);
+    }
+
+    private void createTexts(Container root)
+    {
+        import api.dm.gui.controls.texts.text_view : TextView;
+        import api.dm.gui.controls.texts.text_field : TextField;
+        import api.dm.gui.controls.texts.text_area : TextArea;
+
+        import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
 
         auto exp = new Expander;
         exp.expandPosition = ExpanderPosition.top;
@@ -904,8 +906,8 @@ class Controls : Control
         auto t1 = new TextArea("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...\nКоммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
         t1.isEditable = true;
         t1.id = "TextArea";
-        t1.width = 350;
-        t1.height = 200;
+        t1.width = 250;
+        t1.height = 150;
         t1.isBorder = true;
         exp.contentContainer.addCreate(t1);
         t1.enablePadding;
