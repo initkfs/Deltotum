@@ -465,7 +465,8 @@ class BaseEditableText : BaseMonoText
                 }
             };
 
-            onTextInput ~= (ref e) {
+            onTextInput ~= (ref e)
+            {
 
                 // if (!isStartTextInput)
                 // {
@@ -528,7 +529,8 @@ class BaseEditableText : BaseMonoText
                 }
             };
 
-            onPointerMove ~= (ref e) {
+            onPointerMove ~= (ref e)
+            {
 
                 if (!selection.isStart)
                 {
@@ -615,7 +617,7 @@ class BaseEditableText : BaseMonoText
             auto endGlyph = allGlyphs[endCursorPos.glyphIndexAbs];
 
             shapeWidth = (endGlyph.pos.x + endGlyph.geometry.width) - allGlyphs[startCursorPos
-                    .glyphIndexAbs].pos.x;
+                .glyphIndexAbs].pos.x;
 
             graphic.fillRect(Rect2f(startX, startY, shapeWidth, rowHeight));
             return;
@@ -915,7 +917,7 @@ class BaseEditableText : BaseMonoText
         {
             logger.trace("Remove selection on text input");
         }
-        
+
         cursor.isVisible = true;
         cursorPos = selection.startPos;
         if (cursorPos.glyphIndexAbs == 0)
@@ -1120,6 +1122,26 @@ class BaseEditableText : BaseMonoText
         }
 
         return false;
+    }
+
+    bool showCursor()
+    {
+        if (!cursor)
+        {
+            return false;
+        }
+        cursor.isVisible = true;
+        return true;
+    }
+
+    bool hideCursor()
+    {
+        if (!cursor)
+        {
+            return false;
+        }
+        cursor.isVisible = false;
+        return true;
     }
 
     override bool scrollTo(float value0to1)

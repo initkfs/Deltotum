@@ -50,6 +50,8 @@ class TextField : Control
     override void initialize()
     {
         super.initialize;
+
+        enablePadding;
     }
 
     override void loadTheme()
@@ -98,20 +100,28 @@ class TextField : Control
             auto btn = newClearButton;
             clearButton = !onNewClearButton ? btn : onNewClearButton(btn);
 
-            clearButton.paddingRight = 5;
-
             import api.dm.gui.controls.control : Control;
+
+            //TODO check HLayout\VLayout
+            clearButton.marginLeft = theme.controlGraphicsGap * 1.5;
 
             if (auto control = cast(Control) clearButton)
             {
-                control.isCreateInteractiveListeners = true;
+                control.isCreateInteractions = true;
             }
 
             clearButton.onPointerPress ~= (ref e) {
-                if (!textView.clear(defaultValue, isShowCursor : true))
+                
+                if(textView.text == defaultValue){
+                    return;
+                }
+                
+                if (!textView.clear(defaultValue, isShowCursor:
+                        true))
                 {
                     logger.error("Error clear text view");
                 }
+                textView.hideCursor;
                 textView.focus;
             };
 
@@ -131,7 +141,16 @@ class TextField : Control
 
     Sprite2d newClearButton()
     {
-        return new Text("X");
+        import api.dm.gui.controls.switches.buttons.icon_button : IconButton;
+
+        if (!platform.cap.isIconPack)
+        {
+            return new IconButton(dchar.init, 0, 0, "x");
+        }
+
+        import Icons = api.dm.gui.themes.icons.pack_bootstrap;
+
+        return new IconButton(Icons.x_diamond_fill);
     }
 
     dstring text()

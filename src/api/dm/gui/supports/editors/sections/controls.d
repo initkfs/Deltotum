@@ -886,6 +886,7 @@ class Controls : Control
         fieldBox.addCreate(text);
 
         auto textF1 = new TextField("0");
+        textF1.defaultValue = "0";
         textF1.isCreateClearButton = true;
         fieldBox.addCreate(textF1);
     }
