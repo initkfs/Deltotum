@@ -24,7 +24,7 @@ class Controls : Control
 
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
-        layout = new VLayout;
+        layout = new VLayout(0);
         layout.isAutoResize = true;
         isBackground = false;
     }
@@ -48,8 +48,7 @@ class Controls : Control
     {
         super.create;
 
-        auto rootContainer = new VBox;
-        //rootContainer.layout.isAlignY = true;
+        auto rootContainer = new VBox(0);
         addCreate(rootContainer);
 
         auto switchRoot = new HBox;
@@ -791,18 +790,15 @@ class Controls : Control
 
         import api.dm.gui.controls.indicators.dotmatrix.dotmatrix_display : DotMatrixDisplay;
 
-        auto dm1 = new DotMatrixDisplay!(7, 5);
-        dm1.isBorder = true;
+        auto dm1 = new DotMatrixDisplay!(4,4);
+        dm1.isBorder = false;
         root.addCreate(dm1);
         //dfmt off
-        int[5][7] matrix = [
-            [1, 0, 0, 0, 1],
-            [1, 1, 0, 1, 1],
-            [1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1]
+        int[4][4] matrix = [
+            [1, 0, 0, 1],
+            [0, 1, 1, 0],
+            [0, 1, 1, 0],
+            [1, 0, 0, 1],
         ];
         //dfmt on
         dm1.fromIntMatrix(matrix);
@@ -904,7 +900,7 @@ class Controls : Control
         root.addCreate(exp);
         //exp.close;
 
-        auto t1 = new TextArea("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...\nКоммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
+        auto t1 = new TextArea("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. \nНо он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
         t1.isEditable = true;
         t1.id = "TextArea";
         t1.width = 250;

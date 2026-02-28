@@ -21,16 +21,21 @@ class BaseOrientToggle : BaseToggle
             import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
             layout = new VLayout;
+            layout.isAlignX = true;
         }
-        else
+        else if (orientation == Orientation.horizontal)
         {
             import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
             layout = new HLayout;
+            layout.isAlignY = true;
+        }
+        else
+        {
+            throw new Exception("Unsupported orientation");
         }
 
         layout.isAutoResize = true;
-        layout.isAlignX = true;
     }
 
     bool isVertical() => orientation == Orientation.vertical;
