@@ -281,10 +281,20 @@ class Image : Texture2d
 
     void load(RGBA[][] colorBuf, bool isKeepColorBuffer = false)
     {
-        assert(width > 0);
-        assert(height > 0);
+        if (colorBuf.length == 0)
+        {
+            throw new Exception("Color buffer is empty");
+        }
 
-        //TODO check is mutable
+        height = colorBuf.length;
+        if (colorBuf[0].length == 0)
+        {
+            throw new Exception("Color buffer row is empty");
+        }
+
+        width = colorBuf[0].length;
+
+        //TODO check is mutable.
         if (texture)
         {
             texture.dispose;

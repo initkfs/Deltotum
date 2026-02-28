@@ -173,13 +173,15 @@ class Controls : Control
 
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        auto tbtn1 = new TriangleButton(null, Icons.arrow_up_circle_fill, (ref e) {});
+        auto tbtn1 = new TriangleButton(null, Icons.arrow_up_circle_fill, (ref e) {
+        });
         tbtn1.styleId = DefaultStyle.warning;
         tbtn1.isFixedButton = true;
         tbtn1.isOn = true;
         toggleBtnContainer.addCreate(tbtn1);
 
-        auto tbtn2 = new TriangleButton(null, Icons.arrow_down_circle_fill, (ref e) {});
+        auto tbtn2 = new TriangleButton(null, Icons.arrow_down_circle_fill, (ref e) {
+        });
         tbtn2.isFixedButton = true;
         tbtn2.angle = 180;
         tbtn2.styleId = DefaultStyle.danger;
@@ -509,10 +511,9 @@ class Controls : Control
         import api.dm.gui.controls.meters.gauges.hlinear_gauge : HLinearGauge;
 
         auto hLinGauge = new HLinearGauge(0, 1, 150);
-        hLinGauge.isHGrow = true;
         gaugeContainer.addCreate(hLinGauge);
 
-        gaugeContainer.spacing = -hLinGauge.height;
+        gaugeContainer.spacing = -hLinGauge.height / 2;
 
         import api.dm.gui.controls.meters.gauges.radial_gauge : RadialGauge;
 
@@ -790,7 +791,7 @@ class Controls : Control
 
         import api.dm.gui.controls.indicators.dotmatrix.dotmatrix_display : DotMatrixDisplay;
 
-        auto dm1 = new DotMatrixDisplay!(4,4);
+        auto dm1 = new DotMatrixDisplay!(4, 4);
         dm1.isBorder = false;
         root.addCreate(dm1);
         //dfmt off
@@ -805,42 +806,41 @@ class Controls : Control
 
         import api.dm.gui.controls.indicators.leds.led : Led;
         import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.gui.controls.indicators.leds.led_icon : LedIcon;
+        import IconNames = api.dm.gui.themes.icons.pack_bootstrap;
 
-        auto ledContainer = new VBox;
-        ledContainer.isAlignX = true;
-        root.addCreate(ledContainer);
-        ledContainer.enablePadding;
-
-        auto ledContainer1 = new HBox;
-        ledContainer1.layout.isAlignY = true;
-        ledContainer.addCreate(ledContainer1);
+        auto ledContainer1 = new VBox;
+        ledContainer1.isAlignX = true;
+        root.addCreate(ledContainer1);
         ledContainer1.enablePadding;
 
         auto led1 = new Led(RGBA.red);
         ledContainer1.addCreate(led1);
 
-        auto led2 = new Led(RGBA.yellow);
-        ledContainer1.addCreate(led2);
+        auto ledIcon1 = new LedIcon(IconNames.clock_fill, RGBA.red);
+        ledContainer1.addCreate(ledIcon1);
 
-        auto led3 = new Led(RGBA.green);
-        ledContainer1.addCreate(led3);
-
-        auto ledContainer2 = new HBox;
-        ledContainer2.layout.isAlignY = true;
-        ledContainer.addCreate(ledContainer2);
+        auto ledContainer2 = new VBox;
+        ledContainer2.isAlignX = true;
+        root.addCreate(ledContainer2);
         ledContainer2.enablePadding;
 
-        import api.dm.gui.controls.indicators.leds.led_icon : LedIcon;
-        import IconNames = api.dm.gui.themes.icons.pack_bootstrap;
-
-        auto ledIcon1 = new LedIcon(IconNames.clock_fill, RGBA.red);
-        ledContainer2.addCreate(ledIcon1);
+        auto led2 = new Led(RGBA.yellow);
+        ledContainer2.addCreate(led2);
 
         auto ledIcon2 = new LedIcon(IconNames.battery_full, RGBA.yellow);
         ledContainer2.addCreate(ledIcon2);
 
+        auto ledContainer3 = new VBox;
+        ledContainer3.isAlignX = true;
+        root.addCreate(ledContainer3);
+        ledContainer3.enablePadding;
+
+        auto led3 = new Led(RGBA.green);
+        ledContainer3.addCreate(led3);
+
         auto ledIcon3 = new LedIcon(IconNames.thermometer_high, RGBA.green);
-        ledContainer2.addCreate(ledIcon3);
+        ledContainer3.addCreate(ledIcon3);
 
         import api.dm.gui.controls.viewers.magnifiers.window_magnifier : WindowMagnifier;
 

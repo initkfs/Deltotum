@@ -27,58 +27,43 @@ class LedIcon : BaseLed
     {
         super(colorHue, width, height);
         this.iconName = iconName;
+
+        import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
+
+        layout = new ManagedLayout;
+        layout.isAutoResize = true;
     }
 
     override void loadTheme()
     {
-        super.loadTheme;
-        loadLedIconTheme;
-    }
-
-    void loadLedIconTheme()
-    {
-        auto ledSize = theme.iconSize * 2;
-        if (width == 0)
-        {
-            initWidth = ledSize;
-        }
-
-        if (height == 0)
-        {
-            initHeight = ledSize;
-        }
+        width = theme.iconSize;
+        height = theme.iconSize;
     }
 
     override protected Sprite2d newLayerShape(GraphicStyle style, float iconSize, float blurSize)
     {
-        auto buffSize = iconSize.to!size_t;
-        RGBA[][] buff = new RGBA[][](buffSize, buffSize);
+        //TODO load from surface
+        RGBA[][] buff = createIconBuffer(iconName, colorHue);
 
-        // auto icon = createIcon(iconName, iconSize, (x, y, color) {
-        //     color.r = style.fillColor.r;
-        //     color.g = style.fillColor.g;
-        //     color.b = style.fillColor.b;
-        //     buff[y][x] = color;
-        //     return color;
-        // });
+        if (buff.length == 0)
+        {
+            logger.error("Invalid buffer for led icon");
 
+            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 
-        auto icon = createIcon(iconName);
+            return new Rectangle(iconSize, iconSize);
+        }
 
-        // import api.dm.kit.sprites2d.images.image : Image;
+        import api.dm.kit.sprites2d.images.image : Image;
 
-        // if (auto image = cast(Image) icon)
-        // {
-        //     auto blurBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
-        //     image.load(blurBuff);
-        //     image.blendModeBlend;
-        // }
-        // else
-        // {
-        //     logger.error("Invalid icon received, expected image: " ~ icon.toString);
-        // }
+        auto image = new Image;
+        buildInit(image);
 
-        return icon;
+        auto blurBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
+        image.load(blurBuff);
+        image.blendModeBlend;
+
+        return image;
     }
 
     override Sprite2d createLedLayer()
@@ -90,14 +75,16 @@ class LedIcon : BaseLed
         auto bottomLayerStyle = bottomLayerStyle(color);
         auto bottomLayer = createLayer(bottomLayerStyle, bottomPadding, 6);
         //bottomLayer.opacity = bottomLayerOpacity;
-        scope(exit){
+        scope (exit)
+        {
             bottomLayer.dispose;
         }
 
         auto topLayerStyle = middleLayerStyle(color);
         auto topLayer = createLayer(topLayerStyle, topPadding, 2);
         // topLayer.opacity = 0.5;
-        scope(exit){
+        scope (exit)
+        {
             topLayer.dispose;
         }
 
@@ -108,39 +95,5 @@ class LedIcon : BaseLed
     override void create()
     {
         super.create;
-
-        // auto hsvColor = colorHue.toHSVA;
-        // hsvColor.s = 1;
-        // hsvColor.value = 1;
-
-        // auto bottomHsvColor = hsvColor;
-        // bottomHsvColor.value = 0.8;
-        // bottomHsvColor.s = 0.7;
-        // auto middleHsvColor = hsvColor;
-        // auto topHsvColor = hsvColor;
-        // topHsvColor.s = 0.1;
-
-        // auto style = createStyle;
-        // style.isFill = true;
-        // style.color = bottomLayerColor;
-
-        // const padding = calcLayerPadding;
-
-        // auto bottomLayer = newLayer(style, padding * 4);
-        // window.showingTasks ~= (dt) { bottomLayer.dispose; };
-
-        // auto style2 = createStyle;
-        // style2.isFill = true;
-        // style2.color = middleLayerColor;
-
-        // auto middleLayer = newLayer(style2, padding * 2);
-        // window.showingTasks ~= (dt) { middleLayer.dispose; };
-
-        // auto style3 = createStyle;
-        // style3.isFill = true;
-        // style3.color = topLayerColor;
-
-        // auto topLayer = newLayer(style3, padding);
-
     }
 }

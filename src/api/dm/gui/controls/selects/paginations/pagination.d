@@ -325,8 +325,6 @@ class Pagination : BaseSelector!size_t
 
             infoRoot.addCreate(selectNewPage);
 
-            selectNewPage.enablePadding;
-
             if (onCreatedSelectNewPage)
             {
                 onCreatedSelectNewPage(selectNewPage);

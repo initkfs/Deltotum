@@ -259,8 +259,9 @@ struct RGBA
     float rNorm() const pure @safe => colorNorm(r);
     float gNorm() const pure @safe => colorNorm(g);
     float bNorm() const pure @safe => colorNorm(b);
-    ubyte aByte() const pure @safe => to!ubyte(a * maxColor);
+    ubyte aByte() const pure @safe => toAByte(a);
 
+    static ubyte toAByte(float a) pure @safe => to!ubyte(a * maxColor);
     static float fromAByte(ubyte value) pure @safe => (cast(float) value) / maxColor;
 
     bool isMin() const pure @safe

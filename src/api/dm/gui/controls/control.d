@@ -15,6 +15,7 @@ import api.math.pos2.insets : Insets;
 import api.dm.gui.controls.popups.tooltips.base_tooltip : BaseTooltip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.themes.theme : Theme;
+import api.dm.com.graphics.com_surface: ComSurface;
 
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
@@ -1203,6 +1204,66 @@ class Control : GuiComponent
         auto placeholder = new Rectangle(iconSize, iconSize, GraphicStyle(1, RGBA.red, true, RGBA
                 .red));
         return placeholder;
+    }
+
+    void createIcon(dchar iconCode, scope void delegate(ComSurface) onIconSurface, RGBA fgColor = RGBA.red, RGBA bgColor = RGBA
+            .transparent)
+    {
+        assert(isCreated, "Sprite2d not created");
+        assert(onIconSurface);
+
+        try
+        {
+            graphic.comSurfaceProvider.getNewScoped((surface) {
+                const err = theme.iconPack.render(iconCode, surface, fgColor, bgColor);
+                if (!err)
+                {
+                    onIconSurface(surface);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            logger.error(e.toString);
+        }
+    }
+
+    RGBA[][] createIconBuffer(dchar iconCode, RGBA color)
+    {
+        assert(isCreated, "Sprite2d not created");
+
+        //TODO malloc\free
+        RGBA[][] buff;
+
+        try
+        {
+            graphic.comSurfaceProvider.getNewScoped((surface) {
+                const err = theme.iconPack.render(iconCode, surface, color);
+                if (!err)
+                {
+                    auto buffX = surface.getWidth;
+                    auto buffY = surface.getHeight;
+
+                    buff = new RGBA[][](buffY, buffX);
+
+                    const isErr = surface.getPixels((x, y, r, g, b, a) {
+                        buff[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
+                        return true;
+                    });
+
+                    if (isErr)
+                    {
+                        logger.error(isErr.toString);
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            logger.error(e.toString);
+        }
+
+        return buff;
     }
 
     void applyStyle(Control control)
