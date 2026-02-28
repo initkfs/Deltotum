@@ -35,6 +35,7 @@ string fontSizeLarge = "fontSizeLarge";
 string fontSizeSmall = "fontSizeSmall";
 string fontIconsList = "fontIconsList";
 string fontIconsSize = "fontIconsSize";
+string fontAlphaGamma = "fontAlphaGamma";
 
 string engineIsVsync="engineIsVsync";
 string engineVsyncInterval="engineVsyncInterval";

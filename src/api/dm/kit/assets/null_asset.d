@@ -44,7 +44,7 @@ class NullAsset : Asset
                 ComSurface targetSurface,
                 const(dchar[]) text,
                 ubyte fr, ubyte fg, ubyte fb, ubyte fa,
-                ubyte br, ubyte bg, ubyte bb, ubyte ba) => ComResult.success;
+                ubyte br, ubyte bg, ubyte bb, ubyte ba, float gamma) => ComResult.success;
 
             ComResult create(string path, uint size) => ComResult.success;
             string getFontPath() => null;

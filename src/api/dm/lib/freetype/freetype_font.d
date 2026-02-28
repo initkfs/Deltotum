@@ -83,7 +83,8 @@ class FreeTypeFont : ComFont
         ComSurface targetSurface,
         const(dchar[]) text,
         ubyte fr = 0, ubyte fg = 0, ubyte fb = 0, ubyte fa = 255,
-        ubyte br = 255, ubyte bg = 255, ubyte bb = 255, ubyte ba = 255) nothrow
+        ubyte br = 255, ubyte bg = 255, ubyte bb = 255, ubyte ba = 255,
+        float alphaGamma) nothrow
     {
 
         int minW = 1;
@@ -157,30 +158,28 @@ class FreeTypeFont : ComFont
             {
                 for (int col = 0; col < logicalWidth; col++)
                 {
-                    //For LCD
+                    //For LCD only
                     int base_idx = row * bitmap.pitch + col * 3;
                     ubyte r = bitmap.buffer[base_idx];
                     ubyte g = bitmap.buffer[base_idx + 1];
                     ubyte b = bitmap.buffer[base_idx + 2];
 
                     ubyte alpha = cast(ubyte)((r + g + b) / 3);
-                    //ubyte alpha = bitmap.buffer[row * bitmap.pitch + col];
+                    //ubyte alpha = cast(ubyte)(Math.max(r, Math.max(g, b)));
+
                     if (alpha == 0)
+                    {
                         continue;
+                    }
 
                     int x = drawX + col;
                     int y = drawY + row;
 
                     if (x < 0 || x >= targetSurface.getWidth || y < 0 || y >= targetSurface
                         .getHeight)
+                    {
                         continue;
-
-                    // const ubyte ALPHA_THRESHOLD = 100;
-
-                    // if (alpha < ALPHA_THRESHOLD)
-                    // {
-                    //     continue;
-                    // }
+                    }
 
                     if (alpha == ubyte.max)
                     {
@@ -191,31 +190,33 @@ class FreeTypeFont : ComFont
                         continue;
                     }
 
-                    uint* pixel;
+                    ubyte bgR = br;
+                    ubyte bgG = bg;
+                    ubyte bgB = bb;
+                    ubyte bgA = ba;
 
-                    if (const err = targetSurface.getPixel(x, y, pixel))
+                    float gamma = alphaGamma;
+
+                    float a = 0;
+                    if (gamma <= 0)
                     {
-                        return err;
+                        a = alpha / 255.0f;
+                    }
+                    else
+                    {
+                        //Simple gamma without linear\sRGB convertation, < 1.0 to light
+                        a = Math.pow(alpha / 255.0f, gamma);
                     }
 
-                    ubyte bgR, bgG, bgB, bgA;
-                    if (const err = targetSurface.getPixelRGBA(pixel, bgR, bgG, bgB, bgA))
-                    {
-                        bgR = 0;
-                        bgG = 0;
-                        bgB = 0;
-                        bgA = 0;
-                    }
-
-                    // //float gamma = 1;
-                    float a = alpha / 255.0f;
-                    // //float a = Math.pow(alpha / 255.0f, gamma);
                     float invA = 1.0f - a;
 
                     ubyte outR = cast(ubyte)(fr * a + bgR * invA);
                     ubyte outG = cast(ubyte)(fg * a + bgG * invA);
                     ubyte outB = cast(ubyte)(fb * a + bgB * invA);
-                    ubyte outA = cast(ubyte) Math.max(alpha, bgA);
+                    //ubyte outA = cast(ubyte) Math.max(alpha, bgA);
+
+                    float outa = a + bgA / (cast(float) ubyte.max) * (1 - a);
+                    ubyte outA = cast(ubyte)(outa * ubyte.max);
 
                     if (const err = targetSurface.setPixelRGBA(x, y, outR, outG, outB, outA))
                     {
@@ -233,6 +234,16 @@ class FreeTypeFont : ComFont
         }
 
         return ComResult.success;
+    }
+
+    float sRGBToLinear(float x) nothrow
+    {
+        return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+    }
+
+    float linearTosRGB(float x) nothrow
+    {
+        return x <= 0.0031308 ? x * 12.92 : 1.055 * Math.pow(x, 1 / 2.4) - 0.055;
     }
 
     string getFontPath() nothrow => _path;

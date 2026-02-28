@@ -1250,11 +1250,18 @@ class SdlApp : GuiApp
             auto fontGenerator = newFontGenerator;
             windowBuilder.build(fontGenerator);
 
+            if (uservices.config.hasKey(KitConfigKeys.fontAlphaGamma))
+            {
+                float gamma = uservices.config.getFloat(KitConfigKeys.fontAlphaGamma);
+                fontGenerator.alphaGamma = gamma;
+            }
+
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
             const isColorless = isFontTextureIsColorless(uservices.config, uservices.context);
 
             const colorText = isColorless ? RGBA.white : theme.colorText;
+            //RGBA black for LCD
             const colorTextBackground = isColorless ? RGBA.black : theme.colorTextBackground;
 
             createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorTextBackground, (

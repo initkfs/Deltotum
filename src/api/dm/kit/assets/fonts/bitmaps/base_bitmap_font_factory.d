@@ -22,6 +22,8 @@ class BaseBitmapFontFactory : GraphicComponent
     enum size_t defaultFontTextureWidth = 400;
     enum size_t defaultFontTextureHeight = 100;
 
+    float alphaGamma = 1;
+
     void generateToSurface(
         const(dchar)[] allLetters,
         ComSurface fontMapSurface,
@@ -41,7 +43,7 @@ class BaseBitmapFontFactory : GraphicComponent
                 const isErr = font.render(glyphRepresentation, letters[], foregroundColor.r, foregroundColor.g, foregroundColor
                     .b, foregroundColor
                     .aByte, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor
-                    .aByte);
+                    .aByte, alphaGamma);
 
                 if (isErr)
                 {

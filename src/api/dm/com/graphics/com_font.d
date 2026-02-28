@@ -19,7 +19,7 @@ nothrow:
         ComSurface targetSurface,
         const(dchar[]) text,
         ubyte fr, ubyte fg, ubyte fb, ubyte fa,
-        ubyte br, ubyte bg, ubyte bb, ubyte ba);
+        ubyte br, ubyte bg, ubyte bb, ubyte ba, float gamma);
 
     ComResult create(string path, uint size);
 
