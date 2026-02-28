@@ -3,7 +3,8 @@ module api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-import Math = api.dm.math;
+import api.math.geom2.vec2 : Vec2f;
+import Math = api.math;
 
 /**
  * Authors: initkfs
@@ -38,24 +39,31 @@ class VRegularPolygon : VShape
 
         canvas.lineWidth(lineWidth);
 
+        Vec2f first;
+
         polygon.draw((i, p) {
+            
             const newX = x + p.x;
             const newY = y + p.y;
+            
             if (i == 0)
             {
-                canvas.moveTo(newX, newY);
+                first = Vec2f(newX, newY);
+                canvas.moveTo(first);
+                return true;
             }
-            else
-            {
-                canvas.lineTo(newX, newY);
-            }
+
+            canvas.lineTo(newX, newY);
             return true;
         });
+
+        canvas.lineTo(first);
 
         canvas.closePath;
 
         if (style.isFill)
         {
+            canvas.color = style.fillColor;
             canvas.fillPreserve;
         }
 

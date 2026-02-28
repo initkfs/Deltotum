@@ -58,16 +58,16 @@ interface GraphicCanvas
 {
     enum LineEnd
     {
-        butt,
+        butt, //between start\end
         round,
-        square
+        square //extend start\end
     }
 
     enum LineJoin
     {
-        miter,
-        round,
-        bevel
+        miter, //cutting
+        round, 
+        bevel //truncated
     }
 
     //Unification with JS Canvas API

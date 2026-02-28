@@ -18,11 +18,11 @@ class RadialLoader : BaseLoader
     {
         Sprite2d[] segments;
         size_t segmentsCount;
-        size_t segmentDistance = 40;
-        size_t segmentDiameter = 15;
-
         float progress = 0;
     }
+
+    size_t segmentDistance = 40;
+    size_t segmentDiameter = 25;
 
     float speed = 2;
 

@@ -113,7 +113,7 @@ class RScroll : BaseRadialMonoScroll
         import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        auto thumb = new Texture2d(thumbDiameter, thumbDiameter);
+        auto thumb = new Texture2d(thumbDiameter + 1, thumbDiameter + 1);
         build(thumb);
 
         thumb.isResizedByParent = false;
