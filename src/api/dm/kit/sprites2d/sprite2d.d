@@ -2710,6 +2710,8 @@ class Sprite2d : EventKitTarget
         _managed = value;
     }
 
+    bool hasLayout() => layout !is null;
+
     bool isLayoutManaged() pure @safe
     {
         return _layoutManaged;

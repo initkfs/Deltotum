@@ -177,6 +177,8 @@ class Choice(T) : BaseSelector!T
 
             addCreate(prevNextContainer);
 
+            prevNextContainer.enablePadding;
+
             if (!prevButton && isCreatePrevButton)
             {
                 auto b = newButton(NavigateDirection.toTop);

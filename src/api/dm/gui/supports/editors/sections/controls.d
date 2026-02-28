@@ -49,7 +49,7 @@ class Controls : Control
         super.create;
 
         auto rootContainer = new VBox;
-        rootContainer.layout.isAlignY = true;
+        //rootContainer.layout.isAlignY = true;
         addCreate(rootContainer);
 
         auto switchRoot = new HBox;

@@ -39,24 +39,31 @@ class HLayout : SpaceableLayout
             }
             auto childBounds = child.boundsRect;
 
-            if (isFillStartToEnd)
+            if (isAlignX || child.alignment == Alignment.x)
             {
-                const childX = nextX + child.margin.left;
-                if (Math.abs(child.x - childX) >= sizeChangeDelta)
-                {
-                    child.x = childX;
-                }
-
-                nextX = child.x + childBounds.width + child.margin.right + spacing;
+                alignX(root, child);
             }
             else
             {
-                const childX = nextX - child.margin.right - childBounds.width;
-                if (Math.abs(child.x - childX) >= sizeChangeDelta)
+                if (isFillStartToEnd)
                 {
-                    child.x = childX;
+                    const childX = nextX + child.margin.left;
+                    if (Math.abs(child.x - childX) >= sizeChangeDelta)
+                    {
+                        child.x = childX;
+                    }
+
+                    nextX = child.x + childBounds.width + child.margin.right + spacing;
                 }
-                nextX = child.x - child.margin.left - spacing;
+                else
+                {
+                    const childX = nextX - child.margin.right - childBounds.width;
+                    if (Math.abs(child.x - childX) >= sizeChangeDelta)
+                    {
+                        child.x = childX;
+                    }
+                    nextX = child.x - child.margin.left - spacing;
+                }
             }
 
             if (isAlignY || child.alignment == Alignment.y)
@@ -65,7 +72,9 @@ class HLayout : SpaceableLayout
             }
             else
             {
-                const newChildY = (isInvertY || child.isLayoutInvertY) ? (root.boundsRect.bottom - root.padding.bottom - child.margin.bottom - child.height) : (root.y + root.padding.top + child.margin.top);
+                const newChildY = (isInvertY || child.isLayoutInvertY) ? (
+                    root.boundsRect.bottom - root.padding.bottom - child.margin.bottom - child
+                        .height) : (root.y + root.padding.top + child.margin.top);
                 if (Math.abs(child.y - newChildY) >= sizeChangeDelta)
                 {
                     child.y = newChildY;

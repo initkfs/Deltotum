@@ -1,7 +1,8 @@
 module api.dm.gui.controls.meters.spinners.spinner;
 
 import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
-import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
+import api.dm.gui.controls.containers.expanders.expander : ExpanderPosition;
+import api.dm.gui.controls.containers.expanders.expand_button: ExpandButton;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
 import api.dm.gui.controls.texts.text_field : TextField;
@@ -142,13 +143,14 @@ class Spinner(T) : MinMaxValueMeter!T
 
         import api.dm.gui.controls.containers.vbox : VBox;
 
-        auto valueContainer = new VBox;
+        auto valueContainer = new VBox(0);
         valueContainer.layout.isParentSizeReduce = true;
         addCreate(valueContainer);
+        valueContainer.isAlignX = true;
 
         if (!incLabel && isCreateIncLabel)
         {
-            auto incTextExpander = new Expander;
+            auto incTextExpander = newButtonExpander;
             incTextExpander.expandPosition = ExpanderPosition.top;
             valueContainer.addCreate(incTextExpander);
 
@@ -205,7 +207,7 @@ class Spinner(T) : MinMaxValueMeter!T
 
         if (!decLabel && isCreateDecLabel)
         {
-            auto decTextExpander = new Expander;
+            auto decTextExpander = newButtonExpander;
             decTextExpander.expandPosition = ExpanderPosition.bottom;
             valueContainer.addCreate(decTextExpander);
 
@@ -272,6 +274,11 @@ class Spinner(T) : MinMaxValueMeter!T
 
         value(initValue, isTriggerListeners:
             false);
+    }
+
+    protected ExpandButton newButtonExpander()
+    {
+        return new ExpandButton;
     }
 
     protected TextField setText(TextField text)

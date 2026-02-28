@@ -40,23 +40,30 @@ class VLayout : SpaceableLayout
 
             auto childBounds = child.boundsRect;
 
-            if (isFillStartToEnd)
+            if (isAlignY || child.alignment == Alignment.y)
             {
-                const newChildY = nextY + child.margin.top;
-                if (Math.abs(child.y - newChildY) > sizeChangeDelta)
-                {
-                    child.y = newChildY;
-                }
-                nextY = child.y + childBounds.height + child.margin.bottom + spacing;
+                alignY(root, child);
             }
             else
             {
-                const newChildY = nextY - child.margin.bottom - childBounds.height;
-                if (Math.abs(child.y - newChildY) > sizeChangeDelta)
+                if (isFillStartToEnd)
                 {
-                    child.y = newChildY;
+                    const newChildY = nextY + child.margin.top;
+                    if (Math.abs(child.y - newChildY) > sizeChangeDelta)
+                    {
+                        child.y = newChildY;
+                    }
+                    nextY = child.y + childBounds.height + child.margin.bottom + spacing;
                 }
-                nextY = child.y + child.margin.top - spacing;
+                else
+                {
+                    const newChildY = nextY - child.margin.bottom - childBounds.height;
+                    if (Math.abs(child.y - newChildY) > sizeChangeDelta)
+                    {
+                        child.y = newChildY;
+                    }
+                    nextY = child.y + child.margin.top - spacing;
+                }
             }
 
             if (isAlignX || child.alignment == Alignment.x)
@@ -66,7 +73,8 @@ class VLayout : SpaceableLayout
             else
             {
                 const newChildX = (isInvertX || child.isLayoutInvertX) ? (
-                    root.boundsRect.right - root.padding.right - child.margin.right - child.width) :  (root.x + root.padding.left + child.margin.left);
+                    root.boundsRect.right - root.padding.right - child.margin.right - child.width) : (
+                    root.x + root.padding.left + child.margin.left);
                 if (Math.abs(newChildX - child.x) > sizeChangeDelta)
                 {
                     child.x = newChildX;
