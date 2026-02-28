@@ -36,9 +36,11 @@ class Theme
     @ConfigKey
     RGBA colorText = RGBA.white;
     @ConfigKey
-    RGBA colorTextBackground = RGBA.black;
+    RGBA colorBackground = RGBA.black;
     @ConfigKey
     RGBA colorHover = RGBA.white;
+    @ConfigKey
+    RGBA colorSelect = RGBA.green;
 
     @ConfigKey
     RGBA colorSuccess = RGBA(72, 199, 116);

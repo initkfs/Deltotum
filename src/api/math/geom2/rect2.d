@@ -107,6 +107,10 @@ struct Rect2f
     float right() const nothrow pure @safe => x + width;
     float bottom() const nothrow pure @safe => y + height;
 
+    alias centerX = middleX;
+    alias centerY = middleY;
+
+    //TODO remove
     float middleX() const nothrow pure @safe => x + halfWidth;
     float middleY() const nothrow pure @safe => y + halfHeight;
 
@@ -157,6 +161,25 @@ struct Rect2f
         return newPos;
     }
 
+    Rect2f scale(float factor)
+    {
+        import Math = api.math;
+
+        float newWidth = width * Math.abs(factor);
+        float newHeight = height * Math.abs(factor);
+
+        float newX = middleX - newWidth / 2.0f;
+        float newY = middleY - newHeight / 2.0f;
+
+        if (factor < 0)
+        {
+            newX = middleX - newWidth / 2.0f;
+            newY = middleY - newHeight / 2.0f;
+        }
+
+        return Rect2f(newX, newY, newWidth, newHeight);
+    }
+
     float aspectRatio() const nothrow pure @safe
     {
         import std.math.operations : isClose;
@@ -202,6 +225,22 @@ struct Rect2f
 
     Vec2f pos() => Vec2f(x, y);
 
+    bool equalEps(Rect2f other, float eps = float.epsilon)
+    {
+        import std.math.operations : isClose;
+
+        if (
+            isClose(x, other.x, eps) &&
+            (isClose(y, other.y, eps)) &&
+            (isClose(width, other.width, eps))
+            && isClose(height, other.height, eps))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     string toString() const
     {
         import std.format : format;
@@ -244,4 +283,10 @@ unittest
 
     assert(!rect1.intersect(Rect2f(20, 20 + 1, w, h)));
     assert(!rect1.intersect(Rect2f(10, 20 + 1, w, h)));
+
+    auto srect = Rect2f(10, 10, 100, 100);
+    auto scal1 = srect.scale(0.5);
+    assert(scal1.equalEps(Rect2f(35, 35, 50, 50)));
+    auto scal2 = srect.scale(1.5);
+    assert(scal2.equalEps(Rect2f(-15, -15, 150, 150)));
 }

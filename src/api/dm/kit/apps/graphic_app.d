@@ -620,7 +620,7 @@ abstract class GraphicApp : CliApp
     }
 
     //TODO split function
-    void createFontBitmaps(AlphabetFontFactory generator, Asset assets, RGBA colorText, RGBA colorTextBackground, scope void delegate(
+    void createFontBitmaps(AlphabetFontFactory generator, Asset assets, RGBA colorText, RGBA colorBackground, scope void delegate(
             BitmapFont) onBitmap)
     {
         //TODO from config
@@ -638,12 +638,12 @@ abstract class GraphicApp : CliApp
                 uservices.logger.trace("Found default font for default font bitmap: ", font
                         .getFontPath);
             }
-            BitmapFont bitmapFont = generator.generate(createMediumFontAlphabets, font, colorText, colorTextBackground);
+            BitmapFont bitmapFont = generator.generate(createMediumFontAlphabets, font, colorText, colorBackground);
             onBitmap(bitmapFont);
             assets.setFontBitmap(bitmapFont);
             version (EnableTrace)
             {
-                uservices.logger.tracef("Create font bitmap with foreground %s and background %s", colorText, colorTextBackground);
+                uservices.logger.tracef("Create font bitmap with foreground %s and background %s", colorText, colorBackground);
             }
         }
 
@@ -654,12 +654,12 @@ abstract class GraphicApp : CliApp
             {
                 uservices.logger.trace("Found small font for bitmap: ", font.getFontPath);
             }
-            BitmapFont bitmap = generator.generate(createSmallFontAlphabets, font, colorText, colorTextBackground);
+            BitmapFont bitmap = generator.generate(createSmallFontAlphabets, font, colorText, colorBackground);
             onBitmap(bitmap);
             assets.setFontBitmapSmall(bitmap);
             version (EnableTrace)
             {
-                uservices.logger.tracef("Create small font bitmap with foreground %s and background %s", colorText, colorTextBackground);
+                uservices.logger.tracef("Create small font bitmap with foreground %s and background %s", colorText, colorBackground);
             }
         }
 
@@ -670,12 +670,12 @@ abstract class GraphicApp : CliApp
             {
                 uservices.logger.trace("Found large font for bitmap: ", font.getFontPath);
             }
-            BitmapFont bitmap = generator.generate(createLargeFontAlphabets, font, colorText, colorTextBackground);
+            BitmapFont bitmap = generator.generate(createLargeFontAlphabets, font, colorText, colorBackground);
             onBitmap(bitmap);
             assets.setFontBitmapLarge(bitmap);
             version (EnableTrace)
             {
-                uservices.logger.tracef("Create large font bitmap with foreground %s and background %s", colorText, colorTextBackground);
+                uservices.logger.tracef("Create large font bitmap with foreground %s and background %s", colorText, colorBackground);
             }
         }
     }

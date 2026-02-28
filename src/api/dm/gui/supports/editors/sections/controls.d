@@ -859,7 +859,7 @@ class Controls : Control
 
         auto label1 = new Label("Badge");
         labelRoot.addCreate(label1);
-        label1.addCreate(new Badge("123"));
+        label1.addCreate(new Badge("A"));
 
         import api.dm.gui.controls.labels.hyperlinks.hyperlink : Hyperlink;
 

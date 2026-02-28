@@ -15,7 +15,7 @@ import api.math.pos2.insets : Insets;
 import api.dm.gui.controls.popups.tooltips.base_tooltip : BaseTooltip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.themes.theme : Theme;
-import api.dm.com.graphics.com_surface: ComSurface;
+import api.dm.com.graphics.com_surface : ComSurface;
 
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
@@ -64,7 +64,6 @@ class Control : GuiComponent
     string styleId;
     GraphicStyle[string] styles;
     GraphicStyle delegate(string id) styleFactory;
-    void delegate(string, ref GraphicStyle) onIdStyleCreated;
     bool isStyleUseParent;
     bool isStyleForChild;
     bool isStyleAppendForChild = true;
@@ -824,8 +823,8 @@ class Control : GuiComponent
             {
                 if (!newStyle.isDefault)
                 {
-                    newStyle.lineColor = theme.colorAccent;
-                    newStyle.fillColor = theme.colorAccent;
+                    newStyle.lineColor = theme.colorSelect;
+                    newStyle.fillColor = theme.colorSelect;
                 }
 
                 newStyle.isFill = true;
@@ -922,44 +921,43 @@ class Control : GuiComponent
                 return style;
             }
 
-            if (id.length > 0)
-            {
-                if (auto stylePtr = hasStyle(id))
-                {
-                    return *stylePtr;
-                }
-            }
-
-            GraphicStyle newStyle = createDefaultStyle;
-
-            if (styleId)
-            {
-                switch (styleId) with (DefaultStyle)
-                {
-                    case standard:
-                        break;
-                    case success:
-                        newStyle.lineColor = theme.colorSuccess;
-                        newStyle.fillColor = newStyle.lineColor;
-                        newStyle.isDefault = true;
-                        break;
-                    case warning:
-                        newStyle.lineColor = theme.colorWarning;
-                        newStyle.fillColor = newStyle.lineColor;
-                        newStyle.isDefault = true;
-                        break;
-                    case danger:
-                        newStyle.lineColor = theme.colorDanger;
-                        newStyle.fillColor = newStyle.lineColor;
-                        newStyle.isDefault = true;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            return newStyle;
+            return createDefaultStyle(id);
         };
+    }
+
+    GraphicStyle createDefaultStyle(string id)
+    {
+        if (auto stylePtr = hasStyle(id))
+        {
+            return *stylePtr;
+        }
+
+        GraphicStyle newStyle = createDefaultStyle;
+
+        switch (id) with (DefaultStyle)
+        {
+            case standard:
+                break;
+            case success:
+                newStyle.lineColor = theme.colorSuccess;
+                newStyle.fillColor = newStyle.lineColor;
+                newStyle.isDefault = true;
+                break;
+            case warning:
+                newStyle.lineColor = theme.colorWarning;
+                newStyle.fillColor = newStyle.lineColor;
+                newStyle.isDefault = true;
+                break;
+            case danger:
+                newStyle.lineColor = theme.colorDanger;
+                newStyle.fillColor = newStyle.lineColor;
+                newStyle.isDefault = true;
+                break;
+            default:
+                break;
+        }
+
+        return newStyle;
     }
 
     GraphicStyle createDefaultStyle()
@@ -970,14 +968,12 @@ class Control : GuiComponent
 
     protected GraphicStyle createStyle()
     {
-        assert(styleFactory);
-
-        auto newStyle = styleFactory(styleId);
-        if (onIdStyleCreated)
+        if (styleFactory)
         {
-            onIdStyleCreated(styleId, newStyle);
+            return styleFactory(styleId);
         }
-        return newStyle;
+
+        return createDefaultStyle(styleId);
     }
 
     protected GraphicStyle createFillStyle(RGBA fillColor = RGBA.init)
@@ -993,9 +989,22 @@ class Control : GuiComponent
         return newStyle;
     }
 
+    protected GraphicStyle createSelectStyle(RGBA fillColor = RGBA.init)
+    {
+        auto newStyle = createStyle;
+        if (!newStyle.isPreset)
+        {
+            newStyle.isFill = true;
+            newStyle.fillColor = fillColor != RGBA.init ? fillColor : theme.colorSelect;
+        }
+        return newStyle;
+    }
+
     protected GraphicStyle createBackgroundStyle()
     {
         auto newStyle = createStyle;
+
+        newStyle.fillColor = theme.colorBackground;
 
         newStyle.isFill = isBackground;
         if (!isBorder)
@@ -1419,7 +1428,10 @@ class Control : GuiComponent
 
     GraphicStyle* hasStyle(string id)
     {
-        assert(id.length > 0);
+        if (id.length == 0)
+        {
+            return null;
+        }
         return id in styles;
     }
 

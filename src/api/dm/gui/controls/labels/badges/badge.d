@@ -16,6 +16,8 @@ class Badge : Label
 
     Pos position = Pos.topRight;
 
+    float scaleDistance = 0.8;
+
     this(dstring text = "Badge", dchar iconName = dchar.init, float graphicsGap = 0)
     {
         super(text, iconName, graphicsGap);
@@ -39,9 +41,9 @@ class Badge : Label
         if (parent)
         {
             const thisBounds = boundsRect;
-            pos = thisBounds.toParentBoundsHalf(parent.boundsRect, position);
+            pos = thisBounds.toParentBoundsHalf(parent.boundsRect.scale(scaleDistance), position);
         }
     }
 
-    override protected GraphicStyle createBackgroundStyle() => createFillStyle;
+    override protected GraphicStyle createBackgroundStyle() => createSelectStyle;
 }

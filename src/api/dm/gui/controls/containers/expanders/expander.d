@@ -142,7 +142,17 @@ class Expander : Control
     {
         import api.dm.gui.controls.containers.hbox;
 
-        return new HBox(0);
+        return new class HBox
+        {
+            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+            this()
+            {
+                super(0);
+            }
+
+            override protected GraphicStyle createBackgroundStyle() => createSelectStyle;
+        };
     }
 
     void configureExpandBar(Control expandBar)

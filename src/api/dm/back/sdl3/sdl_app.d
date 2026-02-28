@@ -1207,6 +1207,8 @@ class SdlApp : GuiApp
         windowBuilder.graphic = createGraphics(uservices.logging, sdlRenderer);
         windowBuilder.graphic.initialize;
 
+        windowBuilder.graphic.screenColor = theme.colorBackground;
+
         windowBuilder.gpu = new GPUGraphic(uservices.logging, uservices.config, uservices.context, gpuDevice, window);
 
         windowBuilder.graphic.comTextureProvider = ProviderFactory!ComTexture(
@@ -1262,9 +1264,9 @@ class SdlApp : GuiApp
 
             const colorText = isColorless ? RGBA.white : theme.colorText;
             //RGBA black for LCD
-            const colorTextBackground = isColorless ? RGBA.black : theme.colorTextBackground;
+            const colorBackground = isColorless ? RGBA.black : theme.colorBackground;
 
-            createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorTextBackground, (
+            createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorBackground, (
                     bitmap) {
                 // windowBuilder.build(bitmap);
                 // bitmap.initialize;
