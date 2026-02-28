@@ -208,6 +208,8 @@ class AnalogClockFace : BaseRadialGauge
         }
 
         progressBar = new RadialSegmentBar(diameter, 0, 360);
+        //TODO correct offset
+        progressBar.isUseMiddleAngleOffset = true;
         progressBar.segmentsCount = 60;
         progressBar.segmentStyleOn = progressStyle;
 
