@@ -1,6 +1,6 @@
 module api.dm.addon.media.audio.formats.wav.wav_writer;
 
-import api.dm.com.audio.com_audio_device : ComAudioSpec;
+import api.dm.kit.media.audio.devices.audio_spec : AudioSpec;
 
 import std.stdio : File;
 import std.file : isFile, exists;
@@ -12,7 +12,7 @@ import core.stdc.stdio;
 
 class WavWriter
 {
-    void save(T)(string path, T[] buffer, ComAudioSpec spec)
+    void save(T)(string path, T[] buffer, AudioSpec spec)
     {
         //TODO LE\BE?
         uint dataSize = cast(uint) (buffer.length * T.sizeof);
@@ -54,9 +54,9 @@ class WavWriter
 
         ushort bitsPerSample;
 
-        import api.dm.com.audio.com_audio_device : ComAudioFormat;
+        import api.dm.kit.media.audio.devices.audio_spec : AudioFormat;
 
-        final switch (spec.format) with (ComAudioFormat)
+        final switch (spec.format) with (AudioFormat)
         {
             case s16, none:
                 bitsPerSample = 16;

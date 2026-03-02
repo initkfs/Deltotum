@@ -1,40 +1,29 @@
 module api.dm.kit.media.multimedia;
 
 import api.core.components.units.simple_unit : SimpleUnit;
-import api.dm.com.audio.com_audio_device : ComAudioDevice, ComAudioSpec;
-import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
-import api.dm.com.audio.com_audio_clip : ComAudioClip;
+import api.dm.kit.media.audio.devices.audio_spec: AudioSpec, AudioFormat;
+import api.dm.kit.media.audio.players.audio_engine: AudioEngine;
 
 /**
  * Authors: initkfs
  */
 class MultiMedia : SimpleUnit
 {
-    ComAudioDevice audioOut;
+    AudioSpec audioOutSpec;
+    AudioEngine audio;
 
-    this(ComAudioDevice audioOut)
+    this(AudioSpec audioOutSpec, AudioEngine audioPlayer)
     {
-        assert(audioOut);
-        this.audioOut = audioOut;
-    }
-
-    ComAudioSpec audioOutSpec()
-    {
-        ComAudioSpec spec;
-        if (const err = audioOut.getSpec(spec))
-        {
-            //TODO logging;
-            throw new Exception(err.toString);
-        }
-        return spec;
+        this.audioOutSpec = audioOutSpec;
+        assert(audioPlayer);
+        this.audio = audioPlayer;
     }
 
     import api.dm.kit.media.buffers.finite_signal_buffer : FiniteSignalBuffer;
 
-    FiniteSignalBuffer!T* newHeapChunk(T)(float durationMsec) => newHeapChunk!T(durationMsec, cast(size_t) audioOut
-            .spec.channels);
+    FiniteSignalBuffer!T* newHeapBuffer(T)(float durationMsec) => newHeapBuffer!T(durationMsec,audioOutSpec.channels);
 
-    FiniteSignalBuffer!T* newHeapChunk(T)(float durationMsec, size_t channels)
+    FiniteSignalBuffer!T* newHeapBuffer(T)(float durationMsec, size_t channels)
     {
         auto freqHz = audioOut.spec.freqHz;
         

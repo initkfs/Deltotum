@@ -1,6 +1,7 @@
 module api.dm.kit.media.buffers.audio_buffer;
 
 import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.dm.kit.media.audio.devices.audio_spec: AudioFormat, AudioSpec;
 
 import api.dm.lib.portaudio.native;
 import Math = api.math;
@@ -34,6 +35,7 @@ enum
 
 class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
 {
+    AudioSpec spec;
     //TODO shared
     __gshared RingBufferLF!(float, Size, isStaticArray, true) buffer;
 

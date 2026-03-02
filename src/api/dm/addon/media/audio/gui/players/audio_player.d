@@ -15,7 +15,7 @@ enum AudioPlayerState
     pause,
 }
 
-class AudioPlayer : Control
+class AudioEngine : Control
 {
     AudioPlayerPanel panel;
 

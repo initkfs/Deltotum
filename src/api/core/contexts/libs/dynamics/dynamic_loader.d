@@ -333,4 +333,6 @@ class DynamicLoader
         return libVersion.to!string;
     }
 
+    string lastError() => null;
+
 }

@@ -1,6 +1,6 @@
 module api.dm.addon.media.video.gui.audio_decoder;
 
-import api.dm.com.audio.com_audio_device : ComAudioSpec, ComAudioFormat;
+import api.dm.kit.media.audio.devices.audio_spec : AudioSpec, AudioFormat;
 import api.core.utils.queues.ring_buffer : RingBuffer;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 import api.core.utils.container_result : ContainerResult;
@@ -16,7 +16,7 @@ struct AudioDecoderContext
 {
     AVCodec* codec;
     AVCodecParameters* codecParams;
-    ComAudioSpec audioOutSpec;
+    AudioSpec audioOutSpec;
 }
 
 /**
@@ -32,7 +32,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
         RingBuffer!(ubyte, AudioBufferSize)* buffer;
     }
 
-    ComAudioSpec srcSpec;
+    AudioSpec srcSpec;
 
     this(
         Logger logger,
@@ -93,7 +93,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
             AVSampleFormat srcFormat = cast(AVSampleFormat) context.codecParams.format;
             AVSampleFormat destFormat = av_get_packed_sample_fmt(srcFormat);
 
-            srcSpec = ComAudioSpec.init;
+            srcSpec = AudioSpec.init;
             //TODO check cast av_get_sample_fmt_name((enum AVSampleFormat)codecpar->format) == NULL
             srcSpec.format = fromLibFormat(destFormat);
             srcSpec.freqHz = context.codecParams.sample_rate;
@@ -346,20 +346,20 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
         }
     }
 
-    ComAudioFormat fromLibFormat(AVSampleFormat libFormat)
+    AudioFormat fromLibFormat(AVSampleFormat libFormat)
     {
-        ComAudioFormat format;
+        AudioFormat format;
         switch (libFormat) with (AVSampleFormat)
         {
             //TODO planar swr_convert, AV_SAMPLE_FMT_S32P, AV_SAMPLE_FMT_S16P
             case AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P:
-                format = ComAudioFormat.s32;
+                format = AudioFormat.s32;
                 break;
             case AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P:
-                format = ComAudioFormat.s16;
+                format = AudioFormat.s16;
                 break;
             case AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP:
-                format = ComAudioFormat.f32;
+                format = AudioFormat.f32;
                 break;
             default:
                 break;
@@ -367,11 +367,11 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
         return format;
     }
 
-    AVSampleFormat toLibFormat(ComAudioFormat format)
+    AVSampleFormat toLibFormat(AudioFormat format)
     {
         //TODO default
         AVSampleFormat libFormat = AVSampleFormat.AV_SAMPLE_FMT_S16;
-        switch (format) with (ComAudioFormat)
+        switch (format) with (AudioFormat)
         {
             //TODO planar swr_convert, AV_SAMPLE_FMT_S32P, AV_SAMPLE_FMT_S16P
             case s16:

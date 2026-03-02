@@ -20,8 +20,6 @@ import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.back.sdl3.sdl_lib : SdlLib;
-import api.dm.com.audio.com_audio_device;
-import api.dm.back.sdl3.sounds.sdl_audio_device : SdlAudioDevice;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_window : SdlWindowMode;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
@@ -95,7 +93,6 @@ class SdlApp : GuiApp
     {
         SdlLib sdlLib;
 
-        SdlAudioDevice audioOut;
         SdlJoystickLib sdlJoystick;
 
         SdlJoystick sdlCurrentJoystick;
@@ -149,20 +146,9 @@ class SdlApp : GuiApp
 
             flags |= SDL_INIT_VIDEO;
 
-            if (isAudioEnabled)
-            {
-                flags |= SDL_INIT_AUDIO;
-                gservices.platform.cap.isAudio = true;
-                version (EnableTrace)
-                {
-                    uservices.logger.trace("Audio enabled");
-                }
-            }
-
-            if (isJoystickEnabled)
+            if (gservices.platform.cap.isJoystick)
             {
                 flags |= SDL_INIT_JOYSTICK;
-                gservices.platform.cap.isJoystick = true;
 
                 version (EnableTrace)
                 {
@@ -289,7 +275,15 @@ class SdlApp : GuiApp
 
             _input = new Input(uservices.logging, keyboard, clipboard, cursor, sdlCurrentJoystick);
 
-            _media = new MultiMedia(audioOut);
+            //TODO factory methods
+            import api.dm.kit.media.audio.players.audio_engine: AudioEngine;
+            import api.dm.kit.media.audio.devices.audio_spec: AudioSpec, AudioFormat;
+
+            AudioSpec spec;
+
+            auto player = new AudioEngine(spec);
+
+            _media = new MultiMedia(spec, player);
             _media.initialize;
 
             if (gservices.platform.cap.isVector)
@@ -329,23 +323,32 @@ class SdlApp : GuiApp
                 uservices.logger.error("FFMPEG loading error: ", ffmpegLibForLoad.errorsText);
             }
 
-            // auto audioLib = new PortAudioLib;
-            // audioLib.workDirPath = buildPath(uservices.context.app.workDir, "libs/portaudio/lib");
+            if (gservices.platform.cap.isAudio)
+            {
+                auto audioLib = new PortAudioLib;
 
-            // audioLib.onLoad = () {
-            //     audioLib.initialize;
-            //     portaudioLib = audioLib;
-            //     uservices.logger.tracef("Load PortAudio library: %s, dev: %s", portaudioLib.libVersionStr, portaudioLib
-            //             .deviceInfoNew);
-            // };
+                if (audioLib.load)
+                {
+                    uservices.logger.tracef("Load PortAudio library: %s, dev: %s", audioLib.libVersionStr, audioLib
+                            .deviceInfoNew);
 
-            // audioLib.onErrors = (err) {
-            //     uservices.logger.error("PortAudio loading error: ", err);
-            //     audioLib.unload;
-            //     portaudioLib = null;
-            // };
-
-            // audioLib.load;
+                    string error;
+                    if (!audioLib.initialize(error))
+                    {
+                        gservices.platform.cap.isAudio = false;
+                        uservices.logger.error("PortAudio loading error: ", error);
+                    }
+                    else
+                    {
+                        portaudioLib = audioLib;
+                    }
+                }
+                else
+                {
+                    gservices.platform.cap.isAudio = false;
+                    uservices.logger.error("PortAudio loading error: ", audioLib.errorsText);
+                }
+            }
 
             auto ftLib = new FreeTypeLib;
             if (ftLib.load)
@@ -643,14 +646,6 @@ class SdlApp : GuiApp
             sdlLib = newSdlLib;
         }
 
-        if (caps.isAudio)
-        {
-            if (!audioOut)
-            {
-                audioOut = newSdlAudio;
-            }
-        }
-
         if (!sdlJoystick && caps.isJoystick)
         {
             sdlJoystick = newSdlJoystickLib;
@@ -718,16 +713,6 @@ class SdlApp : GuiApp
         version (EnableTrace)
         {
             uservices.logger.trace("Init SDL font");
-        }
-
-        if (audioOut)
-        {
-            ComAudioSpec defaultSpec;
-            if (const err = audioOut.open(&defaultSpec))
-            {
-                return err;
-            }
-            uservices.logger.tracef("Open audio %s", audioOut.spec);
         }
 
         if (caps.isJoystick)
@@ -827,7 +812,6 @@ class SdlApp : GuiApp
     }
 
     SdlLib newSdlLib() => new SdlLib;
-    SdlAudioDevice newSdlAudio() => new SdlAudioDevice;
     SdlJoystickLib newSdlJoystickLib() => new SdlJoystickLib;
 
     override ulong ticksMs()
@@ -1386,14 +1370,6 @@ class SdlApp : GuiApp
         }
 
         //TODO process EXIT event
-
-        if (audioOut)
-        {
-            if (const err = audioOut.close)
-            {
-                uservices.logger.error(err.toString);
-            }
-        }
 
         // if (vipsLib)
         // {

@@ -1,9 +1,10 @@
-module api.dm.kit.media.audio.audio_player;
+module api.dm.kit.media.audio.players.audio_engine;
 
-import api.dm.kit.media.mixers.audio_mixer : AudioMixer;
+import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.media.buffers.audio_buffer : AudioBuffer;
-import api.dm.kit.media.mixers.sound : Sound, SoundHandle;
+import api.dm.kit.media.audio.mixers.sound : Sound, SoundHandle;
 import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.dm.kit.media.audio.devices.audio_spec: AudioSpec;
 
 import core.thread.osthread : Thread;
 import core.sync.mutex : Mutex;
@@ -12,7 +13,7 @@ import core.sync.mutex : Mutex;
  * Authors: initkfs
  */
 
-class AudioPlayer : Thread
+class AudioEngine : Thread
 {
     AudioBuffer!(4096 * 2 * float.sizeof) buffer;
     AudioMixer mixer;
@@ -21,11 +22,12 @@ class AudioPlayer : Thread
 
     shared Mutex mixerMutex;
 
-    this()
+    this(AudioSpec spec)
     {
         mixerMutex = new shared Mutex;
 
         buffer = new typeof(buffer);
+        buffer.spec = spec;
         buffer.create;
         mixer = new AudioMixer;
         super(&mix);

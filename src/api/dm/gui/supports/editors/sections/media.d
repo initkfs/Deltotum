@@ -4,16 +4,13 @@ module api.dm.gui.supports.editors.sections.media;
 version(EnableAddon):
 // dfmt on
 
-import api.dm.com.audio.com_audio_mixer;
-import api.dm.com.audio.com_audio_clip;
-import api.dm.com.audio.com_audio_chunk;
 
 import api.dm.gui.controls.control : Control;
 
 import api.dm.addon.dsp.signals.analog_signal : AnalogSignal;
 import api.dm.addon.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
-import api.dm.kit.media.audio.audio_player : AudioPlayer;
-import api.dm.kit.media.mixers.sound : Sound;
+import api.dm.kit.media.audio.players.audio_engine : AudioEngine;
+import api.dm.kit.media.audio.mixers.sound : Sound;
 import api.dm.addon.media.audio.music_notes;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -47,136 +44,135 @@ import api.math.geom2.rect2 : Rect2f;
  */
 class Media : Control
 {
-    ComAudioClip clip;
+    // ComAudioClip clip;
 
-    BandEqualizer equalizer;
-    RectLevel level;
+    // BandEqualizer equalizer;
+    // RectLevel level;
 
-    Piano piano;
+    // Piano piano;
 
-    AudioPlayer player;
+    // AudioEngine player;
 
-    this()
-    {
-        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+    // this()
+    // {
+    //     import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
-        layout = new VLayout;
-        layout.isAutoResize = true;
-        isBackground = false;
-        layout.isAlignY = false;
-    }
+    //     layout = new VLayout;
+    //     layout.isAutoResize = true;
+    //     isBackground = false;
+    //     layout.isAlignY = false;
+    // }
 
-    override void initialize()
-    {
-        super.initialize;
-        enablePadding;
-    }
+    // override void initialize()
+    // {
+    //     super.initialize;
+    //     enablePadding;
+    // }
 
-    alias SignalType = short;
+    // alias SignalType = short;
 
-    DspProcessor!(SignalType, sampleBufferSize * 2, 2) dspProcessor;
+    // DspProcessor!(SignalType, sampleBufferSize * 2, 2) dspProcessor;
 
-    shared static
-    {
-        enum sampleWindowSize = 4096;
-        enum sampleBufferSize = 40960;
-    }
+    // shared static
+    // {
+    //     enum sampleWindowSize = 4096;
+    //     enum sampleBufferSize = 40960;
+    // }
 
-    float sampleFreq = 0;
+    // float sampleFreq = 0;
 
-    alias Sint16 = short;
-    alias Uint8 = ubyte;
+    // alias Sint16 = short;
+    // alias Uint8 = ubyte;
 
-    static shared Mutex sampleBufferMutex;
+    // static shared Mutex sampleBufferMutex;
 
-    import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
-    import api.math.numericals.interp;
+    // import api.math.numericals.interp;
 
-    Sound[] sounds;
+    // Sound[] sounds;
 
-    AudioChunk!short[] chunks;
-    FMSynthesizer!short synt;
-    FMSynthesizer!short drumSynt;
+    // AudioChunk!short[] chunks;
+    // FMSynthesizer!short synt;
+    // FMSynthesizer!short drumSynt;
 
-    AudioChunk!short[size_t] channels;
+    // AudioChunk!short[size_t] channels;
 
-    import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
+    // import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
-    RegulateTextField rField;
-    RegulateTextField gField;
-    RegulateTextField bField;
+    // RegulateTextField rField;
+    // RegulateTextField gField;
+    // RegulateTextField bField;
 
     override void create()
     {
         super.create;
 
-        player = new AudioPlayer;
-        player.start;
+        // player = new AudioEngine;
+        // player.start;
 
-        sampleFreq = media.audioOutSpec.freqHz;
+        // sampleFreq = media.audioOutSpec.freqHz;
 
-        sampleBufferMutex = new shared Mutex();
+        // sampleBufferMutex = new shared Mutex();
 
-        dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
-        dspProcessor.dspBuffer.block;
+        // dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
+        // dspProcessor.dspBuffer.block;
 
-        equalizer = new BandEqualizer(sampleWindowSize, sampleFreq, (fftIndex) {
-            return dspProcessor.fftBuffer[fftIndex];
-        }, 100, 8);
+        // equalizer = new BandEqualizer(sampleWindowSize, sampleFreq, (fftIndex) {
+        //     return dspProcessor.fftBuffer[fftIndex];
+        // }, 100, 8);
 
-        dspProcessor.onUpdateFTBuffer = () { equalizer.update; };
+        // dspProcessor.onUpdateFTBuffer = () { equalizer.update; };
 
-        auto root = new VBox;
-        addCreate(root);
+        // auto root = new VBox;
+        // addCreate(root);
 
-        auto panelRoot = new HBox;
-        panelRoot.isAlignY = true;
-        root.addCreate(panelRoot);
+        // auto panelRoot = new HBox;
+        // panelRoot.isAlignY = true;
+        // root.addCreate(panelRoot);
 
-        piano = new Piano;
+        // piano = new Piano;
 
-        //TODO fix window width
-        //pianoContainer.width = window.width == 0 ? 1200 : window.width;
-        piano.width = 1275;
-        piano.height = 200;
-        root.addCreate(piano);
+        // //TODO fix window width
+        // //pianoContainer.width = window.width == 0 ? 1200 : window.width;
+        // piano.width = 1275;
+        // piano.height = 200;
+        // root.addCreate(piano);
 
-        synt = new FMSynthesizer!short(sampleFreq);
+        // synt = new FMSynthesizer!short(sampleFreq);
 
-        piano.settings.adsr(synt.adsr);
-        piano.settings.amp = 0.3;
-        piano.settings.isFcMulFm = true;
-        piano.settings.fmIndex = 1;
-        piano.settings.noteType = NoteType.note1_4;
+        // piano.settings.adsr(synt.adsr);
+        // piano.settings.amp = 0.3;
+        // piano.settings.isFcMulFm = true;
+        // piano.settings.fmIndex = 1;
+        // piano.settings.noteType = NoteType.note1_4;
 
-        drumSynt = new FMSynthesizer!short(sampleFreq);
+        // drumSynt = new FMSynthesizer!short(sampleFreq);
 
-        piano.onPianoKey = (key, ref e) {
+        // piano.onPianoKey = (key, ref e) {
 
-            auto freq = key.freqHz;
+        //     auto freq = key.freqHz;
 
-            import api.dm.com.inputs.com_keyboard : ComKeyName;
+        //     import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-            if (input.isPressedKey(ComKeyName.key_a))
-            {
-                piano.settings.noteType = NoteType.note1;
-            }
-            else if (input.isPressedKey(ComKeyName.key_s))
-            {
-                piano.settings.noteType = NoteType.note1_2;
-            }
-            else if (input.isPressedKey(ComKeyName.key_d))
-            {
-                piano.settings.noteType = NoteType.note1_4;
-            }
-            else if (input.isPressedKey(ComKeyName.key_f))
-            {
-                piano.settings.noteType = NoteType.note1_8;
-            }
-            else if (input.isPressedKey(ComKeyName.key_g))
-            {
-                piano.settings.noteType = NoteType.note1_16;
-            }
+        //     if (input.isPressedKey(ComKeyName.key_a))
+        //     {
+        //         piano.settings.noteType = NoteType.note1;
+        //     }
+        //     else if (input.isPressedKey(ComKeyName.key_s))
+        //     {
+        //         piano.settings.noteType = NoteType.note1_2;
+        //     }
+        //     else if (input.isPressedKey(ComKeyName.key_d))
+        //     {
+        //         piano.settings.noteType = NoteType.note1_4;
+        //     }
+        //     else if (input.isPressedKey(ComKeyName.key_f))
+        //     {
+        //         piano.settings.noteType = NoteType.note1_8;
+        //     }
+        //     else if (input.isPressedKey(ComKeyName.key_g))
+        //     {
+        //         piano.settings.noteType = NoteType.note1_16;
+        //     }
 
             // MusicNote[] notes = [
             //     {Octave.C4}, {Octave.C4}, {Octave.D4}, {Octave.C4}, {
@@ -190,61 +186,61 @@ class Media : Control
 
             // synt.sequence(notes, 44100, (short[] buff, float time) {
 
-            //     auto chunk = media.newHeapChunk!short(time);
+            //     auto chunk = media.newHeapBuffer!short(time);
             //     chunks ~= chunk;
             //     chunk.data.buffer[] = buff;
             //     chunk.play;
 
-            //auto newChunk = media.newHeapChunk!short(1000);
+            //auto newChunk = media.newHeapBuffer!short(1000);
             //synt.sound(newChunk.data.buffer[], freq);
 
             // chunk.play;
             ///dspProcessor.lock;
 
-            auto noteType = piano.settings.noteType;
+            // auto noteType = piano.settings.noteType;
 
-            synt.adsr = piano.settings.adsr;
+            // synt.adsr = piano.settings.adsr;
 
-            float amp = piano.settings.amp;
-            synt.fm = piano.settings.fm;
-            synt.index = piano.settings.fmIndex;
-            synt.isFcMulFm = piano.settings.isFcMulFm;
+            // float amp = piano.settings.amp;
+            // synt.fm = piano.settings.fm;
+            // synt.index = piano.settings.fmIndex;
+            // synt.isFcMulFm = piano.settings.isFcMulFm;
 
-            Sound sound;
+            // Sound sound;
 
-            synt.note(MusicNote(freq, noteType, 120), amp, (data, time) {
-                foreach (chunk; sounds)
-                {
-                    if (!sound.playing && sound.samples.length == data.length)
-                    {
-                        // const lastChannel = chunk.lastChannel;
-                        // if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
-                        // {
-                        //     noteChunk = chunk;
-                        //     break;
-                        // }
-                        foreach (i, d; data)
-                        {
-                            sound.samples[i] = (cast(float) d) / short.max;
-                        }
-                        break;
-                    }
-                }
+            // synt.note(MusicNote(freq, noteType, 120), amp, (data, time) {
+            //     foreach (chunk; sounds)
+            //     {
+            //         if (!sound.playing && sound.samples.length == data.length)
+            //         {
+            //             // const lastChannel = chunk.lastChannel;
+            //             // if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
+            //             // {
+            //             //     noteChunk = chunk;
+            //             //     break;
+            //             // }
+            //             foreach (i, d; data)
+            //             {
+            //                 sound.samples[i] = (cast(float) d) / short.max;
+            //             }
+            //             break;
+            //         }
+            //     }
 
-                if (sound.samples.length == 0)
-                {
-                    auto heapBuff = new float[data.length];
-                    foreach (i, d; data)
-                    {
-                        heapBuff[i] = (cast(float) d) / short.max;
-                    }
-                    sound.samples = heapBuff;
-                    sounds ~= sound;
-                }
-                assert(sound.samples.length == data.length);
-            });
+            //     if (sound.samples.length == 0)
+            //     {
+            //         auto heapBuff = new float[data.length];
+            //         foreach (i, d; data)
+            //         {
+            //             heapBuff[i] = (cast(float) d) / short.max;
+            //         }
+            //         sound.samples = heapBuff;
+            //         sounds ~= sound;
+            //     }
+            //     assert(sound.samples.length == data.length);
+            // });
 
-            player.play(sound);
+            // player.play(sound);
 
             // synt.note(MusicNote(freq, NoteType.note1_4), (buff, time) {
             //     if(noteChunk.data.buffer.length != buff.length){
@@ -277,7 +273,7 @@ class Media : Control
             // }
 
             //noteChunk.play;
-        };
+        //};
 
         // if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
         //         .signal_callback, cast(void*)&dspProcessor
@@ -286,93 +282,93 @@ class Media : Control
         //     throw new Exception(err.toString);
         // }
 
-        level = new RectLevel((i) {
-            if (i < equalizer.bandValues.length)
-            {
-                return equalizer.bandValues[i] * 2;
-            }
-            return 0;
-        }, () { return 1; });
-        level.levels = 100;
-        level.rows = 2;
+        // level = new RectLevel((i) {
+        //     if (i < equalizer.bandValues.length)
+        //     {
+        //         return equalizer.bandValues[i] * 2;
+        //     }
+        //     return 0;
+        // }, () { return 1; });
+        // level.levels = 100;
+        // level.rows = 2;
 
-        level.marginTop = 10;
+        // level.marginTop = 10;
 
-        equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
-            import std.format : format;
+        // equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
+        //     import std.format : format;
 
-            auto label = format("%s\n%s", Math.round(startFreq), Math.round(
-                    endFreq));
-            level.labels[band].text = label;
-        };
+        //     auto label = format("%s\n%s", Math.round(startFreq), Math.round(
+        //             endFreq));
+        //     level.labels[band].text = label;
+        // };
 
-        addCreate(level);
+        // addCreate(level);
 
-        import api.dm.addon.media.video.gui.video_player : mediaPlayer;
-        import api.dm.gui.controls.containers.hbox : HBox;
+        // import api.dm.addon.media.video.gui.video_player : mediaPlayer;
+        // import api.dm.gui.controls.containers.hbox : HBox;
 
-        auto playerBox = new HBox;
-        playerBox.isAlignY = true;
-        addCreate(playerBox);
+        // auto playerBox = new HBox;
+        // playerBox.isAlignY = true;
+        // addCreate(playerBox);
 
-        import api.dm.addon.media.video.gui.video_player : mediaPlayer, VideoPlayer;
+        // import api.dm.addon.media.video.gui.video_player : mediaPlayer, VideoPlayer;
 
-        auto player = mediaPlayer(
-            "https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678/ndtv24x7/master.m3u8");
-        playerBox.addCreate(player);
+        // auto player = mediaPlayer(
+        //     "https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678/ndtv24x7/master.m3u8");
+        // playerBox.addCreate(player);
 
-        player.onPointerPress ~= (ref e) {
-            player.load;
-            player.demuxer.setStatePlay;
-        };
+        // player.onPointerPress ~= (ref e) {
+        //     player.load;
+        //     player.demuxer.setStatePlay;
+        // };
 
-        import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
-        import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
+        // import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+        // import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
-        void delegate() updatePlayer = () {
-            auto r = rField.value;
-            auto g = gField.value;
-            auto b = bField.value;
-            player.videoDecoder.setColor(r, g, b);
-        };
+        // void delegate() updatePlayer = () {
+        //     auto r = rField.value;
+        //     auto g = gField.value;
+        //     auto b = bField.value;
+        //     player.videoDecoder.setColor(r, g, b);
+        // };
 
-        auto tp = new RegulateTextPanel;
-        playerBox.addCreate(tp);
+        // auto tp = new RegulateTextPanel;
+        // playerBox.addCreate(tp);
 
-        rField = new RegulateTextField("R", 0, 1.0, (dt) { updatePlayer(); });
+        // rField = new RegulateTextField("R", 0, 1.0, (dt) { updatePlayer(); });
 
-        gField = new RegulateTextField("G", 0, 1.0, (dt) { updatePlayer(); });
+        // gField = new RegulateTextField("G", 0, 1.0, (dt) { updatePlayer(); });
 
-        bField = new RegulateTextField("B", 0, 1.0, (dt) { updatePlayer(); });
+        // bField = new RegulateTextField("B", 0, 1.0, (dt) { updatePlayer(); });
 
-        tp.addCreate([rField, gField, bField]);
-        tp.alignFields;
+        // tp.addCreate([rField, gField, bField]);
+        // tp.alignFields;
     }
 
     override void pause()
     {
         super.pause;
-        dspProcessor.block;
+        //dspProcessor.block;
     }
 
     override void run()
     {
         super.run;
-        dspProcessor.unblock;
+        //dspProcessor.unblock;
     }
 
     override void update(float delta)
     {
         super.update(delta);
-        dspProcessor.step;
+        //dspProcessor.step;
     }
 
     override void dispose()
     {
         super.dispose;
-        foreach (chunk; chunks)
-        {
-            chunk.dispose;
-        }
+        // foreach (chunk; chunks)
+        // {
+        //     chunk.dispose;
+        // }
     }
 }

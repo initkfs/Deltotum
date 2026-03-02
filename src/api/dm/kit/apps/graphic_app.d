@@ -49,9 +49,6 @@ import api.core.validations.validators.validator : Validator;
  */
 abstract class GraphicApp : CliApp
 {
-    bool isAudioEnabled;
-    bool isJoystickEnabled;
-
     bool isHeadless;
 
     bool isQuitOnCloseAllWindows = true;
@@ -119,15 +116,14 @@ abstract class GraphicApp : CliApp
 
         if (uservices.config.hasKey(KitConfigKeys.backendIsAudio))
         {
-            //TODO remove
-            isAudioEnabled = uservices.config.getBool(KitConfigKeys.backendIsAudio);
-            _graphicServices.platform.cap.isAudio = isAudioEnabled;
+            _graphicServices.platform.cap.isAudio = uservices.config.getBool(
+                KitConfigKeys.backendIsAudio);
         }
 
         if (uservices.config.hasKey(KitConfigKeys.backendIsJoystick))
         {
-            isJoystickEnabled = uservices.config.getBool(KitConfigKeys.backendIsJoystick);
-            _graphicServices.platform.cap.isJoystick = isJoystickEnabled;
+            _graphicServices.platform.cap.isJoystick = uservices.config.getBool(
+                KitConfigKeys.backendIsJoystick);
         }
 
         if (uservices.config.hasKey(KitConfigKeys.graphicsIsImage))

@@ -116,11 +116,11 @@ class PortAudioLib : DynamicLoader
         return info.versionText.fromStringz.idup;
     }
 
-    void initialize()
+    bool initialize(ref string error)
     {
         if (isInit)
         {
-            return;
+            return false;
         }
 
         assert(Pa_Initialize);
@@ -128,10 +128,12 @@ class PortAudioLib : DynamicLoader
         auto res = Pa_Initialize();
         if (res != PaErrorCode.paNoError)
         {
-            throw new Exception(errorNew(res));
+           error = errorNew(res);
+           return false;
         }
 
         isInit = true;
+        return true;
     }
 
     void close()

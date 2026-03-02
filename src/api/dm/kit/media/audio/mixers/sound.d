@@ -1,4 +1,4 @@
-module api.dm.kit.media.mixers.sound;
+module api.dm.kit.media.audio.mixers.sound;
 
 import api.math.geom3.vec3: Vec3f;
 
