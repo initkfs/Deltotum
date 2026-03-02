@@ -1,11 +1,13 @@
-module api.dm.kit.media.buffers.audio_buffer;
+module api.dm.kit.media.audio.devices.audio_stream;
 
 import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
-import api.dm.kit.media.audio.devices.audio_spec: AudioFormat, AudioSpec;
+import api.dm.kit.media.audio.devices.audio_spec : AudioFormat, AudioSpec;
 
 import api.dm.lib.portaudio.native;
 import Math = api.math;
 import core.stdc.config : c_long, c_ulong;
+
+import core.atomic : atomicLoad, atomicStore;
 
 /**
  * Authors: initkfs
@@ -25,22 +27,33 @@ enum Latency
 
 enum
 {
-    SAMPLE_RATE = 44100,
-    CHANNELS = 2,
     FRAMES_PER_BUFFER = 512,
     BUFFER_MS = 100, // 100 ms
     BUFFER_SAMPLES = 4096, //
+    CHANNELS = 2,
     TOTAL_BYTES = BUFFER_SAMPLES * CHANNELS * float.sizeof
 }
 
-class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
+enum AudioStreamState
+{
+    none,
+    open,
+    stop,
+    close
+}
+
+class AudioStream(size_t Size = TOTAL_BYTES)
 {
     AudioSpec spec;
     //TODO shared
-    __gshared RingBufferLF!(float, Size, isStaticArray, true) buffer;
+    __gshared RingBufferLF!(float, Size, false, true) buffer;
 
-    PaStream* _stream;
-    bool _isPlaying;
+    protected
+    {
+        PaStream* _stream;
+
+        shared AudioStreamState _state;
+    }
 
     void create()
     {
@@ -56,15 +69,46 @@ class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
 
     size_t size() => buffer.size;
 
-    void start()
+    PaSampleFormat toSampleFormat(AudioFormat format)
     {
-        if (_isPlaying)
+        final switch (format) with (AudioFormat)
+        {
+            case s16:
+                return paInt16;
+            case s32:
+                return paInt32;
+            case f32:
+                return paFloat32;
+            case none:
+                return paFloat32;
+        }
+    }
+
+    bool isOpen()
+    {
+        if (atomicLoad(_state) == AudioStreamState.open)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void open()
+    {
+        if (isOpen)
+        {
             return;
+        }
+
+        if (_stream)
+        {
+            close;
+        }
 
         PaStreamParameters outputParameters = {
             device: Pa_GetDefaultOutputDevice(),
-            channelCount: CHANNELS,
-            sampleFormat: paFloat32,
+            channelCount: cast(int) spec.channels,
+            sampleFormat: toSampleFormat(spec.format),
             suggestedLatency: Pa_GetDeviceInfo(
                 Pa_GetDefaultOutputDevice()
             ).defaultHighOutputLatency,
@@ -75,7 +119,7 @@ class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
             &_stream,
             null, // no output
             &outputParameters,
-            SAMPLE_RATE,
+            spec.freqHz,
             FRAMES_PER_BUFFER,
             paClipOff,
             &audioCallback,
@@ -85,67 +129,47 @@ class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
         if (err != PaErrorCode.paNoError)
         {
             throw new Exception("Failed to open audio stream: ", lastError(err));
-            return;
         }
 
         err = Pa_StartStream(_stream);
         if (err != PaErrorCode.paNoError)
         {
             throw new Exception("Failed to start audio stream: ", lastError(err));
-            return;
         }
 
-        _isPlaying = true;
+        atomicStore(_state, AudioStreamState.open);
     }
 
     void stop()
     {
-        if (!_isPlaying)
+        if (!isOpen)
+        {
             return;
+        }
 
+        //TODO must be shared?
         if (_stream)
         {
             Pa_StopStream(_stream);
+        }
+
+        atomicStore(_state, AudioStreamState.stop);
+    }
+
+    void close()
+    {
+        //TODO must be shared
+        if (_stream)
+        {
             Pa_CloseStream(_stream);
             _stream = null;
         }
-
-        _isPlaying = false;
+        atomicStore(_state, AudioStreamState.close);
     }
 
     size_t writeAudio(float[] audioData)
     {
-        if (!_isPlaying)
-        {
-            start();
-        }
-        auto count = buffer.write(audioData);
-        return count;
-    }
-
-    size_t writeTestTone(float frequency, float durationSeconds)
-    {
-        size_t numSamples = cast(size_t)(SAMPLE_RATE * durationSeconds * CHANNELS);
-        float[] tone = new float[numSamples];
-
-        float phase = 0.0f;
-        float phaseIncrement = 2.0f * 3.14159265f * frequency / SAMPLE_RATE;
-
-        foreach (i; 0 .. numSamples / CHANNELS)
-        {
-            float sample = 0.8f * Math.sin(phase);
-
-            tone[i * CHANNELS] = sample;
-            tone[i * CHANNELS + 1] = sample;
-
-            phase += phaseIncrement;
-            if (phase > 2.0f * 3.14159265f)
-            {
-                phase -= 2.0f * 3.14159265f;
-            }
-        }
-
-        return writeAudio(tone);
+        return buffer.write(audioData);
     }
 
     static __gshared float[] readBuffer = new float[512 * 2];
@@ -160,14 +184,23 @@ class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
     {
         try
         {
-            AudioBuffer* player = cast(AudioBuffer*) userData;
+            AudioStream* player = cast(AudioStream*) userData;
+
+            if (!player)
+            {
+                import std.stdio : stderr;
+
+                stderr.writeln("Audio stream is null from user data");
+                //TODO segfault?
+                return paContinue;
+            }
 
             float* _out = cast(float*) outputBuffer;
             size_t samplesNeeded = framesPerBuffer * CHANNELS;
 
             size_t buffLen = Math.min(samplesNeeded, readBuffer.length);
 
-            size_t samplesRead = player.buffer.read(readBuffer[0..buffLen]);
+            size_t samplesRead = player.buffer.read(readBuffer[0 .. buffLen]);
 
             if (samplesRead > 0)
             {
@@ -190,14 +223,6 @@ class AudioBuffer(size_t Size = TOTAL_BYTES, bool isStaticArray = false)
         }
 
         return paContinue;
-    }
-
-    void close()
-    {
-        if (_stream)
-        {
-            Pa_CloseStream(_stream);
-        }
     }
 
     size_t calculateLat(Latency req)

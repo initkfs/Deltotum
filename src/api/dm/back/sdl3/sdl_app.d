@@ -49,7 +49,7 @@ import api.dm.kit.platforms.caps.cap_graphics : CapGraphics;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import api.dm.kit.media.multimedia : MultiMedia;
-import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
+import api.dm.kit.media.audio.sounds.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.platforms.screens.screening : Screening;
 
@@ -275,17 +275,6 @@ class SdlApp : GuiApp
 
             _input = new Input(uservices.logging, keyboard, clipboard, cursor, sdlCurrentJoystick);
 
-            //TODO factory methods
-            import api.dm.kit.media.audio.players.audio_engine: AudioEngine;
-            import api.dm.kit.media.audio.devices.audio_spec: AudioSpec, AudioFormat;
-
-            AudioSpec spec;
-
-            auto player = new AudioEngine(spec);
-
-            _media = new MultiMedia(spec, player);
-            _media.initialize;
-
             if (gservices.platform.cap.isVector)
             {
                 auto cairoLibForLoad = new CairoLib;
@@ -349,6 +338,17 @@ class SdlApp : GuiApp
                     uservices.logger.error("PortAudio loading error: ", audioLib.errorsText);
                 }
             }
+
+             //TODO factory methods
+            import api.dm.kit.media.audio.engines.audio_engine: AudioEngine;
+            import api.dm.kit.media.audio.devices.audio_spec: AudioSpec, AudioFormat;
+
+            AudioSpec spec;
+            
+            auto player = new AudioEngine(spec);
+
+            _media = new MultiMedia(spec, player);
+            _media.initialize;
 
             auto ftLib = new FreeTypeLib;
             if (ftLib.load)

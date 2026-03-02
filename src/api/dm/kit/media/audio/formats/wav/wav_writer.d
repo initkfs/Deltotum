@@ -1,4 +1,4 @@
-module api.dm.addon.media.audio.formats.wav.wav_writer;
+module api.dm.kit.media.audio.formats.wav.wav_writer;
 
 import api.dm.kit.media.audio.devices.audio_spec : AudioSpec;
 

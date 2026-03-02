@@ -1,7 +1,7 @@
 module api.dm.addon.media.audio.synthesizers.fm_synthesizer;
 
 import api.dm.addon.media.audio.synthesizers.sound_synthesizer : SoundSynthesizer;
-import api.dm.kit.media.buffers.finite_signal_buffer;
+import api.dm.kit.media.audio.chunks.audio_chunk;
 import api.dm.addon.media.audio.music_notes;
 import api.dm.addon.dsp.synthesis.effect_synthesis;
 import api.dm.addon.dsp.synthesis.signal_synthesis;
@@ -76,7 +76,7 @@ class FMSynthesizer(T) : SoundSynthesizer!T
             fullTimeMs += n.durationMs;
         }
 
-        auto seqBuff = FiniteSignalBuffer!T(sampleRateHz, fullTimeMs, channels);
+        auto seqBuff = AudioChunk(sampleRateHz, fullTimeMs, channels);
         scope (exit)
         {
             seqBuff.dispose;
@@ -89,7 +89,11 @@ class FMSynthesizer(T) : SoundSynthesizer!T
         foreach (n; notes)
         {
             auto time = n.durationMs;
-            auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
+            auto noteBuff = AudioChunk(sampleRateHz, time, channels);
+            scope (exit)
+            {
+                noteBuff.dispose;
+            }
 
             auto targetFm = n.fm;
             if (n.isFcMulFm)
@@ -108,7 +112,6 @@ class FMSynthesizer(T) : SoundSynthesizer!T
             seqBuff.buffer[buffIndex .. endIndex][] = noteBuff.buffer;
 
             buffIndex = endIndex;
-            noteBuff.dispose;
         }
 
         if (isFadeInOut)

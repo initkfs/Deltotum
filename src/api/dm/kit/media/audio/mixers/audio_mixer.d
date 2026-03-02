@@ -1,7 +1,7 @@
-module api.dm.kit.media.audio.mixers.audio_mixer;
+module api.dm.kit.media.audio.sounds.audio_mixer;
 
-import api.dm.kit.media.buffers.audio_buffer : AudioBuffer;
-import api.dm.kit.media.audio.mixers.sound : Sound, SoundHandle;
+import api.dm.kit.media.audio.devices.audio_stream : AudioStream;
+import api.dm.kit.media.audio.sounds.sound : Sound, SoundHandle;
 
 import api.dm.lib.portaudio.native;
 import api.math.geom3.vec3 : Vec3f;
@@ -53,6 +53,34 @@ class AudioMixer
         {
             play(s);
         }
+    }
+
+    bool isPlaying(SoundHandle id)
+    {
+        if (id >= _sounds.length)
+        {
+            return false;
+        }
+
+        return _sounds[id].playing;
+    }
+
+    bool isPlayingOrFree()
+    {
+        bool isPlay;
+        foreach (ref Sound sound; _sounds)
+        {
+            if (sound.playing)
+            {
+                isPlay = true;
+            }
+            else
+            {
+                sound.free;
+            }
+        }
+
+        return isPlay;
     }
 
     bool isPlaying()

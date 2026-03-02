@@ -1,6 +1,6 @@
 module api.dm.addon.media.audio.synthesizers.base_synthesizer;
 
-import api.dm.kit.media.buffers.finite_signal_buffer;
+import api.dm.kit.media.audio.chunks.audio_chunk;
 import api.dm.addon.dsp.synthesis.effect_synthesis;
 import api.dm.addon.dsp.synthesis.signal_synthesis;
 

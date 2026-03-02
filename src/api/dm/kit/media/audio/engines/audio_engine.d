@@ -1,10 +1,11 @@
-module api.dm.kit.media.audio.players.audio_engine;
+module api.dm.kit.media.audio.engines.audio_engine;
 
-import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
-import api.dm.kit.media.buffers.audio_buffer : AudioBuffer;
-import api.dm.kit.media.audio.mixers.sound : Sound, SoundHandle;
+import api.dm.kit.media.audio.sounds.audio_mixer : AudioMixer;
+import api.dm.kit.media.audio.devices.audio_stream : AudioStream;
+import api.dm.kit.media.audio.sounds.sound : Sound, SoundHandle;
 import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
-import api.dm.kit.media.audio.devices.audio_spec: AudioSpec;
+import api.dm.kit.media.audio.devices.audio_spec : AudioSpec;
+import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 
 import core.thread.osthread : Thread;
 import core.sync.mutex : Mutex;
@@ -15,7 +16,7 @@ import core.sync.mutex : Mutex;
 
 class AudioEngine : Thread
 {
-    AudioBuffer!(4096 * 2 * float.sizeof) buffer;
+    AudioStream!(4096 * 2 * float.sizeof) buffer;
     AudioMixer mixer;
 
     float[] samples = new float[256 * 2];
@@ -39,18 +40,20 @@ class AudioEngine : Thread
         {
             try
             {
-                if (!mixer.isPlaying)
+                if (!mixer.isPlayingOrFree)
                 {
+                    // if (buffer.isOpen)
+                    // {
+                    //     buffer.stop;
+                    // }
                     continue;
                 }
 
-                mixerMutex.lock;
-                scope (exit)
-                {
-                    mixerMutex.unlock;
-                }
-
                 mixer.mix(samples, 2, true);
+                if (!buffer.isOpen)
+                {
+                    buffer.open;
+                }
                 buffer.writeAudio(samples);
             }
             catch (Exception e)
@@ -67,6 +70,16 @@ class AudioEngine : Thread
                 throw e;
             }
         }
+    }
+
+    bool isPlay(SoundHandle soundId)
+    {
+        mixerMutex.lock;
+        scope (exit)
+        {
+            mixerMutex.unlock;
+        }
+        return mixer.isPlaying(soundId);
     }
 
     SoundHandle play(Sound sound)

@@ -1,7 +1,7 @@
 module api.dm.addon.media.audio.synthesizers.sound_synthesizer;
 
 import api.dm.addon.media.audio.synthesizers.base_synthesizer : BaseSynthesizer;
-import api.dm.kit.media.buffers.finite_signal_buffer;
+import api.dm.kit.media.audio.chunks.audio_chunk;
 import api.dm.addon.media.audio.music_notes;
 import api.dm.addon.dsp.synthesis.effect_synthesis;
 import api.dm.addon.dsp.synthesis.signal_synthesis;
@@ -21,7 +21,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         super(sampleRateHz);
     }
 
-    void note(MusicNote n, float amplitude0to1, T[]delegate(float) bufferOnTimeProvider)
+    void note(MusicNote n, float amplitude0to1, T[] delegate(float) bufferOnTimeProvider)
     {
         note(n, amplitude0to1, (scopeBuff, time) {
             T[] outBuff = bufferOnTimeProvider(time);
@@ -39,7 +39,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
     void note(MusicNote n, float amplitude0to1, scope void delegate(T[], float) onScopeBufferTime)
     {
         auto time = n.durationMs;
-        auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
+        auto noteBuff = AudioChunk(sampleRateHz, time, channels);
         scope (exit)
         {
             noteBuff.dispose;
@@ -53,6 +53,20 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         }
 
         onScopeBufferTime(noteBuff.buffer, time);
+    }
+
+    AudioChunk* noteNew(MusicNote n, float amplitude0to1)
+    {
+        auto time = n.durationMs;
+        auto noteBuff = new AudioChunk(sampleRateHz, time, channels);
+        sound(noteBuff.buffer, n.freqHz, amplitude0to1);
+
+        if (isFadeInOut)
+        {
+            fadeInOut(noteBuff.buffer);
+        }
+
+        return noteBuff;
     }
 
     void sequence(MusicNote[] notes, float amplitude0to1, T[]delegate(float) bufferOnTimeProvider)
@@ -80,7 +94,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
             fullTimeMs += n.durationMs;
         }
 
-        auto seqBuff = FiniteSignalBuffer!T(sampleRateHz, fullTimeMs, channels);
+        auto seqBuff = AudioChunk(sampleRateHz, fullTimeMs, channels);
         scope (exit)
         {
             seqBuff.dispose;
@@ -98,7 +112,10 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         foreach (n; notes)
         {
             auto time = n.durationMs;
-            auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
+            auto noteBuff = AudioChunk(sampleRateHz, time, channels);
+            scope(exit){
+                noteBuff.dispose;
+            }
 
             // float prevAmp = 0;
             // size_t maxLastSamples = 50;
