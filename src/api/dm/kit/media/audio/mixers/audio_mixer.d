@@ -132,16 +132,6 @@ class AudioMixer
         sound(handle).playing = false;
     }
 
-    float[] mixToBuf(size_t frames, size_t chanCount = 2, bool isClearBuffer = true)
-    {
-        float[] buff = new float[frames * chanCount];
-        if (!mix(buff, chanCount, isClearBuffer))
-        {
-            throw new Exception("Mixer error");
-        }
-        return buff;
-    }
-
     bool mix(ref float[] output, size_t chanCount, bool isClearBuffer = true)
     {
         if (output.length == 0 || chanCount == 0)
@@ -158,7 +148,7 @@ class AudioMixer
         size_t numFrames = output.length / chanCount;
 
         enum maxChans = 32;
-        float[maxChans] tempBufferStatic;
+        float[maxChans] tempBufferStatic = 0;
         float[] tempBuffer = (chanCount <= maxChans) ? tempBufferStatic[0 .. chanCount]
             : new float[chanCount];
 

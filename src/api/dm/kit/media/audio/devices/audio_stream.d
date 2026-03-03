@@ -25,15 +25,6 @@ enum Latency
     offline
 }
 
-enum
-{
-    FRAMES_PER_BUFFER = 512,
-    BUFFER_MS = 100, // 100 ms
-    BUFFER_SAMPLES = 4096, //
-    CHANNELS = 2,
-    TOTAL_BYTES = BUFFER_SAMPLES * CHANNELS * float.sizeof
-}
-
 enum AudioStreamState
 {
     none,
@@ -42,7 +33,7 @@ enum AudioStreamState
     close
 }
 
-class AudioStream(size_t Size = TOTAL_BYTES)
+class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
 {
     AudioSpec spec;
     //TODO shared
@@ -117,11 +108,11 @@ class AudioStream(size_t Size = TOTAL_BYTES)
 
         auto err = Pa_OpenStream(
             &_stream,
-            null, // no output
+            null, // no input
             &outputParameters,
             spec.freqHz,
-            FRAMES_PER_BUFFER,
-            paClipOff,
+            FramesPerBuffer,
+            0,
             &audioCallback,
             cast(void*) this
         );
@@ -167,12 +158,26 @@ class AudioStream(size_t Size = TOTAL_BYTES)
         atomicStore(_state, AudioStreamState.close);
     }
 
+    size_t writeSine(float[] audioData, float soundHz = 440.0, float freqHz = 44100)
+    {
+        size_t totalFrames = audioData.length / 2;
+        double phase = 0.0;
+        double increment = 2.0 * Math.PI * soundHz / freqHz;
+        for (size_t i = 0; i < totalFrames; i++)
+        {
+            float sample = Math.sin(phase) * 0.5f;
+            audioData[i * 2] = sample;
+            audioData[i * 2 + 1] = sample;
+            phase += increment;
+        }
+
+        return writeAudio(audioData);
+    }
+
     size_t writeAudio(float[] audioData)
     {
         return buffer.write(audioData);
     }
-
-    static __gshared float[] readBuffer = new float[512 * 2];
 
     static extern (C) int audioCallback(
         const(void*) inputBuffer,
@@ -186,34 +191,55 @@ class AudioStream(size_t Size = TOTAL_BYTES)
         {
             AudioStream* player = cast(AudioStream*) userData;
 
+            if (statusFlags != 0)
+            {
+                //TODO log
+                import std.stdio : writeln;
+
+                if (statusFlags & paInputOverflow)
+                {
+                    writeln("Input_overflow");
+                }
+
+                if (statusFlags & paOutputUnderflow)
+                {
+                    writeln("Output underflow");
+                }
+
+                if (statusFlags & PaErrorCode.paInternalError)
+                {
+                    writeln("Internal audio driver error");
+                    return paAbort;
+                }
+            }
+
+            //double currentTime = timeInfo.currentTime;
+            //double outputTime = timeInfo.outputBufferDacTime;
+            //double totalLatency = outputTime - currentTime;
+
+            float* _out = cast(float*) outputBuffer;
+            size_t samplesNeeded = framesPerBuffer * Channels;
+
+            float[] outBuff = _out[0 .. samplesNeeded];
+
             if (!player)
             {
                 import std.stdio : stderr;
 
                 stderr.writeln("Audio stream is null from user data");
                 //TODO segfault?
+                outBuff[] = 0;
                 return paContinue;
             }
 
-            float* _out = cast(float*) outputBuffer;
-            size_t samplesNeeded = framesPerBuffer * CHANNELS;
+            size_t samplesRead = player.buffer.read(outBuff);
 
-            size_t buffLen = Math.min(samplesNeeded, readBuffer.length);
-
-            size_t samplesRead = player.buffer.read(readBuffer[0 .. buffLen]);
-
-            if (samplesRead > 0)
+            if (samplesRead < samplesNeeded)
             {
-                _out[0 .. samplesRead] = readBuffer[0 .. samplesRead];
-                if (samplesRead < samplesNeeded)
-                {
-                    _out[samplesRead .. samplesNeeded] = 0.0f;
-                }
-
-                return paContinue;
+                outBuff[samplesRead .. $] = 0.0f;
             }
 
-            _out[0 .. samplesNeeded] = 0.0f;
+            return paContinue;
         }
         catch (Exception e)
         {
@@ -222,6 +248,7 @@ class AudioStream(size_t Size = TOTAL_BYTES)
             stderr.writeln(e);
         }
 
+        //TODO segfault without filling
         return paContinue;
     }
 

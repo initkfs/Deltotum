@@ -166,6 +166,7 @@ class Media : Control
 
             AudioChunk* chunk = synt.noteNew(MusicNote(freq, noteType, 120), amp);
             Sound sound = Sound(chunk.buffer);
+
             sound.freeFunPtr = &free;
             if (!media.audio.isRunning)
             {

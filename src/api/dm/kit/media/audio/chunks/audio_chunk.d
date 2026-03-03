@@ -19,7 +19,7 @@ struct AudioChunk
         bool _freed;
     }
 
-    this(float freqHz, float durationMs, size_t channels = 2)
+    this(float freqHz, float durationMs, size_t channels = 2, bool isClearBuffer = true)
     {
         import std.math.traits : isFinite;
 
@@ -58,6 +58,11 @@ struct AudioChunk
         }
 
         _buffer = (cast(float*) buffPtr)[0 .. buffLen];
+
+        if (isClearBuffer)
+        {
+            _buffer[] = 0;
+        }
     }
 
     ~this()

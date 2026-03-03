@@ -3,7 +3,7 @@ module api.dm.addon.dsp.signal_funcs;
 /**
  * Authors: initkfs
  */
-void onBuffer(T)(T[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, size_t channels, scope float delegate(
+void onBuffer(float[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, size_t channels, scope float delegate(
         size_t, float, float) onIndexFrameTimeNormTime)
 {
     assert(buffer.length > 0);
@@ -19,15 +19,16 @@ void onBuffer(T)(T[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, size
     for (size_t i = 0; i < buffer.length; i += channels)
     {
         float value = onIndexFrameTimeNormTime(i, frameTime, normTime);
-        T buffValue = cast(T)(value * amplitude0to1 * T.max);
-        buffer[i] = buffValue;
+        value *= amplitude0to1;
+
+        buffer[i] = value;
 
         if (isStereo)
         {
             auto nextIndex = i + 1;
             if (nextIndex < buffer.length)
             {
-                buffer[nextIndex] = buffValue;
+                buffer[nextIndex] = value;
             }
         }
         else if (isMultiChans)
@@ -39,7 +40,7 @@ void onBuffer(T)(T[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, size
                 {
                     break;
                 }
-                buffer[nextIndex] = buffValue;
+                buffer[nextIndex] = value;
             }
         }
 
@@ -48,7 +49,7 @@ void onBuffer(T)(T[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, size
     }
 }
 
-void hann(T)(T[] data)
+void hann(float[] data)
 {
     import Math = std.math;
 
@@ -58,14 +59,14 @@ void hann(T)(T[] data)
         return;
     }
 
-    foreach (i, v; data)
+    foreach (i, ref v; data)
     {
         float winVal = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (size - 1)));
-        data[i] = cast(T)(data[i] * winVal);
+        v = v * winVal;
     }
 }
 
-void hamming(T)(T[] data)
+void hamming(float[] data)
 {
     import Math = std.math;
 
@@ -76,14 +77,14 @@ void hamming(T)(T[] data)
         return;
     }
 
-    foreach (i, v; data)
+    foreach (i, ref v; data)
     {
         float winVal = 0.54 - 0.46 * Math.cos((2 * Math.PI * i) / (size - 1));
-        data[i] = cast(T)(data[i] * winVal);
+        v = v * winVal;
     }
 }
 
-void blackman(T)(T[] data)
+void blackman(float[] data)
 {
     import Math = std.math;
 
@@ -94,10 +95,10 @@ void blackman(T)(T[] data)
         return;
     }
 
-    foreach (i, v; data)
+    foreach (i, ref v; data)
     {
         float winVal = 0.42 - 0.5 * Math.cos(
             (2 * Math.PI * i) / (size - 1)) + 0.08 * Math.cos((4 * Math.PI * i) / (size - 1));
-        data[i] = cast(T)(data[i] * winVal);
+        v = v * winVal;
     }
 }

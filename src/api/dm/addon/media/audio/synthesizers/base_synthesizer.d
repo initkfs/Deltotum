@@ -35,7 +35,7 @@ class BaseSynthesizer(T)
         this.sampleRateHz = sampleRateHz;
     }
 
-    void sound(T[] buffer, float freqHz = 0, float amplitude0to1 = 0.9, float phase = 0)
+    void sound(float[] buffer, float freqHz = 0, float amplitude0to1 = 0.9, float phase = 0)
     {
         onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, frameTime, time) {
             //time = time / channels;

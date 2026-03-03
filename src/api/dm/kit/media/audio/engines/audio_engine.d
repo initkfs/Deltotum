@@ -16,10 +16,20 @@ import core.sync.mutex : Mutex;
 
 class AudioEngine : Thread
 {
-    AudioStream!(4096 * 2 * float.sizeof) buffer;
+
+    enum NOTE_DURATION_SECONDS = 10;
+    enum SAMPLE_RATE = 44100;
+    enum CHANNELS = 2;
+
+    enum maxNoteSamples = NOTE_DURATION_SECONDS * SAMPLE_RATE * CHANNELS;
+    enum AudioQueueSize = maxNoteSamples * 2;
+
+    enum FRAMES_PER_BUFFER = 512;
+
+    AudioStream!(AudioQueueSize, FRAMES_PER_BUFFER, CHANNELS) buffer;
     AudioMixer mixer;
 
-    float[] samples = new float[256 * 2];
+    float[] samples = new float[512 * 2];
 
     shared Mutex mixerMutex;
 
@@ -49,12 +59,24 @@ class AudioEngine : Thread
                     continue;
                 }
 
-                mixer.mix(samples, 2, true);
+                if (!mixer.mix(samples, 2, true))
+                {
+                    import std;
+
+                    writeln("Error mix sound");
+                }
+
                 if (!buffer.isOpen)
                 {
                     buffer.open;
                 }
-                buffer.writeAudio(samples);
+                auto size = buffer.writeAudio(samples);
+                if (size != samples.length)
+                {
+                    import std;
+
+                    writeln("Error fill audio buffer: ", size);
+                }
             }
             catch (Exception e)
             {
