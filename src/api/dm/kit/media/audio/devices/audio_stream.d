@@ -29,6 +29,7 @@ enum AudioStreamState
 {
     none,
     open,
+    start,
     stop,
     close
 }
@@ -87,6 +88,9 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
         return false;
     }
 
+    bool isStart() => atomicLoad(_state) == AudioStreamState.start;
+    bool isStop() => atomicLoad(_state) == AudioStreamState.stop;
+
     void open()
     {
         if (isOpen)
@@ -125,18 +129,36 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
             throw new Exception("Failed to open audio stream: ", lastError(err));
         }
 
-        err = Pa_StartStream(_stream);
-        if (err != PaErrorCode.paNoError)
+        atomicStore(_state, AudioStreamState.open);
+    }
+
+    void start()
+    {
+        if (isStart)
         {
-            throw new Exception("Failed to start audio stream: ", lastError(err));
+            return;
         }
 
-        atomicStore(_state, AudioStreamState.open);
+        if (atomicLoad(_state) == AudioStreamState.none)
+        {
+            open;
+        }
+
+        if (_stream)
+        {
+            auto err = Pa_StartStream(_stream);
+            if (err != PaErrorCode.paNoError)
+            {
+                throw new Exception("Failed to start audio stream: ", lastError(err));
+            }
+        }
+
+        atomicStore(_state, AudioStreamState.start);
     }
 
     void stop()
     {
-        if (!isOpen)
+        if (isStop)
         {
             return;
         }

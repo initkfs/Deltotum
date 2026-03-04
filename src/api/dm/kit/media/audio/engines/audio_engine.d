@@ -30,7 +30,7 @@ class AudioEngine : Thread
     //enum MIX_INTERVAL_MS = 10;
     enum SAMPLE_RATE = 44100;
     enum CHANNELS = 2;
-    enum FRAMES_PER_BUFFER = 256;
+    enum FRAMES_PER_BUFFER = 1024;
 
     enum CallbackIntervalMs = (FRAMES_PER_BUFFER / (cast(float) SAMPLE_RATE)) * 1000.0;
     enum float MIX_INTERVAL_MS = CallbackIntervalMs * 0.85;
@@ -65,6 +65,14 @@ class AudioEngine : Thread
         super(&mix);
     }
 
+    void sleep()
+    {
+        import core.time : dur;
+
+        Thread.sleep(dur!("msecs")(1));
+        //Thread.yield;
+    }
+
     void mix()
     {
         while (true)
@@ -72,6 +80,22 @@ class AudioEngine : Thread
             try
             {
                 //mixer.freeSounds;
+
+                if (!mixer.isPlaying && buffer.size == 0)
+                {
+                    if (buffer.isStop)
+                    {
+                        sleep;
+                        continue;
+                    }
+
+                    import std;
+
+                    writeln("Stop audio stream");
+                    buffer.stop;
+                    sleep;
+                    continue;
+                }
 
                 auto nowMs = getCurrentTimeMs;
                 auto elapsedMs = nowMs - lastMixTimeMs;
@@ -88,12 +112,16 @@ class AudioEngine : Thread
                     auto mixSize = mixer.mix(samples, 2, true);
                     if (mixSize == 0)
                     {
+                        sleep;
                         continue;
                     }
 
-                    if (!buffer.isOpen)
+                    if (!buffer.isStart)
                     {
-                        buffer.open;
+                        buffer.start;
+                        import std;
+
+                        writeln("Start audio stream");
                     }
 
                     auto fillSlice = samples[0 .. mixSize];
@@ -101,12 +129,12 @@ class AudioEngine : Thread
                     auto size = buffer.writeAudio(fillSlice);
                     if (size != fillSlice.length)
                     {
-                        continue;
+                        //TODO log
                     }
                 }
                 else
                 {
-                    //Thread.sleep(1);
+                    sleep;
                 }
 
                 // auto mixSize = mixer.mix(samples, 2, true);
@@ -182,7 +210,7 @@ class AudioEngine : Thread
 
     private long getCurrentTimeMs()
     {
-        import std.datetime.systime: Clock;
+        import std.datetime.systime : Clock;
 
         return Clock.currTime.toUnixTime * 1000;
     }
