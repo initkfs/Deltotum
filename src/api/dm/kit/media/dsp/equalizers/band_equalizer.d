@@ -1,6 +1,6 @@
-module api.dm.addon.dsp.equalizers.band_equalizer;
+module api.dm.kit.media.dsp.equalizers.band_equalizer;
 
-import api.dm.addon.dsp.signals.analog_signal : AnalogSignal;
+import api.dm.kit.media.dsp.analog_signals : AnalogSignal;
 
 import Math = api.math;
 

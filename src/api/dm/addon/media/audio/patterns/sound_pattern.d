@@ -1,7 +1,7 @@
 module api.dm.addon.media.audio.patterns.sound_pattern;
 
-import api.dm.addon.dsp.synthesis.effect_synthesis: ADSR;
-import api.dm.addon.media.audio.music_notes: NoteType;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis: ADSR;
+import api.dm.kit.media.audio.music.music_notes: NoteType;
 
 struct SoundPattern
 {

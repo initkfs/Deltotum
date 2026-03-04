@@ -17,8 +17,8 @@ import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPan
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 import api.dm.addon.media.audio.patterns.sound_pattern : SoundPattern;
 
-import api.dm.addon.dsp.synthesis.effect_synthesis : ADSR;
-import api.dm.addon.media.audio.music_notes;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis : ADSR;
+import api.dm.kit.media.audio.music.music_notes;
 
 import Math = api.math;
 

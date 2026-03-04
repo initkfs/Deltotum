@@ -1,7 +1,7 @@
 module api.dm.kit.media.audio.sounds.audio_mixer;
 
-import api.dm.kit.media.audio.devices.audio_stream : AudioStream;
-import api.dm.kit.media.audio.sounds.sound : Sound, SoundHandle;
+import api.dm.kit.media.audio.streams.audio_stream : AudioStream;
+import api.dm.kit.media.audio.mixers.mix_sound : MixSound, SoundHandle;
 
 import core.atomic: atomicLoad, atomicStore;
 
@@ -15,12 +15,12 @@ import Math = api.math;
 
 class AudioMixer
 {
-    Sound[] _sounds;
+    MixSound[] _sounds;
 
     //TODO for chans
     float volume = 1;
 
-    SoundHandle play(Sound sound)
+    SoundHandle play(MixSound sound)
     {
         const id = noactiveId;
         sound.playing = true;
@@ -37,7 +37,7 @@ class AudioMixer
 
     SoundHandle play(float[] samples, float volume = 1.0f, bool loop = false)
     {
-        Sound sound;
+        MixSound sound;
         sound.samples = samples;
         sound.volume = volume;
         sound.loop = loop;
@@ -46,9 +46,9 @@ class AudioMixer
         return play(sound);
     }
 
-    void play(Sound[] sounds)
+    void play(MixSound[] sounds)
     {
-        foreach (Sound s; sounds)
+        foreach (MixSound s; sounds)
         {
             play(s);
         }
@@ -66,7 +66,7 @@ class AudioMixer
 
     void freeSounds()
     {
-        foreach (ref Sound sound; _sounds)
+        foreach (ref MixSound sound; _sounds)
         {
             if (!sound.playing && sound.freeFunPtr)
             {
@@ -79,7 +79,7 @@ class AudioMixer
     size_t playingCount()
     {
         size_t count;
-        foreach (ref Sound sound; _sounds)
+        foreach (ref MixSound sound; _sounds)
         {
             if (sound.playing)
             {
@@ -94,16 +94,16 @@ class AudioMixer
 
     void reset(SoundHandle id)
     {
-        sound(id) = Sound.init;
+        sound(id) = MixSound.init;
     }
 
-    ref Sound sound(SoundHandle id)
+    ref MixSound sound(SoundHandle id)
     {
         if (id >= _sounds.length)
         {
             import std.format : format;
 
-            throw new Exception(format("Sound id '%d' overflow array length '%d'", id, _sounds
+            throw new Exception(format("MixSound id '%d' overflow array length '%d'", id, _sounds
                     .length));
         }
 
@@ -231,7 +231,7 @@ class AudioMixer
         return samplesCount;
     }
 
-    private size_t writeToChan(ref Sound sound, size_t frame, ref float[] output, ref float[] tempBuffer, size_t chanCount)
+    private size_t writeToChan(ref MixSound sound, size_t frame, ref float[] output, ref float[] tempBuffer, size_t chanCount)
     {
         size_t frameIndex = frame * chanCount;
 
@@ -294,7 +294,7 @@ class AudioMixer
         return chanCount;
     }
 
-    private void distributeToChans(float sample, ref Sound sound, ref float[] channels, size_t chanCount)
+    private void distributeToChans(float sample, ref MixSound sound, ref float[] channels, size_t chanCount)
     {
         channels[] = 0.0f;
 
@@ -367,9 +367,9 @@ unittest
     import std.conv : to;
 
     {
-        Sound sound1;
+        MixSound sound1;
         sound1.samples = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1];
-        Sound sound2;
+        MixSound sound2;
         sound2.samples = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2];
 
         auto mixer = new AudioMixer;
@@ -391,8 +391,8 @@ unittest
 
     {
         //TODO ramaining chans
-        Sound sound1 = Sound([0.1, 0.1, 0.1]);
-        Sound sound2 = Sound([0.2, 0.2, 0.2, 0.2, 0.2]);
+        MixSound sound1 = MixSound([0.1, 0.1, 0.1]);
+        MixSound sound2 = MixSound([0.2, 0.2, 0.2, 0.2, 0.2]);
 
         auto mixer = new AudioMixer;
         mixer.play([sound1, sound2]);

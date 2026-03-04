@@ -1,7 +1,7 @@
-module api.dm.addon.dsp.analyzers.analog_signal_analyzer;
+module api.dm.kit.media.dsp.analyzers.analog_signal_analyzer;
 
-import api.dm.addon.dsp.signals.analog_signal : AnalogSignal;
-import DspWinFunc = api.dm.addon.dsp.signal_funcs;
+import api.dm.kit.media.dsp.analog_signals : AnalogSignal;
+import DspWinFunc = api.dm.kit.media.dsp.analog_signals;
 
 import Math = api.math;
 
@@ -10,7 +10,7 @@ import Math = api.math;
  */
 class AnalogSignalAnalyzer
 {
-    void fftFrames(SignalType)(size_t windowSize, float signalFreq, SignalType[] samples, scope bool delegate(float, AnalogSignal[] fftBuffer) onFrameIsContinue)
+    void fftFrames(size_t windowSize, float signalFreq, float[] samples, scope bool delegate(float, AnalogSignal[] fftBuffer) onFrameIsContinue)
     {
         size_t overlap = windowSize / 2;
 
@@ -18,7 +18,7 @@ class AnalogSignalAnalyzer
 
         for (size_t i = 0; i < samples.length - windowSize; i += overlap)
         {
-            SignalType[] frame = samples[i .. i + windowSize];
+            float[] frame = samples[i .. i + windowSize];
             DspWinFunc.hann(frame);
 
             auto timeSec = i / signalFreq;
@@ -39,27 +39,38 @@ class AnalogSignalAnalyzer
         return fft(windowSize, signalFreq, samples, outBuffer);
     }
 
-    bool fft(SignalType)(size_t windowSize, float signalFreq, SignalType[] samples, AnalogSignal[] outBuffer)
+    bool fft(size_t windowSize, float signalFreq, float[] samples, AnalogSignal[] outBuffer)
     {
-        import std.math.traits : isPowerOf2;
-
-        assert(isPowerOf2(samples.length));
-
         if (samples.length == 0)
         {
             return false;
         }
 
-        const halfWinSize = windowSize / 2;
+        import std.math.traits : isPowerOf2;
 
-        assert(halfWinSize <= outBuffer.length);
+        if (!isPowerOf2(samples.length))
+        {
+            throw new Exception("Samples length must be power of 2");
+        }
+
+        const halfWinSize = windowSize / 2;
+        if (halfWinSize != outBuffer.length)
+        {
+            import std.format : format;
+
+            throw new Exception(format("Output buffer must be window size / 2 == %d, but received: %d", halfWinSize, outBuffer
+                    .length));
+        }
 
         import std.numeric : fft;
 
         auto fftRes = fft(samples);
         const fftResLen = fftRes.length;
 
-        assert(halfWinSize <= fftResLen);
+        if (fftResLen > halfWinSize)
+        {
+            throw new Exception("FFT size overflow");
+        }
 
         foreach (i; 0 .. halfWinSize)
         {
@@ -67,21 +78,13 @@ class AnalogSignalAnalyzer
             //fftVal.re = fftVal.re / fftResLen;
             //fftVal.im = fftVal.im / fftResLen;
 
-            float length = Math.sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
+            float magn = Math.sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
 
-            length = Math.clamp(length, 0, SignalType.max) / SignalType.max;
-
-            auto magnMax = SignalType.max;
-            if (length > magnMax)
-            {
-                import std.stdio : stderr, writefln;
-
-                stderr.writefln("Warn. Signal length %s exceeds the maximum value %s", length, magnMax);
-            }
+            magn = Math.clamp(magn, -1.0, 1.0);
 
             //length = length / (sampleWindowSize / 2)
             float freq = i * signalFreq / fftResLen;
-            outBuffer[i] = AnalogSignal(freq, length);
+            outBuffer[i] = AnalogSignal(freq, magn);
         }
 
         return true;

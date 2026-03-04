@@ -8,20 +8,20 @@ import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 
 import api.dm.gui.controls.control : Control;
 
-import api.dm.addon.dsp.signals.analog_signal : AnalogSignal;
-import api.dm.addon.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
-import api.dm.kit.media.audio.sounds.sound : Sound;
-import api.dm.addon.media.audio.music_notes;
+import api.dm.kit.media.dsp.analog_signals : AnalogSignal;
+import api.dm.kit.media.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
+import api.dm.kit.media.audio.mixers.mix_sound : MixSound;
+import api.dm.kit.media.audio.music.music_notes;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
 
 import core.sync.mutex;
 
-import api.dm.addon.dsp.dsp_processor : DspProcessor;
-import api.dm.addon.dsp.equalizers.band_equalizer : BandEqualizer;
+import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
+import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
-import api.dm.addon.dsp.synthesis.signal_synthesis;
+import api.dm.kit.media.dsp.synthesis.signal_synthesis;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -33,8 +33,8 @@ import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 import api.dm.addon.media.audio.gui.piano : Piano;
-import api.dm.addon.media.audio.synthesizers.fm_synthesizer : FMSynthesizer;
-import api.dm.kit.media.audio.sounds.sound : Sound, SoundHandle;
+import api.dm.kit.media.audio.synthesizers.fm_synthesizer : FMSynthesizer;
+import api.dm.kit.media.audio.mixers.mix_sound : MixSound, SoundHandle;
 
 import Math = api.math;
 import api.math.geom2.rect2 : Rect2f;
@@ -66,7 +66,7 @@ class Media : Control
 
     alias SignalType = float;
 
-    DspProcessor!(SignalType, sampleBufferSize * 2, 2) dspProcessor;
+    DspProcessor!(sampleBufferSize * 2, 2) dspProcessor;
 
     shared static
     {
@@ -81,8 +81,8 @@ class Media : Control
     import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
     import api.math.numericals.interp;
 
-    FMSynthesizer!float synt;
-    FMSynthesizer!float drumSynt;
+    FMSynthesizer synt;
+    FMSynthesizer drumSynt;
 
     override void create()
     {
@@ -92,14 +92,14 @@ class Media : Control
 
         sampleBufferMutex = new shared Mutex();
 
-        dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
-        dspProcessor.dspBuffer.block;
+        // dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
+        // dspProcessor.dspBuffer.block;
 
-        equalizer = new BandEqualizer(sampleWindowSize, sampleFreq, (fftIndex) {
-            return dspProcessor.fftBuffer[fftIndex];
-        }, 100, 8);
+        // equalizer = new BandEqualizer(sampleWindowSize, sampleFreq, (fftIndex) {
+        //     return dspProcessor.fftBuffer[fftIndex];
+        // }, 100, 8);
 
-        dspProcessor.onUpdateFTBuffer = () { equalizer.update; };
+        // dspProcessor.onUpdateFTBuffer = () { equalizer.update; };
 
         auto root = new VBox;
         addCreate(root);
@@ -116,7 +116,7 @@ class Media : Control
         piano.height = 200;
         root.addCreate(piano);
 
-        synt = new FMSynthesizer!float(sampleFreq);
+        synt = new FMSynthesizer(sampleFreq);
 
         piano.settings.adsr(synt.adsr);
         piano.settings.amp = 0.3;
@@ -124,7 +124,7 @@ class Media : Control
         piano.settings.fmIndex = 1;
         piano.settings.noteType = NoteType.note1_4;
 
-        drumSynt = new FMSynthesizer!float(sampleFreq);
+        drumSynt = new FMSynthesizer(sampleFreq);
 
         piano.onPianoKey = (key, ref e) {
 
@@ -165,65 +165,62 @@ class Media : Control
             import core.stdc.stdlib : free;
 
             AudioChunk* chunk = synt.noteNew(MusicNote(freq, noteType, 120), amp);
-            Sound sound = Sound(chunk.buffer);
+            MixSound MixSound = MixSound(chunk.buffer);
             import std.conv: to;
-            sound.name = freq.to!string;
+            MixSound.name = freq.to!string;
 
-            sound.freeFunPtr = &free;
+            MixSound.freeFunPtr = &free;
             if (!media.audio.isRunning)
             {
                 media.audio.start;
             }
 
-            media.audio.play(sound);
+            media.audio.play(MixSound);
         };
 
-        level = new RectLevel((i) {
-            if (i < equalizer.bandValues.length)
-            {
-                return equalizer.bandValues[i] * 2;
-            }
-            return 0;
-        }, () { return 1; });
-        level.levels = 100;
-        level.rows = 2;
+        // level = new RectLevel((i) {
+        //     if (i < equalizer.bandValues.length)
+        //     {
+        //         return equalizer.bandValues[i] * 2;
+        //     }
+        //     return 0;
+        // }, () { return 1; });
+        // level.levels = 100;
+        // level.rows = 2;
 
-        level.marginTop = 10;
+        // level.marginTop = 10;
 
-        equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
-            import std.format : format;
+        // equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
+        //     import std.format : format;
 
-            auto label = format("%s\n%s", Math.round(startFreq), Math.round(
-                    endFreq));
-            level.labels[band].text = label;
-        };
+        //     auto label = format("%s\n%s", Math.round(startFreq), Math.round(
+        //             endFreq));
+        //     level.labels[band].text = label;
+        // };
 
-        addCreate(level);
+        // addCreate(level);
 
-        import api.dm.addon.media.video.gui.video_player : mediaPlayer;
-        import api.dm.gui.controls.containers.hbox : HBox;
+        // import api.dm.addon.media.video.gui.video_player : mediaPlayer;
+        // import api.dm.gui.controls.containers.hbox : HBox;
 
-        auto playerBox = new HBox;
-        playerBox.isAlignY = true;
-        addCreate(playerBox);
+        // auto playerBox = new HBox;
+        // playerBox.isAlignY = true;
+        // addCreate(playerBox);
     }
 
     override void pause()
     {
         super.pause;
-        dspProcessor.block;
     }
 
     override void run()
     {
         super.run;
-        dspProcessor.unblock;
     }
 
     override void update(float delta)
     {
         super.update(delta);
-        dspProcessor.step;
     }
 
     override void dispose()

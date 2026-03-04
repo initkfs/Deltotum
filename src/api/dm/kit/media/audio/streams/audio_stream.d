@@ -1,7 +1,7 @@
-module api.dm.kit.media.audio.devices.audio_stream;
+module api.dm.kit.media.audio.streams.audio_stream;
 
 import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
-import api.dm.kit.media.audio.devices.audio_spec : AudioFormat, AudioSpec;
+import api.dm.kit.media.audio.streams.audio_spec : AudioFormat, AudioSpec;
 
 import api.dm.lib.portaudio.native;
 import Math = api.math;
@@ -109,7 +109,7 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
             sampleFormat: toSampleFormat(spec.format),
             suggestedLatency: Pa_GetDeviceInfo(
                 Pa_GetDefaultOutputDevice()
-            ).defaultHighOutputLatency,
+            ).defaultLowOutputLatency,
             hostApiSpecificStreamInfo: null
         };
 

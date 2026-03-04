@@ -1,12 +1,12 @@
-module api.dm.addon.media.audio.synthesizers.sound_synthesizer;
+module api.dm.kit.media.audio.synthesizers.sound_synthesizer;
 
-import api.dm.addon.media.audio.synthesizers.base_synthesizer : BaseSynthesizer;
+import api.dm.kit.media.audio.synthesizers.base_synthesizer : BaseSynthesizer;
 import api.dm.kit.media.audio.chunks.audio_chunk;
-import api.dm.addon.media.audio.music_notes;
-import api.dm.addon.dsp.synthesis.effect_synthesis;
-import api.dm.addon.dsp.synthesis.signal_synthesis;
+import api.dm.kit.media.audio.music.music_notes;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis;
+import api.dm.kit.media.dsp.synthesis.signal_synthesis;
 
-import api.dm.addon.dsp.signal_funcs;
+import api.dm.kit.media.dsp.analog_signals;
 
 import Math = api.math;
 
@@ -14,17 +14,17 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class SoundSynthesizer(T) : BaseSynthesizer!T
+class SoundSynthesizer : BaseSynthesizer
 {
     this(float sampleRateHz)
     {
         super(sampleRateHz);
     }
 
-    void note(MusicNote n, float amplitude0to1, T[] delegate(float) bufferOnTimeProvider)
+    void note(MusicNote n, float amplitude0to1, float[] delegate(float) bufferOnTimeProvider)
     {
         note(n, amplitude0to1, (scopeBuff, time) {
-            T[] outBuff = bufferOnTimeProvider(time);
+            float[] outBuff = bufferOnTimeProvider(time);
             if (outBuff.length != scopeBuff.length)
             {
                 import std.format : format;
@@ -36,7 +36,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         });
     }
 
-    void note(MusicNote n, float amplitude0to1, scope void delegate(T[], float) onScopeBufferTime)
+    void note(MusicNote n, float amplitude0to1, scope void delegate(float[], float) onScopeBufferTime)
     {
         auto time = n.durationMs;
         auto noteBuff = AudioChunk(sampleRateHz, time, channels);
@@ -45,7 +45,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
             noteBuff.dispose;
         }
 
-        sound(noteBuff.buffer, n.freqHz, amplitude0to1);
+        MixSound(noteBuff.buffer, n.freqHz, amplitude0to1);
 
         if (isFadeInOut)
         {
@@ -59,7 +59,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
     {
         auto time = n.durationMs;
         auto noteBuff = new AudioChunk(sampleRateHz, time, channels);
-        sound(noteBuff.buffer, n.freqHz, amplitude0to1);
+        MixSound(noteBuff.buffer, n.freqHz, amplitude0to1);
 
         if (isFadeInOut)
         {
@@ -69,10 +69,10 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         return noteBuff;
     }
 
-    void sequence(MusicNote[] notes, float amplitude0to1, T[]delegate(float) bufferOnTimeProvider)
+    void sequence(MusicNote[] notes, float amplitude0to1, float[]delegate(float) bufferOnTimeProvider)
     {
         sequence(notes, amplitude0to1, (scopeBuff, time) {
-            T[] outBuff = bufferOnTimeProvider(time);
+            float[] outBuff = bufferOnTimeProvider(time);
             if (outBuff.length != scopeBuff.length)
             {
                 import std.format : format;
@@ -84,7 +84,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         });
     }
 
-    void sequence(MusicNote[] notes, float amplitude0to1, scope void delegate(T[], float) onScopeBufferTime)
+    void sequence(MusicNote[] notes, float amplitude0to1, scope void delegate(float[], float) onScopeBufferTime)
     {
         assert(notes.length > 0);
 
@@ -132,7 +132,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
             //     }
             // }
 
-            sound(noteBuff.buffer, n.freqHz, amplitude0to1, phase);
+            MixSound(noteBuff.buffer, n.freqHz, amplitude0to1, phase);
 
             auto endIndex = buffIndex + noteBuff.buffer.length;
             seqBuff.buffer[buffIndex .. endIndex][] = noteBuff.buffer;

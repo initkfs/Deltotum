@@ -1,6 +1,6 @@
 module api.dm.kit.media.audio.formats.wav.wav_writer;
 
-import api.dm.kit.media.audio.devices.audio_spec : AudioSpec;
+import api.dm.kit.media.audio.streams.audio_spec : AudioSpec;
 
 import std.stdio : File;
 import std.file : isFile, exists;
@@ -54,7 +54,7 @@ class WavWriter
 
         ushort bitsPerSample;
 
-        import api.dm.kit.media.audio.devices.audio_spec : AudioFormat;
+        import api.dm.kit.media.audio.streams.audio_spec : AudioFormat;
 
         final switch (spec.format) with (AudioFormat)
         {

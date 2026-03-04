@@ -1,12 +1,12 @@
-module api.dm.addon.media.audio.synthesizers.fm_synthesizer;
+module api.dm.kit.media.audio.synthesizers.fm_synthesizer;
 
-import api.dm.addon.media.audio.synthesizers.sound_synthesizer : SoundSynthesizer;
+import api.dm.kit.media.audio.synthesizers.sound_synthesizer : SoundSynthesizer;
 import api.dm.kit.media.audio.chunks.audio_chunk;
-import api.dm.addon.media.audio.music_notes;
-import api.dm.addon.dsp.synthesis.effect_synthesis;
-import api.dm.addon.dsp.synthesis.signal_synthesis;
+import api.dm.kit.media.audio.music.music_notes;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis;
+import api.dm.kit.media.dsp.synthesis.signal_synthesis;
 
-import api.dm.addon.dsp.signal_funcs;
+import api.dm.kit.media.dsp.analog_signals;
 
 import Math = api.math;
 
@@ -30,7 +30,7 @@ import Math = api.math;
      * quack, 11,69.90, adsr(0,4;0.1,0.6,0.4)
      * bell, fc*8, 1
      */
-class FMSynthesizer(T) : SoundSynthesizer!T
+class FMSynthesizer : SoundSynthesizer
 {
     float fm = 0;
     float index = 0;
@@ -51,10 +51,10 @@ class FMSynthesizer(T) : SoundSynthesizer!T
         };
     }
 
-    void sequence(FMdata[] notes, float amplitude0to1, T[]delegate(float) bufferOnTimeProvider)
+    void sequence(FMdata[] notes, float amplitude0to1, float[] delegate(float) bufferOnTimeProvider)
     {
         sequence(notes, amplitude0to1, (scopeBuff, time) {
-            T[] outBuff = bufferOnTimeProvider(time);
+            float[] outBuff = bufferOnTimeProvider(time);
             if (outBuff.length != scopeBuff.length)
             {
                 import std.format : format;
@@ -66,7 +66,7 @@ class FMSynthesizer(T) : SoundSynthesizer!T
         });
     }
 
-    void sequence(FMdata[] notes, float amplitude0to1, scope void delegate(T[], float) onScopeBufferTime)
+    void sequence(FMdata[] notes, float amplitude0to1, scope void delegate(float[], float) onScopeBufferTime)
     {
         assert(notes.length > 0);
 

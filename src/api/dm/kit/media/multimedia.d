@@ -1,7 +1,7 @@
 module api.dm.kit.media.multimedia;
 
 import api.core.components.units.simple_unit : SimpleUnit;
-import api.dm.kit.media.audio.devices.audio_spec: AudioSpec, AudioFormat;
+import api.dm.kit.media.audio.streams.audio_spec: AudioSpec, AudioFormat;
 import api.dm.kit.media.audio.engines.audio_engine: AudioEngine;
 
 /**

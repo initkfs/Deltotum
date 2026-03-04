@@ -2,7 +2,7 @@ module api.dm.addon.media.video.gui.video_player;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.media.audio.devices.audio_spec : AudioSpec, AudioFormat;
+import api.dm.kit.media.audio.streams.audio_spec : AudioSpec, AudioFormat;
 
 import core.sync.mutex : Mutex;
 import core.sync.condition : Condition;

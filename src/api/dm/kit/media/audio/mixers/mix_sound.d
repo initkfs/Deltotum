@@ -1,4 +1,4 @@
-module api.dm.kit.media.audio.sounds.sound;
+module api.dm.kit.media.audio.mixers.mix_sound;
 
 import api.math.geom3.vec3 : Vec3f;
 
@@ -6,7 +6,9 @@ import api.math.geom3.vec3 : Vec3f;
  * Authors: initkfs
  */
 
-struct Sound
+alias SoundHandle = size_t;
+
+struct MixSound
 {
     float[] samples;
 
@@ -31,5 +33,3 @@ struct Sound
         return true;
     }
 }
-
-alias SoundHandle = size_t;

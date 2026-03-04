@@ -341,11 +341,14 @@ class SdlApp : GuiApp
 
              //TODO factory methods
             import api.dm.kit.media.audio.engines.audio_engine: AudioEngine;
-            import api.dm.kit.media.audio.devices.audio_spec: AudioSpec, AudioFormat;
+            import api.dm.kit.media.audio.streams.audio_spec: AudioSpec, AudioFormat;
 
             AudioSpec spec;
             
             auto player = new AudioEngine(spec);
+            player.timestampMsProvider = (){
+                return SDL_GetTicksNS() / 1e-6;
+            };
 
             _media = new MultiMedia(spec, player);
             _media.initialize;

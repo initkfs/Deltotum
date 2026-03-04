@@ -1,6 +1,6 @@
 module api.dm.addon.media.video.gui.audio_decoder;
 
-import api.dm.kit.media.audio.devices.audio_spec : AudioSpec, AudioFormat;
+import api.dm.kit.media.audio.streams.audio_spec : AudioSpec, AudioFormat;
 import api.core.utils.queues.ring_buffer : RingBuffer;
 import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
 import api.core.utils.container_result : ContainerResult;

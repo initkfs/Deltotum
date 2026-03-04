@@ -1,6 +1,6 @@
-module api.dm.addon.dsp.synthesis.effect_synthesis;
+module api.dm.kit.media.dsp.synthesis.effect_synthesis;
 
-import api.dm.addon.dsp.signal_funcs;
+import api.dm.kit.media.dsp.analog_signals;
 
 import Math = api.math;
 

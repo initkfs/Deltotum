@@ -1,4 +1,4 @@
-module api.dm.kit.media.audio.devices.audio_spec;
+module api.dm.kit.media.audio.streams.audio_spec;
 
 /**
  * Authors: initkfs

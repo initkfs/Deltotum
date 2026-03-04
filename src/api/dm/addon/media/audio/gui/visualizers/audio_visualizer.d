@@ -4,10 +4,10 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.control : Control;
 
-import api.dm.addon.dsp.dsp_processor : DspProcessor;
-import api.dm.addon.dsp.equalizers.band_equalizer : BandEqualizer;
+import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
+import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
-import api.dm.addon.dsp.analyzers.analog_signal_analyzer;
+import api.dm.kit.media.dsp.analyzers.analog_signal_analyzer;
 
 import core.sync.mutex : Mutex;
 

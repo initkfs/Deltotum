@@ -1,8 +1,15 @@
-module api.dm.addon.dsp.signal_funcs;
+module api.dm.kit.media.dsp.analog_signals;
 
 /**
  * Authors: initkfs
  */
+
+struct AnalogSignal
+{
+    float freqHz = 0;
+    float magn = 0;
+}
+
 void onBuffer(float[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, size_t channels, scope float delegate(
         size_t, float, float) onIndexFrameTimeNormTime)
 {

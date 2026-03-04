@@ -146,7 +146,7 @@ struct PaDeviceInfo
     /** Default latency values for interactive performance. */
     PaTime defaultLowInputLatency;
     PaTime defaultLowOutputLatency;
-    /** Default latency values for robust non-interactive applications (eg. playing sound files). */
+    /** Default latency values for robust non-interactive applications (eg. playing MixSound files). */
     PaTime defaultHighInputLatency;
     PaTime defaultHighOutputLatency;
 
@@ -163,7 +163,7 @@ struct PaStreamParameters
     */
     PaDeviceIndex device;
 
-    /** The number of channels of sound to be delivered to the
+    /** The number of channels of MixSound to be delivered to the
      stream callback or accessed by Pa_ReadStream() or Pa_WriteStream().
      It can range from 1 to the value of maxInputChannels in the
      PaDeviceInfo record for the device specified by the device parameter.
