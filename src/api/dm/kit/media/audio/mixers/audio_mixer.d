@@ -3,6 +3,8 @@ module api.dm.kit.media.audio.sounds.audio_mixer;
 import api.dm.kit.media.audio.devices.audio_stream : AudioStream;
 import api.dm.kit.media.audio.sounds.sound : Sound, SoundHandle;
 
+import core.atomic: atomicLoad, atomicStore;
+
 import api.dm.lib.portaudio.native;
 import api.math.geom3.vec3 : Vec3f;
 import Math = api.math;
@@ -21,7 +23,6 @@ class AudioMixer
     SoundHandle play(Sound sound)
     {
         const id = noactiveId;
-        sound.active = true;
         sound.playing = true;
         if (id < 0)
         {
@@ -30,7 +31,6 @@ class AudioMixer
             return nextId;
         }
 
-        reset(id);
         _sounds[id] = sound;
         return id;
     }
@@ -42,7 +42,6 @@ class AudioMixer
         sound.volume = volume;
         sound.loop = loop;
         sound.playing = true;
-        sound.active = true;
 
         return play(sound);
     }
@@ -65,36 +64,33 @@ class AudioMixer
         return _sounds[id].playing;
     }
 
-    bool isPlayingOrFree()
+    void freeSounds()
     {
-        bool isPlay;
         foreach (ref Sound sound; _sounds)
         {
-            if (sound.playing)
-            {
-                isPlay = true;
-            }
-            else
+            if (!sound.playing && sound.freeFunPtr)
             {
                 sound.free;
+                sound.freeFunPtr = null;
             }
         }
-
-        return isPlay;
     }
 
-    bool isPlaying()
+    size_t playingCount()
     {
+        size_t count;
         foreach (ref Sound sound; _sounds)
         {
             if (sound.playing)
             {
-                return true;
+                count++;
             }
         }
 
-        return false;
+        return count;
     }
+
+    bool isPlaying() => playingCount != 0;
 
     void reset(SoundHandle id)
     {
@@ -116,9 +112,9 @@ class AudioMixer
 
     ptrdiff_t noactiveId()
     {
-        foreach (i, s; _sounds)
+        foreach (i, ref s; _sounds)
         {
-            if (!s.active)
+            if (!s.playing)
             {
                 return i;
             }
@@ -132,17 +128,26 @@ class AudioMixer
         sound(handle).playing = false;
     }
 
-    bool mix(ref float[] output, size_t chanCount, bool isClearBuffer = true)
+    size_t mix(float[] output, size_t chanCount, bool isClearBuffer = true)
     {
         if (output.length == 0 || chanCount == 0)
         {
-            return false;
+            return 0;
         }
 
         if (output.length % chanCount != 0)
         {
+            return 0;
+        }
+
+        if (!isPlaying)
+        {
+            return 0;
+        }
+
+        if (isClearBuffer)
+        {
             output[] = 0;
-            return false;
         }
 
         size_t numFrames = output.length / chanCount;
@@ -152,78 +157,89 @@ class AudioMixer
         float[] tempBuffer = (chanCount <= maxChans) ? tempBufferStatic[0 .. chanCount]
             : new float[chanCount];
 
-        if (isClearBuffer)
-        {
-            output[] = 0;
-        }
+        size_t maxFramesCount;
 
         foreach (ref sound; _sounds)
         {
-            if (!sound.playing || !sound.active)
+            if (!sound.playing)
             {
                 continue;
             }
 
-            ptrdiff_t framesAvailable = (sound.samples.length - sound.position) / chanCount;
+            size_t framesCount;
+
+            const framesInSound = sound.samples.length / chanCount;
+
+            ptrdiff_t framesAvailable = framesInSound - sound.positionFrame;
             if (framesAvailable <= 0)
             {
-                //throw new Exception("Samples negative");
-                sound.position = 0;
+                sound.positionFrame = 0;
                 sound.playing = false;
-                sound.active = false;
                 continue;
             }
 
             size_t framesToProcess = Math.min(numFrames, framesAvailable);
 
-            for (size_t frame = 0; frame < framesToProcess; frame++)
+            foreach (frame; 0 .. framesToProcess)
             {
-                float sample = sample(sound, frame);
-                writeToChan(sound, frame, sample, output, tempBuffer, chanCount);
+                writeToChan(sound, frame, output, tempBuffer, chanCount);
             }
 
-            sound.position += framesToProcess;
+            sound.positionFrame += framesToProcess;
+            framesCount += framesToProcess;
 
-            if (sound.position >= sound.samples.length)
+            if (sound.positionFrame >= framesInSound)
             {
                 if (sound.loop)
                 {
-                    sound.position = 0;
+                    sound.positionFrame = 0;
 
                     if (framesToProcess < numFrames)
                     {
                         size_t remainingFrames = numFrames - framesToProcess;
 
-                        for (size_t frame = 0; frame < remainingFrames; frame++)
+                        foreach (frame; 0 .. remainingFrames)
                         {
-                            float sample = sample(sound, frame);
-                            writeToChan(sound, frame, sample, output, tempBuffer, chanCount);
+                            writeToChan(sound, frame, output, tempBuffer, chanCount);
                         }
 
-                        sound.position += remainingFrames;
+                        sound.positionFrame += remainingFrames;
+                        framesCount += remainingFrames;
                     }
                 }
                 else
                 {
                     sound.playing = false;
+                    sound.positionFrame = 0;
                 }
+            }
+
+            if (framesCount > maxFramesCount)
+            {
+                maxFramesCount = framesCount;
             }
         }
 
-        for (size_t i = 0; i < output.length; i++)
+        const samplesCount = maxFramesCount * chanCount;
+
+        const float maxAmp = 0.95;
+        foreach (i, ref v; output[0 .. samplesCount])
         {
-            output[i] = Math.clamp(output[i], -1.0f, 1.0f);
+            v = Math.clamp(v, -maxAmp, maxAmp);
         }
 
-        return true;
+        return samplesCount;
     }
 
-    private void writeToChan(ref Sound sound, size_t frame, float sample, ref float[] output, ref float[] tempBuffer, size_t chanCount)
+    private size_t writeToChan(ref Sound sound, size_t frame, ref float[] output, ref float[] tempBuffer, size_t chanCount)
     {
+        size_t frameIndex = frame * chanCount;
+
         switch (chanCount)
         {
             case 1:
-                output[frame] += sample * sound.volume * this.volume;
+                //float sample = sound.samples[frameIndex];
+                //output[frameIndex] += sample * sound.volume * this.volume;
                 break;
 
             case 2:
@@ -248,58 +264,34 @@ class AudioMixer
                 float leftGain = sound.volume * (1.0f - Math.max(0.0f, sound.pan));
                 float rightGain = sound.volume * (1.0f + Math.min(0.0f, sound.pan));
 
-                output[frame * 2] += sample * leftGain * this.volume;
-                output[frame * 2 + 1] += sample * rightGain * this.volume;
-                break;
-
-            default:
-                tempBuffer[] = 0.0f;
-                distributeToChans(sample, sound, tempBuffer, chanCount);
-                for (size_t ch = 0; ch < chanCount; ch++)
+                size_t posIndex = (sound.positionFrame + frame);
+                if (posIndex > 0)
                 {
-                    output[frame * chanCount + ch] += tempBuffer[ch];
+                    posIndex--;
                 }
+
+                float sampleL = sound.samples[posIndex * chanCount];
+                float sampleR = sound.samples[posIndex * chanCount + 1];
+
+                //output[frameIndex] += sampleL * leftGain * this.volume;
+                //output[frameIndex + 1] += sampleR * rightGain * this.volume;
+                output[frameIndex] += sampleL * leftGain * this.volume;
+                output[frameIndex + 1] += sampleR * rightGain * this.volume;
+                break;
+            default:
+                import std.conv : text;
+
+                throw new Exception("Not supported channels: " ~ text(chanCount));
+                // tempBuffer[] = 0.0f;
+                // distributeToChans(sample, sound, tempBuffer, chanCount);
+                // for (size_t ch = 0; ch < chanCount; ch++)
+                // {
+                //     output[frame * chanCount + ch] += tempBuffer[ch];
+                // }
                 break;
         }
-    }
 
-    private float sample(ref Sound sound, size_t frameOffset = 0)
-    {
-        float exactPosition = sound.position + frameOffset;
-        size_t integerPos = cast(size_t) exactPosition;
-        float fraction = exactPosition - integerPos;
-
-        if (integerPos >= sound.samples.length)
-        {
-            if (sound.loop)
-            {
-                // wrap around
-                integerPos %= sound.samples.length;
-            }
-            else
-            {
-                return 0.0f;
-            }
-        }
-
-        float current = sound.samples[integerPos];
-        size_t nextPos = integerPos + 1;
-        if (nextPos >= sound.samples.length)
-        {
-            if (sound.loop)
-            {
-                nextPos = 0;
-            }
-            else
-            {
-                return current;
-            }
-        }
-
-        float next = sound.samples[nextPos];
-
-        // Linear interpolation
-        return current * (1.0f - fraction) + next * fraction;
+        return chanCount;
     }
 
     private void distributeToChans(float sample, ref Sound sound, ref float[] channels, size_t chanCount)
@@ -382,31 +374,33 @@ unittest
 
         auto mixer = new AudioMixer;
         auto sid1 = mixer.play(sound1);
-        assert(sound1.position == 0);
+        assert(sound1.positionFrame == 0);
         auto sid2 = mixer.play(sound2);
-        assert(sound2.position == 0);
+        assert(sound2.positionFrame == 0);
 
         float[] buffer = new float[6];
         auto res = mixer.mix(buffer, 2);
-        assert(res);
+        assert(res == buffer.length);
         foreach (float v; buffer)
         {
             assert(isClose(v, 0.3), v.to!string);
         }
-        assert(sound1.position == 0);
-        assert(sound2.position == 0);
+        assert(sound1.positionFrame == 0);
+        assert(sound2.positionFrame == 0);
     }
 
     {
+        //TODO ramaining chans
         Sound sound1 = Sound([0.1, 0.1, 0.1]);
         Sound sound2 = Sound([0.2, 0.2, 0.2, 0.2, 0.2]);
 
         auto mixer = new AudioMixer;
         mixer.play([sound1, sound2]);
 
-        auto res = mixer.mixToBuf(3, 2);
-        assert(res.length == 6);
-        isClose(res, [0.3, 0.3, 0.2, 0.2, 0, 0]);
+        float[16] buff = 0;
+        auto res = mixer.mix(buff[], 2);
+        assert(res == 4);
+        isClose(buff[0 .. res], [0.3, 0.3, 0.2, 0.2, 0, 0]);
     }
 
 }

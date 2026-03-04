@@ -39,6 +39,9 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
     //TODO shared
     __gshared RingBufferLF!(float, Size, false, true) buffer;
 
+    shared double callbackTimeDACSec;
+    shared size_t callbackFramesCount;
+
     protected
     {
         PaStream* _stream;
@@ -231,6 +234,14 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
                 outBuff[] = 0;
                 return paContinue;
             }
+
+            // size_t dacTime;
+            // if (timeInfo)
+            // {
+            //     dacTime = timeInfo.outputBufferDacTime;
+            // }
+
+            // atomicStore(player.callbackTimeDACSec, dacTime);
 
             size_t samplesRead = player.buffer.read(outBuff);
 

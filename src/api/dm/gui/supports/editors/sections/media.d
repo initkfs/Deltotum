@@ -166,12 +166,15 @@ class Media : Control
 
             AudioChunk* chunk = synt.noteNew(MusicNote(freq, noteType, 120), amp);
             Sound sound = Sound(chunk.buffer);
+            import std.conv: to;
+            sound.name = freq.to!string;
 
             sound.freeFunPtr = &free;
             if (!media.audio.isRunning)
             {
                 media.audio.start;
             }
+
             media.audio.play(sound);
         };
 

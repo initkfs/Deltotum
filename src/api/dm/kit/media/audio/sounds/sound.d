@@ -10,14 +10,14 @@ struct Sound
 {
     float[] samples;
 
-    size_t position;
+    size_t positionFrame;
     float volume = 1; //[0..1]
     float pan = 0; // [-1..1]
     Vec3f geomPosition;
     extern(C) void function(void*) freeFunPtr;
     bool loop;
     bool playing;
-    bool active;
+    string name;
 
     bool free()
     {

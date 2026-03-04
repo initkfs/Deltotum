@@ -10,28 +10,41 @@ import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 import core.thread.osthread : Thread;
 import core.sync.mutex : Mutex;
 
+import Math = api.math;
+
 /**
  * Authors: initkfs
  */
-
+/**  
+	  frames	mixBuffer	ringBuffer	ringBuffer (ms)
+2 ms	88	       256	      2048	      46 ms
+5 ms	220	       512	      4096	      93 ms
+10 ms	441	       512	      8192	      186 ms
+15 ms	661	       1024	      16384	      372 ms
+ */
 class AudioEngine : Thread
 {
+    enum AUDIO_QUEUE_SIZE_SEC = 5;
 
-    enum NOTE_DURATION_SECONDS = 10;
+    //interval <= ideal callback interval 512 / 44100 = 0.01161 sec = 11.6 ms
+    //enum MIX_INTERVAL_MS = 10;
     enum SAMPLE_RATE = 44100;
     enum CHANNELS = 2;
+    enum FRAMES_PER_BUFFER = 256;
 
-    enum maxNoteSamples = NOTE_DURATION_SECONDS * SAMPLE_RATE * CHANNELS;
-    enum AudioQueueSize = maxNoteSamples * 2;
+    enum CallbackIntervalMs = (FRAMES_PER_BUFFER / (cast(float) SAMPLE_RATE)) * 1000.0;
+    enum float MIX_INTERVAL_MS = CallbackIntervalMs * 0.85;
 
-    enum FRAMES_PER_BUFFER = 512;
+    enum AudioQueueSize = SAMPLE_RATE * AUDIO_QUEUE_SIZE_SEC * 2;
 
     AudioStream!(AudioQueueSize, FRAMES_PER_BUFFER, CHANNELS) buffer;
     AudioMixer mixer;
 
-    float[] samples = new float[512 * 2];
+    //length % channels == 0
+    __gshared float[] samples;
 
     shared Mutex mixerMutex;
+    private double lastMixTimeMs;
 
     this(AudioSpec spec)
     {
@@ -41,6 +54,14 @@ class AudioEngine : Thread
         buffer.spec = spec;
         buffer.create;
         mixer = new AudioMixer;
+
+        const mixBufferFrames = Math.nextPowerOfTwo(cast(uint) Math.max(FRAMES_PER_BUFFER, (
+                SAMPLE_RATE * MIX_INTERVAL_MS * 2 / 1000)));
+        samples = new float[](mixBufferFrames * 2);
+        samples[] = 0;
+
+        lastMixTimeMs = getCurrentTimeMs;
+
         super(&mix);
     }
 
@@ -50,33 +71,63 @@ class AudioEngine : Thread
         {
             try
             {
-                if (!mixer.isPlayingOrFree)
+                //mixer.freeSounds;
+
+                auto nowMs = getCurrentTimeMs;
+                auto elapsedMs = nowMs - lastMixTimeMs;
+
+                if (elapsedMs >= MIX_INTERVAL_MS)
                 {
-                    // if (buffer.isOpen)
+                    lastMixTimeMs += MIX_INTERVAL_MS;
+
+                    // if (nowMs - lastMixTimeMs > MIX_INTERVAL_MS)
                     // {
-                    //     buffer.stop;
+                    //     lastMixTimeMs = nowMs;
                     // }
-                    continue;
-                }
 
-                if (!mixer.mix(samples, 2, true))
+                    auto mixSize = mixer.mix(samples, 2, true);
+                    if (mixSize == 0)
+                    {
+                        continue;
+                    }
+
+                    if (!buffer.isOpen)
+                    {
+                        buffer.open;
+                    }
+
+                    auto fillSlice = samples[0 .. mixSize];
+
+                    auto size = buffer.writeAudio(fillSlice);
+                    if (size != fillSlice.length)
+                    {
+                        continue;
+                    }
+                }
+                else
                 {
-                    import std;
-
-                    writeln("Error mix sound");
+                    //Thread.sleep(1);
                 }
 
-                if (!buffer.isOpen)
-                {
-                    buffer.open;
-                }
-                auto size = buffer.writeAudio(samples);
-                if (size != samples.length)
-                {
-                    import std;
+                // auto mixSize = mixer.mix(samples, 2, true);
+                // if (mixSize == 0)
+                // {
+                //     continue;
+                // }
 
-                    writeln("Error fill audio buffer: ", size);
-                }
+                // if (!buffer.isOpen)
+                // {
+                //     buffer.open;
+                // }
+
+                // auto fillSlice = samples[0 .. mixSize];
+
+                // auto size = buffer.writeAudio(fillSlice);
+                // if (size != fillSlice.length)
+                // {
+                //     isSend = false;
+                //     continue;
+                // }
             }
             catch (Exception e)
             {
@@ -104,6 +155,20 @@ class AudioEngine : Thread
         return mixer.isPlaying(soundId);
     }
 
+    void play(Sound[] sound)
+    {
+        mixerMutex.lock;
+        scope (exit)
+        {
+            mixerMutex.unlock;
+        }
+
+        foreach (s; sound)
+        {
+            mixer.play(s);
+        }
+    }
+
     SoundHandle play(Sound sound)
     {
         mixerMutex.lock;
@@ -113,5 +178,12 @@ class AudioEngine : Thread
         }
         const sid = mixer.play(sound);
         return sid;
+    }
+
+    private long getCurrentTimeMs()
+    {
+        import std.datetime.systime: Clock;
+
+        return Clock.currTime.toUnixTime * 1000;
     }
 }
