@@ -66,6 +66,8 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
         }
     }
 
+    bool isEmpty() => size == 0;
+
     static if (isLockFree)
     {
         size_t size() => size(_readIndex.atomicLoad, _writeIndex.atomicLoad);
@@ -141,7 +143,7 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
         return write;
     }
 
-    size_t read(BufferType[] buf)
+    size_t read(BufferType[] buf, bool isRemove = true)
     {
         static if (isLockFree)
         {
@@ -182,16 +184,19 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
                 buf[currToEnd .. currToEnd + fromStartAround] = _buffer[0 .. fromStartAround];
             }
 
-            readIdx = readIdx + read;
-            static if (isLockFree)
+            if (isRemove)
             {
-                _readIndex.atomicStore!(MemoryOrder.rel)(readIdx);
+                readIdx = readIdx + read;
+                static if (isLockFree)
+                {
+                    _readIndex.atomicStore!(MemoryOrder.rel)(readIdx);
+                }
+                else
+                {
+                    _readIndex = readIdx;
+                }
+                return read;
             }
-            else
-            {
-                _readIndex = readIdx;
-            }
-            return read;
         }
         return 0;
     }

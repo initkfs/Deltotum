@@ -1,8 +1,8 @@
-module api.dm.addon.media.video.gui.video_decoder;
+module api.dm.kit.media.engines.video_decoder;
 
-import api.core.utils.queues.ring_buffer : RingBuffer;
+import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
 import api.core.utils.container_result : ContainerResult;
-import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
+import api.dm.kit.media.engines.base_media_worker : BaseMediaWorker;
 
 import api.core.loggers.builtins.logger : Logger;
 import std.string : fromStringz, toStringz;
@@ -87,8 +87,8 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
     {
         VideoDecoderContext context;
 
-        RingBuffer!(AVPacket*, PacketBufferSize)* packetQueue;
-        RingBuffer!(UVFrame, VideoBufferSize)* buffer;
+        RingBufferLF!(AVPacket*, PacketBufferSize)* packetQueue;
+        RingBufferLF!(UVFrame, VideoBufferSize)* buffer;
     }
 
     this(
@@ -212,9 +212,9 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             }
 
             import std.string : toStringz, fromStringz;
-            
-            import core.stdc.stdio: snprintf;
-            import std.format: format;
+
+            import core.stdc.stdio : snprintf;
+            import std.format : format;
 
             //video_size=200x200:pix_fmt=0:time_base=1/90000:pixel_aspect=1/1
             int destFormatInt = cast(int) destFormat;
@@ -343,72 +343,55 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                     continue;
                 }
 
-                if (buffer.isFull)
-                {
-                    waitInLoop;
-                    //import std;
+                AVPacket* pkt;
+                AVPacket*[1] pkts;
 
-                    //debug writeln("Video buffer is full. Continue");
+                const countRead = packetQueue.read(pkts);
+                if (countRead != 1)
+                {
+                    logger.errorf("Error read video packet from queue: %s", countRead);
                     continue;
                 }
 
-                AVPacket* pkt;
-                try
+                pkt = pkts[0];
+
+                const isSend = avcodec_send_packet(ctx, pkt);
+                if (isSend == codeEOF)
                 {
-                    packetQueue.mutex.lock;
-
-                    const isPacketRead = packetQueue.peek(pkt);
-                    if (isPacketRead != ContainerResult.success)
+                    if (pkt)
                     {
-                        logger.errorf("Error peek video packet from queue: %s", isPacketRead);
-                        continue;
-                    }
-
-                    const isSend = avcodec_send_packet(ctx, pkt);
-
-                    if (isSend == codeEOF)
-                    {
-                        if (pkt)
-                        {
-                            packetQueue.removeStrict;
-                            av_packet_free(&pkt);
-                        }
-                        logger.error("EOF in video decoder, break");
-                        stopCause = codeEOF;
-                        break;
-                    }
-
-                    import core.stdc.errno: EAGAIN;
-
-                    if (isSend < 0 && isSend != AVERROR(EAGAIN))
-                    {
-                        //TODO drop packet?
-                        packetQueue.removeStrict;
                         av_packet_free(&pkt);
-                        logger.errorf("Error sending packet in video decoder: %s", errorText(isSend));
-                        continue;
                     }
-
-                    import core.stdc.errno: EAGAIN;
-
-                    const isReceive = avcodec_receive_frame(ctx, frame);
-                    if (isReceive == AVERROR(EAGAIN))
-                    {
-                        continue;
-                    }
-
-                    if (isReceive < 0)
-                    {
-                        logger.errorf("Error receiving frame in video decoder: %s", errorText(
-                                isReceive));
-                        continue;
-                    }
-
-                    packetQueue.removeStrict;
+                    logger.error("EOF in video decoder, break");
+                    stopCause = codeEOF;
+                    break;
                 }
-                finally
+
+                import core.stdc.errno : EAGAIN;
+
+                if (isSend < 0 && isSend != AVERROR(EAGAIN))
                 {
-                    packetQueue.mutex.unlock;
+                    //TODO drop packet?
+                    av_packet_free(&pkt);
+                    logger.errorf("Error sending packet in video decoder: %s", errorText(isSend));
+                    continue;
+                }
+
+                import core.stdc.errno : EAGAIN;
+
+                const isReceive = avcodec_receive_frame(ctx, frame);
+                if (isReceive == AVERROR(EAGAIN))
+                {
+                    av_packet_free(&pkt);
+                    continue;
+                }
+
+                if (isReceive < 0)
+                {
+                    logger.errorf("Error receiving frame in video decoder: %s", errorText(
+                            isReceive));
+                    av_packet_free(&pkt);
+                    continue;
                 }
 
                 scope (exit)
@@ -518,10 +501,10 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 uvFrame.ptsSec = ptsSec;
 
                 UVFrame[1] frames = [uvFrame];
-                const isWriteUvFrame = buffer.writeSync(frames);
-                if (isWriteUvFrame != ContainerResult.success)
+                const writeCount = buffer.write(frames);
+                if (writeCount != 1)
                 {
-                    logger.errorf("Error writing video frame to buffer: %s", isWriteUvFrame);
+                    logger.errorf("Error writing video frame to buffer: %d", writeCount);
                 }
             }
 

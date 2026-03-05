@@ -1,8 +1,8 @@
-module api.dm.addon.media.video.gui.audio_decoder;
+module api.dm.kit.media.engines.audio_decoder;
 
 import api.dm.kit.media.audio.streams.audio_spec : AudioSpec, AudioFormat;
-import api.core.utils.queues.ring_buffer : RingBuffer;
-import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
+import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.dm.kit.media.engines.base_media_worker : BaseMediaWorker;
 import api.core.utils.container_result : ContainerResult;
 
 import api.core.loggers.builtins.logger : Logger;
@@ -10,7 +10,7 @@ import std.string : toStringz, fromStringz;
 
 import api.dm.lib.ffmpeg.native;
 
-import core.stdc.errno: EAGAIN;
+import core.stdc.errno : EAGAIN;
 
 struct AudioDecoderContext
 {
@@ -28,8 +28,8 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
     {
         AudioDecoderContext context;
 
-        RingBuffer!(AVPacket*, PacketBufferSize)* packetQueue;
-        RingBuffer!(ubyte, AudioBufferSize)* buffer;
+        RingBufferLF!(AVPacket*, PacketBufferSize)* packetQueue;
+        RingBufferLF!(float, AudioBufferSize)* buffer;
     }
 
     AudioSpec srcSpec;
@@ -175,69 +175,50 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                     continue;
                 }
 
-                if (buffer.isFull)
-                {
-                    waitInLoop;
-                    //import std;
+                AVPacket* pkt;
 
-                    //debug writeln("Audio buffer is full. Continue");
+                AVPacket*[1] pkts;
+                const sizeRead = packetQueue.read(pkts);
+                if (sizeRead != 1)
+                {
+                    logger.errorf("Error peek audio packet from queue: %s", isPacketRead);
                     continue;
                 }
 
-                AVPacket* pkt;
-                try
+                pkt = pkts[0];
+
+                const isSend = avcodec_send_packet(ctx, pkt);
+
+                if (isSend == codeEOF)
                 {
-                    packetQueue.mutex.lock;
-
-                    const isPacketRead = packetQueue.peek(pkt);
-                    if (isPacketRead != ContainerResult.success)
+                    if (pkt)
                     {
-                        logger.errorf("Error peek audio packet from queue: %s", isPacketRead);
-                        continue;
-                    }
-
-                    const isSend = avcodec_send_packet(ctx, pkt);
-
-                    if (isSend == codeEOF)
-                    {
-                        if (pkt)
-                        {
-                            packetQueue.removeStrict;
-                            av_packet_free(&pkt);
-                        }
-                        logger.error("EOF in audio decoder, break");
-                        break;
-                    }
-
-                    if (isSend < 0 && isSend != AVERROR(EAGAIN))
-                    {
-                        //TODO drop packet?
-                        packetQueue.removeStrict;
                         av_packet_free(&pkt);
-                        logger.errorf("Error sending packet in audio decoder: %s", errorText(
-                                isSend));
-                        continue;
                     }
-
-                    const isReceive = avcodec_receive_frame(ctx, frame);
-                    if (isReceive == AVERROR(EAGAIN))
-                    {
-                        continue;
-                    }
-
-                    if (isReceive < 0)
-                    {
-                        logger.errorf("Error receiving frame in audio decoder: %s", errorText(
-                                isReceive));
-                        continue;
-                    }
-
-                    packetQueue.removeStrict;
+                    logger.error("EOF in audio decoder, break");
+                    break;
                 }
 
-                finally
+                if (isSend < 0 && isSend != AVERROR(EAGAIN))
                 {
-                    packetQueue.mutex.unlock;
+                    //TODO drop packet?
+                    av_packet_free(&pkt);
+                    logger.errorf("Error sending packet in audio decoder: %s", errorText(
+                            isSend));
+                    continue;
+                }
+
+                const isReceive = avcodec_receive_frame(ctx, frame);
+                if (isReceive == AVERROR(EAGAIN))
+                {
+                    continue;
+                }
+
+                if (isReceive < 0)
+                {
+                    logger.errorf("Error receiving frame in audio decoder: %s", errorText(
+                            isReceive));
+                    continue;
                 }
 
                 scope (exit)
@@ -280,8 +261,8 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 {
                     if (audioBuff)
                     {
-                        import core.stdc.stdlib: free;
-                        
+                        import core.stdc.stdlib : free;
+
                         free(audioBuff);
                     }
                 }
@@ -316,15 +297,18 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
                 size_t writeBytes = audioBuffSize;
 
-                const isWrite = buffer.writeSync(audioBuff[0 .. audioBuffSize]);
+                float[] writeSlice = audioBuff[0 .. audioBuffSize];
+                const sizeWrite = buffer.write(writeSlice);
 
-                if (isWrite != ContainerResult.success)
+                if (sizeWrite != writeSlice.length)
                 {
-                    debug {
-                        import std.stdio: writefln;
+                    debug
+                    {
+                        import std.stdio : writefln;
+
                         writefln(
-                        "Write to audio buffer %s bytes: %s, cap %s, source bytes %s, full %s, packet queue: %s", writeBytes, isWrite, buffer
-                            .capacity, audioBuffSize, buffer.isFull, packetQueue.size);
+                            "Write to audio buffer %d bytes, result %d, packet queue: %d", writeSlice.length, sizeWrite, packetQueue
+                                .size);
                     }
                 }
             }
@@ -400,10 +384,10 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
         return format("Format: %s(%s), rate:%dHz, chans:%d, %s",
             av_get_sample_fmt_name(cast(AVSampleFormat) codecpar.format)
                 .fromStringz,
-            av_sample_fmt_is_planar(cast(AVSampleFormat) codecpar.format) ? "planar" : "packed",
-            codecpar.sample_rate,
-            codecpar.ch_layout.nb_channels,
-            buffLen > 0 ? buff[0 .. buffLen] : "unknown"
+                av_sample_fmt_is_planar(cast(AVSampleFormat) codecpar.format) ? "planar" : "packed",
+                codecpar.sample_rate,
+                codecpar.ch_layout.nb_channels,
+                buffLen > 0 ? buff[0 .. buffLen] : "unknown"
         );
     }
 }

@@ -1,4 +1,4 @@
-module api.dm.addon.media.video.gui.base_media_worker;
+module api.dm.kit.media.engines.base_media_worker;
 
 import core.thread.osthread : Thread;
 import api.core.loggers.builtins.logger : Logger;

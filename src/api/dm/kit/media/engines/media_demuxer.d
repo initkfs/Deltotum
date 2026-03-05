@@ -1,9 +1,9 @@
-module api.dm.addon.media.video.gui.media_demuxer;
+module api.dm.kit.media.engines.media_demuxer;
 
-import api.core.utils.queues.ring_buffer : RingBuffer;
+import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
 import api.core.utils.container_result : ContainerResult;
-import api.dm.addon.media.video.gui.base_media_worker : BaseMediaWorker;
-import api.dm.addon.media.video.gui.video_decoder : UVFrame;
+import api.dm.kit.media.engines.base_media_worker : BaseMediaWorker;
+import api.dm.kit.media.engines.video_decoder : UVFrame;
 
 import api.core.loggers.builtins.logger : Logger;
 import core.sync.mutex : Mutex;
@@ -38,11 +38,11 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
     {
         DemuxerContext context;
 
-        RingBuffer!(AVPacket*, VideoQueueSize)* videoPacketQueue;
-        RingBuffer!(AVPacket*, AudioQueueSize)* audioPacketQueue;
+        RingBufferLF!(AVPacket*, VideoQueueSize)* videoPacketQueue;
+        RingBufferLF!(AVPacket*, AudioQueueSize)* audioPacketQueue;
 
-        RingBuffer!(UVFrame, VideoBufferSize)* videoBuffer;
-        RingBuffer!(ubyte, AudioBufferSize)* audioBuffer;
+        RingBufferLF!(UVFrame, VideoBufferSize)* videoBuffer;
+        RingBufferLF!(ubyte, AudioBufferSize)* audioBuffer;
     }
 
     this(Logger logger,
@@ -117,7 +117,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                     break;
                 }
 
-                import core.stdc.errno: EAGAIN;
+                import core.stdc.errno : EAGAIN;
 
                 if (packetRet == AVERROR(EAGAIN))
                 {
@@ -157,66 +157,27 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                     lastCheckDropTimeMcs = nowMcs;
                 }
 
+                AVPacket* copy = allocCopy(packet);
+                AVPacket*[1] packets = [copy];
+                size_t isSend;
                 if (context.isVideo && packet.stream_index == context.videoFrameIndex)
                 {
-                    videoPacketQueue.mutex.lock;
-                    scope (exit)
-                    {
-                        videoPacketQueue.mutex.unlock;
-                    }
-
-                    if (videoPacketQueue.isFull)
+                    isSend = videoPacketQueue.write(packets);
+                    if (isSend != 1)
                     {
                         droppedVideoPackets++;
-                        av_packet_unref(packet);
-
-                        //import std;
-
-                        //debug writeln("Discard video packet");
-                    }
-                    else
-                    {
-                        AVPacket* copy = allocCopy(packet);
-
-                        AVPacket*[1] packets = [copy];
-                        const isWrite = videoPacketQueue.write(packets);
-                        if (isWrite != ContainerResult.success)
-                        {
-                            logger.errorf("Error sending video packet to queue: %s", isWrite);
-                        }
+                        //av_packet_unref(packet);
                     }
                 }
                 else if (context.isAudio && packet.stream_index == context.audioFrameIndex)
                 {
-                    audioPacketQueue.mutex.lock;
-                    scope (exit)
-                    {
-                        audioPacketQueue.mutex.unlock;
-                    }
-
-                    if (audioPacketQueue.isFull)
+                    isSend = audioPacketQueue.write(packets);
+                    if (isSend != 1)
                     {
                         droppedAudioPackets++;
                         import core.time : dur;
-
                         sleep(10.dur!"msecs");
-
-                        av_packet_unref(packet);
-
-                        //import std;
-                        //debug writeln("Discard audio packet");
-                    }
-                    else
-                    {
-                        AVPacket* copy = allocCopy(packet);
-
-                        AVPacket*[1] slice = [copy];
-                        const isWrite = audioPacketQueue.write(slice);
-
-                        if (isWrite != ContainerResult.success)
-                        {
-                            logger.errorf("Error sending audio packet to queue: %s", isWrite);
-                        }
+                        //av_packet_unref(packet);
                     }
                 }
             }
