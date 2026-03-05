@@ -42,6 +42,9 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
 
     shared double callbackTimeDACSec;
     shared size_t callbackFramesCount;
+    
+    //FIXME bug without static?
+    static shared size_t frameClock;
 
     protected
     {
@@ -270,6 +273,14 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
             if (samplesRead < samplesNeeded)
             {
                 outBuff[samplesRead .. $] = 0.0f;
+            }
+
+            //or samplesNeeded?
+            if (samplesRead > 0)
+            {
+                import core.atomic : atomicOp;
+
+                atomicOp!("+=")(player.frameClock, samplesNeeded / Channels);
             }
 
             return paContinue;

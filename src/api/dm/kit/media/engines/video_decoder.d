@@ -502,10 +502,10 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
                 UVFrame[1] frames = [uvFrame];
                 const writeCount = buffer.write(frames);
-                if (writeCount != 1)
-                {
-                    logger.errorf("Error writing video frame to buffer: %d", writeCount);
-                }
+                // if (writeCount != 1)
+                // {
+                //     logger.errorf("Error writing video frame to buffer: %d, buffsize: %d", writeCount, buffer.size);
+                // }
             }
 
             // if (stopCause == codeEOF)

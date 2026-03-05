@@ -619,6 +619,16 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
+    bool updateUV(ubyte* yplane, int ypitch, ubyte* uplane, int upitch, ubyte* vplane, int vpitch) nothrow
+    {
+        assert(ptr);
+        SDL_Rect* rect = null;
+        return SDL_UpdateYUVTexture(ptr, rect,
+            yplane, ypitch,
+            uplane, upitch,
+            vplane, vpitch);
+    }
+
     ComResult getPixels(out void* pixels)
     {
         assert(ptr);

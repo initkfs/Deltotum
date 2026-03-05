@@ -908,6 +908,13 @@ class Controls : Control
         t1.isBorder = true;
         exp.contentContainer.addCreate(t1);
         t1.enablePadding;
+
+        import api.dm.gui.controls.media.video.video_player : VideoPlayer;
+
+        auto path = asset.withResourcePath("sw.wmv");
+        
+        auto videoPlayer = new VideoPlayer(path, 250, 150);
+        root.addCreate(videoPlayer);
     }
 
     private void createProgressBars(Container root)

@@ -83,6 +83,7 @@ nothrow:
     ComResult fill(ubyte r, ubyte g, ubyte b, ubyte a);
 
     ComResult update(Rect2f rect, void* pixels, int pitch);
+    bool updateUV(ubyte* yplane, int ypitch, ubyte* uplane, int upitch, ubyte* vplane, int vpitch);
 
     ComResult getPixels(out void* pixels);
 

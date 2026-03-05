@@ -7,6 +7,7 @@ import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
 import api.dm.kit.media.audio.streams.audio_spec : AudioSpec;
 import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 
+import core.atomic : atomicLoad, atomicStore;
 import core.thread.osthread : Thread;
 import core.sync.mutex : Mutex;
 
@@ -33,7 +34,7 @@ class AudioEngine : Thread
 
     enum AudioQueueSize = SAMPLE_RATE * AUDIO_QUEUE_SIZE_SEC * 2;
 
-    AudioStream!(AudioQueueSize, FRAMES_PER_BUFFER, CHANNELS) buffer;
+    __gshared AudioStream!(AudioQueueSize, FRAMES_PER_BUFFER, CHANNELS) buffer;
     AudioMixer mixer;
 
     //length % channels == 0
@@ -98,7 +99,7 @@ class AudioEngine : Thread
                 if (elapsedMs >= MIX_INTERVAL_MS)
                 {
                     lastMixTimeMs = nowMs;
-                    
+
                     auto mixSize = mixer.mix(samples, 2, true);
                     if (mixSize == 0)
                     {
@@ -163,6 +164,11 @@ class AudioEngine : Thread
         }
     }
 
+    double audioClock()
+    {
+        return atomicLoad(buffer.frameClock);
+    }
+
     bool isPlay(SoundHandle soundId)
     {
         mixerMutex.lock;
@@ -185,6 +191,15 @@ class AudioEngine : Thread
         {
             mixer.play(s);
         }
+    }
+
+    size_t writeAudio(float[] samples)
+    {
+        if (!buffer.isStart)
+        {
+            buffer.start;
+        }
+        return buffer.writeAudio(samples);
     }
 
     SoundHandle play(MixSound MixSound)

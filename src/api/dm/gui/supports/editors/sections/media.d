@@ -200,7 +200,7 @@ class Media : Control
 
         // addCreate(level);
 
-        // import api.dm.kit.media.engines.video_player : mediaPlayer;
+        // import api.dm.kit.media.engines.media_engine : mediaPlayer;
         // import api.dm.gui.controls.containers.hbox : HBox;
 
         // auto playerBox = new HBox;

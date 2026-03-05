@@ -67,6 +67,7 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
     }
 
     bool isEmpty() => size == 0;
+    bool isFull() => size == RequestBufferSize;
 
     static if (isLockFree)
     {
@@ -195,8 +196,9 @@ struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = f
                 {
                     _readIndex = readIdx;
                 }
-                return read;
             }
+
+            return read;
         }
         return 0;
     }

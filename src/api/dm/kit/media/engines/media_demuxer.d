@@ -42,7 +42,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
         RingBufferLF!(AVPacket*, AudioQueueSize)* audioPacketQueue;
 
         RingBufferLF!(UVFrame, VideoBufferSize)* videoBuffer;
-        RingBufferLF!(ubyte, AudioBufferSize)* audioBuffer;
+        RingBufferLF!(float, AudioBufferSize)* audioBuffer;
     }
 
     this(Logger logger,
@@ -77,10 +77,10 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
     {
         try
         {
-            version (EnableTrace)
-            {
+            //version (EnableTrace)
+            //{
                 logger.tracef("Run demuxer");
-            }
+            //}
 
             //data_size + AV_INPUT_BUFFER_PADDING_SIZE
             AVPacket* packet = av_packet_alloc();
@@ -97,17 +97,17 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
             size_t droppedAudioPackets = 0;
             size_t droppedVideoPackets = 0;
 
-            version (EnableTrace)
-            {
+            //version (EnableTrace)
+            //{
                 logger.trace("Start demuxer loop");
-            }
+            //}
 
             while (true)
             {
-                if (state != WorkerState.play)
-                {
-                    continue;
-                }
+                // if (state != WorkerState.play)
+                // {
+                //     continue;
+                // }
 
                 const packetRet = av_read_frame(context.formatCtx, packet);
 
@@ -176,6 +176,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                     {
                         droppedAudioPackets++;
                         import core.time : dur;
+
                         sleep(10.dur!"msecs");
                         //av_packet_unref(packet);
                     }

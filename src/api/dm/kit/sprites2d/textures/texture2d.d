@@ -489,6 +489,11 @@ class Texture2d : Sprite2d
         }
     }
 
+    bool updateTextureUV(ubyte[] yplane, int ypitch, ubyte[] uplane, int upitch, ubyte[] vplane, int vpitch)
+    {
+        return texture.updateUV(yplane.ptr, ypitch, uplane.ptr, upitch, vplane.ptr, vpitch);
+    }
+
     uint format()
     {
         assert(texture);
@@ -644,6 +649,15 @@ class Texture2d : Sprite2d
         {
             logger.error(err.toString);
         }
+    }
+
+    string lastErrorNew()
+    {
+        if (!texture)
+        {
+            return null;
+        }
+        return texture.getLastErrorNew;
     }
 
     override void dispose()
