@@ -2,6 +2,7 @@ module api.dm.kit.graphics.canvases.graphic_canvas;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2: Rect2f;
 
 struct GStop
 {
@@ -66,7 +67,7 @@ interface GraphicCanvas
     enum LineJoin
     {
         miter, //cutting
-        round, 
+        round,
         bevel //truncated
     }
 
@@ -84,7 +85,7 @@ interface GraphicCanvas
     {
         linearGradient(builder.start, builder.end, builder.stops, onPattern);
     }
-    
+
     //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createRadialGradient
     final GStopBuilder createRadialGradient(float innerCenterX, float innerCenterY, float innerRadius, float outerCenterX, float outerCenterY, float outerRadius)
     {
@@ -95,7 +96,7 @@ interface GraphicCanvas
     {
         radialGradient(builder.start, builder.innerRadius, builder.end, builder.outerRadius, builder.stops, onPattern);
     }
-    
+
     void beginPath();
     void closePath();
 
@@ -103,6 +104,16 @@ interface GraphicCanvas
 
     RGBA color();
     void color(RGBA rgba);
+
+    final float globalAlpha() => color.a;
+    final void globalAlpha(float value0to1)
+    {
+        import Math = api.math;
+
+        auto currColor = color;
+        currColor.a = Math.clamp01(value0to1);
+        color = currColor;
+    }
 
     final void color(string hex)
     {
@@ -160,4 +171,7 @@ interface GraphicCanvas
     void fontSize(double size);
 
     void miterLimit(double size);
+
+    Rect2f textExtents(string text);
+
 }

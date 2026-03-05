@@ -8,7 +8,7 @@ import api.core.contexts.libs.dynamics.dynamic_loader : DynamicLoader;
 
 alias cairo_write_func_t = extern (C) cairo_status_t function(void* closure, const ubyte* data, uint length);
 
-extern (C)  nothrow
+extern (C) nothrow
 {
     cairo_t* function(cairo_surface_t* target) cairo_create;
     cairo_surface_t* function(cairo_format_t format, int width, int height) cairo_image_surface_create;
@@ -107,11 +107,13 @@ extern (C)  nothrow
         double alpha0to1) cairo_pattern_add_color_stop_rgba;
     void function(cairo_t* cr, cairo_pattern_t* source) cairo_set_source;
 
-    void function(cairo_t *cr, double size) cairo_set_font_size;
-    void function(cairo_t *cr, const char *family, cairo_font_slant_t slant, cairo_font_weight_t weight) cairo_select_font_face;
-    void function(cairo_t *cr, const char *utf8) cairo_text_path;
+    void function(cairo_t* cr, double size) cairo_set_font_size;
+    void function(cairo_t* cr, const char* family, cairo_font_slant_t slant, cairo_font_weight_t weight) cairo_select_font_face;
+    void function(cairo_t* cr, const char* utf8) cairo_text_path;
 
-    void function(cairo_t *cr, double limit) cairo_set_miter_limit;
+    void function(cairo_t* cr, double limit) cairo_set_miter_limit;
+
+    void function(cairo_t* cr, const char* utf8, cairo_text_extents_t* extents) cairo_text_extents;
 
 }
 
@@ -182,6 +184,8 @@ class CairoLib : DynamicLoader
         bind(&cairo_text_path, "cairo_text_path");
 
         bind(&cairo_set_miter_limit, "cairo_set_miter_limit");
+
+        bind(&cairo_text_extents, "cairo_text_extents");
     }
 
     version (Windows)

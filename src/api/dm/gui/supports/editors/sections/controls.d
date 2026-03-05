@@ -848,6 +848,13 @@ class Controls : Control
         auto ledIcon3 = new LedIcon(IconNames.thermometer_high, RGBA.green);
         ledContainer3.addCreate(ledIcon3);
 
+        import api.dm.gui.controls.meters.ppis.plan_position_indicator: PlanPositionIndicator;
+
+        auto ppi = new PlanPositionIndicator;
+        ppi.isShowLabelDist = false;
+        ppi.isShowLabelDeg = false;
+        root.addCreate(ppi);
+
         import api.dm.gui.controls.viewers.magnifiers.window_magnifier : WindowMagnifier;
 
         auto magn = new WindowMagnifier;

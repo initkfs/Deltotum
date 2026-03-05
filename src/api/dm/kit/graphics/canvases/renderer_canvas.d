@@ -5,6 +5,7 @@ import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GStop;
 import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 
 /**
  * Authors: initkfs
@@ -156,31 +157,37 @@ class RendererCanvas : StateCanvas
 
     void text(string text)
     {
-      
+
     }
 
     void strokeText(string text, float x, float y)
     {
-        
+
     }
 
     void fillText(string text, float x, float y)
     {
-        
+
     }
 
     void fontFace(string name)
     {
-        
+
     }
 
     void fontSize(double size)
     {
-        
+
     }
 
-    void miterLimit(double size){
-        
+    void miterLimit(double size)
+    {
+
+    }
+
+    Rect2f textExtents(string text)
+    {
+        return Rect2f.init;
     }
 
 }

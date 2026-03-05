@@ -4,9 +4,12 @@ import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GStop;
 import api.dm.lib.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
+import api.math.geom2.rect2 : Rect2f;
 
-//TODO remove native api
-import api.dm.lib.cairo;
+     //TODO remove native api
+    import api.dm.lib.cairo;
+
+
 
 /**
  * Authors: initkfs
@@ -16,6 +19,7 @@ class VectorCanvas : GraphicCanvas
     protected
     {
         CairoContext context;
+
         cairo_t* cr;
 
         bool isChangeColor;
@@ -329,5 +333,16 @@ class VectorCanvas : GraphicCanvas
     void miterLimit(double size)
     {
         cairo_set_miter_limit(cr, size);
+    }
+
+    Rect2f textExtents(string text)
+    {
+        import std.utf : toUTFz;
+
+        cairo_text_extents_t ext;
+        const char* utf8 = text.toUTFz!(const(char)*);
+        cairo_text_extents(cr, utf8, &ext);
+
+        return Rect2f(0, 0, ext.width, ext.height);
     }
 }
