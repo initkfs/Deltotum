@@ -374,6 +374,12 @@ class Controls : Control
         choiceHRoot1.addCreate(choice1);
         choice1.fill(choiceItems);
 
+        import api.dm.gui.controls.selects.choices.hchoice : HChoice;
+
+        auto choice2 = new HChoice!dstring;
+        choiceHRoot1.addCreate(choice2);
+        choice2.fill(choiceItems);
+
         import api.dm.gui.controls.meters.spinners.spinner : Spinner;
 
         auto spinner1 = new Spinner!int(5, 1, 1);
