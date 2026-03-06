@@ -53,20 +53,28 @@ class VideoPlayer : Control
         addCreate(texture);
         texture.createMutYV;
 
-        texture.lock;
-        scope (exit)
-        {
-            texture.unlock;
-        }
-
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        foreach (y; 0 .. (cast(uint) texture.height))
-        {
-            foreach (x; 0 .. (cast(uint)(texture.width)))
-            {
-                texture.changeColor(x, y, RGBA.red);
-            }
+        //TODO extract changeColorYV
+
+        //IYUV
+        const fillColor = RGBA.gray.toYUVA;
+        
+        size_t ysize = cast(size_t) (width * height);
+        ubyte[] yplane = new ubyte[ysize];
+
+        int uvWidth = cast(int)((width + 1) / 2);
+        int uvHeight = cast(int) ((height + 1) / 2);
+        int uvSize = uvWidth * uvHeight;
+        ubyte[] uplane = new ubyte[uvSize];
+        ubyte[] vplane = new ubyte[uvSize];
+
+        yplane[] = fillColor.y;
+        uplane[] = fillColor.u;
+        vplane[] = fillColor.v;
+
+        if(!texture.updateTextureUV(yplane, widthi, uplane, uvWidth, vplane, uvWidth)){
+            logger.error(texture.lastErrorNew);
         }
 
         panel = new VideoPlayerPanel;

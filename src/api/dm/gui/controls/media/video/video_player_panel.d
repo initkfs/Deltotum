@@ -27,7 +27,9 @@ class VideoPlayerPanel : Control
     {
         super.create;
 
-        playButton = new Button("Play");
+        import Icons = api.dm.gui.themes.icons.pack_bootstrap;
+
+        playButton = new IconButton(Icons.play_fill);
         addCreate(playButton);
         playButton.onAction ~= (ref e) {
             if (onPlay)

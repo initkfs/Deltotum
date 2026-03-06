@@ -466,6 +466,43 @@ struct RGBA
         return HSLA(h, s, l, a);
     }
 
+    import api.dm.kit.graphics.colors.yuva: YUVA;
+
+    YUVA toYUVA()
+    {
+        import Math = api.math;
+
+        float r = rNorm;
+        float g = gNorm;
+        float b = bNorm;
+
+        //  BT.601
+        // Y = 0.299R + 0.587G + 0.114B
+        // U = -0.147R - 0.289G + 0.436B + 128
+        // V = 0.615R - 0.515G - 0.100B + 128
+
+        //OR
+        //y = r * 0.299 + g * 0.587 + b * 0.114;
+        //u = r * -0.168736 + g * -0.331264 + b * 0.5 + 128;
+        //v = r * 0.5 + g * -0.418688 + b * -0.081312 + 128;
+
+        float y = 0.299 * r + 0.587 * g + 0.114 * b;
+        float u = -0.168736 * r - 0.331264 * g + 0.5 * b;
+        float v = 0.5f * r - 0.418688 * g - 0.081312 * b;
+
+        // offsets
+        u = u * 255.0f + 128.0f;
+        v = v * 255.0f + 128.0f;
+        y = y * 255.0f;
+
+        return YUVA(
+            cast(ubyte) Math.clamp(y, 0.0f, 255.0f),
+            cast(ubyte) Math.clamp(u, 0.0f, 255.0f),
+            cast(ubyte) Math.clamp(v, 0.0f, 255.0f),
+            a
+        );
+    }
+
     RGBAb toRGBAb() => RGBAb(r, g, b, aByte);
 
     float[3] toArrayFRGB() => [rNorm, gNorm, bNorm];
@@ -715,6 +752,13 @@ unittest
     assert(isClose(hsv1.h, 88.24, 0.0001));
     assert(isClose(hsv1.s, 0.68, 0.0001));
     assert(isClose(hsv1.v, 0.196, 0.001));
+
+    import api.dm.kit.graphics.colors.yuva: YUVA;
+
+    YUVA yv1 = RGBA(34, 50, 16).toYUVA;
+    assert(yv1.y == 41);
+    assert(yv1.u == 113);
+    assert(yv1.v == 122);
 }
 
 unittest

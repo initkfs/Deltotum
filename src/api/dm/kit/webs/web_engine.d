@@ -1,4 +1,4 @@
-module api.dm.gui.webs.web_engine;
+module api.dm.kit.webs.web_engine;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
@@ -123,9 +123,10 @@ class WebEngine : Sprite2d
         }
     }
 
-    this(double width = 400, double height = 400)
+    this(float width, float height)
     {
         initSize(width, height);
+        setManagedLayout;
     }
 
     override void create()

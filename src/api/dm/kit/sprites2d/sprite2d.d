@@ -1131,6 +1131,30 @@ class Sprite2d : EventKitTarget
 
     bool isClipped() => clip.width > 0 || clip.height > 0;
 
+    final void setHLayout(bool isAutoResize = true)
+    {
+        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+
+        layout = new HLayout;
+        layout.isAutoResize = isAutoResize;
+    }
+
+    final void setVLayout(bool isAutoResize = true)
+    {
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+
+        layout = new VLayout;
+        layout.isAutoResize = isAutoResize;
+    }
+
+    final void setManagedLayout(bool isAutoResize = true)
+    {
+        import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
+
+        layout = new ManagedLayout;
+        layout.isAutoResize = isAutoResize;
+    }
+
     void applyLayout()
     {
         if (layout)

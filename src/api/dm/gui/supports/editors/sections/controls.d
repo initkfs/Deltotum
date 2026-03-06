@@ -76,27 +76,47 @@ class Controls : Control
 
         rootContainer.addCreate(new HSeparator);
 
+        auto largeContainer = new HBox;
+        rootContainer.addCreate(largeContainer);
+
+        auto vContainer = new VBox;
+        largeContainer.addCreate(vContainer);
+
         auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
-        rootContainer.addCreate(selectionContainer);
-
+        vContainer.addCreate(selectionContainer);
         createSelects(selectionContainer);
-
         createTexts(selectionContainer);
-
+        
         auto metersContainer = new HBox;
         metersContainer.layout.isAlignY = true;
-        rootContainer.addCreate(metersContainer);
+        vContainer.addCreate(metersContainer);
 
         createMeters(metersContainer);
 
         auto dataContainer = new HBox(5);
         dataContainer.layout.isAlignY = true;
-        rootContainer.addCreate(dataContainer);
+        vContainer.addCreate(dataContainer);
 
         createCharts(dataContainer);
 
         createIndicators(dataContainer);
+
+        auto vContainer2 = new VBox;
+        vContainer2.isAlignX = true;
+        largeContainer.addCreate(vContainer2);
+
+        import api.dm.gui.controls.media.video.video_player : VideoPlayer;
+
+        auto path = asset.withResourcePath("sw.wmv");
+
+        auto videoPlayer = new VideoPlayer(path, 250, 150);
+        vContainer2.addCreate(videoPlayer);
+
+        import api.dm.gui.controls.viewers.webs.web_browser : WebBrowser;
+
+        auto webBrowser = new WebBrowser;
+        vContainer2.addCreate(webBrowser);
     }
 
     void createSwitches(Container root)
@@ -553,6 +573,16 @@ class Controls : Control
         auto digClock = new DigitalClock;
         digClock.isAutorun = true;
         clockBox.addCreate(digClock);
+
+        auto ppiContainer = new VBox;
+        root.addCreate(ppiContainer);
+
+        import api.dm.gui.controls.meters.ppis.plan_position_indicator : PlanPositionIndicator;
+
+        auto ppi = new PlanPositionIndicator;
+        ppi.isShowLabelDist = false;
+        ppi.isShowLabelDeg = false;
+        ppiContainer.addCreate(ppi);
     }
 
     void createProgress(Container root)
@@ -848,13 +878,6 @@ class Controls : Control
         auto ledIcon3 = new LedIcon(IconNames.thermometer_high, RGBA.green);
         ledContainer3.addCreate(ledIcon3);
 
-        import api.dm.gui.controls.meters.ppis.plan_position_indicator: PlanPositionIndicator;
-
-        auto ppi = new PlanPositionIndicator;
-        ppi.isShowLabelDist = false;
-        ppi.isShowLabelDeg = false;
-        root.addCreate(ppi);
-
         import api.dm.gui.controls.viewers.magnifiers.window_magnifier : WindowMagnifier;
 
         auto magn = new WindowMagnifier;
@@ -921,13 +944,6 @@ class Controls : Control
         t1.isBorder = true;
         exp.contentContainer.addCreate(t1);
         t1.enablePadding;
-
-        import api.dm.gui.controls.media.video.video_player : VideoPlayer;
-
-        auto path = asset.withResourcePath("sw.wmv");
-        
-        auto videoPlayer = new VideoPlayer(path, 250, 150);
-        root.addCreate(videoPlayer);
     }
 
     private void createProgressBars(Container root)
