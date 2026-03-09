@@ -20,7 +20,7 @@ import core.sync.mutex;
 
 import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
 import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
-import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
+import api.dm.gui.controls.meters.levels.rect_fill_level : RectFillLevel;
 import api.dm.kit.media.dsp.synthesis.signal_synthesis;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -45,7 +45,7 @@ import api.math.geom2.rect2 : Rect2f;
 class Media : Control
 {
     BandEqualizer equalizer;
-    RectLevel level;
+    RectFillLevel level;
     Piano piano;
 
     this()
@@ -178,7 +178,7 @@ class Media : Control
             media.audio.play(MixSound);
         };
 
-        // level = new RectLevel((i) {
+        // level = new RectFillLevel((i) {
         //     if (i < equalizer.bandValues.length)
         //     {
         //         return equalizer.bandValues[i] * 2;

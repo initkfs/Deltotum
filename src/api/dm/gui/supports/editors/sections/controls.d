@@ -87,7 +87,7 @@ class Controls : Control
         vContainer.addCreate(selectionContainer);
         createSelects(selectionContainer);
         createTexts(selectionContainer);
-        
+
         auto metersContainer = new HBox;
         metersContainer.layout.isAlignY = true;
         vContainer.addCreate(metersContainer);
@@ -583,6 +583,15 @@ class Controls : Control
         ppi.isShowLabelDist = false;
         ppi.isShowLabelDeg = false;
         ppiContainer.addCreate(ppi);
+
+        import api.dm.gui.controls.meters.levels.rect_fill_level : RectFillLevel;
+
+        auto rlevel = new RectFillLevel((i) => i, () => 10);
+        rlevel.levelNameProvider = (i){
+            import std.conv: to;
+            return i.to!dstring;
+        };
+        root.addCreate(rlevel);
     }
 
     void createProgress(Container root)

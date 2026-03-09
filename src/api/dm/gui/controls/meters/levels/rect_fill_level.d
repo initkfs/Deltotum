@@ -1,8 +1,8 @@
-module api.dm.gui.controls.meters.levels.rect_level;
+module api.dm.gui.controls.meters.levels.rect_fill_level;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.containers.base.spaceable_container : SpaceableContainer;
 import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic : VScaleDynamic;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
@@ -15,12 +15,12 @@ import Math = api.math;
 /**
  * Authors: initkfs
  */
-class RectLevel : Control
+class RectFillLevel : Control
 {
-    Container[] labelContainers;
+    SpaceableContainer[] labelContainers;
     Text[] labels;
 
-    Container[] levelContainers;
+    SpaceableContainer[] levelContainers;
 
     size_t levels = 10;
     size_t rows = 1;
@@ -67,17 +67,17 @@ class RectLevel : Control
 
         if (startLevelColor == RGBA.init)
         {
-            startLevelColor = RGBA.random;
+            startLevelColor = RGBA.red;
         }
 
         if (levelColorPaletteDeltaDeg == 0)
         {
-            levelColorPaletteDeltaDeg = 20;
+            levelColorPaletteDeltaDeg = 360.0f / levels * rows;
         }
 
         HSLA startColor = startLevelColor.toHSLA;
-        startColor.l = 0.8;
-        startColor.s = 0.6;
+        startColor.l = 0.7;
+        startColor.s = 0.8;
 
         foreach (ref levelColor; levelColors)
         {
@@ -87,12 +87,12 @@ class RectLevel : Control
 
         if (levelShapeWidth == 0)
         {
-            levelShapeWidth = theme.meterThumbWidth * 0.8;
+            levelShapeWidth = theme.meterThumbWidth;
         }
 
         if (levelShapeHeight == 0)
         {
-            levelShapeHeight = theme.controlDefaultHeight;
+            levelShapeHeight = theme.controlDefaultHeight * 2;
         }
     }
 
@@ -102,18 +102,20 @@ class RectLevel : Control
 
         auto levelsInRow = levels / rows;
 
+        auto spacing = 1;
         foreach (ri; 0 .. rows)
         {
-            auto levelContainer = new HBox;
+            auto levelContainer = new HBox(spacing);
             levelContainers ~= levelContainer;
             addCreate(levelContainer);
 
             auto levelsWidth = levelsInRow * levelShapeWidth;
-            levelContainer.resize(levelsWidth, levelShapeHeight);
+            levelContainer.resize(levelsWidth + levels * levelContainer.spacing, levelShapeHeight);
 
-            auto labelContainer = new HBox;
+            auto labelContainer = new HBox(spacing);
             labelContainers ~= labelContainer;
             addCreate(labelContainer);
+            labelContainer.width = levelContainer.width;
 
             foreach (i; 0 .. levelsInRow)
             {
@@ -121,17 +123,16 @@ class RectLevel : Control
                     : "0";
                 auto text = new Text(levelName);
                 text.setSmallSize;
+                text.isLayoutManaged = false;
                 labels ~= text;
                 labelContainer.addCreate(text);
+                text.isLayoutManaged = false;
             }
         }
-
     }
 
-    override void drawContent()
+    void onLevelXY(scope bool delegate(size_t, size_t, float, float) onIndexLevelRowXYIsContinue)
     {
-        super.drawContent;
-
         assert(levelContainers.length == rows);
 
         auto levelsInRow = levels / rows;
@@ -140,39 +141,67 @@ class RectLevel : Control
         {
             auto levelContainer = levelContainers[ri];
             auto currentY = Math.round(levelContainer.y + levelContainer.height);
+            float currentX = levelContainer.x + levelContainer.padding.left;
 
-            assert(levelNumValueProvider);
-            assert(levelMaxValueProvider);
-
-            auto maxValue = levelMaxValueProvider();
-            auto halfLevelW = levelShapeWidth / 2;
             foreach (i; 0 .. levelsInRow)
             {
                 auto levelIndex = i + (ri * levelsInRow);
-                auto label = labels[levelIndex];
-                auto currentX = label.boundsRect.middleX - halfLevelW;
-                auto levelValue = levelNumValueProvider(levelIndex);
-                float normValue = levelValue / maxValue;
-                if (normValue > 1)
+
+                if (!onIndexLevelRowXYIsContinue(levelIndex, ri, currentX, currentY))
                 {
-                    normValue = 1;
-                }
-                auto levelHeight = Math.round(normValue * levelShapeHeight);
-                if(levelHeight > levelShapeHeight){
-                    levelHeight = levelShapeHeight;
+                    return;
                 }
 
-                graphic.color(levelColors[levelIndex]);
-                scope (exit)
-                {
-                    graphic.restoreColor;
-                }
-
-                auto levelY = Math.round(currentY - levelHeight);
-
-                graphic.fillRect(currentX, levelY, levelShapeWidth, levelHeight);
-                currentX += levelShapeWidth;
+                currentX += levelShapeWidth + levelContainer.spacing;
             }
         }
+    }
+
+    override void applyLayout()
+    {
+        super.applyLayout;
+
+        onLevelXY((li, ri, currX, currY) {
+            auto levelCenter = currX + levelShapeWidth / 2;
+            auto label = labels[li];
+            label.x = levelCenter - label.halfWidth;
+            label.y = label.parent.y;
+            return true;
+        });
+    }
+
+    override void drawContent()
+    {
+        super.drawContent;
+
+        assert(levelMaxValueProvider);
+        auto maxValue = levelMaxValueProvider();
+
+        onLevelXY((levelIndex, rowIndex, currentX, currentY) {
+            
+            assert(levelNumValueProvider);
+
+            auto levelValue = levelNumValueProvider(levelIndex);
+            float normValue = levelValue / maxValue;
+            normValue = Math.clamp01(normValue);
+
+            auto levelHeight = Math.round(normValue * levelShapeHeight);
+            if (levelHeight > levelShapeHeight)
+            {
+                levelHeight = levelShapeHeight;
+            }
+
+            graphic.color(levelColors[levelIndex]);
+            scope (exit)
+            {
+                graphic.restoreColor;
+            }
+
+            auto levelY = Math.round(currentY - levelHeight);
+
+            graphic.fillRect(currentX, levelY, levelShapeWidth, levelHeight);
+
+            return true;
+        });
     }
 }

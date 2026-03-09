@@ -6,7 +6,7 @@ import api.dm.gui.controls.control : Control;
 
 import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
 import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
-import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
+import api.dm.gui.controls.meters.levels.rect_fill_level : RectFillLevel;
 import api.dm.kit.media.dsp.analyzers.analog_signal_analyzer;
 
 import core.sync.mutex : Mutex;
@@ -34,10 +34,10 @@ class AudioVisualizer(SignalType) : Control
     BandEqualizer delegate(BandEqualizer) onNewBandEqualizer;
     void delegate(BandEqualizer) onConfiguredEqualizer;
 
-    RectLevel level;
-    RectLevel delegate(RectLevel) onNewRectLevel;
-    void delegate(RectLevel) onConfiguredRectLevel;
-    void delegate(RectLevel) onCreatedRectLavel;
+    RectFillLevel level;
+    RectFillLevel delegate(RectFillLevel) onNewRectLevel;
+    void delegate(RectFillLevel) onConfiguredRectLevel;
+    void delegate(RectFillLevel) onCreatedRectLavel;
 
     this()
     {
@@ -109,10 +109,10 @@ class AudioVisualizer(SignalType) : Control
         return equalizer;
     }
 
-    RectLevel newRectLevel()
+    RectFillLevel newRectLevel()
     {
         assert(equalizer);
-        auto level = new RectLevel((i) {
+        auto level = new RectFillLevel((i) {
             if (i < equalizer.bandValues.length)
             {
                 return equalizer.bandValues[i] * 2;
