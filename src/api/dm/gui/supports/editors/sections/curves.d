@@ -12,7 +12,7 @@ import api.math.geom2.vec2 : Vec2f;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 
-import CurveCalc = api.dm.addon.math.curves;
+import CurveCalc = api.math.geom2.curves;
 
 import Math = api.dm.math;
 

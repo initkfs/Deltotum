@@ -1,6 +1,6 @@
-module api.dm.addon.math.curves.spirals;
+module api.math.geom2.curves.spirals;
 
-import api.dm.addon.math.curves.plane_curves : onPointStep;
+import api.math.geom2.curves.plane_curves : onPointStep;
 import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.dm.math;

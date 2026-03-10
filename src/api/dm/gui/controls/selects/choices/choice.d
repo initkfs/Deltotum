@@ -26,5 +26,7 @@ class Choice(T) : BaseChoice!T
         }
 
         tryCreateLabel;
+
+        enablePadding;
     }
 }

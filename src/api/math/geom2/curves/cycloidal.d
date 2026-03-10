@@ -1,6 +1,6 @@
-module api.dm.addon.math.curves.cycloidal;
+module api.math.geom2.curves.cycloidal;
 
-import api.dm.addon.math.curves.plane_curves : onPointStep;
+import api.math.geom2.curves.plane_curves : onPointStep;
 import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.dm.math;

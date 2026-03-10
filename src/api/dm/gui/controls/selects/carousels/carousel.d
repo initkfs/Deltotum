@@ -70,6 +70,11 @@ class Carousel : BaseSelector!Sprite2d
 
     this(Sprite2d[] newItems)
     {
+        if (newItems.length == 0)
+        {
+            throw new Exception("No items");
+        }
+
         this._items = newItems;
 
         layout = new HLayout;
@@ -229,7 +234,7 @@ class Carousel : BaseSelector!Sprite2d
             }
 
             addCreate(nextButton);
-            
+
             if (onCreatedNextButton)
             {
                 onCreatedNextButton(nextButton);

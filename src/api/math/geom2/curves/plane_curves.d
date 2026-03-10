@@ -1,4 +1,4 @@
-module api.dm.addon.math.curves.plane_curves;
+module api.math.geom2.curves.plane_curves;
 
 import api.math.geom2.vec2 : Vec2f;
 

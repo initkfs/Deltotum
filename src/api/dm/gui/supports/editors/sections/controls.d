@@ -409,17 +409,71 @@ class Controls : Control
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        const imageSize = 35;
+        const imageSize = 45;
         auto style = GraphicStyle.transparentFill;
 
-        auto carousel1 = new Carousel([
-            theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.red)),
-            theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.yellow)),
-            theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.green)),
-            theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.blue)),
-        ]);
+        import PlaneCurves = api.math.geom2.curves.plane_curves;
 
-        choiceHRoot1.addCreate(carousel1);
+        if (!platform.cap.isVector)
+        {
+            auto carousel1 = new Carousel([
+                theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.red)),
+                theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.yellow)),
+                theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.green)),
+                theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.blue)),
+            ]);
+
+            choiceHRoot1.addCreate(carousel1);
+        }
+        else
+        {
+            import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+            import api.math.geom2.vec2 : Vec2f;
+
+            Sprite2d[] shapes;
+            foreach_reverse (ii; 2 .. 8)(i)
+            {
+                auto shape = new class VectorTexture
+                {
+                    this()
+                    {
+                        super(imageSize, imageSize);
+                    }
+
+                    override void createContent()
+                    {
+                        auto ctx = canvas;
+
+                        auto style = createFillStyle;
+
+                        ctx.translate(imageSize / 2, imageSize / 2);
+
+                        Vec2f first;
+                        PlaneCurves.rose((p) {
+                            if (first == Vec2f.init)
+                            {
+                                ctx.moveTo(p);
+                                first = p;
+                                return true;
+                            }
+                            ctx.lineTo(p);
+                            return true;
+
+                        }, imageSize / 2 - 3, i, i - 1, 12);
+
+                        ctx.lineTo(first);
+                        ctx.lineWidth = style.lineWidth;
+                        ctx.color = style.lineColor;
+                        ctx.stroke;
+                    }
+                };
+
+                shapes ~= shape;
+            }(ii);
+
+            auto carousel1 = new Carousel(shapes);
+            choiceHRoot1.addCreate(carousel1);
+        }
 
         import api.dm.gui.controls.selects.paginations.pagination : Pagination;
 
@@ -587,8 +641,9 @@ class Controls : Control
         import api.dm.gui.controls.meters.levels.rect_fill_level : RectFillLevel;
 
         auto rlevel = new RectFillLevel((i) => i, () => 10);
-        rlevel.levelNameProvider = (i){
-            import std.conv: to;
+        rlevel.levelNameProvider = (i) {
+            import std.conv : to;
+
             return i.to!dstring;
         };
         root.addCreate(rlevel);

@@ -225,7 +225,7 @@ class BaseChoice(T) : BaseSelector!T
             }
         }
 
-        padding = theme.controlPadding.left / 2;
+        //padding = theme.controlPadding.left / 2;
     }
 
     protected void tryCreatePrevButton(Control root, NavigateDirection direction)
