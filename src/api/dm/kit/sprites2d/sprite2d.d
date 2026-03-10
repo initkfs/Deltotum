@@ -515,6 +515,8 @@ class Sprite2d : EventKitTarget
                                 .button, e.movementX, e.movementY);
                         exitEvent.isSynthetic = true;
                         fireEvent(exitEvent);
+                    }else {
+                        runEventHandlers(e);
                     }
 
                     //runEventHandlers(e);
