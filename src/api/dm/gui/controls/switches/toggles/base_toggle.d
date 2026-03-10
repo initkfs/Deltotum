@@ -140,7 +140,7 @@ class BaseToggle : BaseBiswitch
         auto size = thumbSize;
 
         auto style = createStyle;
-        if (!style.isNested && !style.isDefault)
+        if (!style.isPreset)
         {
             style.isFill = false;
         }
@@ -173,14 +173,14 @@ class BaseToggle : BaseBiswitch
     Sprite2d newThumbEffect(float w, float h)
     {
         auto currStyle = createStyle;
-        if (!currStyle.isNested)
+        if (!currStyle.isPreset)
         {
             currStyle.isFill = true;
             currStyle.fillColor = theme.colorAccent;
         }
 
         auto shape = theme.shape(w, h, angle, currStyle);
-        shape.isVisible = false;
+        //shape.isVisible = false;
         return shape;
     }
 

@@ -21,11 +21,6 @@ class VConvexPolygon : VShape
 
     override void createContent()
     {
-        if (style.isFill)
-        {
-            canvas.color(style.fillColor);
-        }
-
         const lineWidth = style.lineWidth;
         canvas.lineWidth(lineWidth);
 
@@ -75,9 +70,9 @@ class VConvexPolygon : VShape
 
         if(style.isFill){
             canvas.color = style.fillColor;
-            canvas.fill;
+            canvas.fillPreserve;
         }
-
+        
         canvas.color(style.lineColor);
         canvas.stroke;
     }
