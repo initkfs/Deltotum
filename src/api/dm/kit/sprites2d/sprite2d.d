@@ -117,6 +117,7 @@ class Sprite2d : EventKitTarget
     void delegate(Rect2f* clip) onClipMove;
     bool isOutClipForwardEvents;
 
+    bool isDrawable = true;
     bool isDrawByParent = true;
     bool isRedraw = true;
     bool isRedrawChildren = true;
@@ -682,7 +683,7 @@ class Sprite2d : EventKitTarget
     {
         updateDrawPhys(alpha);
 
-        if (!isVisible)
+        if ((!isVisible) || (!isDrawable))
         {
             return false;
         }
@@ -696,22 +697,37 @@ class Sprite2d : EventKitTarget
 
         foreach (Sprite2d obj; children)
         {
-            if (!obj.isDrawByParent)
+            if (!obj.isDrawByParent || !obj.isDrawable)
             {
                 continue;
             }
 
             if (!obj.isDrawAfterParent && obj.isVisible)
             {
-                //if (!isValid)
-                //{
-                obj.draw(alpha);
-                //}
-                //else
-                //{
-                //  isRedraw = false;
-                //}
-                checkClip(obj);
+                try
+                {
+                    //if (!isValid)
+                    //{
+                    obj.draw(alpha);
+                    //}
+                    //else
+                    //{
+                    //  isRedraw = false;
+                    //}
+                    checkClip(obj);
+                }
+                catch (Exception e)
+                {
+                    version (EnableDebug)
+                    {
+                        throw e;
+                    }
+
+                    obj.isDrawable = false;
+                    obj.isVisible = false;
+                    logger.error("Disable sprite drawing: " ~ e.toString);
+                }
+
             }
         }
 
@@ -723,18 +739,31 @@ class Sprite2d : EventKitTarget
 
         foreach (Sprite2d obj; children)
         {
-            if (!obj.isDrawByParent)
+            if (!obj.isDrawByParent || !obj.isDrawable)
             {
                 continue;
             }
 
             if (obj.isDrawAfterParent && obj.isVisible)
             {
-                //if (!obj.isValid)
+                try
                 {
-                    obj.draw(alpha);
+                    //if (!obj.isValid)
+                    {
+                        obj.draw(alpha);
+                    }
+                    checkClip(obj);
                 }
-                checkClip(obj);
+                catch (Exception e)
+                {
+                    version (EnableDebug)
+                    {
+                        throw e;
+                    }
+                    obj.isDrawable = false;
+                    obj.isVisible = false;
+                    logger.error("Disable sprite drawing: " ~ e.toString);
+                }
             }
         }
 
@@ -882,6 +911,11 @@ class Sprite2d : EventKitTarget
         }
         catch (Exception e)
         {
+            version (EnableDebug)
+            {
+                throw e;
+            }
+
             logger.error(e.toString);
         }
 
@@ -1469,19 +1503,28 @@ class Sprite2d : EventKitTarget
                 continue;
             }
 
-            if (layout is null || (child.isManaged && !child.isLayoutManaged))
+            try
             {
-                //child.velocity.x = velocity.x;
-                //child.velocity.y = velocity.y;
-
-                if (dx != 0 || dy != 0)
+                if (layout is null || (child.isManaged && !child.isLayoutManaged))
                 {
-                    child.x = child.x + dx;
-                    child.y = child.y + dy;
-                }
-            }
+                    //child.velocity.x = velocity.x;
+                    //child.velocity.y = velocity.y;
 
-            child.update(delta);
+                    if (dx != 0 || dy != 0)
+                    {
+                        child.x = child.x + dx;
+                        child.y = child.y + dy;
+                    }
+                }
+
+                child.update(delta);
+            }
+            //TODO recursive bug? why need Throwable?
+            catch (Throwable e)
+            {
+                child.isUpdatable = false;
+                logger.error("Disable sprite update: " ~ e.toString);
+            }
         }
     }
 
