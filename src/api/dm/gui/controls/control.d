@@ -151,6 +151,8 @@ class Control : GuiComponent
         isCreateInteractiveListeners = true;
     }
 
+    alias initialize = Sprite2d.initialize;
+
     override void initialize()
     {
         super.initialize;
@@ -1067,49 +1069,65 @@ class Control : GuiComponent
 
     alias addCreate = GuiComponent.addCreate;
 
-    void addCreate(Control control, long index = -1)
+    bool addCreate(Control control, long index = -1)
     {
-        if (!control.isBuilt)
+
+        //FIXME TODO bug buildInitCreate
+        try
         {
-            //FIXME TODO bug buildInitCreate
-            build(control);
-            assert(control.isBuilt);
-            control.initialize;
-            assert(control.isInitializing);
+            if (!control.isBuilt)
+            {
+                build(control);
+                initialize(control);
+            }
+
+            return super.addCreate(control, index);
         }
-        super.addCreate(control, index);
+        catch (Exception e)
+        {
+            logger.error(e.toString);
+        }
+
+        return false;
     }
 
-    override void addCreate(Sprite2d sprite, long index = -1)
+    override bool addCreate(Sprite2d sprite, long index = -1)
     {
         if (auto control = cast(Control) sprite)
         {
-            addCreate(control, index);
-            return;
+            return addCreate(control, index);
         }
-        super.addCreate(sprite, index);
+
+        return super.addCreate(sprite, index);
     }
 
-    override void addCreate(Sprite2d[] sprites)
+    override bool addCreate(Sprite2d[] sprites)
     {
+        bool isAddCreate = true;
         foreach (s; sprites)
         {
             if (auto control = cast(Control) s)
             {
-                addCreate(control);
+                isAddCreate &= addCreate(control);
                 continue;
             }
 
-            super.addCreate(s);
+            isAddCreate &= super.addCreate(s);
         }
+        return isAddCreate;
     }
 
     alias add = GuiComponent.add;
 
-    void add(Control control, long index = -1)
+    bool add(Control control, long index = -1)
     {
-        super.add(control, index);
+        if (!super.add(control, index))
+        {
+            return false;
+        }
+
         applyStyle(control);
+        return true;
     }
 
     void installTooltip(BaseTooltip tooltip)

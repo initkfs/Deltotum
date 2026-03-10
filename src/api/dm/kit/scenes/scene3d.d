@@ -121,7 +121,7 @@ class Scene3d : Scene2d
         return camera;
     }
 
-    override void addCreate(Sprite2d object)
+    override bool addCreate(Sprite2d object)
     {
         if (auto sprite3d = cast(Sprite3d) object)
         {
@@ -134,12 +134,15 @@ class Scene3d : Scene2d
                 sprite3d.camera = camera;
             }
         }
-        super.addCreate(object);
+        return super.addCreate(object);
     }
 
-    override void add(Sprite2d object)
+    override bool add(Sprite2d object)
     {
-        super.add(object);
+        if (!super.add(object))
+        {
+            return false;
+        }
 
         if (auto sprite3d = cast(Sprite3d) object)
         {
@@ -148,6 +151,8 @@ class Scene3d : Scene2d
                 sprite3d.camera = camera;
             }
         }
+
+        return true;
     }
 
     void uploadStart()

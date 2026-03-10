@@ -1,5 +1,6 @@
 module api.dm.kit.scenes.scene2d;
 
+import api.core.components.units.simple_unit: SimpleUnit;
 import api.dm.kit.events.event_kit_target : EventKitTarget;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.factories.factory_kit : FactoryKit;
@@ -249,6 +250,8 @@ class Scene2d : EventKitTarget
         return path;
     }
 
+    alias create = SimpleUnit.create;
+
     override void create()
     {
         super.create;
@@ -430,42 +433,52 @@ class Scene2d : EventKitTarget
         sprites = null;
     }
 
-    void addCreate(Sprite2d obj)
+    bool addCreate(Sprite2d obj)
     {
         if (!obj.sceneProvider)
         {
             obj.sceneProvider = () => this;
         }
 
-        if (!obj.isBuilt)
+        try
         {
-            build(obj);
-            assert(obj.isBuilt, "Object not built: " ~ obj.toString);
-        }
-
-        if (!obj.isCreated)
-        {
-            if (!obj.isInitializing)
+            if (!obj.isBuilt)
             {
-                obj.initialize;
-                assert(obj.isInitializing, "Object not initialized: " ~ obj.toString);
+                build(obj);
             }
 
-            obj.create;
-            assert(obj.isCreating, "Object not created: " ~ obj.toString);
+            if (!obj.isCreated)
+            {
+                if (!obj.isInitializing)
+                {
+                    initialize(obj);
+                }
+
+                create(obj);
+
+                return add(obj);
+            }
+        }
+        catch (Exception e)
+        {
+            logger.error(e.toString);
         }
 
-        add(obj);
+        return false;
     }
 
-    void add(Sprite2d object)
+    bool add(Sprite2d object)
     {
-        assert(object);
+        if (!object)
+        {
+            throw new Exception("Object must not be null");
+        }
+
         foreach (sp; sprites)
         {
             if (object is sp)
             {
-                return;
+                return false;
             }
         }
 
@@ -475,6 +488,7 @@ class Scene2d : EventKitTarget
         }
 
         sprites ~= object;
+        return true;
     }
 
     void changeScene(Scene2d other)

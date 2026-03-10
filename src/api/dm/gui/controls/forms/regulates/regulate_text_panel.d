@@ -24,24 +24,31 @@ class RegulateTextPanel : Container
         layout.isDecreaseRootSize = true;
     }
 
-    override void create(){
+    override void create()
+    {
         super.create;
 
-        if(isInsets){
+        if (isInsets)
+        {
             enablePadding;
         }
     }
 
     alias add = Container.add;
 
-    override void add(Sprite2d obj, long index = -1)
+    override bool add(Sprite2d obj, long index = -1)
     {
-        super.add(obj, index);
+        if (!super.add(obj, index))
+        {
+            return false;
+        }
 
         if (auto field = cast(RegulateTextField) obj)
         {
             fields ~= field;
         }
+
+        return true;
     }
 
     void alignFields()

@@ -1,12 +1,12 @@
 module api.dm.gui.scenes.gui_scene;
 
-import api.dm.kit.scenes.scene3d: Scene3d;
+import api.dm.kit.scenes.scene3d : Scene3d;
 import api.dm.gui.themes.theme : Theme;
-import api.dm.gui.interacts.interact: Interact;
+import api.dm.gui.interacts.interact : Interact;
 import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.gui.components.gui_component : GuiComponent;
-import api.dm.kit.sprites2d.sprite2d: Sprite2d;
-import api.dm.gui.controls.control: Control;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.gui.controls.control : Control;
 
 /**
  * Authors: initkfs
@@ -52,9 +52,12 @@ class GuiScene : Scene3d
         add(cast(Sprite2d) guiComponent);
     }
 
-    override void add(Sprite2d object)
+    override bool add(Sprite2d object)
     {
-        super.add(object);
+        if (!super.add(object))
+        {
+            return false;
+        }
 
         if (auto guiSprite = cast(Control) object)
         {
@@ -98,6 +101,8 @@ class GuiScene : Scene3d
             }
 
         }
+
+        return true;
     }
 
     void createDebugger()
@@ -111,7 +116,8 @@ class GuiScene : Scene3d
         window.showingTasks ~= (dt) { debugWrapper.setInitialPos; };
     }
 
-    override void update(float dt){
+    override void update(float dt)
+    {
         super.update(dt);
 
         if (debugger && debugger.isVisible)

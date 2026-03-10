@@ -11,9 +11,12 @@ class SwitchGroup : Container
 {
     alias add = Container.add;
 
-    override void add(Sprite2d sprite, long index = -1)
+    override bool add(Sprite2d sprite, long index = -1)
     {
-        super.add(sprite, index);
+        if (!super.add(sprite, index))
+        {
+            return false;
+        }
 
         if (auto toggle = cast(BaseBiswitch) sprite)
         {
@@ -26,6 +29,8 @@ class SwitchGroup : Container
                 toggleStates(toggle);
             };
         }
+
+        return true;
     }
 
     void toggleStates(BaseBiswitch control)

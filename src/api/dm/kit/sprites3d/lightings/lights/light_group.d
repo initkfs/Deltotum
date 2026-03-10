@@ -30,9 +30,12 @@ class LightGroup : PipelineGroup
         createPipeline(buffers);
     }
 
-    override void add(Sprite2d object, long index = -1)
+    override bool add(Sprite2d object, long index = -1)
     {
-        super.add(object, index);
+        if (!super.add(object, index))
+        {
+            return false;
+        }
 
         if (auto light = cast(BaseLight) object)
         {
@@ -40,12 +43,14 @@ class LightGroup : PipelineGroup
             {
                 if (oldLight is light)
                 {
-                    return;
+                    return true;
                 }
             }
 
             lights ~= light;
         }
+
+        return true;
     }
 
     size_t length() => lights.length;
@@ -63,8 +68,8 @@ class LightGroup : PipelineGroup
 
         //TODO color
         UniBuffer buff = UniBuffer([camera.nearPlane, camera.farPlane, 0, 0], [
-            0.5, 0.5, 0.5, 1
-        ]);
+                0.5, 0.5, 0.5, 1
+            ]);
         gpu.dev.pushUniformFragmentData(0, &buff, UniBuffer.sizeof);
     }
 }

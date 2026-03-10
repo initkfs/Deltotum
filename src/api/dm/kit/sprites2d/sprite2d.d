@@ -515,7 +515,9 @@ class Sprite2d : EventKitTarget
                                 .button, e.movementX, e.movementY);
                         exitEvent.isSynthetic = true;
                         fireEvent(exitEvent);
-                    }else {
+                    }
+                    else
+                    {
                         runEventHandlers(e);
                     }
 
@@ -825,15 +827,18 @@ class Sprite2d : EventKitTarget
         return isSet;
     }
 
-    void addCreate(Sprite2d[] sprites)
+    bool addCreate(Sprite2d[] sprites)
     {
+        bool isAddCreate = true;
         foreach (sprite; sprites)
         {
-            addCreate(sprite);
+            isAddCreate &= addCreate(sprite);
         }
+
+        return isAddCreate;
     }
 
-    void addCreate(Sprite2d sprite, long index = -1)
+    bool addCreate(Sprite2d sprite, long index = -1)
     {
         if (sprite is null)
         {
@@ -846,57 +851,77 @@ class Sprite2d : EventKitTarget
             throw new Exception("Cannot add this");
         }
 
-        if (sprite.isManaged)
+        try
         {
-            sprite.x = x + sprite.x;
-            sprite.y = y + sprite.y;
-        }
-
-        if (!sprite.isBuilt)
-        {
-            buildInit(sprite);
-        }
-
-        if (!sprite.isCreated)
-        {
-            if (!sprite.isInitializing)
+            if (sprite.isManaged)
             {
-                initialize(sprite);
+                sprite.x = x + sprite.x;
+                sprite.y = y + sprite.y;
             }
 
-            sprite.create;
+            if (!sprite.isBuilt)
+            {
+                buildInit(sprite);
+            }
+
             if (!sprite.isCreated)
             {
-                throw new Exception("Sprite2d not created: " ~ sprite.className);
+                if (!sprite.isInitializing)
+                {
+                    initialize(sprite);
+                }
+
+                sprite.create;
+                if (!sprite.isCreated)
+                {
+                    throw new Exception("Sprite2d not created: " ~ sprite.className);
+                }
             }
+
+            return add(sprite, index);
+        }
+        catch (Exception e)
+        {
+            logger.error(e.toString);
         }
 
-        add(sprite, index);
+        return false;
     }
 
-    void add(Sprite2d[] sprites)
+    bool add(Sprite2d[] sprites)
     {
+        bool isAdd = true;
         foreach (s; sprites)
         {
-            add(s);
+            isAdd &= add(s);
         }
+
+        return isAdd;
     }
 
-    void add(Sprite2d sprite, long index = -1)
+    bool add(Sprite2d sprite, long index = -1)
     {
         if (hasDirect(sprite))
         {
-            debug
+            version (EnableDebug)
             {
                 import std.format : format;
 
                 throw new Exception(format("Sprite2d %s already added: %s. Parent %s: %s", typeid(
                         sprite), sprite.toString, typeid(this), toString));
             }
-            return;
+            return false;
         }
 
-        trySetParentProps(sprite);
+        try
+        {
+            trySetParentProps(sprite);
+        }
+        catch (Exception e)
+        {
+            logger.error(e.toString);
+            return false;
+        }
 
         if (index < 0 || index == children.length)
         {
@@ -917,7 +942,10 @@ class Sprite2d : EventKitTarget
 
             children.insertInPlace(cast(size_t) index, sprite);
         }
+
         setInvalid;
+
+        return true;
     }
 
     Sprite2d hasDirectSprite(Sprite2d obj)

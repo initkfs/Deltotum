@@ -174,15 +174,15 @@ class TabBox : Container
 
     alias add = Container.add;
 
-    override void add(Sprite2d obj, long index = -1)
+    override bool add(Sprite2d obj, long index = -1)
     {
         if (auto tab = cast(Tab) obj)
         {
             createTabContent(tab);
-            return;
+            return true;
         }
 
-        super.add(obj, index);
+        return super.add(obj, index);
     }
 
     protected void createTabContent(Tab tab)

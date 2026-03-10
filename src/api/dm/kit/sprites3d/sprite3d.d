@@ -120,9 +120,12 @@ class Sprite3d : Sprite2d
 
     bool isInCameraFrustum() => true;
 
-    override void add(Sprite2d object, long index = -1)
+    override bool add(Sprite2d object, long index = -1)
     {
-        super.add(object, index);
+        if (!super.add(object, index))
+        {
+            return false;
+        }
 
         if (auto sprite3d = cast(Sprite3d) object)
         {
@@ -137,9 +140,11 @@ class Sprite3d : Sprite2d
                 sprite3d.camera = _camera;
             }
         }
+
+        return true;
     }
 
-    override void addCreate(Sprite2d object, long index = -1)
+    override bool addCreate(Sprite2d object, long index = -1)
     {
         if (auto sprite3d = cast(Sprite3d) object)
         {
@@ -155,7 +160,7 @@ class Sprite3d : Sprite2d
             }
         }
 
-        super.addCreate(object, index);
+        return super.addCreate(object, index);
     }
 
     void pushUniforms()

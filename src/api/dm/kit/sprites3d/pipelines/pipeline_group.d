@@ -113,7 +113,8 @@ class PipelineGroup : Sprite3d
     bool bindPipeline()
     {
         //assert(_pipeline);
-        if(!_pipeline){
+        if (!_pipeline)
+        {
             return false;
         }
 
@@ -126,9 +127,13 @@ class PipelineGroup : Sprite3d
         return true;
     }
 
-    override void add(Sprite2d object, long index = -1)
+    override bool add(Sprite2d object, long index = -1)
     {
-        super.add(object, index);
+        if (!super.add(object, index))
+        {
+            return false;
+        }
+
         if (auto pipeline = cast(PipelineGroup) object)
         {
             //TODO check exists
@@ -143,6 +148,8 @@ class PipelineGroup : Sprite3d
                 _hasSprites = true;
             }
         }
+
+        return true;
     }
 
     PipelineBuffers pipeBuffers()

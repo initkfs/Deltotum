@@ -24,9 +24,11 @@ class TabHeader : Control
 
     alias add = Control.add;
 
-    override void add(Sprite2d obj, long index = -1)
+    override bool add(Sprite2d obj, long index = -1)
     {
-        super.add(obj, index);
+        if(!super.add(obj, index)){
+            return false;
+        }
 
         if (auto tab = cast(Tab) obj)
         {
@@ -36,6 +38,8 @@ class TabHeader : Control
                 throw new Exception("Failed to add tab: " ~ tab.toString);
             }
         }
+
+        return true;
     }
 
     protected bool addTab(Tab newTab)
