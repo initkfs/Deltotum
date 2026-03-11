@@ -46,7 +46,6 @@ class Fractals : Control
         layout = new VLayout;
         layout.isAutoResize = true;
         isBackground = false;
-        layout.isAlignY = true;
 
         random = rands;
     }
@@ -70,7 +69,6 @@ class Fractals : Control
     protected Container newHContainer()
     {
         auto container = new HBox(10);
-        container.layout.isAlignY = true;
         return container;
     }
 

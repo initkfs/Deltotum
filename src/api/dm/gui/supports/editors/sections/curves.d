@@ -40,7 +40,6 @@ class Curves : Control
 
         layout = new VLayout;
         layout.isAutoResize = true;
-        isBackground = false;
     }
 
     override void initialize()
@@ -95,7 +94,6 @@ class Curves : Control
     protected Container newHContainer()
     {
         auto container = new HBox(10);
-        container.layout.isAlign = true;
         return container;
     }
 
