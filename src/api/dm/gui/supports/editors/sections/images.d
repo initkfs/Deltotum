@@ -21,10 +21,7 @@ class Images : Control
 {
     private
     {
-        const originalImage = import("Lenna.png");
-
         GraphicStyle shapeStyle = GraphicStyle.simple;
-
         enum imageSize = 100;
     }
 
@@ -88,17 +85,16 @@ class Images : Control
         addCreate(container);
         container.enablePadding;
 
-        auto original = new Image;
-        build(original);
+        import api.dm.addon.procedural.fractals.images.newton : Newton;
+
+        auto original = new Newton(imageSize, imageSize);
 
         static RGBA[][] colorBuff = new RGBA[][](imageSize, imageSize);
-
         original.onColor = (x, y, color) {
             colorBuff[y][x] = color;
             return color;
         };
 
-        original.create(cast(const(ubyte[])) originalImage);
         container.addCreate(createImageInfo("Original", original));
 
         const size_t imageWidth = cast(size_t) original.width;

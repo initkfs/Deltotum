@@ -48,7 +48,15 @@ abstract class ComplexFractalImage : Texture2d
 
                 RGBA color = calcColor(x, y);
 
-                changeColor(cast(uint) xi, cast(uint) yi, color);
+                const uint uxi = cast(uint) xi;
+                const uint uyi = cast(uint) yi;
+
+                if (onColor)
+                {
+                    onColor(uxi, uyi, color);
+                }
+
+                changeColor(uxi, uyi, color);
             }
         }
     }
