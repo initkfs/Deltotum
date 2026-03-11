@@ -66,8 +66,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_GPUTexture* lastSwapchain;
 
         GPUGraphicState state;
-
-        bool _isCreated;
     }
 
     SDL_GPUSampleCount sampleCount;
@@ -90,7 +88,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     SDL_GPUCopyPass* copyPass() => lastCopyPass;
     SDL_GPUTexture* swapchain() => lastSwapchain;
 
-    ComResult createRenderer(SDL_Window* window, ComRenderer renderer)
+    ComResult createRenderer(SDL_Window* window, ref SDL_Renderer* renderer)
     {
         auto ptr = SDL_CreateGPURenderer(ptr, window);
         if (!ptr)
@@ -98,9 +96,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             return getErrorRes("Error create GPU renderer");
         }
 
-        import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
-
-        renderer = new SdlRenderer(ptr);
+        renderer = ptr;
 
         return ComResult.success;
     }
@@ -118,11 +114,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         {
             return getErrorRes("GPU device not created");
         }
-        _isCreated = true;
         return ComResult.success;
     }
-
-    bool isCreated() => _isCreated;
 
     protected ubyte[] readShader(string path)
     {

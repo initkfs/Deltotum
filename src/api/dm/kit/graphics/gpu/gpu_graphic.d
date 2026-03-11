@@ -29,7 +29,6 @@ class GPUGraphic : ApplicationUnit
         SdlGPUDevice device;
     }
 
-    bool isActive() => device.isCreated;
     SdlGPUDevice dev() => device;
 
     this(Logging logging, Config config, Context context, SdlGPUDevice device, Window window)

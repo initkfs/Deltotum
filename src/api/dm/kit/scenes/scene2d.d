@@ -342,7 +342,9 @@ class Scene2d : EventKitTarget
     void drawAll(float alpha)
     {
         drawSelfAndChildren(alpha);
-        graphic.rendererPresent;
+        if(!gpu.isCreated){
+            graphic.rendererPresent;
+        }
     }
 
     void update(float delta)
@@ -351,7 +353,7 @@ class Scene2d : EventKitTarget
         {
             if (isClearScreen)
             {
-                if (!gpu.isActive)
+                if (!gpu.isCreated)
                 {
                     graphic.clear;
                 }

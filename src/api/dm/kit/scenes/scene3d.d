@@ -46,7 +46,7 @@ class Scene3d : Scene2d
     {
         super.create;
 
-        if (gpu.isActive)
+        if (gpu.isCreated)
         {
             camera = createCamera;
             assert(camera);
@@ -167,7 +167,7 @@ class Scene3d : Scene2d
 
     void uploadToGPU()
     {
-        if (!gpu.isActive)
+        if (!gpu.isCreated)
         {
             return;
         }
@@ -206,31 +206,47 @@ class Scene3d : Scene2d
     protected SDL_GPUColorTargetInfo createTargetInfo()
     {
         SDL_GPUColorTargetInfo colorTargetInfo;
-        colorTargetInfo.texture = msaaTexture;
-        colorTargetInfo.clear_color = gpu.dev.clearColor;
-        colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-
-        if (aliasingSampleCount == SDL_GPU_SAMPLECOUNT_1)
+        if (isAntiAliasing)
         {
-            colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+            colorTargetInfo.texture = msaaTexture;
         }
         else
         {
-            colorTargetInfo.store_op = SDL_GPU_STOREOP_RESOLVE;
-            colorTargetInfo.resolve_texture = resultTexture;
+            colorTargetInfo.texture = gpu.dev.swapchain;
+        }
+
+        colorTargetInfo.clear_color = gpu.dev.clearColor;
+        colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+
+        if (isAntiAliasing)
+        {
+            if (aliasingSampleCount == SDL_GPU_SAMPLECOUNT_1)
+            {
+                colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+            }
+            else
+            {
+                colorTargetInfo.store_op = SDL_GPU_STOREOP_RESOLVE;
+                colorTargetInfo.resolve_texture = resultTexture;
+            }
+        }
+        else
+        {
+            colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+            colorTargetInfo.cycle = true;
         }
         return colorTargetInfo;
     }
 
     override void drawAll(float alpha)
     {
-        bool isGPU = gpu.isActive;
-
-        if (!isGPU)
+        if ((!gpu) || (!gpu.isCreated))
         {
             super.drawAll(alpha);
             return;
         }
+
+        //graphic.clear;
 
         if (isDepth && depthTexture)
         {
@@ -243,6 +259,7 @@ class Scene3d : Scene2d
             depthStencilTargetInfo.clear_stencil = 0;
             depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
             depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+            //depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_DONT_CARE;
             depthStencilTargetInfo.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
             depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
 
@@ -289,7 +306,8 @@ class Scene3d : Scene2d
 
         }
 
-        drawSelfAndChildren(alpha);
+        drawSelfAndChildren(alpha);  
+        graphic.clear;      
 
         if (isAntiAliasing)
         {
@@ -329,39 +347,6 @@ class Scene3d : Scene2d
             gpu.dev.submitCmdBuffer;
             gpu.dev.resetState;
         }
-    }
-
-    override protected void drawSelfAndChildren(float alpha)
-    {
-        if (!gpu.isActive)
-        {
-            super.drawSelfAndChildren(alpha);
-            return;
-        }
-
-        if (!isDrawAfterAllSprites && !drawBeforeSprite)
-        {
-            drawSelf(alpha);
-        }
-
-        foreach (obj; sprites)
-        {
-            auto sprite3d = cast(Sprite3d) obj;
-            if (!sprite3d)
-            {
-                continue;
-            }
-
-            sprite3d.draw(alpha);
-            sprite3d.unvalidate;
-        }
-
-        if (isDrawAfterAllSprites && !drawBeforeSprite)
-        {
-            drawSelf(alpha);
-        }
-
-        startDrawProcess = false;
     }
 
     override void update(float dt)

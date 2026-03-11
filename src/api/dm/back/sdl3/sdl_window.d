@@ -60,9 +60,12 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult create() nothrow => create(initWidth, initHeight, 0);
+    ComResult create() nothrow => create(initWidth, initHeight, 0, isCreateRenderer:
+        false);
+    ComResult createWithRenderer() nothrow => create(initWidth, initHeight, 0, isCreateRenderer:
+        true);
 
-    ComResult create(int width, int height, ulong flags) nothrow
+    ComResult create(int width, int height, ulong flags, bool isCreateRenderer) nothrow
     {
         if (width < 0)
         {
@@ -88,17 +91,28 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         assert(!ptr);
         assert(!_renderer);
 
-        SDL_Renderer* mustBeRenderer;
-
-        if (!SDL_CreateWindowAndRenderer(null, width, height, flags, &ptr, &mustBeRenderer))
+        if (isCreateRenderer)
         {
-            return getErrorRes("Error creating SDL window");
+            SDL_Renderer* mustBeRenderer;
+
+            if (!SDL_CreateWindowAndRenderer(null, width, height, flags, &ptr, &mustBeRenderer))
+            {
+                return getErrorRes("Error creating SDL window and renderer");
+            }
+
+            assert(ptr);
+            assert(mustBeRenderer);
+
+            _renderer = mustBeRenderer;
         }
-
-        assert(ptr);
-        assert(mustBeRenderer);
-
-        _renderer = mustBeRenderer;
+        else
+        {
+            ptr = SDL_CreateWindow(null, width, height, flags);
+            if (!ptr)
+            {
+                return getErrorRes("Error creating SDL window");
+            }
+        }
 
         return ComResult.success;
     }

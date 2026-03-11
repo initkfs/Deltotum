@@ -128,6 +128,29 @@ class Window : GraphicComponent
         }
     }
 
+    void createWithRenderer()
+    {
+        super.create;
+
+        if (const err = comWindow.createWithRenderer)
+        {
+            throw new Exception(err.toString);
+        }
+
+        version (EnableTrace)
+        {
+            logger.tracef("Create with renderer window '%s' with id %d", title, id);
+        }
+
+        if (onCreate.length > 0)
+        {
+            foreach (dg; onCreate)
+            {
+                dg();
+            }
+        }
+    }
+
     Scene2d currentScene() @safe pure nothrow
     out (_currentScene; _currentScene !is null)
     {
@@ -184,7 +207,7 @@ class Window : GraphicComponent
         scene.create;
         assert(scene.isCreating);
 
-        if (gpu.isActive)
+        if (platform.cap.isGPU)
         {
             if (auto scene3d = cast(Scene3d) scene)
             {
@@ -395,11 +418,11 @@ class Window : GraphicComponent
             renderer.dispose;
         }
 
-        if (gpuDevice && comWindow)
+        if (gpuDevice && comWindow && !comWindow.isDisposed)
         {
             if (const err = gpuDevice.removeFromWindow(comWindow))
             {
-                throw new Exception(err.toString);
+                logger.warning(err.toString);
             }
 
             version (EnableTrace)

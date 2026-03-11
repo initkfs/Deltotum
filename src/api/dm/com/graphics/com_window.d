@@ -34,7 +34,8 @@ interface ComWindow : ComDestroyable
 nothrow:
 
     ComResult create();
-    ComResult create(int width, int height, ulong flags);
+    ComResult createWithRenderer();
+    ComResult create(int width, int height, ulong flags, bool isCreateRenderer);
     ComResult create(ComNativePtr newPtr);
 
     ComResult show();

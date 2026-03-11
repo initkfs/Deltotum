@@ -12,5 +12,5 @@ class CapGraphics : ComponentService
    
     bool isAudio;
     bool isJoystick;
-    bool is3d;
+    bool isGPU;
 }

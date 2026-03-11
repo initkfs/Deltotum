@@ -152,7 +152,7 @@ abstract class GraphicApp : CliApp
 
         if (uservices.config.hasKey(KitConfigKeys.backendIsGPU))
         {
-            _graphicServices.platform.cap.is3d = uservices.config.getBool(
+            _graphicServices.platform.cap.isGPU = uservices.config.getBool(
                 KitConfigKeys.backendIsGPU);
         }
 

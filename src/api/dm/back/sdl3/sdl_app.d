@@ -182,13 +182,15 @@ class SdlApp : GuiApp
             import KitConfigKeys = api.dm.kit.kit_config_keys;
 
             gpuDevice = new SdlGPUDevice;
-            if (uservices.config.hasKey(KitConfigKeys.backendIsGPU) && uservices.config.getBool(
-                    KitConfigKeys.backendIsGPU))
+            if (gservices.platform.cap.isGPU)
             {
                 if (const err = gpuDevice.create)
                 {
+                    gservices.platform.cap.isGPU = false;
+
                     throw new Exception(err.toString);
                 }
+
                 string gpuName;
                 if (const err = gpuDevice.getDriverNameNew(gpuName))
                 {
@@ -339,16 +341,14 @@ class SdlApp : GuiApp
                 }
             }
 
-             //TODO factory methods
-            import api.dm.kit.media.audio.engines.audio_engine: AudioEngine;
-            import api.dm.kit.media.audio.streams.audio_spec: AudioSpec, AudioFormat;
+            //TODO factory methods
+            import api.dm.kit.media.audio.engines.audio_engine : AudioEngine;
+            import api.dm.kit.media.audio.streams.audio_spec : AudioSpec, AudioFormat;
 
             AudioSpec spec;
-            
+
             auto player = new AudioEngine(spec);
-            player.timestampMsProvider = (){
-                return SDL_GetTicksNS() / 1e-6;
-            };
+            player.timestampMsProvider = () { return SDL_GetTicksNS() / 1e-6; };
 
             _media = new MultiMedia(spec, player);
             _media.initialize;
@@ -1014,22 +1014,44 @@ class SdlApp : GuiApp
         buildPartially(window);
 
         window.initialize;
-        window.create;
+
+        SDL_Renderer* renderer;
+        if (gservices.platform.cap.isGPU)
+        {
+            window.create;
+
+            if (const err = gpuDevice.createRenderer(sdlWindow.getObject, renderer))
+            {
+                throw new Exception(err.toString);
+            }
+
+            if (!renderer)
+            {
+                throw new Exception("GPU renderer must not be null");
+            }
+
+            window.gpuDevice = gpuDevice;
+
+            if (const err = gpuDevice.attachToWindow(sdlWindow))
+            {
+                uservices.logger.error(err.toString);
+            }
+        }
+        else
+        {
+            window.createWithRenderer;
+            renderer = sdlWindow.renderer;
+        }
+
+        SdlRenderer sdlRenderer = newRenderer(renderer);
+
+        window.renderer = sdlRenderer;
 
         assert(comScreen);
         ComScreenId screenId;
         if (const err = comScreen.getScreenForWindow(sdlWindow, screenId))
         {
             uservices.logger.errorf("Error getting display for window: %s", window.title);
-        }
-
-        if (gpuDevice.isCreated)
-        {
-            window.gpuDevice = gpuDevice;
-            if (const err = gpuDevice.attachToWindow(sdlWindow))
-            {
-                uservices.logger.error(err.toString);
-            }
         }
 
         window.screen = _platform.screen.single(screenId);
@@ -1047,9 +1069,6 @@ class SdlApp : GuiApp
         const int newY = (y == Window.defaultPosY) ? SDL_WINDOWPOS_UNDEFINED : y;
 
         window.pos(newX, newY);
-
-        SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer);
-        window.renderer = sdlRenderer;
 
         if (uservices.config.hasKey(KitConfigKeys.engineIsVsync))
         {

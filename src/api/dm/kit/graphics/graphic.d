@@ -930,6 +930,8 @@ class Graphic : LoggableUnit
         }
     }
 
+    bool rendererFlush() => renderer.tryFlush;
+
     void clear()
     {
         clear(screenColor);
