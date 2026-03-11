@@ -148,6 +148,8 @@ class BaseChoice(T) : BaseSelector!T
 
             addCreate(popupMenu);
 
+            resizePopup;
+
             popupMenu.menuList.onChangeOldNew ~= (oldRow, newRow) {
                 assert(newRow);
                 auto newItem = newRow.item;
@@ -322,14 +324,24 @@ class BaseChoice(T) : BaseSelector!T
         showPopup;
     }
 
+    void resizePopup()
+    {
+        if (!popupMenu)
+        {
+            return;
+        }
+
+        if (popupMenu.width < width)
+        {
+            popupMenu.width = width;
+        }
+    }
+
     void showPopup()
     {
         if (popupMenu && !popupMenu.isVisible)
         {
-            if (popupMenu.width < width)
-            {
-                popupMenu.width = width;
-            }
+            resizePopup;
 
             auto newX = boundsRect.middleX - popupMenu.halfWidth;
             auto newY = boundsRect.bottom;
@@ -521,4 +533,17 @@ class BaseChoice(T) : BaseSelector!T
 
         return setSelectedIndex(0);
     }
+
+    override bool width(float value)
+    {
+        if (super.width(value))
+        {
+            resizePopup;
+            return true;
+        }
+
+        return false;
+    }
+
+    override float width() => super.width;
 }
