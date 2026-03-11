@@ -1201,7 +1201,7 @@ class Control : GuiComponent
                 {
                     icon = new Image;
                     buildInit(icon);
-                    icon.loadFromSurface(surface);
+                    icon.create(surface);
                     icon.blendModeBlend;
                 }
             });

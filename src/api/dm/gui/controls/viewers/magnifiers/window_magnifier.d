@@ -59,7 +59,7 @@ class WindowMagnifier : BaseMagnifier
 
                 auto winTexture = new Texture2d(w, h);
                 buildInitCreate(winTexture);
-                winTexture.loadFromSurface(buffer);
+                winTexture.create(buffer);
                 scope (exit)
                 {
                     winTexture.dispose;

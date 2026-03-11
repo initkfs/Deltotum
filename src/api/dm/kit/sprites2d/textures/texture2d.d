@@ -21,6 +21,15 @@ class Texture2d : Sprite2d
 
     Vec2f rotateCenter = Vec2f.infinity;
 
+    RGBA delegate(int x, int y, RGBA color) onColor;
+
+    bool isInterpolationResize;
+    bool isKeepOriginalColorBuffer;
+    RGBA[][] originalBuffer;
+
+    bool isKeepSurface;
+    ComSurface surface;
+
     protected
     {
         ComTexture texture;
@@ -78,32 +87,219 @@ class Texture2d : Sprite2d
         }
     }
 
-    void loadFromSurface(ComSurface surface)
+    void create(ComSurface image, int requestWidth = -1, int requestHeight = -1)
     {
-        auto newTexture = texture;
-        if (!newTexture)
+        if (!image)
         {
-            if (!hasGraphic)
-            {
-                throw new Exception("Graphic is null");
-            }
-            newTexture = graphic.comTextureProvider.getNew();
+            throw new Exception("Image must not be null");
         }
 
-        if (const err = newTexture.create(surface))
+        int imageWidth = image.getWidth;
+        int imageHeight = image.getHeight;
+
+        if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
+        {
+            bool isResized;
+            if (const err = image.resize(cast(int)(requestWidth * scale), cast(int)(
+                    requestHeight * scale), isResized))
+            {
+                throw new Exception(err.toString);
+            }
+
+            imageWidth = image.getWidth;
+            imageHeight = image.getHeight;
+        }
+        else
+        {
+            if (scale != 1)
+            {
+                bool isResized;
+                //TODO check non negative resize
+                if (const err = image.resize(cast(int)(imageWidth * scale), cast(int)(
+                        imageHeight * scale), isResized))
+                {
+                    throw new Exception(err.toString);
+                }
+
+                imageWidth = image.getWidth;
+                imageHeight = image.getHeight;
+            }
+        }
+
+        //TODO test functionality, remove
+        if (isKeepOriginalColorBuffer || isInterpolationResize)
+        {
+            if (const err = image.lock)
+            {
+                throw new Exception(err.toString);
+            }
+
+            scope (exit)
+            {
+                if (const err = image.unlock)
+                {
+                    throw new Exception(err.toString);
+                }
+            }
+
+            originalBuffer = new RGBA[][](imageHeight, imageWidth);
+
+            foreach (y; 0 .. imageHeight)
+            {
+                foreach (x; 0 .. imageWidth)
+                {
+                    uint* pixelPtr;
+                    if (const err = image.getPixel(x, y, pixelPtr))
+                    {
+                        throw new Exception(err.toString);
+                    }
+                    ubyte r, g, b, a;
+                    if (const err = image.getPixelRGBA(pixelPtr, r, g, b, a))
+                    {
+                        throw new Exception(err.toString);
+                    }
+                    originalBuffer[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
+                }
+            }
+        }
+
+        if (onColor)
+        {
+            if (const err = image.lock)
+            {
+                throw new Exception(err.toString);
+            }
+
+            scope (exit)
+            {
+                if (const err = image.unlock)
+                {
+                    throw new Exception(err.toString);
+                }
+            }
+
+            foreach (y; 0 .. imageHeight)
+            {
+                foreach (x; 0 .. imageWidth)
+                {
+                    //TODO more optimal iteration
+                    uint* pixelPtr;
+                    if (const err = image.getPixel(x, y, pixelPtr))
+                    {
+                        throw new Exception(err.toString);
+                    }
+                    ubyte r, g, b, a;
+                    if (const err = image.getPixelRGBA(pixelPtr, r, g, b, a))
+                    {
+                        throw new Exception(err.toString);
+                    }
+                    RGBA oldColor = {r, g, b, RGBA.fromAByte(a)};
+                    RGBA newColor = onColor(x, y, oldColor);
+                    if (newColor != oldColor)
+                    {
+                        if (const err = image.setPixelRGBA(x, y, newColor.r, newColor.g, newColor.b, newColor
+                                .aByte))
+                        {
+                            throw new Exception(err.toString);
+                        }
+                    }
+
+                    if (originalBuffer)
+                    {
+                        originalBuffer[y][x] = newColor;
+                    }
+                }
+            }
+        }
+
+        if (!texture)
+        {
+            texture = graphic.comTextureProvider.getNew();
+        }
+
+        if (const err = texture.create(image))
         {
             throw new Exception(err.toString);
         }
-        int w, h;
-        if (const sizeErr = newTexture.getSize(w, h))
+
+        int width;
+        int height;
+
+        if (const err = texture.getSize(width, height))
         {
-            throw new Exception(sizeErr.toString);
+            throw new Exception(err.toString);
         }
 
-        this.width = w;
-        this.height = h;
+        forceWidth = width;
+        forceHeight = height;
 
-        this.texture = newTexture;
+        if (isKeepSurface)
+        {
+            if (surface)
+            {
+                //TODO swap pointers
+                surface.dispose;
+            }
+            else
+            {
+                this.surface = graphic.comSurfaceProvider.getNew();
+            }
+
+            if (const err = image.copyTo(surface))
+            {
+                throw new Exception(err.toString);
+            }
+        }
+    }
+
+    void create(RGBA[][] colorBuf, bool isKeepColorBuffer = false)
+    {
+        if (colorBuf.length == 0)
+        {
+            throw new Exception("Color buffer is empty");
+        }
+
+        height = colorBuf.length;
+        if (colorBuf[0].length == 0)
+        {
+            throw new Exception("Color buffer row is empty");
+        }
+
+        width = colorBuf[0].length;
+
+        //TODO check is mutable.
+        if (texture)
+        {
+            texture.dispose;
+            texture = null;
+        }
+
+        //TODO check width, height == colorBuf.dims
+        createMutRGBA32;
+        assert(texture);
+
+        lock;
+        scope (exit)
+        {
+            unlock;
+        }
+
+        foreach (yy, ref RGBA[] colors; colorBuf)
+        {
+            foreach (xx, ref RGBA color; colors)
+            {
+                uint x = cast(uint) xx;
+                uint y = cast(uint) yy;
+
+                RGBA newColor = onColor ? onColor(x, y, color) : color;
+                changeColor(x, y, newColor);
+            }
+        }
+
+        if (isKeepColorBuffer)
+        {
+            originalBuffer = colorBuf;
+        }
     }
 
     void createMutRGBA32()
@@ -279,31 +475,53 @@ class Texture2d : Sprite2d
         return RGBA(r, g, b, a / (cast(float) ubyte.max));
     }
 
-    override float width()
-    {
-        return super.width;
-    }
+    override float width() => super.width;
 
-    override bool width(float value)
+    override bool width(float v)
     {
-        auto isResized = super.width(value);
+        auto isResized = super.width(v);
+
         if (!isResizable)
         {
             return isResized;
         }
-        import Math = api.dm.math;
 
-        if (texture)
+        import Math = api.math;
+
+        bool isNeedResize = Math.abs(oldChangedWidth - v) > changeSizeDelta;
+        if (!isNeedResize)
         {
-            bool isTextureCreated;
-            if (const err = texture.isCreating(isTextureCreated))
+            return isResized;
+        }
+
+        if (isInterpolationResize && originalBuffer && originalBuffer.length > 0)
+        {
+            import Transform = api.dm.kit.graphics.colors.processings.transforms;
+
+            if (width < 0)
             {
-                logger.error(err.toString);
+                throw new Exception("Width must be positive");
             }
 
-            if (isTextureCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
+            if (height < 0)
             {
-                if (!isDisableRecreate)
+                throw new Exception("Height must be positive");
+            }
+            //TODO recreate?
+            auto biBuff = Transform.bilinear(originalBuffer, cast(size_t) width, cast(size_t) height);
+            create(biBuff);
+        }
+        else
+        {
+            if (texture)
+            {
+                bool isTextureCreated;
+                if (const err = texture.isCreating(isTextureCreated))
+                {
+                    logger.error(err.toString);
+                }
+
+                if (isTextureCreated && !isDisableRecreate)
                 {
                     if (onPreRecreateWidthOldNew)
                     {
@@ -311,41 +529,60 @@ class Texture2d : Sprite2d
                     }
                     recreate;
                 }
-
-                oldChangedWidth = width;
-
-                return true;
             }
         }
 
-        return isResized;
+        oldChangedWidth = width;
+        return true;
     }
 
-    override float height()
-    {
-        return super.height;
-    }
+    override float height() => super.height;
 
     override bool height(float value)
     {
         auto isResized = super.height(value);
+
         if (!isResizable)
         {
             return isResized;
         }
-        import Math = api.dm.math;
 
-        if (texture)
+        import Math = api.math;
+
+        bool isNeedResize = Math.abs(oldChangedHeight - value) > changeSizeDelta;
+        if (!isNeedResize)
         {
-            bool isTextureCreated;
-            if (const err = texture.isCreating(isTextureCreated))
+            return isResized;
+        }
+
+        if (isInterpolationResize && originalBuffer && originalBuffer.length > 0)
+        {
+            if (width < 0)
             {
-                logger.error(err.toString);
+                throw new Exception("Width must be positive");
             }
 
-            if (isTextureCreated && Math.abs(oldChangedHeight - value) > changeSizeDelta)
+            if (height < 0)
             {
-                if (!isDisableRecreate)
+                throw new Exception("Height must be positive");
+            }
+
+            import Transform = api.dm.kit.graphics.colors.processings.transforms;
+
+            auto biBuff = Transform.bilinear(originalBuffer, cast(size_t) width, cast(size_t) height);
+            create(biBuff);
+        }
+        else
+        {
+            if (texture)
+            {
+                bool isTextureCreated;
+                if (const err = texture.isCreating(isTextureCreated))
+                {
+                    logger.error(err.toString);
+                }
+
+                if (isTextureCreated && !isDisableRecreate)
                 {
                     if (onPreRecreateHeightOldNew)
                     {
@@ -353,12 +590,11 @@ class Texture2d : Sprite2d
                     }
                     recreate;
                 }
-                oldChangedHeight = value;
-                return true;
             }
         }
 
-        return isResized;
+        oldChangedHeight = value;
+        return true;
     }
 
     override bool recreate()

@@ -67,9 +67,9 @@ class AnimImage : Image
         isDrawTexture = false;
     }
 
-    override void load(string path, int requestWidth = -1, int requestHeight = -1)
+    override void create(string path, int requestWidth = -1, int requestHeight = -1)
     {
-        super.load(path, requestWidth, requestHeight);
+        super.create(path, requestWidth, requestHeight);
 
         if (frameWidth == 0)
         {

@@ -47,7 +47,7 @@ class ImageFactory : GraphicComponent
 
         try
         {
-            newImage.load(path, reqWidth, reqHeight);
+            newImage.create(path, reqWidth, reqHeight);
         }
         catch (Exception e)
         {
@@ -64,7 +64,7 @@ class ImageFactory : GraphicComponent
         build(newAnimated);
         try
         {
-            newAnimated.load(path, requestWidth, requestHeight);
+            newAnimated.create(path, requestWidth, requestHeight);
         }
         catch (Exception e)
         {

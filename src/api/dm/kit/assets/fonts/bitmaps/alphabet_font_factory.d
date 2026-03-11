@@ -88,7 +88,7 @@ class AlphabetFontFactory : BaseBitmapFontFactory
 
         bitmapFont.glyphs = glyphs;
 
-        bitmapFont.loadFromSurface(fontMapSurface);
+        bitmapFont.create(fontMapSurface);
         fontMapSurface.dispose;
         bitmapFont.create;
         bitmapFont.blendModeBlend;

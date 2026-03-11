@@ -60,7 +60,7 @@ class LedIcon : BaseLed
         buildInit(image);
 
         auto blurBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
-        image.load(blurBuff);
+        image.create(blurBuff);
         image.blendModeBlend;
 
         return image;

@@ -34,7 +34,7 @@ class IconBitmapGenerator : BaseBitmapFontFactory
         Rect2f glyphPosition;
         generateToSurface(text, fontMapSurface, font, (ref glyph, ref pos) {}, foregroundColor, backgroundColor, glyphPosition);
 
-        bitmapFont.loadFromSurface(fontMapSurface);
+        bitmapFont.create(fontMapSurface);
         fontMapSurface.dispose;
         bitmapFont.create;
         bitmapFont.blendModeBlend;

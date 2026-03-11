@@ -15,31 +15,17 @@ import Math = api.math;
 /**
  * Authors: initkfs
  */
-//TODO remove duplication with animation bitmap, but it's not clear what code would be required
+//TODO remove duplication with animation bitmap
 class Image : Texture2d
 {
-    RGBA delegate(int x, int y, RGBA color) onColor;
-
-    bool isInterpolationResize;
-    bool isKeepOriginalColorBuffer;
-    RGBA[][] originalBuffer;
-
-    float dwidth = 0;
-    float dheight = 0;
-    float dsizeDelta = 15;
-
-    bool isKeepSurface;
-    ComSurface surface;
-
     this()
     {
-        super();
+
     }
 
     this(float width, float height)
     {
-        forceWidth = width;
-        forceHeight = height;
+        super(width, height);
     }
 
     this(ComTexture texture)
@@ -47,167 +33,9 @@ class Image : Texture2d
         super(texture);
     }
 
-    void load(ComSurface image, int requestWidth = -1, int requestHeight = -1)
-    {
-        assert(image);
-        int imageWidth = image.getWidth;
-        int imageHeight = image.getHeight;
+    alias create = Texture2d.create;
 
-        if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
-        {
-            bool isResized;
-            if (const err = image.resize(cast(int)(requestWidth * scale), cast(int)(
-                    requestHeight * scale), isResized))
-            {
-                throw new Exception(err.toString);
-            }
-
-            imageWidth = image.getWidth;
-            imageHeight = image.getHeight;
-        }
-        else
-        {
-            if (scale != 1)
-            {
-                bool isResized;
-                //TODO check non negative resize
-                if (const err = image.resize(cast(int)(imageWidth * scale), cast(int)(
-                        imageHeight * scale), isResized))
-                {
-                    throw new Exception(err.toString);
-                }
-
-                imageWidth = image.getWidth;
-                imageHeight = image.getHeight;
-            }
-        }
-
-        //TODO test functionality, remove
-        if (isKeepOriginalColorBuffer || isInterpolationResize)
-        {
-            if (const err = image.lock)
-            {
-                throw new Exception(err.toString);
-            }
-
-            scope (exit)
-            {
-                if (const err = image.unlock)
-                {
-                    throw new Exception(err.toString);
-                }
-            }
-
-            originalBuffer = new RGBA[][](imageHeight, imageWidth);
-
-            foreach (y; 0 .. imageHeight)
-            {
-                foreach (x; 0 .. imageWidth)
-                {
-                    uint* pixelPtr;
-                    if (const err = image.getPixel(x, y, pixelPtr))
-                    {
-                        throw new Exception(err.toString);
-                    }
-                    ubyte r, g, b, a;
-                    if (const err = image.getPixelRGBA(pixelPtr, r, g, b, a))
-                    {
-                        throw new Exception(err.toString);
-                    }
-                    originalBuffer[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
-                }
-            }
-        }
-
-        if (onColor)
-        {
-            if (const err = image.lock)
-            {
-                throw new Exception(err.toString);
-            }
-
-            scope (exit)
-            {
-                if (const err = image.unlock)
-                {
-                    throw new Exception(err.toString);
-                }
-            }
-
-            foreach (y; 0 .. imageHeight)
-            {
-                foreach (x; 0 .. imageWidth)
-                {
-                    //TODO more optimal iteration
-                    uint* pixelPtr;
-                    if (const err = image.getPixel(x, y, pixelPtr))
-                    {
-                        throw new Exception(err.toString);
-                    }
-                    ubyte r, g, b, a;
-                    if (const err = image.getPixelRGBA(pixelPtr, r, g, b, a))
-                    {
-                        throw new Exception(err.toString);
-                    }
-                    RGBA oldColor = {r, g, b, RGBA.fromAByte(a)};
-                    RGBA newColor = onColor(x, y, oldColor);
-                    if (newColor != oldColor)
-                    {
-                        if (const err = image.setPixelRGBA(x, y, newColor.r, newColor.g, newColor.b, newColor
-                                .aByte))
-                        {
-                            throw new Exception(err.toString);
-                        }
-                    }
-
-                    if (originalBuffer)
-                    {
-                        originalBuffer[y][x] = newColor;
-                    }
-                }
-            }
-        }
-
-        if (!texture)
-        {
-            texture = graphic.comTextureProvider.getNew();
-        }
-
-        if (const err = texture.create(image))
-        {
-            throw new Exception(err.toString);
-        }
-
-        int width;
-        int height;
-
-        if (const err = texture.getSize(width, height))
-        {
-            throw new Exception(err.toString);
-        }
-
-        forceWidth = width;
-        forceHeight = height;
-
-        if (isKeepSurface)
-        {
-            if (surface)
-            {
-                surface.dispose;
-            }
-            else
-            {
-                this.surface = graphic.comSurfaceProvider.getNew();
-            }
-
-            if (const err = image.copyTo(surface))
-            {
-                throw new Exception(err.toString);
-            }
-        }
-    }
-
-    void load(string path, int requestWidth = -1, int requestHeight = -1)
+    void create(string path, int requestWidth = -1, int requestHeight = -1)
     {
         import std.path : isAbsolute;
         import std.file : isFile, exists;
@@ -245,10 +73,10 @@ class Image : Texture2d
             comSurf.dispose;
         }
 
-        load(comSurf, requestWidth, requestHeight);
+        create(comSurf, requestWidth, requestHeight);
     }
 
-    void loadRaw(const(ubyte[]) buff, int requestWidth = -1, int requestHeight = -1)
+    void create(const(ubyte[]) buff, int requestWidth = -1, int requestHeight = -1)
     {
         //TODO remove duplication with load
         ComSurface comSurf;
@@ -276,57 +104,7 @@ class Image : Texture2d
             comSurf.dispose;
         }
 
-        load(comSurf, requestWidth, requestHeight);
-    }
-
-    void load(RGBA[][] colorBuf, bool isKeepColorBuffer = false)
-    {
-        if (colorBuf.length == 0)
-        {
-            throw new Exception("Color buffer is empty");
-        }
-
-        height = colorBuf.length;
-        if (colorBuf[0].length == 0)
-        {
-            throw new Exception("Color buffer row is empty");
-        }
-
-        width = colorBuf[0].length;
-
-        //TODO check is mutable.
-        if (texture)
-        {
-            texture.dispose;
-            texture = null;
-        }
-
-        //TODO check width, height == colorBuf.dims
-        createMutRGBA32;
-        assert(texture);
-
-        lock;
-        scope (exit)
-        {
-            unlock;
-        }
-
-        foreach (yy, ref RGBA[] colors; colorBuf)
-        {
-            foreach (xx, ref RGBA color; colors)
-            {
-                uint x = cast(uint) xx;
-                uint y = cast(uint) yy;
-
-                RGBA newColor = onColor ? onColor(x, y, color) : color;
-                changeColor(x, y, newColor);
-            }
-        }
-
-        if (isKeepColorBuffer)
-        {
-            originalBuffer = colorBuf;
-        }
+        create(comSurf, requestWidth, requestHeight);
     }
 
     void save(ComSurface surf, string path)
@@ -370,83 +148,5 @@ class Image : Texture2d
         }
 
         save(surface, path);
-    }
-
-    alias width = Texture2d.width;
-    alias height = Texture2d.height;
-
-    override bool width(float v)
-    {
-        if (!canChangeWidth(v))
-        {
-            return false;
-        }
-
-        if (width == 0 || height == 0)
-        {
-            return super.width(v);
-        }
-
-        import std.conv : to;
-
-        float dw = Math.abs(width - v);
-        dwidth += dw;
-
-        bool isResized = tryWidth(v);
-        assert(isResized);
-
-        if (isInterpolationResize && originalBuffer && originalBuffer.length > 0)
-        {
-            if (dwidth >= dsizeDelta)
-            {
-                import Transform = api.dm.kit.graphics.colors.processings.transforms;
-
-                auto biBuff = Transform.bilinear(originalBuffer, width.to!size_t, height
-                        .to!size_t);
-                load(biBuff);
-
-                dwidth = 0;
-            }
-
-        }
-
-        return isResized;
-    }
-
-    override bool height(float v)
-    {
-        if (!canChangeHeight(v))
-        {
-            return false;
-        }
-
-        if (width == 0 || height == 0)
-        {
-            return super.height(v);
-        }
-
-        import std.conv : to;
-
-        float dh = Math.abs(height - v);
-        dheight += dh;
-
-        bool isResized = tryHeight(v);
-        assert(isResized);
-
-        if (isInterpolationResize && originalBuffer && originalBuffer.length > 0)
-        {
-            if (dheight >= dsizeDelta)
-            {
-                import Transform = api.dm.kit.graphics.colors.processings.transforms;
-
-                auto biBuff = Transform.bilinear(originalBuffer, width.to!size_t, height
-                        .to!size_t);
-                load(biBuff);
-                dheight = 0;
-            }
-
-        }
-
-        return isResized;
     }
 }
