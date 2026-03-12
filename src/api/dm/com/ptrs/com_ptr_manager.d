@@ -1,9 +1,11 @@
 module api.dm.com.ptrs.com_ptr_manager;
 
+import api.dm.com.objects.com_unique_object : ComUniqueObject;
+
 /**
  * Authors: initkfs
  */
-abstract class ComPtrManager(T)
+abstract class ComPtrManager(T) : ComUniqueObject
 {
     import api.dm.com.com_result : ComResult;
     import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
@@ -36,16 +38,8 @@ abstract class ComPtrManager(T)
         {
             import std.stdio : stderr;
 
-            static if (__traits(compiles, this.id))
-            {
-                stderr.writefln("Warning! Undestroyed common native object %s, with id: %s", typeof(
-                        this).stringof, id);
-            }
-            else
-            {
-                stderr.writefln("Warning! Undestroyed common native object %s", typeof(
-                        this).stringof);
-            }
+            stderr.writefln("Warning! Undestroyed common native object %s, with id: %s", typeof(
+                    this).stringof, id);
 
             dispose;
         }
@@ -55,17 +49,21 @@ abstract class ComPtrManager(T)
     {
         if (!newPtr)
         {
+            import std.conv : text;
+
             return ComResult.error(
-                "Error update pointer with dispose, new pointer is null for " ~ T.stringof);
+                text("Error update pointer with dispose, new pointer is null for ", T.stringof, " id: ", id));
         }
 
         if (_ptr)
         {
             if (!disposePtr)
             {
+                import std.conv : text;
+
                 return ComResult.error(
-                    "Error update pointer with dispose, previous pointer is not disposed for " ~ T
-                        .stringof);
+                    text("Error update pointer with dispose, previous pointer is not disposed for ", T
+                        .stringof, " id:", id));
             }
         }
 

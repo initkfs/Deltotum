@@ -1,12 +1,12 @@
 module api.dm.back.sdl3.base.sdl_object;
 
-import api.dm.com.objects.com_object : ComObject;
+import api.dm.com.objects.com_unique_object : ComUniqueObject;
 
 /**
  * Authors: initkfs
  */
 
-class SdlObject : ComObject
+class SdlObject : ComUniqueObject
 {
     mixin SdlObjectMixin;
 }

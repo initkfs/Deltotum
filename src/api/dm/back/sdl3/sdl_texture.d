@@ -38,20 +38,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         assert(renderer);
         this.renderer = renderer;
-        setId(id);
+        this.id = id;
     }
 
     protected this(SDL_Texture* ptr, SdlRenderer renderer, string id = "sdl_texture")
     {
         super(ptr);
         this.renderer = renderer;
-        setId(id);
-    }
-
-    bool setId(string newId) pure @safe
-    {
-        this.id = newId;
-        return true;
+        this.id = id;
     }
 
     ComResult createUnsafe(void* newPtr) nothrow

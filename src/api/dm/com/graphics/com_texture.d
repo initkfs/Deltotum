@@ -1,7 +1,7 @@
 module api.dm.com.graphics.com_texture;
 
 import api.dm.com.ptrs.com_pointerable: ComPointerable;
-import api.dm.com.objects.com_objectable : ComObjectable;
+import api.dm.com.objects.com_unique_objectable : ComUniqueObjectable;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
@@ -31,7 +31,7 @@ enum ComTextureWrapMode
 /**
  * Authors: initkfs
  */
-interface ComTexture : ComObjectable, ComPointerable, ComErrorManageable
+interface ComTexture : ComUniqueObjectable, ComPointerable, ComErrorManageable
 {
 nothrow:
 
