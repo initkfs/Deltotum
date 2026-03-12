@@ -162,7 +162,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         assert(hasPtr);
         assert(parent);
 
-        ComNativePtr parentPtr =parent.nativePtr;
+        ComNativePtr parentPtr = parent.nativePtr;
         SDL_Window* parentWinPtr = parentPtr.castSafe!(SDL_Window*);
 
         if (!SDL_SetWindowParent(ptr, parentWinPtr))
@@ -761,6 +761,8 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         density = newDensity;
         return ComResult.success;
     }
+
+    string lastError() => getError;
 
     protected override bool disposePtr()
     {

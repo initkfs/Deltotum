@@ -153,7 +153,7 @@ class Input
         Vec2f pos;
         if (!systemCursor.getPos(pos))
         {
-            logging.logger.error("Invalid cursor position: ", systemCursor.getLastErrorNew);
+            logging.logger.error("Invalid cursor position: ", systemCursor.lastError);
             return Vec2f.init;
         }
         return pos;

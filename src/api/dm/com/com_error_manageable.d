@@ -5,7 +5,5 @@ module api.dm.com.com_error_manageable;
  */
 interface ComErrorManageable
 {
-nothrow:
-
-    string getLastErrorNew();
+    string lastError() nothrow;
 }

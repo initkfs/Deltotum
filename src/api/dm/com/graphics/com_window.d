@@ -1,10 +1,10 @@
 module api.dm.com.graphics.com_window;
 
 import api.dm.com.ptrs.com_pointerable: ComPointerable;
+import api.dm.com.com_error_manageable: ComErrorManageable;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
-import api.dm.com.com_disposable : ComDisposable;
+import api.dm.com.ptrs.com_native_ptr: ComNativePtr;
 import api.dm.com.graphics.com_screen : ComScreenId;
 
 import api.math.geom2.rect2 : Rect2f;
@@ -30,7 +30,7 @@ enum ComWindowProgressState
 /**
  * Authors: initkfs
  */
-interface ComWindow : ComPointerable
+interface ComWindow : ComPointerable, ComErrorManageable
 {
 nothrow:
 

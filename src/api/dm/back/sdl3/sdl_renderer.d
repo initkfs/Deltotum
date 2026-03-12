@@ -509,7 +509,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         assert(hasPtr);
         if (!SDL_SetGPURenderStateFragmentUniforms(_state, slotIndex, data, length))
         {
-            throw new Exception(getLastErrorNew);
+            throw new Exception(lastError);
         }
     }
 
@@ -529,7 +529,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         SDL_GPURenderState* newState = SDL_CreateGPURenderState(ptr, &info);
         if (!newState)
         {
-            throw new Exception(getLastErrorNew);
+            throw new Exception(lastError);
         }
         return newState;
     }
@@ -559,7 +559,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    string getLastErrorNew() => getError;
+    string lastError() => getError;
 
     bool disposeState() nothrow
     {

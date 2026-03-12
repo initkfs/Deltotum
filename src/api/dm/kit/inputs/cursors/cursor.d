@@ -132,7 +132,7 @@ abstract class Cursor
         return defaultCursor.hide;
     }
 
-    string getLastErrorNew() => defaultCursor.getLastErrorNew;
+    string lastError() => defaultCursor.lastError;
 
     void dispose()
     {

@@ -178,7 +178,7 @@ class Graphic : LoggableUnit
     {
         if (!renderer.drawLine(startX, startY, endX, endY))
         {
-            throw new Exception("Line drawing error: " ~ renderer.getLastErrorNew);
+            throw new Exception("Line drawing error: " ~ renderer.lastError);
         }
     }
 
@@ -221,7 +221,7 @@ class Graphic : LoggableUnit
 
         if (!renderer.drawLines(points))
         {
-            throw new Exception("Lines drawing error: " ~ renderer.getLastErrorNew);
+            throw new Exception("Lines drawing error: " ~ renderer.lastError);
         }
 
         if (points.length >= 3)
@@ -253,7 +253,7 @@ class Graphic : LoggableUnit
     {
         if (!renderer.drawPoint(x, y))
         {
-            throw new Exception("Point drawing error: " ~ renderer.getLastErrorNew);
+            throw new Exception("Point drawing error: " ~ renderer.lastError);
         }
     }
 
@@ -286,7 +286,7 @@ class Graphic : LoggableUnit
         }
         if (!renderer.drawPoints(points))
         {
-            throw new Exception("float points drawing error: " ~ renderer.getLastErrorNew);
+            throw new Exception("float points drawing error: " ~ renderer.lastError);
         }
     }
 
@@ -304,7 +304,7 @@ class Graphic : LoggableUnit
 
         if (!renderer.drawPoints(p))
         {
-            throw new Exception("Float points drawing error: " ~ renderer.getLastErrorNew);
+            throw new Exception("Float points drawing error: " ~ renderer.lastError);
         }
     }
 
@@ -761,7 +761,7 @@ class Graphic : LoggableUnit
     {
         if (!renderer.drawFillRect(x, y, width, height))
         {
-            throw new Exception("Fill rect error: " ~ renderer.getLastErrorNew);
+            throw new Exception("Fill rect error: " ~ renderer.lastError);
         }
     }
 
@@ -774,7 +774,7 @@ class Graphic : LoggableUnit
         }
         if (!renderer.drawFillRects(rects))
         {
-            throw new Exception("Fill rects error: " ~ renderer.getLastErrorNew);
+            throw new Exception("Fill rects error: " ~ renderer.lastError);
         }
     }
 
@@ -807,7 +807,7 @@ class Graphic : LoggableUnit
     {
         if (!renderer.drawRect(x, y, width, height))
         {
-            throw new Exception("Draw rect error: " ~ renderer.getLastErrorNew);
+            throw new Exception("Draw rect error: " ~ renderer.lastError);
         }
     }
 
@@ -926,7 +926,7 @@ class Graphic : LoggableUnit
     {
         if (!renderer.tryPresent)
         {
-            throw new Exception("Error presenting renderer: " ~ renderer.getLastErrorNew);
+            throw new Exception("Error presenting renderer: " ~ renderer.lastError);
         }
     }
 
@@ -952,7 +952,7 @@ class Graphic : LoggableUnit
 
         if (!renderer.tryClearAndFill)
         {
-            throw new Exception("Error clearing error: " ~ renderer.getLastErrorNew);
+            throw new Exception("Error clearing error: " ~ renderer.lastError);
             //TODO logging in main loop?
         }
     }

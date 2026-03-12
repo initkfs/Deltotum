@@ -13,7 +13,7 @@ import std.typecons : Tuple;
 /**
  * Authors: initkfs
  */
-interface ComSurface : ComPointerable
+interface ComSurface : ComPointerable, ComErrorManageable
 {
     ComResult getPixels(
         scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue

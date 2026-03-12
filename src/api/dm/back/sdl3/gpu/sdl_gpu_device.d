@@ -530,7 +530,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_ReleaseGPUTexture(ptr, tPtr);
     }
 
-    string getLastErrorNew() => getError;
+    string lastError() => getError;
 
     override protected bool disposePtr() nothrow
     {

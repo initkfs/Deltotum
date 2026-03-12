@@ -50,7 +50,7 @@ class Screening
             import std.format : format;
 
             throw new Exception(format("Error getting screen bounds with id %s: %s", id, comScreen
-                    .getLastErrorNew));
+                    .lastError));
         }
         return Rect2f(x, y, width, height);
     }
@@ -63,7 +63,7 @@ class Screening
             import std.format : format;
 
             throw new Exception(format("Error getting screen bounds with id %s: %s", id, comScreen
-                    .getLastErrorNew));
+                    .lastError));
         }
         return Rect2f(x, y, width, height);
     }
@@ -79,7 +79,7 @@ class Screening
             import std.format : format;
 
             throw new Exception(format("Error getting screen mode with id %s: %s", id, comScreen
-                    .getLastErrorNew));
+                    .lastError));
         }
 
         return mode;
@@ -93,7 +93,7 @@ class Screening
             import std.format : format;
 
             throw new Exception(format("Error getting screen orientation with index %s: %s", id, comScreen
-                    .getLastErrorNew));
+                    .lastError));
         }
         return result;
     }

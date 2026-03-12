@@ -450,7 +450,7 @@ class Texture2d : Sprite2d
     {
         if (!texture.draw(textureBounds, destBounds, angle, flip, rotateCenter))
         {
-            logger.error("Error texture drawing: ", texture.getLastErrorNew);
+            logger.error("Error texture drawing: ", texture.lastError);
         }
     }
 
@@ -893,7 +893,7 @@ class Texture2d : Sprite2d
         {
             return null;
         }
-        return texture.getLastErrorNew;
+        return texture.lastError;
     }
 
     override void dispose()

@@ -156,7 +156,7 @@ class SDLScreen : SdlObject, ComScreen
         return true;
     }
 
-    string getLastErrorNew() nothrow => getError;
+    string lastError() nothrow => getError;
 
     bool isDisposed() nothrow pure @safe => false;
     bool dispose() nothrow => false;
