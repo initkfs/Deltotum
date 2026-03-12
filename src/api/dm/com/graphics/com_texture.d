@@ -4,8 +4,6 @@ import api.dm.com.ptrs.com_pointerable: ComPointerable;
 import api.dm.com.objects.com_unique_objectable : ComUniqueObjectable;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
-import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
-import api.dm.com.com_disposable : ComDisposable;
 import api.dm.com.com_error_manageable : ComErrorManageable;
 
 import api.math.geom2.rect2 : Rect2f;
@@ -36,28 +34,24 @@ interface ComTexture : ComUniqueObjectable, ComPointerable, ComErrorManageable
 nothrow:
 
     ComResult createRaw(void* newPtr);
-
-    ComResult createRGBA32(int width, int height);
-
-    ComResult createMutRGBA32(int width, int height);
-    ComResult createMutBGRA32(int width, int height);
-    ComResult createMutABGR32(int width, int height);
-    ComResult createMutARGB32(int width, int height);
-
-    ComResult createMutYV(int width, int height);
-
-    ComResult createTargetRGBA32(int width, int height);
     ComResult create(ComSurface surface);
 
-    ComResult isCreating(out bool created);
+    ComResult createRGBA32(int width, int height);
+    ComResult createTargetRGBA32(int width, int height);
+    ComResult createMutRGBA32(int width, int height);
+    ComResult createMutTargetRGBA32(int width, int height);
 
-    ComResult getFormat(out uint format);
-    ComResult getPitch(out int pitch);
+    ComResult createMutBGRA32(int width, int height);
+    ComResult createMutARGB32(int width, int height);
+    ComResult createMutYV(int width, int height);
+
+    uint getFormat();
+    int getPitch();
 
     ComResult setRenderTarget();
     ComResult restoreRenderTarget();
 
-    ComResult getSize(out int width, out int height);
+    void getSize(out int width, out int height);
     ComResult setSize(int newWidth, int newHeight);
 
     ComResult setBlendMode(ComBlendMode mode);
@@ -77,20 +71,20 @@ nothrow:
     ComResult lockToSurface(ComSurface buffer);
     ComResult lockToSurface(Rect2f src, ComSurface buffer);
     ComResult unlock();
-    ComResult isLocked(out bool locked);
+    bool isLocked();
 
     ComResult fill(ubyte r, ubyte g, ubyte b, ubyte a);
 
-    ComResult update(Rect2f rect, void* pixels, int pitch);
+    bool update(Rect2f rect, void* pixels, int pitch);
     bool updateUV(ubyte* yplane, int ypitch, ubyte* uplane, int upitch, ubyte* vplane, int vpitch);
 
     ComResult getPixelsRGBA(out void* pixels);
 
-    ComResult getPixel(uint x, uint y, out uint* pixel);
-    ComResult setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte aByte);
-    ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte);
-    ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
-    ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
+    bool getPixel(uint x, uint y, out uint* pixel);
+    bool setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte aByte);
+    bool setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte);
+    bool getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
+    bool getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
 
     bool draw(ComTexture other, Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none, Vec2f rotateCenter = Vec2f.zero);

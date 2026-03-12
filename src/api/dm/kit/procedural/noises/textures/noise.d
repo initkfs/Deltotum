@@ -56,9 +56,9 @@ abstract class Noise : Texture2d
             foreach (int x; 0 .. w)
             {
                 RGBA color = drawNoise(x, y);
-                if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
+                if (!texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
                 {
-                    throw new Exception(err.toString);
+                    throw new Exception(texture.lastError);
                 }
             }
         }

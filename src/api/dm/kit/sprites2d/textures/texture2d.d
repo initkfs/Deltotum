@@ -67,10 +67,7 @@ class Texture2d : Sprite2d
         this();
 
         int w, h;
-        if (const sizeErr = texture.getSize(w, h))
-        {
-            throw new Exception(sizeErr.toString);
-        }
+        texture.getSize(w, h);
 
         this.width = w;
         this.height = h;
@@ -225,10 +222,7 @@ class Texture2d : Sprite2d
         int width;
         int height;
 
-        if (const err = texture.getSize(width, height))
-        {
-            throw new Exception(err.toString);
-        }
+        texture.getSize(width, height);
 
         forceWidth = width;
         forceHeight = height;
@@ -515,11 +509,7 @@ class Texture2d : Sprite2d
         {
             if (texture)
             {
-                bool isTextureCreated;
-                if (const err = texture.isCreating(isTextureCreated))
-                {
-                    logger.error(err.toString);
-                }
+                bool isTextureCreated= texture.hasPtr;
 
                 if (isTextureCreated && !isDisableRecreate)
                 {
@@ -576,11 +566,7 @@ class Texture2d : Sprite2d
         {
             if (texture)
             {
-                bool isTextureCreated;
-                if (const err = texture.isCreating(isTextureCreated))
-                {
-                    logger.error(err.toString);
-                }
+                bool isTextureCreated = texture.hasPtr;
 
                 if (isTextureCreated && !isDisableRecreate)
                 {
@@ -667,12 +653,7 @@ class Texture2d : Sprite2d
     bool isLocked()
     {
         assert(texture);
-        bool locked;
-        if (const err = texture.isLocked(locked))
-        {
-            throw new Exception(err.toString);
-        }
-        return locked;
+        return texture.isLocked;
     }
 
     void lock()
@@ -698,17 +679,17 @@ class Texture2d : Sprite2d
 
     void changeColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte a)
     {
-        if (const err = texture.setPixelColor(x, y, r, g, b, a))
+        if (!texture.setPixelColor(x, y, r, g, b, a))
         {
-            throw new Exception(err.toString);
+            throw new Exception(texture.lastError);
         }
     }
 
     void changeColor(uint x, uint y, RGBA color)
     {
-        if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
+        if (!texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
         {
-            throw new Exception(err.toString);
+            throw new Exception(texture.lastError);
         }
     }
 
@@ -719,9 +700,9 @@ class Texture2d : Sprite2d
 
     void updateTexture(Rect2f rect, void* pixels, int pitch)
     {
-        if (const err = texture.update(rect, pixels, pitch))
+        if (!texture.update(rect, pixels, pitch))
         {
-            throw new Exception(err.toString);
+            throw new Exception(texture.lastError);
         }
     }
 
@@ -734,24 +715,14 @@ class Texture2d : Sprite2d
     {
         assert(texture);
         assert(isLocked);
-        uint format;
-        if (const err = texture.getFormat(format))
-        {
-            throw new Exception(err.toString);
-        }
-        return format;
+        return texture.getFormat;
     }
 
     int pitch()
     {
         assert(texture);
         assert(isLocked);
-        int pitch;
-        if (const err = texture.getPitch(pitch))
-        {
-            throw new Exception(err.toString);
-        }
-        return pitch;
+        return texture.getPitch;
     }
 
     void* pixels()
@@ -759,9 +730,9 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         void* ptr;
-        if (const err = texture.getPixelsRGBA(ptr))
+        if (!texture.getPixelsRGBA(ptr))
         {
-            throw new Exception(err.toString);
+            throw new Exception(texture.lastError);
         }
         assert(ptr);
         return ptr;
@@ -772,9 +743,9 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         uint* ptr;
-        if (const err = texture.getPixel(x, y, ptr))
+        if (!texture.getPixel(x, y, ptr))
         {
-            throw new Exception(err.toString);
+            throw new Exception(texture.lastError);
         }
         return ptr;
     }
@@ -834,9 +805,9 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         ubyte r, g, b, a;
-        if (const err = texture.getPixelColor(x, y, r, g, b, a))
+        if (!texture.getPixelColor(x, y, r, g, b, a))
         {
-            throw new Exception(err.toString);
+            throw new Exception(texture.lastError);
         }
         return RGBA(r, g, b, RGBA.fromAByte(a));
     }

@@ -105,11 +105,7 @@ class VectorTextureMut : Texture2d
             throw new Exception(err.toString);
         }
 
-        int pitch;
-        if (const err = texture.getPitch(pitch))
-        {
-            throw new Exception(err.toString);
-        }
+        int pitch = texture.getPitch;
 
         void* pixels;
         if (const err = texture.getPixelsRGBA(pixels))

@@ -279,11 +279,7 @@ class VectorTexture : Texture2d
             throw new Exception(err.toString);
         }
 
-        int pitch;
-        if (const err = texture.getPitch(pitch))
-        {
-            throw new Exception(err.toString);
-        }
+        int pitch = texture.getPitch;
 
         void* surfPixels;
         if (const err = comSurface.getPixelsRGBA(surfPixels))
@@ -339,10 +335,8 @@ class VectorTexture : Texture2d
         }
 
         int w, h;
-        if (const err = texture.getSize(w, h))
-        {
-            throw new Exception(err.toString);
-        }
+        texture.getSize(w, h);
+       
         int newWidth = cast(int) width;
         int newHeight = cast(int) height;
         if (newWidth != w || newHeight != h)

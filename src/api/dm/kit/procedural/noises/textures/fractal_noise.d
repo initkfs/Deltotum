@@ -120,9 +120,9 @@ class FractalNoise : Texture2d
                 //ubyte b = cast(ubyte)(n * ubyte.max);
                 newColor.v = Math.clamp(n * valueScale, HSVA.minValue, HSVA.maxValue);
                 color = newColor.toRGBA;
-                if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
+                if (!texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
                 {
-                    throw new Exception(err.toString);
+                    throw new Exception(texture.lastError);
                 }
             }
         }
