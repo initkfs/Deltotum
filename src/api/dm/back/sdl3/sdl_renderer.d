@@ -35,7 +35,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult getName(out string name) nothrow
     {
-        assert(ptr);
         const(char*) rName = SDL_GetRendererName(ptr);
         if (!rName)
         {
@@ -49,7 +48,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult setVsync(int interval)
     {
-        assert(ptr);
         if (!SDL_SetRenderVSync(ptr, interval))
         {
             return getErrorRes("Unable to set vsync on SDL renderer");
@@ -439,7 +437,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     //it should be called after rendering and before SDL_RenderPresent().
     ComResult readPixels(Rect2f rect, ComSurface buffer) nothrow
     {
-        assert(ptr);
         assert(buffer);
         //TODO SDL_GetRenderLogicalPresentationRect
         //https://wiki.libsdl.org/SDL3/SDL_RenderReadPixels
@@ -475,8 +472,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult toRenderCoordinates(SDL_Event* event)
     {
-        assert(ptr);
-
         if (!SDL_ConvertEventToRenderCoordinates(ptr, event))
         {
             return getErrorRes("Error converting SDL event to render coordinates");
@@ -511,7 +506,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     void setFragmentUniforms(uint slotIndex, const void* data, uint length)
     {
         assert(_state);
-        assert(ptr);
+        assert(hasPtr);
         if (!SDL_SetGPURenderStateFragmentUniforms(_state, slotIndex, data, length))
         {
             throw new Exception(getLastErrorNew);
@@ -520,7 +515,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     SDL_GPURenderState* newState(SDL_GPUShader* fragShader, SDL_GPUTextureSamplerBinding* samplerBindings = null, int numSamplerBindings = 0, SDL_GPUBuffer** storageBuffers = null, int numStorageBuffers = 0, SDL_GPUTexture** storageTextures = null, int numStorageTextures = 0)
     {
-        assert(ptr);
         SDL_GPURenderStateCreateInfo info;
         info.fragment_shader = fragShader;
         info.num_sampler_bindings = numSamplerBindings;

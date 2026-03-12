@@ -147,8 +147,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult convert(SDL_PixelFormat format) nothrow
     {
-        assert(ptr);
-
         // Returns the new SDL_Surface
         SDL_Surface* newPtr = SDL_ConvertSurface(ptr, format);
         if (!newPtr)
@@ -187,7 +185,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     protected ComResult scaleTo(SDL_Surface* destPtr, SDL_Rect* srcRect, SDL_Rect* dstRect) nothrow
     {
-        assert(ptr);
         assert(destPtr);
 
         SDL_ScaleMode scaleMode = SDL_SCALEMODE_LINEAR;
@@ -200,7 +197,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult resize(int newWidth, int newHeight, out bool isResized) nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
         //https://stackoverflow.com/questions/40850196/sdl2-resize-a-surface
         // https://stackoverflow.com/questions/33850453/sdl2-copy-scaled-from-a-palettized-8bpp-surface-gives-error-copy-combination/33944312
         if (newWidth <= 0 || newHeight <= 0)
@@ -254,7 +251,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult copyTo(ComSurface dst) nothrow
     {
-        assert(ptr);
         assert(dst);
 
         auto newSurfacePtr = SDL_DuplicateSurface(ptr);
@@ -305,7 +301,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult copyTo(SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect) nothrow
     {
-        assert(ptr);
         if (!SDL_BlitSurface(ptr, srcRect, dst, dstRect))
         {
             return getErrorRes("Error surface copying");
@@ -315,8 +310,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult getCopyAlphaMod(out int mod) nothrow
     {
-        assert(ptr);
-
         ubyte oldMod;
         if (!SDL_GetSurfaceAlphaMod(ptr, &oldMod))
         {
@@ -329,8 +322,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult setCopyAlphaMod(int alpha) nothrow
     {
-        assert(ptr);
-
         //srcA = srcA * (alpha / 255)
         if (!SDL_SetSurfaceAlphaMod(ptr, cast(ubyte) alpha))
         {
@@ -341,8 +332,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult setBlendMode(ComBlendMode mode) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetSurfaceBlendMode(ptr, toNativeBlendMode(mode)))
         {
             return getErrorRes("Error setting surface blend mode");
@@ -352,8 +341,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult getBlendMode(out ComBlendMode mode) nothrow
     {
-        assert(ptr);
-
         SDL_BlendMode sdlMode;
         if (!SDL_GetSurfaceBlendMode(ptr, &sdlMode))
         {
@@ -405,8 +392,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult getPalette(out SDL_Palette* palette) nothrow
     {
-        assert(ptr);
-
         SDL_Palette* palettePtr = SDL_GetSurfacePalette(ptr);
         palette = palettePtr;
 
@@ -415,7 +400,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult lock() nothrow
     {
-        assert(ptr);
         //TODO  SDL_MUSTLOCK(surface)
         if (!SDL_LockSurface(ptr))
         {
@@ -426,21 +410,15 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult unlock() nothrow
     {
-        assert(ptr);
         SDL_UnlockSurface(ptr);
 
         return ComResult.success;
     }
 
-    void* pixels()
-    {
-        assert(ptr);
-        return ptr.pixels;
-    }
+    void* pixels() => ptr.pixels;
 
     ComResult getPixels(out void* pixPtr) nothrow
     {
-        assert(ptr);
         pixPtr = ptr.pixels;
         if (!pixPtr)
         {
@@ -451,7 +429,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult getPixel(int x, int y, out uint* pixel) nothrow
     {
-        assert(ptr);
         //TODO cache
         SDL_PixelFormatDetails* details;
         if (const err = getFormatDetails(ptr.format, details))
@@ -615,7 +592,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult fill(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
-        assert(ptr);
         const float maxValue = ubyte.max;
         if (!SDL_ClearSurface(ptr, r / maxValue, g / maxValue, b / maxValue, a / maxValue))
         {
@@ -626,35 +602,18 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     alias pitch = getPixelRowLenBytes;
 
-    int getPixelRowLenBytes() nothrow
-    {
-        assert(ptr);
-        return ptr.pitch;
-    }
+    int getPixelRowLenBytes() nothrow => ptr.pitch;
 
     uint getFormat() nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
         return pixelFormat;
     }
 
-    SDL_PixelFormat pixelFormat() nothrow
-    {
-        assert(ptr);
-        return ptr.format;
-    }
+    SDL_PixelFormat pixelFormat() nothrow => ptr.format;
 
-    int getWidth() nothrow
-    {
-        assert(ptr);
-        return ptr.w;
-    }
-
-    int getHeight() nothrow
-    {
-        assert(ptr);
-        return ptr.h;
-    }
+    int getWidth() nothrow => ptr.w;
+    int getHeight() nothrow => ptr.h;
 
     void getSize(out int w, out int h)
     {
@@ -664,7 +623,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult saveBMP(const(char)[] file) nothrow
     {
-        assert(ptr);
         if (!SDL_SaveBMP(ptr, file.ptr))
         {
             return getErrorRes("Error saving surface to bmp file");

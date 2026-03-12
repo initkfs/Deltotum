@@ -79,8 +79,11 @@ abstract class ComPtrManager(T)
     }
 
     inout(T*) ptr() inout nothrow @safe
-    out (p; p !is null)
     {
+        if (!_ptr)
+        {
+            throw new Error("Pointer is null");
+        }
         return _ptr;
     }
 

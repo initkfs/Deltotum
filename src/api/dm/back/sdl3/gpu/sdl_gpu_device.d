@@ -190,7 +190,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         uint numStorageTextures = 0,
     )
     {
-        assert(ptr);
+        assert(hasPtr);
         SDL_GPUShaderCreateInfo shaderInfo;
         shaderInfo.props = 0;
         shaderInfo.format = SDL_GPU_SHADERFORMAT_SPIRV;
@@ -235,7 +235,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     SdlGPUPipeline newPipeline(SDL_GPUGraphicsPipelineCreateInfo info)
     {
-        assert(ptr);
         auto pipePtr = SDL_CreateGPUGraphicsPipeline(ptr, &info);
         if (!pipePtr)
         {
@@ -360,14 +359,12 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     void deletePipeline(SdlGPUPipeline pipe)
     {
-        assert(ptr);
         SDL_ReleaseGPUGraphicsPipeline(ptr, pipe.ptr);
         pipe.setNullPtr;
     }
 
     void deleteShader(SdlGPUShader shader)
     {
-        assert(ptr);
         shader.disposeWithGpu(ptr);
         shader.setNullPtr;
     }
@@ -424,8 +421,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     SDL_GPUTransferBuffer* newTransferBuffer(SDL_GPUTransferBufferUsage usage, size_t size)
     {
-        assert(ptr);
-
         SDL_GPUTransferBufferCreateInfo info;
         info.usage = usage;
         info.size = cast(uint) size;
@@ -445,7 +440,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     void* mapTransferBuffer(SDL_GPUTransferBuffer* transferBuffer, bool cycle = false)
     {
-        assert(ptr);
         void* addrPtr = SDL_MapGPUTransferBuffer(ptr, transferBuffer, cycle);
         if (!addrPtr)
         {
@@ -550,7 +544,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     ComResult getDriverNameNew(out string name)
     {
-        assert(ptr);
         const char* namePtr = SDL_GetGPUDeviceDriver(ptr);
         if (!namePtr)
         {
@@ -564,7 +557,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     ComResult attachToWindow(ComWindow window)
     {
         assert(window);
-        assert(ptr);
+        assert(hasPtr);
 
         import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
@@ -577,7 +570,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     ComResult attachToWindow(SDL_Window* sdlWinPtr)
     {
         assert(sdlWinPtr);
-        assert(ptr);
 
         if (!SDL_ClaimWindowForGPUDevice(ptr, sdlWinPtr))
         {
@@ -590,7 +582,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     ComResult removeFromWindow(ComWindow window)
     {
         assert(window);
-        assert(ptr);
+        assert(hasPtr);
 
         import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
@@ -603,10 +595,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     ComResult removeFromWindow(SDL_Window* sdlWinPtr)
     {
         assert(sdlWinPtr);
-        assert(ptr);
-
         SDL_ReleaseWindowFromGPUDevice(ptr, sdlWinPtr);
-
         return ComResult.success;
     }
 
@@ -677,7 +666,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_Window* currSdlWindow, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
     {
         assert(currSdlWindow);
-        assert(ptr);
 
         if (state != GPUGraphicState.none)
         {
@@ -747,7 +735,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     bool startCopyPass()
     {
-        assert(ptr);
         if (state != GPUGraphicState.none)
         {
             return false;
@@ -1060,7 +1047,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     SDL_GPUSampler* newSampler(SDL_GPUSamplerCreateInfo* info)
     {
-        assert(ptr);
         auto samplerPtr = SDL_CreateGPUSampler(ptr, info);
         if (!samplerPtr)
         {

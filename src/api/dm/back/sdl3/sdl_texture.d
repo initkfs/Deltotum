@@ -211,11 +211,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    SDL_PixelFormat getPixelFormat() nothrow
-    {
-        assert(ptr);
-        return ptr.format;
-    }
+    SDL_PixelFormat getPixelFormat() nothrow => ptr.format;
 
     ComResult getFormat(out uint format) nothrow
     {
@@ -235,13 +231,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     SDL_PixelFormatDetails* getPixelFormatDetails(SDL_PixelFormat format) nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
         return SDL_GetPixelFormatDetails(format);
     }
 
     ComResult getFormatDetails(SDL_PixelFormat format, out SDL_PixelFormatDetails* details) nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
 
         details = getPixelFormatDetails(format);
         if (!details)
@@ -260,7 +256,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setRenderTarget() nothrow
     {
-        assert(ptr);
         assert(renderer);
 
         if (lastRendererTarget)
@@ -300,8 +295,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getSize(out int width, out int height) nothrow
     {
-        assert(ptr);
-
         width = ptr.w;
         height = ptr.h;
 
@@ -310,7 +303,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setSize(int newWidth, int newHeight) nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
         assert(renderer);
 
         if (newWidth <= 0)
@@ -386,8 +379,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getAlphaMod(out ubyte alpha) nothrow
     {
-        assert(ptr);
-
         if (!SDL_GetTextureAlphaMod(ptr, &alpha))
         {
             return getErrorRes("Error getting SDL texture alpha mod");
@@ -397,8 +388,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     protected ComResult setAlphaMod(ubyte alpha) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetTextureAlphaMod(ptr, alpha))
         {
             return getErrorRes("Error setting SDL texture alpha mod");
@@ -408,8 +397,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setBlendMode(ComBlendMode mode) nothrow
     {
-        assert(ptr);
-
         SDL_BlendMode newMode = toNativeBlendMode(mode);
         if (!SDL_SetTextureBlendMode(ptr, newMode))
         {
@@ -423,7 +410,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getOpacity(out float value) nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
 
         if (_opacity != 0)
         {
@@ -452,8 +439,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getScaleMode(out ComTextureScaleMode mode) nothrow
     {
-        assert(ptr);
-
         SDL_ScaleMode oldMode;
         if (!SDL_GetTextureScaleMode(ptr, &oldMode))
         {
@@ -465,8 +450,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setScaleMode(ComTextureScaleMode mode) nothrow
     {
-        assert(ptr);
-
         const nativeMode = toSdlMode(mode);
         if (!SDL_SetTextureScaleMode(ptr, nativeMode))
         {
@@ -477,8 +460,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
     {
-        assert(ptr);
-
         if (!SDL_GetTextureColorMod(ptr, &r, &g, &b))
         {
             return getErrorRes("Error getting SDL texture color mod");
@@ -488,8 +469,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetTextureColorMod(ptr, r, g, b))
         {
             return getErrorRes("Error setting SDL texture color mod");
@@ -499,7 +478,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult lock() nothrow
     {
-        assert(ptr);
         assert(!locked);
         if (!SDL_LockTexture(ptr, null, cast(void**)&pixelPtr, &pitch))
         {
@@ -512,7 +490,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult lockToSurface(SDL_Rect* bounds, SDL_Surface* surface) nothrow
     {
-        assert(ptr);
         assert(!locked);
 
         if (!SDL_LockTextureToSurface(ptr, bounds, &surface))
@@ -551,7 +528,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult unlock() nothrow
     {
-        assert(ptr);
         assert(locked);
 
         SDL_UnlockTexture(ptr);
@@ -598,8 +574,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult update(Rect2f rect, void* pixels, int pitch) nothrow
     {
-        assert(ptr);
-
         if (!locked)
         {
             return ComResult.error("SDL texture not locked for update");
@@ -618,7 +592,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     bool updateUV(ubyte* yplane, int ypitch, ubyte* uplane, int upitch, ubyte* vplane, int vpitch) nothrow
     {
-        assert(ptr);
         SDL_Rect* rect = null;
         return SDL_UpdateYUVTexture(ptr, rect,
             yplane, ypitch,
@@ -628,7 +601,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getPixels(out void* pixels)
     {
-        assert(ptr);
+        assert(hasPtr);
 
         if (!locked)
         {
@@ -640,7 +613,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getPixel(uint x, uint y, out uint* pixel) nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
         assert(locked);
         assert(pitch > 0);
         assert(pixelPtr);
@@ -775,7 +748,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult copyToNew(out ComTexture toTexture)
     {
-        assert(ptr);
+        assert(hasPtr);
 
         SdlTexture newTexture;
         try
