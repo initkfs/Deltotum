@@ -183,7 +183,7 @@ class FreeTypeFont : ComFont
 
                     if (alpha == ubyte.max)
                     {
-                        if (const err = targetSurface.setPixelRGBA(x, y, fr, fg, fb, fa))
+                        if (const err = targetSurface.setPixel(x, y, fr, fg, fb, fa))
                         {
 
                         }
@@ -218,7 +218,7 @@ class FreeTypeFont : ComFont
                     float outa = a + bgA / (cast(float) ubyte.max) * (1 - a);
                     ubyte outA = cast(ubyte)(outa * ubyte.max);
 
-                    if (const err = targetSurface.setPixelRGBA(x, y, outR, outG, outB, outA))
+                    if (const err = targetSurface.setPixel(x, y, outR, outG, outB, outA))
                     {
                         return err;
                     }

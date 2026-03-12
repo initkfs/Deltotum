@@ -26,11 +26,9 @@ interface ComSurface : ComPointerable, ComErrorManageable
 nothrow:
 
     ComResult createRGBA32(int width, int height);
-    ComResult createARGB32(int width, int height);
-    ComResult createABGR32(int width, int height);
     ComResult createBGRA32(int width, int height);
     ComResult createRGB24(int width, int height);
-    ComResult createUnsafe(void* ptr) nothrow;
+    ComResult createRaw(void* ptr) nothrow;
     ComResult create(ComNativePtr ptr) nothrow;
 
     uint getFormat();
@@ -62,11 +60,11 @@ nothrow:
     void* pixels();
     ComResult getPixelsRGBA(out void* pixels);
    
-    ComResult getPixelRGBA(int x, int y, out uint* pixel);
-    ComResult getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a);
+    ComResult getPixel(int x, int y, out uint* pixel);
+    ComResult getPixel(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a);
 
-    ComResult setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
-    ComResult setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a);
+    ComResult setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
+    ComResult setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a);
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a);
 
     ComResult saveBMP(const(char)[] file);

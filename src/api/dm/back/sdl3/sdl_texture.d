@@ -48,7 +48,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         this.id = id;
     }
 
-    ComResult createUnsafe(void* newPtr) nothrow
+    ComResult createRaw(void* newPtr) nothrow
     {
         return create(cast(SDL_Texture*) newPtr);
     }
@@ -72,20 +72,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         //alias SDL_PIXELFORMAT_RGBA32 = SDL_PIXELFORMAT_ABGR8888;
         return create(SDL_PIXELFORMAT_RGBA32,
-            SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, width,
-            height);
-    }
-
-    ComResult createABGR32(int width, int height) nothrow
-    {
-        return create(SDL_PIXELFORMAT_ABGR32,
-            SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, width,
-            height);
-    }
-
-    ComResult createARGB32(int width, int height) nothrow
-    {
-        return create(SDL_PIXELFORMAT_ARGB32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, width,
             height);
     }
@@ -605,7 +591,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult getPixelRGBA(uint x, uint y, out uint* pixel) nothrow
+    ComResult getPixel(uint x, uint y, out uint* pixel) nothrow
     {
         assert(hasPtr);
         assert(locked);
@@ -657,7 +643,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) nothrow
     {
         uint* pixel;
-        if (const err = getPixelRGBA(x, y, pixel))
+        if (const err = getPixel(x, y, pixel))
         {
             return err;
         }

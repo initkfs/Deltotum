@@ -29,7 +29,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         super(ptr);
     }
 
-    ComResult createUnsafe(void* ptr) nothrow
+    ComResult createRaw(void* ptr) nothrow
     {
         return updatePtr(cast(SDL_Surface*) ptr);
     }
@@ -44,12 +44,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return create(width, height, SDL_PIXELFORMAT_RGBA32);
     }
 
-    ComResult createABGR32(int width, int height) nothrow
-    {
-        return create(width, height, SDL_PIXELFORMAT_ABGR32);
-    }
-
-    ComResult createARGB32(int width, int height) nothrow => create(width, height, SDL_PIXELFORMAT_ARGB32);
     ComResult createBGRA32(int width, int height) nothrow => create(width, height, SDL_PIXELFORMAT_BGRA32);
 
     ComResult create(int newWidth, int newHeight, uint format) nothrow
@@ -246,7 +240,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return getErrorRes("Cannot rotate surface");
         }
 
-        return target.createUnsafe(copy);
+        return target.createRaw(copy);
     }
 
     ComResult copyTo(ComSurface dst) nothrow
@@ -427,7 +421,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixelRGBA(int x, int y, out uint* pixel) nothrow
+    ComResult getPixel(int x, int y, out uint* pixel) nothrow
     {
         //TODO cache
         SDL_PixelFormatDetails* details;
@@ -443,17 +437,17 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
+    ComResult setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         uint* pixelPtr;
-        if (auto err = getPixelRGBA(x, y, pixelPtr))
+        if (auto err = getPixel(x, y, pixelPtr))
         {
             return err;
         }
-        return setPixelRGBA(pixelPtr, r, g, b, a);
+        return setPixel(pixelPtr, r, g, b, a);
     }
 
-    ComResult getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
+    ComResult getPixel(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
     {
         SDL_PixelFormatDetails* details;
         if (const err = getFormatDetails(ptr.format, details))
@@ -471,7 +465,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
+    ComResult setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         SDL_PixelFormatDetails* details;
         if (const err = getFormatDetails(ptr.format, details))
@@ -516,7 +510,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         onPixelsRGBA((x, y, pixelPtr) {
 
             ubyte r, g, b, a;
-            if (const err = getPixelRGBA(pixelPtr, r, g, b, a))
+            if (const err = getPixel(pixelPtr, r, g, b, a))
             {
                 result = err;
                 return false;
@@ -535,7 +529,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         onPixelsRGBA((x, y, pixelPtr) {
             ubyte r, g, b, a;
             bool isContinue = onXYRGBAIsContinue(x, y, r, g, b, a);
-            if (auto err = setPixelRGBA(pixelPtr, r, g, b, a))
+            if (auto err = setPixel(pixelPtr, r, g, b, a))
             {
                 result = err;
                 return false;

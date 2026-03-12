@@ -149,12 +149,12 @@ class Texture2d : Sprite2d
                 foreach (x; 0 .. imageWidth)
                 {
                     uint* pixelPtr;
-                    if (const err = image.getPixelRGBA(x, y, pixelPtr))
+                    if (const err = image.getPixel(x, y, pixelPtr))
                     {
                         throw new Exception(err.toString);
                     }
                     ubyte r, g, b, a;
-                    if (const err = image.getPixelRGBA(pixelPtr, r, g, b, a))
+                    if (const err = image.getPixel(pixelPtr, r, g, b, a))
                     {
                         throw new Exception(err.toString);
                     }
@@ -184,12 +184,12 @@ class Texture2d : Sprite2d
                 {
                     //TODO more optimal iteration
                     uint* pixelPtr;
-                    if (const err = image.getPixelRGBA(x, y, pixelPtr))
+                    if (const err = image.getPixel(x, y, pixelPtr))
                     {
                         throw new Exception(err.toString);
                     }
                     ubyte r, g, b, a;
-                    if (const err = image.getPixelRGBA(pixelPtr, r, g, b, a))
+                    if (const err = image.getPixel(pixelPtr, r, g, b, a))
                     {
                         throw new Exception(err.toString);
                     }
@@ -197,7 +197,7 @@ class Texture2d : Sprite2d
                     RGBA newColor = onColor(x, y, oldColor);
                     if (newColor != oldColor)
                     {
-                        if (const err = image.setPixelRGBA(x, y, newColor.r, newColor.g, newColor.b, newColor
+                        if (const err = image.setPixel(x, y, newColor.r, newColor.g, newColor.b, newColor
                                 .aByte))
                         {
                             throw new Exception(err.toString);
@@ -772,7 +772,7 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         uint* ptr;
-        if (const err = texture.getPixelRGBA(x, y, ptr))
+        if (const err = texture.getPixel(x, y, ptr))
         {
             throw new Exception(err.toString);
         }

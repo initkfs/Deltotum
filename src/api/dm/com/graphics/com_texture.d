@@ -35,11 +35,9 @@ interface ComTexture : ComUniqueObjectable, ComPointerable, ComErrorManageable
 {
 nothrow:
 
-    ComResult createUnsafe(void* newPtr);
+    ComResult createRaw(void* newPtr);
 
     ComResult createRGBA32(int width, int height);
-    ComResult createABGR32(int width, int height);
-    ComResult createARGB32(int width, int height);
 
     ComResult createMutRGBA32(int width, int height);
     ComResult createMutBGRA32(int width, int height);
@@ -88,7 +86,7 @@ nothrow:
 
     ComResult getPixelsRGBA(out void* pixels);
 
-    ComResult getPixelRGBA(uint x, uint y, out uint* pixel);
+    ComResult getPixel(uint x, uint y, out uint* pixel);
     ComResult setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte aByte);
     ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte);
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
