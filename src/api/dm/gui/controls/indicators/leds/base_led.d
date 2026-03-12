@@ -48,7 +48,7 @@ class BaseLed : Control
             RGBA[][] buff = surfaceToBuffer(surf);
             RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
 
-            auto err = surf.setPixelsRGBA((x, y, ref r, ref g, ref b, ref a) {
+            auto isSuccess = surf.setPixelsRGBA((x, y, ref r, ref g, ref b, ref a) {
                 auto buffColor = gaussBuff[y][x];
                 r = buffColor.r;
                 g = buffColor.g;
@@ -56,9 +56,9 @@ class BaseLed : Control
                 a = buffColor.aByte;
                 return true;
             });
-            if (err)
+            if (!isSuccess)
             {
-                logger.error(err.toString);
+                logger.error(surf.lastError);
             }
 
             return true;

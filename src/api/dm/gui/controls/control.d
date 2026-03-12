@@ -1273,14 +1273,14 @@ class Control : GuiComponent
 
                     buff = new RGBA[][](buffY, buffX);
 
-                    const isErr = surface.getPixelsRGBA((x, y, r, g, b, a) {
+                    const isSuccess = surface.getPixelsRGBA((x, y, r, g, b, a) {
                         buff[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
                         return true;
                     });
 
-                    if (isErr)
+                    if (!isSuccess)
                     {
-                        logger.error(isErr.toString);
+                        logger.error(surface.lastError);
                     }
                 }
             });

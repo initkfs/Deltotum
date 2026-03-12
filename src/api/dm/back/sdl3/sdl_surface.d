@@ -10,7 +10,6 @@ import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
 import api.math.geom2.rect2 : Rect2f;
-import std.typecons : Tuple;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -350,20 +349,13 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         sdlbool colorKey = isTransparent;
 
         auto format = ptr.format;
-        SDL_PixelFormatDetails* details;
-        SDL_Palette* palette;
-
-        if (const err = getFormatDetails(format, details))
+        SDL_PixelFormatDetails* details = getFormatDetails(format);
+        if (!details)
         {
-            return err;
+            return ComResult.error("Format details is null");
         }
 
-        if (const err = getPalette(palette))
-        {
-            return err;
-        }
-
-        assert(details);
+        SDL_Palette* palette = getPalette;
 
         if (!SDL_SetSurfaceColorKey(ptr, colorKey, SDL_MapRGBA(
                 details, palette, r, g, b, a)))
@@ -373,23 +365,14 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getFormatDetails(SDL_PixelFormat format, out SDL_PixelFormatDetails* details) nothrow
+    SDL_PixelFormatDetails* getFormatDetails(SDL_PixelFormat format) nothrow
     {
-        SDL_PixelFormatDetails* detailsPtr = SDL_GetPixelFormatDetails(format);
-        if (!detailsPtr)
-        {
-            return getErrorRes("Error getting format details");
-        }
-        details = detailsPtr;
-        return ComResult.success;
+        return SDL_GetPixelFormatDetails(format);
     }
 
-    ComResult getPalette(out SDL_Palette* palette) nothrow
+    SDL_Palette* getPalette() nothrow
     {
-        SDL_Palette* palettePtr = SDL_GetSurfacePalette(ptr);
-        palette = palettePtr;
-
-        return ComResult.success;
+        return SDL_GetSurfacePalette(ptr);
     }
 
     ComResult lock() nothrow
@@ -421,66 +404,60 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixel(int x, int y, out uint* pixel) nothrow
+    bool getPixel(int x, int y, out uint* pixel) nothrow
     {
         //TODO cache
-        SDL_PixelFormatDetails* details;
-        if (const err = getFormatDetails(ptr.format, details))
+        SDL_PixelFormatDetails* details = getFormatDetails(ptr.format);
+        if (!details)
         {
-            return err;
+            return false;
         }
         //TODO check bounds
         //SDL_ReadSurfacePixel
         pixel = cast(Uint32*)(
             cast(
                 Uint8*) ptr.pixels + y * ptr.pitch + x * details.bytes_per_pixel);
-        return ComResult.success;
+        return true;
     }
 
-    ComResult setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
+    bool setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         uint* pixelPtr;
-        if (auto err = getPixel(x, y, pixelPtr))
+        if (!getPixel(x, y, pixelPtr))
         {
-            return err;
+            return false;
         }
         return setPixel(pixelPtr, r, g, b, a);
     }
 
-    ComResult getPixel(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
+    bool getPixel(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
     {
-        SDL_PixelFormatDetails* details;
-        if (const err = getFormatDetails(ptr.format, details))
+        SDL_PixelFormatDetails* details = getFormatDetails(ptr.format);
+        if (!details)
         {
-            return err;
+            return false;
         }
-        SDL_Palette* palette;
-        if (const err = getPalette(palette))
-        {
-            return err;
-        }
+
+        SDL_Palette* palette = getPalette;
 
         //SDL_WriteSurfacePixel
         SDL_GetRGBA(*pixel, details, palette, &r, &g, &b, &a);
-        return ComResult.success;
+        return true;
     }
 
-    ComResult setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
+    bool setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
-        SDL_PixelFormatDetails* details;
-        if (const err = getFormatDetails(ptr.format, details))
+        SDL_PixelFormatDetails* details = getFormatDetails(ptr.format);
+        SDL_Palette* palette = getPalette;
+
+        if (!details)
         {
-            return err;
-        }
-        SDL_Palette* palette;
-        if (const err = getPalette(palette))
-        {
-            return err;
+            return false;
         }
 
         Uint32 color = SDL_MapRGBA(details, palette, r, g, b, a);
         *pixel = color;
-        return ComResult.success;
+        return true;
     }
 
     void onPixelsRGBA(scope bool delegate(size_t x, size_t y, uint* pixel) onXYPixelIsContinue) @trusted
@@ -504,15 +481,15 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         }
     }
 
-    ComResult getPixelsRGBA(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue) @trusted
+    bool getPixelsRGBA(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue) @trusted
     {
-        ComResult result = ComResult.success;
+        bool result = true;
         onPixelsRGBA((x, y, pixelPtr) {
 
             ubyte r, g, b, a;
-            if (const err = getPixel(pixelPtr, r, g, b, a))
+            if (!getPixel(pixelPtr, r, g, b, a))
             {
-                result = err;
+                result = false;
                 return false;
             }
 
@@ -522,16 +499,16 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return result;
     }
 
-    ComResult setPixelsRGBA(scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAIsContinue) @trusted
+    bool setPixelsRGBA(scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAIsContinue) @trusted
     {
-        ComResult result = ComResult.success;
+        bool result = true;
 
         onPixelsRGBA((x, y, pixelPtr) {
             ubyte r, g, b, a;
             bool isContinue = onXYRGBAIsContinue(x, y, r, g, b, a);
-            if (auto err = setPixel(pixelPtr, r, g, b, a))
+            if (!setPixel(pixelPtr, r, g, b, a))
             {
-                result = err;
+                result = false;
                 return false;
             }
 

@@ -115,13 +115,13 @@ class WindowMagnifier : BaseMagnifier
         }
 
         //TODO batch
-        const isErr = buffer.getPixelsRGBA((size_t x, size_t y, ubyte r, ubyte g, ubyte b, ubyte a) {
+        const isSuccess = buffer.getPixelsRGBA((size_t x, size_t y, ubyte r, ubyte g, ubyte b, ubyte a) {
             magnifier.changeColor(cast(uint) x, cast(uint) y, r, g, b, a);
             return true;
         });
-        if (isErr)
+        if (!isSuccess)
         {
-            logger.error(isErr.toString);
+            logger.error(buffer.lastError);
         }
     }
 

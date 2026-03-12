@@ -15,11 +15,11 @@ interface ComSurface : ComPointerable, ComErrorManageable
 {
     void onPixelsRGBA(scope bool delegate(size_t x, size_t y, uint* pixel) onXYPixelIsContinue) @trusted;
 
-    ComResult getPixelsRGBA(
+    bool getPixelsRGBA(
         scope bool delegate(size_t x, size_t y, ubyte r, ubyte g, ubyte b, ubyte a) onXYRGBAIsContinue
     ) @trusted;
 
-    ComResult setPixelsRGBA(
+    bool setPixelsRGBA(
         scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAIsContinue
     ) @trusted;
 
@@ -60,11 +60,12 @@ nothrow:
     void* pixels();
     ComResult getPixelsRGBA(out void* pixels);
    
-    ComResult getPixel(int x, int y, out uint* pixel);
-    ComResult getPixel(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a);
+    bool getPixel(int x, int y, out uint* pixel);
+    bool getPixel(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a);
 
-    ComResult setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
-    ComResult setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a);
+    bool setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
+    bool setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a);
+    
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a);
 
     ComResult saveBMP(const(char)[] file);

@@ -218,9 +218,9 @@ class FreeTypeFont : ComFont
                     float outa = a + bgA / (cast(float) ubyte.max) * (1 - a);
                     ubyte outA = cast(ubyte)(outa * ubyte.max);
 
-                    if (const err = targetSurface.setPixel(x, y, outR, outG, outB, outA))
+                    if (!targetSurface.setPixel(x, y, outR, outG, outB, outA))
                     {
-                        return err;
+                        return ComResult.error("Error setting font pixel: " ~ targetSurface.lastError);
                     }
                 }
             }

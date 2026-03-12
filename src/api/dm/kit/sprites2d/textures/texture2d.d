@@ -149,14 +149,14 @@ class Texture2d : Sprite2d
                 foreach (x; 0 .. imageWidth)
                 {
                     uint* pixelPtr;
-                    if (const err = image.getPixel(x, y, pixelPtr))
+                    if (!image.getPixel(x, y, pixelPtr))
                     {
-                        throw new Exception(err.toString);
+                        throw new Exception(image.lastError);
                     }
                     ubyte r, g, b, a;
-                    if (const err = image.getPixel(pixelPtr, r, g, b, a))
+                    if (!image.getPixel(pixelPtr, r, g, b, a))
                     {
-                        throw new Exception(err.toString);
+                        throw new Exception(image.lastError);
                     }
                     originalBuffer[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
                 }
@@ -184,23 +184,23 @@ class Texture2d : Sprite2d
                 {
                     //TODO more optimal iteration
                     uint* pixelPtr;
-                    if (const err = image.getPixel(x, y, pixelPtr))
+                    if (!image.getPixel(x, y, pixelPtr))
                     {
-                        throw new Exception(err.toString);
+                        throw new Exception(image.lastError);
                     }
                     ubyte r, g, b, a;
-                    if (const err = image.getPixel(pixelPtr, r, g, b, a))
+                    if (!image.getPixel(pixelPtr, r, g, b, a))
                     {
-                        throw new Exception(err.toString);
+                        throw new Exception(image.lastError);
                     }
                     RGBA oldColor = {r, g, b, RGBA.fromAByte(a)};
                     RGBA newColor = onColor(x, y, oldColor);
                     if (newColor != oldColor)
                     {
-                        if (const err = image.setPixel(x, y, newColor.r, newColor.g, newColor.b, newColor
+                        if (!image.setPixel(x, y, newColor.r, newColor.g, newColor.b, newColor
                                 .aByte))
                         {
-                            throw new Exception(err.toString);
+                            throw new Exception(image.lastError);
                         }
                     }
 
