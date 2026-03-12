@@ -1051,7 +1051,7 @@ class SdlApp : GuiApp
         ComScreenId screenId;
         if (const err = comScreen.getScreenForWindow(sdlWindow, screenId))
         {
-            uservices.logger.errorf("Error getting display for window: %s", window.title);
+            uservices.logger.error("Error getting display for window: " ~ err.toString);
         }
 
         window.screen = _platform.screen.single(screenId);

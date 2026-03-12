@@ -42,7 +42,7 @@ class GPUGraphic : ApplicationUnit
         assert(window);
         _currentWindow = window;
 
-        import api.dm.com.com_native_ptr : ComNativePtr;
+        import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
         ComNativePtr winNatPtr;
         if (!window.nativePtr(winNatPtr))

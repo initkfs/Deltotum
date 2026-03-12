@@ -2,7 +2,7 @@ module api.dm.com.inputs.com_cursor;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_window: ComWindow;
-import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.com_disposable : ComDisposable;
 import api.dm.com.com_error_manageable: ComErrorManageable;
 
 enum ComPlatformCursorType
@@ -25,7 +25,7 @@ enum ComPlatformCursorType
 /**
  * Authors: initkfs
  */
-interface ComCursor : ComDestroyable, ComErrorManageable
+interface ComCursor : ComDisposable, ComErrorManageable
 {
 nothrow:
 

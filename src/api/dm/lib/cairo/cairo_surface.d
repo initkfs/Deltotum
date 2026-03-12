@@ -43,11 +43,12 @@ class CairoSurface : CairoObjectWrapper!cairo_surface_t
         cairo_surface_flush(ptr);
     }
 
-    override bool disposePtr()
+    protected override bool disposePtr()
     {
-        if (ptr)
+        if (hasPtr)
         {
             cairo_surface_destroy(ptr);
+            setNullPtr;
             return true;
         }
 

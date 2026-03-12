@@ -1,14 +1,14 @@
 module api.dm.com.graphics.com_font;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.com_disposable : ComDisposable;
 import api.dm.com.graphics.com_surface : ComSurface;
 
 /**
  * Authors: initkfs
  */
 
-interface ComFont : ComDestroyable
+interface ComFont : ComDisposable
 {
 
 nothrow:

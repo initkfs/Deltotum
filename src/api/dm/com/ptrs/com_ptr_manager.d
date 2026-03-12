@@ -1,16 +1,16 @@
-module api.dm.com.objects.com_ptr_manager;
+module api.dm.com.ptrs.com_ptr_manager;
 
 /**
  * Authors: initkfs
  */
-mixin template ComPtrManager(T)
+abstract class ComPtrManager(T)
 {
     import api.dm.com.com_result : ComResult;
+    import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
-    protected
+    private
     {
         T* _ptr;
-        bool _disposed;
     }
 
     abstract protected bool disposePtr() nothrow;
@@ -32,7 +32,7 @@ mixin template ComPtrManager(T)
 
     ~this()
     {
-        if (_ptr && !_disposed)
+        if (_ptr)
         {
             import std.stdio : stderr;
 
@@ -55,24 +55,25 @@ mixin template ComPtrManager(T)
     {
         if (!newPtr)
         {
-            return ComResult.error("Error update pointer with dispose, new pointer is null");
+            return ComResult.error(
+                "Error update pointer with dispose, new pointer is null for " ~ T.stringof);
         }
+
         if (_ptr)
         {
             if (!disposePtr)
             {
                 return ComResult.error(
-                    "Error update pointer with dispose, previous pointer is not disposed");
+                    "Error update pointer with dispose, previous pointer is not disposed for " ~ T
+                        .stringof);
             }
         }
 
         _ptr = newPtr;
-        _disposed = false;
-
         return ComResult.success;
     }
 
-    void setNull() nothrow
+    void setNullPtr() nothrow
     {
         _ptr = null;
     }
@@ -87,22 +88,36 @@ mixin template ComPtrManager(T)
 
     void ptr(T* newPtr) nothrow @safe
     {
+        if (_ptr)
+        {
+            throw new Error("Pointer not disposed: " ~ T.stringof);
+        }
+
         _ptr = newPtr;
     }
 
+    ComResult nativePtr(out ComNativePtr nptr) nothrow
+    {
+        if (!_ptr)
+        {
+            return ComResult.error("Pointer is null " ~ T.stringof);
+        }
+
+        nptr = ComNativePtr(_ptr);
+        return ComResult.success;
+    }
+
     bool hasPtr() nothrow pure @safe => _ptr !is null;
-    bool isDisposed() nothrow pure @safe => _disposed;
+    bool isDisposed() nothrow pure @safe => !hasPtr;
 
     bool dispose() nothrow
     {
-        if (_ptr)
+        bool isDispose = disposePtr;
+        if (isDispose && _ptr)
         {
-            _disposed = disposePtr;
-            if (_disposed && _ptr)
-            {
-                _ptr = null;
-            }
+            _ptr = null;
         }
-        return _disposed;
+
+        return isDispose;
     }
 }

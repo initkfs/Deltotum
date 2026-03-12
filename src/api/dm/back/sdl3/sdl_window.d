@@ -3,7 +3,7 @@ module api.dm.back.sdl3.sdl_window;
 import api.dm.com.com_result;
 
 import api.dm.com.graphics.com_window : ComWindowId, ComWindow, ComWindowTheme, ComWindowProgressState;
-import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_screen : ComScreenId;
 import api.dm.com.graphics.com_surface : ComSurface;
@@ -88,38 +88,41 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
                 break;
         }
 
-        assert(!_ptr);
+        assert(!hasPtr);
         assert(!_renderer);
+
+        SDL_Window* newPtr;
 
         if (isCreateRenderer)
         {
             SDL_Renderer* mustBeRenderer;
 
-            if (!SDL_CreateWindowAndRenderer(null, width, height, flags, &_ptr, &mustBeRenderer))
+            if (!SDL_CreateWindowAndRenderer(null, width, height, flags, &newPtr, &mustBeRenderer))
             {
                 return getErrorRes("Error creating SDL window and renderer");
             }
 
-            assert(_ptr);
             assert(mustBeRenderer);
-
             _renderer = mustBeRenderer;
         }
         else
         {
-            _ptr = SDL_CreateWindow(null, width, height, flags);
-            if (!_ptr)
-            {
-                return getErrorRes("Error creating SDL window");
-            }
+            newPtr = SDL_CreateWindow(null, width, height, flags);
         }
+
+        if (!newPtr)
+        {
+            return getErrorRes("Error creating SDL window");
+        }
+
+        ptr = newPtr;
 
         return ComResult.success;
     }
 
     ComResult show() nothrow
     {
-        if (!SDL_ShowWindow(_ptr))
+        if (!SDL_ShowWindow(ptr))
         {
             return getErrorRes("Error showing SDL window");
         }
@@ -727,28 +730,12 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return SDL_SetWindowProgressState(ptr, targetState);
     }
 
-    ComResult nativePtr(out ComNativePtr ptrInfo) nothrow
-    {
-        if (!_ptr && isDisposed)
-        {
-            return ComResult.error("Native window pointer is destroyed or null");
-        }
-
-        ptrInfo = ComNativePtr(ptr);
-        return ComResult.success;
-    }
-
     bool hasRenderer() => _renderer !is null;
 
     SDL_Renderer* renderer()
     {
         assert(_renderer, "Renderer must not be null");
         return _renderer;
-    }
-
-    override void* rawPtr() nothrow
-    {
-        return ptr;
     }
 
     ComResult startTextInput()
@@ -783,9 +770,9 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    override protected bool disposePtr()
+    protected override bool disposePtr()
     {
-        if (ptr)
+        if (hasPtr)
         {
             SDL_DestroyWindow(ptr);
             return true;

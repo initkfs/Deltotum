@@ -1,13 +1,13 @@
 module api.dm.back.sdl3.sdl_surface;
 
-import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.com_result : ComResult;
-import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
-import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
 import api.math.geom2.rect2 : Rect2f;
 import std.typecons : Tuple;
@@ -668,13 +668,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         h = getHeight;
     }
 
-    ComResult nativePtr(out ComNativePtr nptr) nothrow
-    {
-        assert(ptr);
-        nptr = ComNativePtr(ptr);
-        return ComResult.success;
-    }
-
     ComResult saveBMP(const(char)[] file) nothrow
     {
         assert(ptr);
@@ -702,17 +695,11 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     string getLastErrorNew() => getError;
 
-    SDL_Surface* nativePtrUnsafe()
+    protected override bool disposePtr() nothrow
     {
-        return ptr;
-    }
-
-    override protected bool disposePtr() nothrow
-    {
-        if (ptr)
+        if (hasPtr)
         {
             SDL_DestroySurface(ptr);
-            ptr = null;
             return true;
         }
         return false;

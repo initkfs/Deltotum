@@ -1,4 +1,4 @@
-module api.dm.com.com_native_ptr;
+module api.dm.com.ptrs.com_native_ptr;
 
 /**
  * Authors: initkfs

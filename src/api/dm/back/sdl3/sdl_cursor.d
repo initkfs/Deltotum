@@ -101,7 +101,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
 
     ComResult getWindowHasFocus(ComWindow buffer) nothrow
     {
-        import api.dm.com.com_native_ptr : ComNativePtr;
+        import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
         SDL_Window* window = SDL_GetMouseFocus();
         if (!window)

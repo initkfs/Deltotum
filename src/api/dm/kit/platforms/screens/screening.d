@@ -49,7 +49,7 @@ class Screening
         {
             import std.format : format;
 
-            throw new Exception(format("Error getting screen bounds with id: ", id, comScreen
+            throw new Exception(format("Error getting screen bounds with id %s: %s", id, comScreen
                     .getLastErrorNew));
         }
         return Rect2f(x, y, width, height);

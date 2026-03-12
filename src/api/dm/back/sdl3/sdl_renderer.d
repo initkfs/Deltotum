@@ -2,7 +2,7 @@ module api.dm.back.sdl3.sdl_renderer;
 
 import api.dm.com.com_result;
 
-import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_renderer : ComRenderer, ComRendererLogicalScaling;
 import api.dm.com.graphics.com_texture : ComTexture, ComTextureWrapMode;
 import api.dm.com.com_result : ComResult;
@@ -579,13 +579,14 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return true;
     }
 
-    override protected bool disposePtr()
+    protected override bool disposePtr()
     {
         disposeState;
 
-        if (ptr)
+        if (hasPtr)
         {
             SDL_DestroyRenderer(ptr);
+            setNullPtr;
             return true;
         }
         return false;

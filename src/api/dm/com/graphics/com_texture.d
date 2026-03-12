@@ -1,10 +1,11 @@
 module api.dm.com.graphics.com_texture;
 
+import api.dm.com.ptrs.com_pointerable: ComPointerable;
 import api.dm.com.objects.com_objectable : ComObjectable;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
-import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
+import api.dm.com.com_disposable : ComDisposable;
 import api.dm.com.com_error_manageable : ComErrorManageable;
 
 import api.math.geom2.rect2 : Rect2f;
@@ -30,7 +31,7 @@ enum ComTextureWrapMode
 /**
  * Authors: initkfs
  */
-interface ComTexture : ComObjectable, ComDestroyable, ComErrorManageable
+interface ComTexture : ComObjectable, ComPointerable, ComErrorManageable
 {
 nothrow:
 
@@ -103,8 +104,4 @@ nothrow:
             .none);
     ComResult copyFrom(ComTexture other, Rect2f srcRect, Rect2f dstRect, float angle = 0, Flip flip = Flip
             .none);
-
-    ComResult nativePtr(out ComNativePtr ptr);
-    ComResult nativePtr(out void* tptr);
-    bool hasPtr();
 }

@@ -1,10 +1,10 @@
 module api.dm.com.graphics.com_surface;
 
+import api.dm.com.ptrs.com_pointerable: ComPointerable;
 import api.dm.com.com_result : ComResult;
-import api.dm.com.com_destroyable : ComDestroyable;
 import api.dm.com.com_error_manageable: ComErrorManageable;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
-import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
 import api.math.geom2.rect2 : Rect2f;
 
@@ -13,7 +13,7 @@ import std.typecons : Tuple;
 /**
  * Authors: initkfs
  */
-interface ComSurface : ComDestroyable
+interface ComSurface : ComPointerable
 {
     ComResult getPixels(
         scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue
@@ -75,7 +75,4 @@ nothrow:
 
     ComResult saveBMP(const(char)[] file);
     ComResult loadBMP(const(char)[] file);
-
-    ComResult nativePtr(out ComNativePtr ptr);
-    void* nativePtrUnsafe();
 }

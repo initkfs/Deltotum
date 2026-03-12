@@ -2,7 +2,7 @@ module api.dm.com.graphics.com_screen;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_window : ComWindow;
-import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.com_disposable : ComDisposable;
 import api.dm.com.com_error_manageable : ComErrorManageable;
 
 alias ComScreenId = int;
@@ -35,7 +35,7 @@ struct ComScreenDpi
 /**
  * Authors: initkfs
  */
-interface ComScreen : ComDestroyable, ComErrorManageable
+interface ComScreen : ComDisposable, ComErrorManageable
 {
 
 nothrow:

@@ -362,14 +362,14 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     {
         assert(ptr);
         SDL_ReleaseGPUGraphicsPipeline(ptr, pipe.ptr);
-        pipe.setNull;
+        pipe.setNullPtr;
     }
 
     void deleteShader(SdlGPUShader shader)
     {
         assert(ptr);
         shader.disposeWithGpu(ptr);
-        shader.setNull;
+        shader.setNullPtr;
     }
 
     SDL_GPUBuffer* newGPUBufferVertex(size_t size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_VERTEX, size);
@@ -540,7 +540,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     override protected bool disposePtr() nothrow
     {
-        if (ptr)
+        if (hasPtr)
         {
             SDL_DestroyGPUDevice(ptr);
             return true;
@@ -566,7 +566,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(window);
         assert(ptr);
 
-        import api.dm.com.com_native_ptr : ComNativePtr;
+        import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
         ComNativePtr natWinPtr;
         if (const err = window.nativePtr(natWinPtr))
@@ -597,7 +597,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(window);
         assert(ptr);
 
-        import api.dm.com.com_native_ptr : ComNativePtr;
+        import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
         ComNativePtr natWinPtr;
         if (const err = window.nativePtr(natWinPtr))
@@ -627,7 +627,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     SDL_GPUTextureFormat getSwapchainTextureFormat(ComWindow comWindow)
     {
-        import api.dm.com.com_native_ptr : ComNativePtr;
+        import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
         ComNativePtr winNat;
         if (const err = comWindow.nativePtr(winNat))

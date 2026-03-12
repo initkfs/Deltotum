@@ -1,9 +1,10 @@
 module api.dm.com.graphics.com_window;
 
+import api.dm.com.ptrs.com_pointerable: ComPointerable;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
+import api.dm.com.com_disposable : ComDisposable;
 import api.dm.com.graphics.com_screen : ComScreenId;
 
 import api.math.geom2.rect2 : Rect2f;
@@ -29,7 +30,7 @@ enum ComWindowProgressState
 /**
  * Authors: initkfs
  */
-interface ComWindow : ComDestroyable
+interface ComWindow : ComPointerable
 {
 nothrow:
 
@@ -99,9 +100,6 @@ nothrow:
     ComResult getIsTextInputActive(out bool isActive);
 
     ComResult getSystemTheme(out ComWindowTheme theme);
-
-    ComResult nativePtr(out ComNativePtr ptr);
-    void* rawPtr();
 
     ComResult startTextInput();
     ComResult endTextInput();

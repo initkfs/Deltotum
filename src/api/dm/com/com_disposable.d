@@ -1,9 +1,9 @@
-module api.dm.com.com_destroyable;
+module api.dm.com.com_disposable;
 
 /**
  * Authors: initkfs
  */
-interface ComDestroyable
+interface ComDisposable
 {
 nothrow:
 

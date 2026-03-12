@@ -35,7 +35,7 @@ class SDLScreen : SdlObject, ComScreen
 
     ComResult getScreenForWindow(ComWindow window, out ComScreenId id) nothrow
     {
-        import api.dm.com.com_native_ptr : ComNativePtr;
+        import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
         ComNativePtr winPtr;
         if (const err = window.nativePtr(winPtr))

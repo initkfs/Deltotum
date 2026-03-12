@@ -5,7 +5,7 @@ import api.dm.kit.scenes.scene3d : Scene3d;
 import api.dm.com.graphics.com_screen : ComScreenId;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphic_component : GraphicComponent;
-import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_window : ComWindowId, ComWindow, ComWindowProgressState;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.geom2.vec2 : Vec2f, Vec2i;

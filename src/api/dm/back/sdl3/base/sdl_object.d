@@ -1,22 +1,24 @@
 module api.dm.back.sdl3.base.sdl_object;
 
-import api.math.geom2.rect2;
-
 import api.dm.com.objects.com_object : ComObject;
-import api.dm.com.com_result : ComResult;
-import api.dm.com.graphics.com_blend_mode : ComBlendMode;
-
-import api.math.geom2.rect2 : Rect2f;
-
-import std.string : toStringz, fromStringz;
-
-import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
  */
+
 class SdlObject : ComObject
 {
+    mixin SdlObjectMixin;
+}
+
+mixin template SdlObjectMixin()
+{
+    import api.dm.com.com_result : ComResult;
+    import api.dm.com.graphics.com_blend_mode : ComBlendMode;
+    import api.math.geom2.rect2 : Rect2f;
+    import std.string : toStringz, fromStringz;
+    import api.dm.back.sdl3.externs.csdl3;
+
     ComResult getErrorRes(int code = -1) const nothrow
     {
         return ComResult.error(code, null, getError);

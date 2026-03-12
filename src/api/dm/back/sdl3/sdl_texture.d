@@ -2,7 +2,7 @@ module api.dm.back.sdl3.sdl_texture;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_texture : ComTexture, ComTextureWrapMode, ComTextureScaleMode;
-import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
 import api.dm.com.graphics.com_surface : ComSurface;
@@ -29,6 +29,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         bool locked;
         int pitch;
         uint* pixelPtr;
+        string id;
 
         SDL_Texture* lastRendererTarget;
     }
@@ -45,6 +46,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         super(ptr);
         this.renderer = renderer;
         setId(id);
+    }
+
+    bool setId(string newId) pure @safe
+    {
+        this.id = newId;
+        return true;
     }
 
     ComResult createUnsafe(void* newPtr) nothrow
@@ -893,20 +900,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
     }
 
-    override bool hasPtr() nothrow => _ptr !is null;
-
-    ComResult nativePtr(out ComNativePtr nptr) nothrow
-    {
-        nptr = ComNativePtr(ptr);
-        return ComResult.success;
-    }
-
-    ComResult nativePtr(out void* tptr)
-    {
-        tptr = cast(void*) ptr;
-        return ComResult.success;
-    }
-
     ComResult isLocked(out bool value) nothrow
     {
         value = locked;
@@ -915,11 +908,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     string getLastErrorNew() => getError;
 
-    override protected bool disposePtr() nothrow
+    protected override bool disposePtr() nothrow
     {
-        if (ptr)
+        if (hasPtr)
         {
             SDL_DestroyTexture(ptr);
+            setNullPtr;
             return true;
         }
         return false;
