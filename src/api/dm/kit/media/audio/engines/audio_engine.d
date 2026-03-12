@@ -3,7 +3,7 @@ module api.dm.kit.media.audio.engines.audio_engine;
 import api.dm.kit.media.audio.sounds.audio_mixer : AudioMixer;
 import api.dm.kit.media.audio.streams.audio_stream : AudioStream;
 import api.dm.kit.media.audio.mixers.mix_sound : MixSound, SoundHandle;
-import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.dm.kit.media.audio.streams.audio_spec : AudioSpec;
 import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 

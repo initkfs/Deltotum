@@ -1,4 +1,4 @@
-module api.core.utils.queues.ring_buffer_lf;
+module api.core.utils.queues.ring_buffer_spsc;
 
 import api.core.utils.container_result : ContainerResult;
 import api.core.utils.buffers.dense_buffer : DenseBuffer;
@@ -11,7 +11,7 @@ import Math = api.math;
  * Authors: initkfs
  * Simple Single Producer, Single Consumer (SPSC) buffer
  */
-struct RingBufferLF(BufferType, size_t RequestBufferSize, bool isStaticArray = false, bool isLockFree = true, size_t CacheLine = 64)
+struct RingBuffer(BufferType, size_t RequestBufferSize, bool isStaticArray = false, bool isLockFree = true, size_t CacheLine = 64)
 {
     private
     {
@@ -214,15 +214,15 @@ unittest
 
     import Math = api.math;
 
-    alias Buffer4 = RingBufferLF!(ubyte, 3, false);
-    alias Buffer8 = RingBufferLF!(ubyte, 5, false);
-    alias Buffer16 = RingBufferLF!(ubyte, 9, false);
+    alias Buffer4 = RingBuffer!(ubyte, 3, false);
+    alias Buffer8 = RingBuffer!(ubyte, 5, false);
+    alias Buffer16 = RingBuffer!(ubyte, 9, false);
 
     assert(Buffer4.BufferSize == 4);
     assert(Buffer8.BufferSize == 8);
     assert(Buffer16.BufferSize == 16);
 
-    alias TestBuffer = RingBufferLF!(ubyte, 8, false);
+    alias TestBuffer = RingBuffer!(ubyte, 8, false);
 
     {
         TestBuffer buffer;
@@ -234,7 +234,7 @@ unittest
     }
 
     {
-        RingBufferLF!(ubyte, 4) buffer;
+        RingBuffer!(ubyte, 4) buffer;
         buffer.initialize;
 
         ubyte[4] dataToWrite = [1, 2, 3, 4];

@@ -1,7 +1,7 @@
 module api.dm.kit.media.engines.audio_decoder;
 
 import api.dm.kit.media.audio.streams.audio_spec : AudioSpec, AudioFormat;
-import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.dm.kit.media.engines.base_media_worker : BaseMediaWorker;
 import api.core.utils.container_result : ContainerResult;
 import api.dm.kit.media.audio.engines.audio_engine: AudioEngine;
@@ -29,8 +29,8 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
     {
         AudioDecoderContext context;
 
-        RingBufferLF!(AVPacket*, PacketBufferSize)* packetQueue;
-        RingBufferLF!(float, AudioBufferSize)* buffer;
+        RingBuffer!(AVPacket*, PacketBufferSize)* packetQueue;
+        RingBuffer!(float, AudioBufferSize)* buffer;
     }
 
     AudioSpec srcSpec;

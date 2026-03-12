@@ -6,7 +6,7 @@ import api.dm.kit.media.audio.engines.audio_engine : AudioEngine;
 
 import core.sync.mutex : Mutex;
 import core.sync.condition : Condition;
-import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.core.utils.container_result : ContainerResult;
 import api.core.utils.sync : MutexLock;
 
@@ -34,11 +34,11 @@ class MediaEngine(
     size_t AudioBufferSize) : Sprite2d
 {
 
-    RingBufferLF!(AVPacket*, VideoQueueSize) videoPacketQueue;
-    RingBufferLF!(AVPacket*, AudioQueueSize) audioPacketQueue;
+    RingBuffer!(AVPacket*, VideoQueueSize) videoPacketQueue;
+    RingBuffer!(AVPacket*, AudioQueueSize) audioPacketQueue;
 
-    RingBufferLF!(UVFrame, VideoBufferSize) videoBuffer;
-    RingBufferLF!(float, AudioBufferSize) audioBuffer;
+    RingBuffer!(UVFrame, VideoBufferSize) videoBuffer;
+    RingBuffer!(float, AudioBufferSize) audioBuffer;
 
     AudioEngine audioEngine;
 

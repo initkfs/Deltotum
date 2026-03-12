@@ -1,6 +1,6 @@
 module api.dm.kit.media.audio.streams.audio_stream;
 
-import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.dm.kit.media.audio.streams.audio_spec : AudioFormat, AudioSpec;
 
 import api.dm.lib.portaudio.native;
@@ -38,7 +38,7 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
 {
     AudioSpec spec;
     //TODO shared
-    __gshared RingBufferLF!(float, Size, false, true) buffer;
+    __gshared RingBuffer!(float, Size, false, true) buffer;
 
     shared double callbackTimeDACSec;
     shared size_t callbackFramesCount;

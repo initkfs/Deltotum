@@ -1,6 +1,6 @@
 module api.dm.kit.media.dsp.dsp_processor;
 
-import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
 import api.dm.kit.media.dsp.analog_signals : AnalogSignal;

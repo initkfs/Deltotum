@@ -1,6 +1,6 @@
 module api.dm.kit.media.engines.media_demuxer;
 
-import api.core.utils.queues.ring_buffer_lf : RingBufferLF;
+import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.core.utils.container_result : ContainerResult;
 import api.dm.kit.media.engines.base_media_worker : BaseMediaWorker;
 import api.dm.kit.media.engines.video_decoder : UVFrame;
@@ -38,11 +38,11 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
     {
         DemuxerContext context;
 
-        RingBufferLF!(AVPacket*, VideoQueueSize)* videoPacketQueue;
-        RingBufferLF!(AVPacket*, AudioQueueSize)* audioPacketQueue;
+        RingBuffer!(AVPacket*, VideoQueueSize)* videoPacketQueue;
+        RingBuffer!(AVPacket*, AudioQueueSize)* audioPacketQueue;
 
-        RingBufferLF!(UVFrame, VideoBufferSize)* videoBuffer;
-        RingBufferLF!(float, AudioBufferSize)* audioBuffer;
+        RingBuffer!(UVFrame, VideoBufferSize)* videoBuffer;
+        RingBuffer!(float, AudioBufferSize)* audioBuffer;
     }
 
     this(Logger logger,
