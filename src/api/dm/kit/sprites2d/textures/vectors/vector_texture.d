@@ -130,11 +130,11 @@ class VectorTexture : Texture2d
         }
 
         void* pixels;
-        if (const err = comSurface.getPixels(pixels))
+        if (const err = comSurface.getPixelsRGBA(pixels))
         {
             throw new Exception(err.toString);
         }
-        int pitch = comSurface.getPixelRowLenBytes;
+        int pitch = comSurface.getPitch;
 
         cairoSurface = new CairoSurface(cast(ubyte*) pixels, cairo_format_t
                 .CAIRO_FORMAT_ARGB32, cast(int) width, cast(int) height, pitch);
@@ -274,24 +274,24 @@ class VectorTexture : Texture2d
         }
 
         void* texturePixels;
-        if (const err = texture.getPixels(texturePixels))
+        if (const err = texture.getPixelsRGBA(texturePixels))
         {
             throw new Exception(err.toString);
         }
 
         int pitch;
-        if (const err = texture.getPixelRowLenBytes(pitch))
+        if (const err = texture.getPitch(pitch))
         {
             throw new Exception(err.toString);
         }
 
         void* surfPixels;
-        if (const err = comSurface.getPixels(surfPixels))
+        if (const err = comSurface.getPixelsRGBA(surfPixels))
         {
             throw new Exception(err.toString);
         }
 
-        int surfacePitch = comSurface.getPixelRowLenBytes;
+        int surfacePitch = comSurface.getPitch;
 
         if (pitch != surfacePitch)
         {

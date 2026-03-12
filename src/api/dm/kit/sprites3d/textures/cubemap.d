@@ -72,7 +72,7 @@ class CubeMap : Texture3d
         //     assert(h > 0);
 
         //     void* rawImagePtr;
-        //     if (const err = imageLoader.getPixels(rawImagePtr))
+        //     if (const err = imageLoader.getPixelsRGBA(rawImagePtr))
         //     {
         //         throw new Exception(err.toString);
         //     }

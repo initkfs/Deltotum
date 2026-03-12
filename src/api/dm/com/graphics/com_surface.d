@@ -1,26 +1,26 @@
 module api.dm.com.graphics.com_surface;
 
-import api.dm.com.ptrs.com_pointerable: ComPointerable;
+import api.dm.com.ptrs.com_pointerable : ComPointerable;
 import api.dm.com.com_result : ComResult;
-import api.dm.com.com_error_manageable: ComErrorManageable;
+import api.dm.com.com_error_manageable : ComErrorManageable;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
 import api.math.geom2.rect2 : Rect2f;
-
-import std.typecons : Tuple;
 
 /**
  * Authors: initkfs
  */
 interface ComSurface : ComPointerable, ComErrorManageable
 {
-    ComResult getPixels(
-        scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue
+    void onPixelsRGBA(scope bool delegate(size_t x, size_t y, uint* pixel) onXYPixelIsContinue) @trusted;
+
+    ComResult getPixelsRGBA(
+        scope bool delegate(size_t x, size_t y, ubyte r, ubyte g, ubyte b, ubyte a) onXYRGBAIsContinue
     ) @trusted;
 
-    ComResult setPixels(
-        scope bool delegate(size_t, size_t, out Tuple!(ubyte, ubyte, ubyte, ubyte)) onXYRGBAIsContinue
+    ComResult setPixelsRGBA(
+        scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAIsContinue
     ) @trusted;
 
 nothrow:
@@ -39,8 +39,7 @@ nothrow:
     void getSize(out int w, out int h);
 
     //pitch = image-width × bytes-per-pixel + padding-between-rows
-    alias getPitch = getPixelRowLenBytes;
-    int getPixelRowLenBytes();
+    int getPitch();
 
     ComResult resize(int newWidth, int newHeight, out bool isResized);
     ComResult rotateTo(float angleDeg, ComSurface target);
@@ -61,17 +60,14 @@ nothrow:
     ComResult getBlendMode(out ComBlendMode mode);
 
     void* pixels();
-
-    ComResult getPixel(int x, int y, out uint* pixel);
-    ComResult getPixels(out void* pixels);
-    ComResult getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
-    ComResult getPixels(out Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
+    ComResult getPixelsRGBA(out void* pixels);
+   
+    ComResult getPixelRGBA(int x, int y, out uint* pixel);
     ComResult getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a);
 
     ComResult setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
     ComResult setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a);
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a);
-    ComResult setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
 
     ComResult saveBMP(const(char)[] file);
     ComResult loadBMP(const(char)[] file);

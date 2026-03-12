@@ -55,7 +55,7 @@ class Texture3d : Sprite3d
         // int h = image.getHeight;
 
         // void* rawImagePtr;
-        // if (const err = image.getPixels(rawImagePtr))
+        // if (const err = image.getPixelsRGBA(rawImagePtr))
         // {
         //     throw new Exception(err.toString);
         // }

@@ -149,7 +149,7 @@ class Texture2d : Sprite2d
                 foreach (x; 0 .. imageWidth)
                 {
                     uint* pixelPtr;
-                    if (const err = image.getPixel(x, y, pixelPtr))
+                    if (const err = image.getPixelRGBA(x, y, pixelPtr))
                     {
                         throw new Exception(err.toString);
                     }
@@ -184,7 +184,7 @@ class Texture2d : Sprite2d
                 {
                     //TODO more optimal iteration
                     uint* pixelPtr;
-                    if (const err = image.getPixel(x, y, pixelPtr))
+                    if (const err = image.getPixelRGBA(x, y, pixelPtr))
                     {
                         throw new Exception(err.toString);
                     }
@@ -747,7 +747,7 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         int pitch;
-        if (const err = texture.getPixelRowLenBytes(pitch))
+        if (const err = texture.getPitch(pitch))
         {
             throw new Exception(err.toString);
         }
@@ -759,7 +759,7 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         void* ptr;
-        if (const err = texture.getPixels(ptr))
+        if (const err = texture.getPixelsRGBA(ptr))
         {
             throw new Exception(err.toString);
         }
@@ -772,7 +772,7 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         uint* ptr;
-        if (const err = texture.getPixel(x, y, ptr))
+        if (const err = texture.getPixelRGBA(x, y, ptr))
         {
             throw new Exception(err.toString);
         }

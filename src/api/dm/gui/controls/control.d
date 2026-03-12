@@ -1273,7 +1273,7 @@ class Control : GuiComponent
 
                     buff = new RGBA[][](buffY, buffX);
 
-                    const isErr = surface.getPixels((x, y, r, g, b, a) {
+                    const isErr = surface.getPixelsRGBA((x, y, r, g, b, a) {
                         buff[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
                         return true;
                     });

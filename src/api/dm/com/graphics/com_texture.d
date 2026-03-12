@@ -54,7 +54,7 @@ nothrow:
     ComResult isCreating(out bool created);
 
     ComResult getFormat(out uint format);
-    ComResult getPixelRowLenBytes(out int pitch);
+    ComResult getPitch(out int pitch);
 
     ComResult setRenderTarget();
     ComResult restoreRenderTarget();
@@ -86,9 +86,9 @@ nothrow:
     ComResult update(Rect2f rect, void* pixels, int pitch);
     bool updateUV(ubyte* yplane, int ypitch, ubyte* uplane, int upitch, ubyte* vplane, int vpitch);
 
-    ComResult getPixels(out void* pixels);
+    ComResult getPixelsRGBA(out void* pixels);
 
-    ComResult getPixel(uint x, uint y, out uint* pixel);
+    ComResult getPixelRGBA(uint x, uint y, out uint* pixel);
     ComResult setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte aByte);
     ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte);
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);

@@ -48,12 +48,12 @@ class BaseLed : Control
             RGBA[][] buff = surfaceToBuffer(surf);
             RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
 
-            auto err = surf.setPixels((x, y, color) {
+            auto err = surf.setPixelsRGBA((x, y, ref r, ref g, ref b, ref a) {
                 auto buffColor = gaussBuff[y][x];
-                color[0] = buffColor.r;
-                color[1] = buffColor.g;
-                color[2] = buffColor.b;
-                color[3] = buffColor.aByte;
+                r = buffColor.r;
+                g = buffColor.g;
+                b = buffColor.b;
+                a = buffColor.aByte;
                 return true;
             });
             if (err)

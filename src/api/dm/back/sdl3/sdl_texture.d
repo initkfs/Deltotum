@@ -213,7 +213,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult getPixelRowLenBytes(out int pitch) nothrow
+    ComResult getPitch(out int pitch) nothrow
     {
         if (!locked)
         {
@@ -593,7 +593,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             vplane, vpitch);
     }
 
-    ComResult getPixels(out void* pixels)
+    ComResult getPixelsRGBA(out void* pixels)
     {
         assert(hasPtr);
 
@@ -605,7 +605,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult getPixel(uint x, uint y, out uint* pixel) nothrow
+    ComResult getPixelRGBA(uint x, uint y, out uint* pixel) nothrow
     {
         assert(hasPtr);
         assert(locked);
@@ -657,7 +657,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) nothrow
     {
         uint* pixel;
-        if (const err = getPixel(x, y, pixel))
+        if (const err = getPixelRGBA(x, y, pixel))
         {
             return err;
         }

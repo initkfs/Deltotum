@@ -417,7 +417,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     void* pixels() => ptr.pixels;
 
-    ComResult getPixels(out void* pixPtr) nothrow
+    ComResult getPixelsRGBA(out void* pixPtr) nothrow
     {
         pixPtr = ptr.pixels;
         if (!pixPtr)
@@ -427,7 +427,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixel(int x, int y, out uint* pixel) nothrow
+    ComResult getPixelRGBA(int x, int y, out uint* pixel) nothrow
     {
         //TODO cache
         SDL_PixelFormatDetails* details;
@@ -446,7 +446,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     ComResult setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         uint* pixelPtr;
-        if (auto err = getPixel(x, y, pixelPtr))
+        if (auto err = getPixelRGBA(x, y, pixelPtr))
         {
             return err;
         }
@@ -489,105 +489,62 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixels(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue) @trusted
+    void onPixelsRGBA(scope bool delegate(size_t x, size_t y, uint* pixel) onXYPixelIsContinue) @trusted
     {
         int h = getHeight;
         int w = getWidth;
+        ubyte* pixelsPtr = cast(ubyte*) pixels;
+        auto pixelsPitch = pitch;
 
         foreach (y; 0 .. h)
         {
+            uint* rowPtr = cast(uint*)(pixelsPtr + y * pixelsPitch);
             foreach (x; 0 .. w)
             {
-                uint* pixelPtr;
-                if (const err = getPixel(x, y, pixelPtr))
+                uint* pixelPtr = &rowPtr[x];
+                if (!onXYPixelIsContinue(x, y, pixelPtr))
                 {
-                    return err;
-                }
-                ubyte r, g, b, a;
-                if (const err = getPixelRGBA(pixelPtr, r, g, b, a))
-                {
-                    return err;
-                }
-                if (!onXYRGBAIsContinue(x, y, r, g, b, a))
-                {
-                    return ComResult.success;
+                    return;
                 }
             }
         }
-        return ComResult.success;
     }
 
-    ComResult getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) nothrow
+    ComResult getPixelsRGBA(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue) @trusted
     {
-        try
-        {
-            return getPixels((x, y, r, g, b, a) {
-                Tuple!(ubyte, ubyte, ubyte, ubyte) color;
-                color[0] = r;
-                color[1] = g;
-                color[2] = b;
-                color[3] = a;
-                buff[y][x] = color;
-                return true;
-            });
-        }
-        catch (Exception ex)
-        {
-            //TODO toString not nothrow
-            return ComResult.error(ex.msg);
-        }
-    }
+        ComResult result = ComResult.success;
+        onPixelsRGBA((x, y, pixelPtr) {
 
-    ComResult getPixels(out Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) nothrow
-    {
-        int w = getWidth;
-        int h = getHeight;
-
-        auto newBuff = new Tuple!(ubyte, ubyte, ubyte, ubyte)[][](h, w);
-        if (auto err = getPixels(newBuff))
-        {
-            return err;
-        }
-        buff = newBuff;
-        return ComResult.success;
-    }
-
-    ComResult setPixels(scope bool delegate(size_t, size_t, out Tuple!(ubyte, ubyte, ubyte, ubyte)) onXYRGBAIsContinue) @trusted
-    {
-        int w = getWidth;
-        int h = getHeight;
-
-        foreach (y; 0 .. h)
-        {
-            foreach (x; 0 .. w)
+            ubyte r, g, b, a;
+            if (const err = getPixelRGBA(pixelPtr, r, g, b, a))
             {
-                Tuple!(ubyte, ubyte, ubyte, ubyte) color;
-                bool isContinue = onXYRGBAIsContinue(x, y, color);
-                if (auto err = setPixelRGBA(x, y, color[0], color[1], color[2], color[3]))
-                {
-                    return err;
-                }
-                if (!isContinue)
-                {
-                    return ComResult.success;
-                }
+                result = err;
+                return false;
             }
-        }
 
-        return ComResult.success;
+            return onXYRGBAIsContinue(x, y, r, g, b, a);
+        });
+
+        return result;
     }
 
-    ComResult setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) nothrow
+    ComResult setPixelsRGBA(scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAIsContinue) @trusted
     {
-        try
-        {
-            return setPixels((x, y, color) { color = buff[y][x]; return true; });
-        }
-        catch (Exception e)
-        {
-            //TODO toString not nothrow
-            return ComResult.error(e.msg);
-        }
+        ComResult result = ComResult.success;
+
+        onPixelsRGBA((x, y, pixelPtr) {
+            ubyte r, g, b, a;
+            bool isContinue = onXYRGBAIsContinue(x, y, r, g, b, a);
+            if (auto err = setPixelRGBA(pixelPtr, r, g, b, a))
+            {
+                result = err;
+                return false;
+            }
+
+            return isContinue;
+        });
+
+        return result;
     }
 
     ComResult fill(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
@@ -600,9 +557,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    alias pitch = getPixelRowLenBytes;
+    alias pitch = getPitch;
 
-    int getPixelRowLenBytes() nothrow => ptr.pitch;
+    int getPitch() nothrow => ptr.pitch;
 
     uint getFormat() nothrow
     {

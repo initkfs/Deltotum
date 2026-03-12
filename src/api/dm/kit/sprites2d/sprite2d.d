@@ -3091,7 +3091,7 @@ class Sprite2d : EventKitTarget
 
         assert(buff.all!(b => b.length >= surfWidth));
 
-        auto pixErr = surf.getPixels((x, y, r, g, b, a) {
+        auto pixErr = surf.getPixelsRGBA((x, y, r, g, b, a) {
             buff[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
             return true;
         });
