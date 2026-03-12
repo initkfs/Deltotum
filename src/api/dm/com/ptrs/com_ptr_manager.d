@@ -96,16 +96,7 @@ abstract class ComPtrManager(T)
         _ptr = newPtr;
     }
 
-    ComResult nativePtr(out ComNativePtr nptr) nothrow
-    {
-        if (!_ptr)
-        {
-            return ComResult.error("Pointer is null " ~ T.stringof);
-        }
-
-        nptr = ComNativePtr(_ptr);
-        return ComResult.success;
-    }
+    ComNativePtr nativePtr() nothrow => ComNativePtr(_ptr);
 
     bool hasPtr() nothrow pure @safe => _ptr !is null;
     bool isDisposed() nothrow pure @safe => !hasPtr;

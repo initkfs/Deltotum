@@ -10,7 +10,7 @@ import api.dm.com.com_result : ComResult;
 interface ComPointerable : ComDisposable
 {
     void* rawPtr() nothrow;
-    ComResult nativePtr(out ComNativePtr ptr) nothrow;
+    ComNativePtr nativePtr() nothrow;
 
     bool hasPtr() nothrow pure @safe;
 }

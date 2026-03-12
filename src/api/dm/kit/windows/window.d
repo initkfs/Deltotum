@@ -984,15 +984,6 @@ class Window : GraphicComponent
         return density;
     }
 
-    bool nativePtr(out ComNativePtr ptr)
-    {
-        if (const err = comWindow.nativePtr(ptr))
-        {
-            logger.error("Native window pointer is invalid");
-            return false;
-        }
-        return true;
-    }
-
+    ComNativePtr nativePtr() => comWindow.nativePtr;
     void* rawPtr() => comWindow.rawPtr;
 }

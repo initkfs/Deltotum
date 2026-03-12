@@ -13,27 +13,42 @@ struct ComNativePtr
 
     this(T)(T* newPtr) pure nothrow
     {
-        assert(newPtr, "Pointer must not be null");
-        _ptr = cast(void*) newPtr;
-        _type = typeid(newPtr);
+        if (newPtr)
+        {
+            _ptr = cast(void*) newPtr;
+            _type = typeid(newPtr);
+        }
     }
 
     T castSafe(T)() inout nothrow
     {
-        assert(_ptr);
-        assert(_type);
+        if (!_ptr)
+        {
+            throw new Error("Pointer is null");
+        }
 
-        import std.conv : text;
+        if (!_type)
+        {
+            throw new Error("Pointer type is null");
+        }
 
         auto otherType = typeid(T);
 
+        bool isForType;
         try
         {
-            assert(_type == otherType, text("Expected cast type is ", otherType, ", but pointer type is ", _type));
+            isForType = _type == otherType;
         }
         catch (Exception e)
         {
-            throw new Error("Exception in a safe cast attempt", e);
+            throw new Error(e.toString);
+        }
+
+        if (!isForType)
+        {
+            import std.conv : text;
+
+            throw new Error(text("Expected cast type is ", otherType, ", but pointer type is ", _type));
         }
 
         return cast(T) _ptr;

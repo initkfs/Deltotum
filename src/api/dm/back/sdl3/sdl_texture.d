@@ -142,12 +142,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         assert(surface, "Surface for new SDL texture must not be null");
 
-        ComNativePtr surfPtr;
-        if (const err = surface.nativePtr(surfPtr))
-        {
-            return err;
-        }
-
+        ComNativePtr surfPtr = surface.nativePtr;
         SDL_Surface* sptr = surfPtr.castSafe!(SDL_Surface*);
         return create(sptr);
     }

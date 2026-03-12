@@ -44,12 +44,7 @@ class GPUGraphic : ApplicationUnit
 
         import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
-        ComNativePtr winNatPtr;
-        if (!window.nativePtr(winNatPtr))
-        {
-            throw new Exception("Native window pointer is null");
-        }
-
+        ComNativePtr winNatPtr = window.nativePtr;
         currSdlWindow = winNatPtr.castSafe!(SDL_Window*);
 
         this.device = device;

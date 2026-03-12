@@ -162,11 +162,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         assert(hasPtr);
         assert(parent);
 
-        ComNativePtr parentPtr;
-        if (const err = parent.nativePtr(parentPtr))
-        {
-            return err;
-        }
+        ComNativePtr parentPtr =parent.nativePtr;
         SDL_Window* parentWinPtr = parentPtr.castSafe!(SDL_Window*);
 
         if (!SDL_SetWindowParent(ptr, parentWinPtr))
@@ -597,11 +593,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     {
         assert(icon);
 
-        ComNativePtr nPtr;
-        if (const err = icon.nativePtr(nPtr))
-        {
-            return err;
-        }
+        ComNativePtr nPtr = icon.nativePtr;
         SDL_Surface* surfPtr = nPtr.castSafe!(SDL_Surface*);
         if (!SDL_SetWindowIcon(ptr, surfPtr))
         {

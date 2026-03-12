@@ -233,7 +233,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return err;
         }
 
-        if(const err = updatePtr(newSurfacePtr)){
+        if (const err = updatePtr(newSurfacePtr))
+        {
             return err;
         }
         isResized = true;
@@ -295,14 +296,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     //https://discourse.libsdl.org/t/sdl-blitsurface-doesnt-work-in-sdl-2-0/19288/3
     ComResult copyTo(SDL_Rect* srcRect, ComSurface dst, SDL_Rect* dstRect) nothrow
     {
-        ComNativePtr dstPtr;
-
-        //TODO unsafe
-        if (const err = dst.nativePtr(dstPtr))
-        {
-            return err;
-        }
-
+        ComNativePtr dstPtr = dst.nativePtr;
         SDL_Surface* sdlDstPtr = dstPtr.castSafe!(SDL_Surface*);
         assert(sdlDstPtr);
 
@@ -686,7 +680,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return getErrorRes("Error loading surface from file");
         }
 
-        if(const err = updatePtr(newPtr)){
+        if (const err = updatePtr(newPtr))
+        {
             return err;
         }
 

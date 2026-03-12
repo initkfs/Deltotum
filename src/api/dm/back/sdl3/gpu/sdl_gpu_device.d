@@ -568,12 +568,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
-        ComNativePtr natWinPtr;
-        if (const err = window.nativePtr(natWinPtr))
-        {
-            return err;
-        }
-
+        ComNativePtr natWinPtr = window.nativePtr;
         SDL_Window* sdlWinPtr = natWinPtr.castSafe!(SDL_Window*);
 
         return attachToWindow(sdlWinPtr);
@@ -599,12 +594,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
-        ComNativePtr natWinPtr;
-        if (const err = window.nativePtr(natWinPtr))
-        {
-            return err;
-        }
-
+        ComNativePtr natWinPtr = window.nativePtr;
         SDL_Window* sdlWinPtr = natWinPtr.castSafe!(SDL_Window*);
 
         return removeFromWindow(sdlWinPtr);
@@ -629,12 +619,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     {
         import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
-        ComNativePtr winNat;
-        if (const err = comWindow.nativePtr(winNat))
-        {
-            return SDL_GPU_TEXTUREFORMAT_INVALID;
-        }
-
+        ComNativePtr winNat = comWindow.nativePtr;
         auto sdlWinPtr = winNat.castSafe!(SDL_Window*);
 
         return getSwapchainTextureFormat(sdlWinPtr);

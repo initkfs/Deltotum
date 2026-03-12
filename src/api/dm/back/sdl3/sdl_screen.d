@@ -37,12 +37,7 @@ class SDLScreen : SdlObject, ComScreen
     {
         import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 
-        ComNativePtr winPtr;
-        if (const err = window.nativePtr(winPtr))
-        {
-            return err;
-        }
-
+        ComNativePtr winPtr = window.nativePtr;
         SDL_Window* ptr = winPtr.castSafe!(SDL_Window*);
 
         SDL_DisplayID sdlId;
