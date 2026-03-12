@@ -1,6 +1,5 @@
 module api.core.utils.queues.ring_buffer_spsc;
 
-import api.core.utils.container_result : ContainerResult;
 import api.core.utils.buffers.dense_buffer : DenseBuffer;
 
 import core.atomic;
