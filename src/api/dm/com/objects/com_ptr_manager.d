@@ -9,7 +9,7 @@ mixin template ComPtrManager(T)
 
     protected
     {
-        T* ptr;
+        T* _ptr;
         bool _disposed;
     }
 
@@ -22,16 +22,17 @@ mixin template ComPtrManager(T)
 
     this(T* ptr) pure @safe
     {
-        if(!ptr){
+        if (!ptr)
+        {
             throw new Exception("Common native object pointer must not be null");
         }
 
-        this.ptr = ptr;
+        this._ptr = ptr;
     }
 
     ~this()
     {
-        if (ptr && !_disposed)
+        if (_ptr && !_disposed)
         {
             import std.stdio : stderr;
 
@@ -50,69 +51,56 @@ mixin template ComPtrManager(T)
         }
     }
 
-    ComResult setWithDispose(T* newPtr) nothrow
+    ComResult updatePtr(T* newPtr) nothrow
     {
         if (!newPtr)
         {
-            return ComResult.error("Error setting with dispose, new pointer is null");
+            return ComResult.error("Error update pointer with dispose, new pointer is null");
         }
-        if (ptr)
+        if (_ptr)
         {
             if (!disposePtr)
             {
                 return ComResult.error(
-                    "Error setting with dispose, previous pointer is not disposed");
+                    "Error update pointer with dispose, previous pointer is not disposed");
             }
         }
-        ptr = newPtr;
+
+        _ptr = newPtr;
+        _disposed = false;
+
         return ComResult.success;
     }
 
     void setNull() nothrow
     {
-        ptr = null;
+        _ptr = null;
     }
 
-    final inout(T*) getObject() inout nothrow @safe
+    inout(T*) ptr() inout nothrow @safe
     out (p; p !is null)
     {
-        return ptr;
+        return _ptr;
     }
 
-    final bool hasObject() nothrow pure @safe
+    void* rawPtr() nothrow => cast(void*) ptr;
+
+    void ptr(T* newPtr) nothrow @safe
     {
-        return !isEmpty;
+        _ptr = newPtr;
     }
 
-    final bool isEmpty() nothrow pure @safe
-    {
-        return ptr is null;
-    }
-
-    final bool isDisposed() nothrow pure @safe
-    {
-        return _disposed;
-    }
-
-    final void updateObject(T* newPtr) nothrow
-    {
-        assert(newPtr, "New common native object pointer must not be null");
-        if (ptr)
-        {
-            disposePtr;
-        }
-        ptr = newPtr;
-        _disposed = false;
-    }
+    bool hasPtr() nothrow pure @safe => _ptr !is null;
+    bool isDisposed() nothrow pure @safe => _disposed;
 
     bool dispose() nothrow
     {
-        if (ptr)
+        if (_ptr)
         {
             _disposed = disposePtr;
-            if (_disposed && ptr)
+            if (_disposed && _ptr)
             {
-                ptr = null;
+                _ptr = null;
             }
         }
         return _disposed;

@@ -1020,7 +1020,7 @@ class SdlApp : GuiApp
         {
             window.create;
 
-            if (const err = gpuDevice.createRenderer(sdlWindow.getObject, renderer))
+            if (const err = gpuDevice.createRenderer(sdlWindow.ptr, renderer))
             {
                 throw new Exception(err.toString);
             }

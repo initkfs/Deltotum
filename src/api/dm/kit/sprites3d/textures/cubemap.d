@@ -90,7 +90,7 @@ class CubeMap : Texture3d
         //         info.num_levels = 1;
         //         info.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
 
-        //         _texture = SDL_CreateGPUTexture(gpu.dev.getObject, &info);
+        //         _texture = SDL_CreateGPUTexture(gpu.dev.ptr, &info);
         //         if (!texture)
         //         {
         //             throw new Exception("Cubemap texture is empty");

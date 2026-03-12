@@ -13,7 +13,7 @@ interface ComFont : ComDestroyable
 
 nothrow:
 
-    bool hasChar(ulong code);
+    bool hasCode(ulong code);
 
     ComResult render(
         ComSurface targetSurface,

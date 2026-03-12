@@ -84,7 +84,7 @@ class Texture3d : Sprite3d
 
         // import std.string : toStringz;
 
-        // SDL_SetGPUTextureName(gpu.dev.getObject, _texture, id.toStringz);
+        // SDL_SetGPUTextureName(gpu.dev.ptr, _texture, id.toStringz);
     }
 
     override void create()
@@ -141,7 +141,7 @@ class Texture3d : Sprite3d
 
         if (_sampler)
         {
-            SDL_ReleaseGPUSampler(gpu.dev.getObject, _sampler);
+            SDL_ReleaseGPUSampler(gpu.dev.ptr, _sampler);
         }
     }
 }

@@ -9,7 +9,7 @@ class ComObject : ComObjectable
 {
     string id = "com_object";
 
-    final bool setNotEmptyId(string newId) pure @safe
+    final bool setId(string newId) pure @safe
     {
         if (newId.length == 0)
         {

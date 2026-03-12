@@ -5,5 +5,5 @@ module api.dm.com.objects.com_objectable;
  */
 interface ComObjectable
 {
-    bool setNotEmptyId(string newId) pure @safe;
+    bool setId(string newId) pure @safe;
 }

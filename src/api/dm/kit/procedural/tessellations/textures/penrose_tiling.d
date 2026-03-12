@@ -67,7 +67,7 @@ class PenroseTiling : VShape
         tf ~= tuple(3.0f, [0.0f, 0, 0, 0], 7.0f);
         Tuple!(float, float[], float)[][] f = [tf];
 
-        auto cr = cairoContext.getObject;
+        auto cr = cairoContext.ptr;
         cairo_set_source_rgb(cr, style.fillColor.rNorm, style
                 .fillColor.gNorm, style
                 .fillColor.bNorm);

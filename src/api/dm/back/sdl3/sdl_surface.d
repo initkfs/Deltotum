@@ -31,7 +31,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult createUnsafe(void* ptr) nothrow
     {
-        return setWithDispose(cast(SDL_Surface*) ptr);
+        return updatePtr(cast(SDL_Surface*) ptr);
     }
 
     ComResult createRGB24(int width, int height) nothrow
@@ -54,7 +54,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult create(int newWidth, int newHeight, uint format) nothrow
     {
-        if (ptr)
+        if (hasPtr)
         {
             disposePtr;
         }
@@ -70,7 +70,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         }
 
         ptr = createPtr(newWidth, newHeight, format);
-        if (!ptr)
+        if (!hasPtr)
         {
             return getErrorRes("Cannot create surface: surface pointer is null");
         }
@@ -95,13 +95,13 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
                 "Cannot create surface from pixels. Height must be positive number");
         }
 
-        if (ptr)
+        if (hasPtr)
         {
             disposePtr;
         }
 
         ptr = SDL_CreateSurfaceFrom(newWidth, newHeight, cast(SDL_PixelFormat) format, pixels, pitch);
-        if (!ptr)
+        if (!hasPtr)
         {
             return getErrorRes("Cannot create surface from pixels.");
         }
@@ -113,7 +113,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         SDL_Surface* newSdlPtr = newPtr.castSafe!(SDL_Surface*);
         assert(newSdlPtr);
 
-        if (ptr)
+        if (hasPtr)
         {
             disposePtr;
         }
@@ -133,12 +133,15 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         assert(window);
         assert(surfaceForPtr);
 
-        SDL_Surface* ptr = SDL_GetWindowSurface(window.getObject);
+        SDL_Surface* ptr = SDL_GetWindowSurface(window.ptr);
         if (!ptr)
         {
             return ComResult.error("Surface pointer from window is null");
         }
-        surfaceForPtr.updateObject(ptr);
+        if (const err = surfaceForPtr.updatePtr(ptr))
+        {
+            return err;
+        }
         return ComResult.success;
     }
 
@@ -174,7 +177,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult scaleTo(SdlSurface dest, SDL_Rect* destRect) nothrow
     {
-        return scaleTo(dest.getObject, destRect);
+        return scaleTo(dest.ptr, destRect);
     }
 
     protected ComResult scaleTo(SDL_Surface* destPtr, SDL_Rect* dstRect) nothrow
@@ -230,7 +233,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return err;
         }
 
-        updateObject(newSurfacePtr);
+        if(const err = updatePtr(newSurfacePtr)){
+            return err;
+        }
         isResized = true;
         return ComResult.success;
     }
@@ -688,7 +693,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return getErrorRes("Error loading surface from file");
         }
 
-        updateObject(newPtr);
+        if(const err = updatePtr(newPtr)){
+            return err;
+        }
 
         return ComResult.success;
     }

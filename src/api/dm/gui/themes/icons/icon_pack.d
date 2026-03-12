@@ -18,7 +18,7 @@ class IconPack
     {
         foreach (ComFont font; iconFonts)
         {
-            if (!font.hasChar(code))
+            if (!font.hasCode(code))
             {
                 continue;
             }

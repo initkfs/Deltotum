@@ -25,7 +25,7 @@ class VTriangle : VShape
         //TODO remove native api
         import api.dm.lib.cairo;
 
-        auto cr = cairoContext.getObject;
+        auto cr = cairoContext.ptr;
 
         cairo_set_source_rgb(cr, style.fillColor.rNorm, style.fillColor.gNorm, style
                     .fillColor.bNorm);

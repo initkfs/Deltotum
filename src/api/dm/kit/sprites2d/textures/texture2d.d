@@ -83,7 +83,7 @@ class Texture2d : Sprite2d
         super.create;
         if (texture)
         {
-            texture.setNotEmptyId(id);
+            texture.setId(id);
         }
     }
 

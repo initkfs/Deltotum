@@ -428,7 +428,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult renderTextureEx(SdlTexture texture, SDL_FRect* srcRect = null, SDL_FRect* destRect = null, float angle = 0, SDL_FPoint* center = null, SDL_FlipMode flip = SDL_FLIP_NONE) nothrow
     {
-        const result = SDL_RenderTextureRotated(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
+        const result = SDL_RenderTextureRotated(ptr, texture.ptr, srcRect, destRect, angle, center, flip);
         if (!result)
         {
             return getErrorRes;
@@ -461,7 +461,9 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
             auto sdlBuffer = cast(SdlSurface) buffer;
             assert(sdlBuffer);
-            sdlBuffer.updateObject(surface);
+            if(const err = sdlBuffer.updatePtr(surface)){
+                return err;
+            }
         }
         catch (Exception e)
         {

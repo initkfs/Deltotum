@@ -37,14 +37,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         assert(renderer);
         this.renderer = renderer;
-        setNotEmptyId(id);
+        setId(id);
     }
 
     protected this(SDL_Texture* ptr, SdlRenderer renderer, string id = "sdl_texture")
     {
         super(ptr);
         this.renderer = renderer;
-        setNotEmptyId(id);
+        setId(id);
     }
 
     ComResult createUnsafe(void* newPtr) nothrow
@@ -52,19 +52,19 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return create(cast(SDL_Texture*) newPtr);
     }
 
-    ComResult create(SDL_Texture* texture) nothrow => setWithDispose(texture);
+    ComResult create(SDL_Texture* texture) nothrow => updatePtr(texture);
 
     ComResult create(SDL_PixelFormat format, SDL_TextureAccess access, int w, int h) nothrow
     {
         assert(renderer);
 
-        auto newPtr = SDL_CreateTexture(renderer.getObject, format, access, w, h);
+        auto newPtr = SDL_CreateTexture(renderer.ptr, format, access, w, h);
         if (!newPtr)
         {
             return getErrorRes("Error creating new SDL texture");
         }
 
-        return setWithDispose(newPtr);
+        return updatePtr(newPtr);
     }
 
     ComResult createRGBA32(int width, int height) nothrow
@@ -150,13 +150,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         assert(surface, "Surface ptr for new SDL texture must not be null");
         assert(renderer);
 
-        auto newPtr = SDL_CreateTextureFromSurface(renderer.getObject, surface);
+        auto newPtr = SDL_CreateTextureFromSurface(renderer.ptr, surface);
         if (!newPtr)
         {
             return getErrorRes("Unable create SDL texture from renderer and surface.");
         }
 
-        if (const err = setWithDispose(newPtr))
+        if (const err = updatePtr(newPtr))
         {
             return err;
         }
@@ -252,7 +252,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult getRendererTarget(out SDL_Texture* target) nothrow
     {
         assert(renderer);
-        target = SDL_GetRenderTarget(renderer.getObject);
+        target = SDL_GetRenderTarget(renderer.ptr);
         return ComResult.success;
     }
 
@@ -271,7 +271,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (!SDL_SetRenderTarget(renderer.getObject, ptr))
+        if (!SDL_SetRenderTarget(renderer.ptr, ptr))
         {
             return getErrorRes("Error setting render target SDL texture");
         }
@@ -289,7 +289,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             lastRendererTarget = null;
         }
 
-        if (!SDL_SetRenderTarget(renderer.getObject, target))
+        if (!SDL_SetRenderTarget(renderer.ptr, target))
         {
             return getErrorRes("Error restore renderer target for SDL texture");
         }
@@ -340,7 +340,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         srcRect.w = textureWidth;
         srcRect.h = textureHeight;
 
-        auto tempSrc = SDL_RenderReadPixels(renderer.getObject, &srcRect);
+        auto tempSrc = SDL_RenderReadPixels(renderer.ptr, &srcRect);
         scope (exit)
         {
             SDL_DestroySurface(tempSrc);
@@ -893,18 +893,16 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
     }
 
-    bool hasPtr() nothrow => ptr !is null;
+    override bool hasPtr() nothrow => _ptr !is null;
 
     ComResult nativePtr(out ComNativePtr nptr) nothrow
     {
-        assert(ptr);
         nptr = ComNativePtr(ptr);
         return ComResult.success;
     }
 
     ComResult nativePtr(out void* tptr)
     {
-        assert(ptr);
         tptr = cast(void*) ptr;
         return ComResult.success;
     }

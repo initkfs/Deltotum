@@ -288,8 +288,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         }
 
         info.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
-        info.vertex_shader = vertexShader.getObject;
-        info.fragment_shader = fragmentShader.getObject;
+        info.vertex_shader = vertexShader.ptr;
+        info.fragment_shader = fragmentShader.ptr;
 
         SDL_GPUVertexBufferDescription[1] vertexBufferDesctiptions = comVertexDesc;
         info.vertex_input_state.num_vertex_buffers = vertexBufferDesctiptions.length;
@@ -361,7 +361,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     void deletePipeline(SdlGPUPipeline pipe)
     {
         assert(ptr);
-        SDL_ReleaseGPUGraphicsPipeline(ptr, pipe.getObject);
+        SDL_ReleaseGPUGraphicsPipeline(ptr, pipe.ptr);
         pipe.setNull;
     }
 
@@ -918,7 +918,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
 
-        SDL_BindGPUGraphicsPipeline(lastPass, pipeline.getObject);
+        SDL_BindGPUGraphicsPipeline(lastPass, pipeline.ptr);
     }
 
     void bindVertexBuffer(SDL_GPUBuffer* vertexBuffer, uint firstSlot = 0, uint offset = 0)

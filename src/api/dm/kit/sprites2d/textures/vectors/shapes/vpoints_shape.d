@@ -43,7 +43,7 @@ class VPointsShape : VShape
 
     void setDrawingContext()
     {
-        auto ctx = cairoContext.getObject;
+        auto ctx = cairoContext.ptr;
 
         if (isFlipY)
         {
@@ -67,7 +67,7 @@ class VPointsShape : VShape
 
     void setDrawingContextStyle()
     {
-        auto ctx = cairoContext.getObject;
+        auto ctx = cairoContext.ptr;
 
         cairo_set_line_width(ctx, style.lineWidth);
         color(style.lineColor);
@@ -76,7 +76,7 @@ class VPointsShape : VShape
     void drawPoints()
     {
         assert(!points.empty);
-        auto ctx = cairoContext.getObject;
+        auto ctx = cairoContext.ptr;
 
         float startX = points.front.x, startY = points.front.y;
         cairo_move_to(ctx, startX, startY);

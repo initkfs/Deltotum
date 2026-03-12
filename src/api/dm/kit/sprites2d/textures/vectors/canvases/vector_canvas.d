@@ -33,7 +33,7 @@ class VectorCanvas : GraphicCanvas
             throw new Exception("Cairo context must not be null");
         }
         this.context = context;
-        this.cr = context.getObject;
+        this.cr = context.ptr;
         assert(cr);
 
         cairo_set_antialias(cr, cairo_antialias_t.CAIRO_ANTIALIAS_GOOD);

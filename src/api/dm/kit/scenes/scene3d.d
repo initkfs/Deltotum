@@ -54,7 +54,7 @@ class Scene3d : Scene2d
             if (isAntiAliasing)
             {
                 auto format = gpu.getSwapchainTextureFormat;
-                if (SDL_GPUTextureSupportsSampleCount(gpu.dev.getObject, format, aliasingSampleCount))
+                if (SDL_GPUTextureSupportsSampleCount(gpu.dev.ptr, format, aliasingSampleCount))
                 {
                     gpu.dev.isUseSampleCount = true;
                     gpu.dev.sampleCount = aliasingSampleCount;
@@ -74,7 +74,7 @@ class Scene3d : Scene2d
                         msaTextureInfo.usage |= SDL_GPU_TEXTUREUSAGE_SAMPLER;
                     }
 
-                    msaaTexture = SDL_CreateGPUTexture(gpu.dev.getObject, &msaTextureInfo);
+                    msaaTexture = SDL_CreateGPUTexture(gpu.dev.ptr, &msaTextureInfo);
                     assert(msaaTexture);
 
                     SDL_GPUTextureCreateInfo resultTextureInfo;
@@ -86,7 +86,7 @@ class Scene3d : Scene2d
                     resultTextureInfo.format = format;
                     resultTextureInfo.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
 
-                    resultTexture = SDL_CreateGPUTexture(gpu.dev.getObject, &resultTextureInfo);
+                    resultTexture = SDL_CreateGPUTexture(gpu.dev.ptr, &resultTextureInfo);
                     assert(resultTexture);
                 }
                 else

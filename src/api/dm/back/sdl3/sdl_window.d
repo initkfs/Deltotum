@@ -88,27 +88,27 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
                 break;
         }
 
-        assert(!ptr);
+        assert(!_ptr);
         assert(!_renderer);
 
         if (isCreateRenderer)
         {
             SDL_Renderer* mustBeRenderer;
 
-            if (!SDL_CreateWindowAndRenderer(null, width, height, flags, &ptr, &mustBeRenderer))
+            if (!SDL_CreateWindowAndRenderer(null, width, height, flags, &_ptr, &mustBeRenderer))
             {
                 return getErrorRes("Error creating SDL window and renderer");
             }
 
-            assert(ptr);
+            assert(_ptr);
             assert(mustBeRenderer);
 
             _renderer = mustBeRenderer;
         }
         else
         {
-            ptr = SDL_CreateWindow(null, width, height, flags);
-            if (!ptr)
+            _ptr = SDL_CreateWindow(null, width, height, flags);
+            if (!_ptr)
             {
                 return getErrorRes("Error creating SDL window");
             }
@@ -119,9 +119,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult show() nothrow
     {
-        assert(ptr);
-
-        if (!SDL_ShowWindow(ptr))
+        if (!SDL_ShowWindow(_ptr))
         {
             return getErrorRes("Error showing SDL window");
         }
@@ -130,8 +128,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult hide() nothrow
     {
-        assert(ptr);
-
         if (!SDL_HideWindow(ptr))
         {
             return getErrorRes("Error hiding SDL window");
@@ -141,7 +137,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult close() nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
 
         dispose;
         return ComResult.success;
@@ -149,7 +145,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult restore() nothrow
     {
-        assert(ptr);
         // If an immediate change is required, call SDL_SyncWindow() to block until the changes have taken effect.
         //https://wiki.libsdl.org/SDL3/SDL_RestoreWindow
         if (!SDL_RestoreWindow(ptr))
@@ -161,7 +156,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setParent(ComWindow parent) nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
         assert(parent);
 
         ComNativePtr parentPtr;
@@ -181,8 +176,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setModal(bool value) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetWindowModal(ptr, value))
         {
             return getErrorRes("Error setting window modal value");
@@ -220,8 +213,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getId(out ComWindowId id) nothrow
     {
-        assert(ptr);
-
         const idOrZeroError = SDL_GetWindowID(ptr);
         if (idOrZeroError == 0)
         {
@@ -235,8 +226,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getScreenId(out ComScreenId id) nothrow
     {
-        assert(ptr);
-
         const idOrZeroErr = SDL_GetDisplayForWindow(ptr);
         if (idOrZeroErr <= 0)
         {
@@ -249,8 +238,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult focusRequest() nothrow
     {
-        assert(ptr);
-
         if (!SDL_RaiseWindow(ptr))
         {
             return getErrorRes("Error raising SDL window");
@@ -260,8 +247,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getPos(out int x, out int y) nothrow
     {
-        assert(ptr);
-
         if (!SDL_GetWindowPosition(ptr, &x, &y))
         {
             return getErrorRes("Error getting SDL window position");
@@ -271,8 +256,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setPos(int x, int y) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetWindowPosition(ptr, x, y))
         {
             return getErrorRes("Error setting SDL window position");
@@ -282,8 +265,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getFlags(out ulong flags) nothrow
     {
-        assert(ptr);
-
         flags = SDL_GetWindowFlags(ptr);
         return ComResult.success;
     }
@@ -306,8 +287,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setMinimized() nothrow
     {
-        assert(ptr);
-
         if (!SDL_MinimizeWindow(ptr))
         {
             return getErrorRes("Error minimize SDL window");
@@ -333,8 +312,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setMaximized() nothrow
     {
-        assert(ptr);
-
         if (!SDL_MaximizeWindow(ptr))
         {
             return getErrorRes("Error maximize SDL window");
@@ -345,8 +322,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setDecorated(bool isDecorated) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetWindowBordered(ptr, isDecorated))
         {
             return getErrorRes("Error setting bordered SDL window");
@@ -383,8 +358,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setResizable(bool isResizable) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetWindowResizable(ptr, isResizable))
         {
             return getErrorRes("Error setting SDL window resizable");
@@ -409,8 +382,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setOpacity(float value0to1) nothrow
     {
-        assert(ptr);
-
         if (value0to1 < 0.0 || value0to1 > 1.0)
         {
             return ComResult.error("SDL window opacity must be in the range from 0 to 1.0");
@@ -426,8 +397,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getOpacity(out float value0to1) nothrow
     {
-        assert(ptr);
-
         const result = SDL_GetWindowOpacity(ptr);
         if (result == -1f)
         {
@@ -459,8 +428,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setFullScreen(bool isFullScreen) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetWindowFullscreen(ptr, isFullScreen))
         {
             return getErrorRes("Error setting SDL window fullscreen");
@@ -500,8 +467,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     protected ComResult getRawWindowSize(int* width, int* height) nothrow
     {
-        assert(ptr);
-
         if (!SDL_GetWindowSize(ptr, width, height))
         {
             return getErrorRes("Error getting SDL window size");
@@ -511,8 +476,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setSize(int width, int height) nothrow
     {
-        assert(ptr);
-
         if (!SDL_SetWindowSize(ptr, width, height))
         {
             return getErrorRes("Error setting SDL window size");
@@ -522,8 +485,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getTitle(out dstring title) nothrow
     {
-        assert(ptr);
-
         import std.conv : to;
 
         //UTF-8
@@ -541,7 +502,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setTitle(const(dchar[]) title) nothrow
     {
-        assert(ptr);
+        assert(hasPtr);
 
         import std.utf : toUTFz;
 
@@ -564,8 +525,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setMaxSize(int w, int h) nothrow
     {
-        assert(ptr);
-
         if (w <= 0)
         {
             return ComResult.error("SDL window maximum width must be positive number");
@@ -585,8 +544,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setMinSize(int w, int h) nothrow
     {
-        assert(ptr);
-
         if (w <= 0)
         {
             return ComResult.error("SDL window minimum width must be positive number");
@@ -606,7 +563,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getSafeBounds(out Rect2f bounds) nothrow
     {
-        assert(ptr);
         SDL_Rect rect;
         if (!SDL_GetWindowSafeArea(ptr, &rect))
         {
@@ -654,8 +610,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setTextInputArea(Rect2f area, int cursor = 0) nothrow
     {
-        assert(ptr);
-
         SDL_Rect rect = {
             cast(int) area.x, cast(int) area.y, cast(int) area.width, cast(int) area.height
         };
@@ -669,14 +623,12 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getIsTextInputActive(out bool isActive) nothrow
     {
-        assert(ptr);
         isActive = SDL_TextInputActive(ptr);
         return ComResult.success;
     }
 
     ComResult setTextInputStart() nothrow
     {
-        assert(ptr);
         if (!SDL_StartTextInput(ptr))
         {
             return getErrorRes("Cannot start text input for window");
@@ -686,7 +638,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setTextInputStop() nothrow
     {
-        assert(ptr);
         if (!SDL_StopTextInput(ptr))
         {
             return getErrorRes("Cannot stop text input for window");
@@ -778,7 +729,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult nativePtr(out ComNativePtr ptrInfo) nothrow
     {
-        if (!ptr && isDisposed)
+        if (!_ptr && isDisposed)
         {
             return ComResult.error("Native window pointer is destroyed or null");
         }
@@ -795,14 +746,14 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return _renderer;
     }
 
-    void* rawPtr() nothrow
+    override void* rawPtr() nothrow
     {
         return ptr;
     }
 
     ComResult startTextInput()
     {
-        assert(ptr);
+        assert(hasPtr);
         if (!SDL_StartTextInput(ptr))
         {
             return getErrorRes("Error starting text input");
@@ -812,7 +763,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult endTextInput()
     {
-        assert(ptr);
+        assert(hasPtr);
         if (!SDL_StopTextInput(ptr))
         {
             return getErrorRes("Error stopping text input");

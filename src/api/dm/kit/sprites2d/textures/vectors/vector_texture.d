@@ -378,9 +378,9 @@ class VectorTexture : Texture2d
     override void color(RGBA newColor)
     {
         assert(isCreated);
-        if (cairoContext && cairoContext.hasObject)
+        if (cairoContext && cairoContext.hasPtr)
         {
-            auto ctx = cairoContext.getObject;
+            auto ctx = cairoContext.ptr;
             assert(ctx);
             cairo_set_source_rgba(ctx, newColor.rNorm, newColor.gNorm, newColor.bNorm, newColor.a);
             return;

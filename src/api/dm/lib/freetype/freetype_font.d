@@ -67,7 +67,7 @@ class FreeTypeFont : ComFont
         return ComResult.success;
     }
 
-    bool hasChar(ulong code)
+    bool hasCode(ulong code)
     {
         assert(_face);
         int res = FT2_FT_Get_Char_Index(_face, code);

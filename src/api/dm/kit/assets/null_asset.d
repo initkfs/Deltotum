@@ -36,7 +36,7 @@ class NullAsset : Asset
 
         return new class ComFont
         {
-            bool hasChar(ulong code) => false;
+            bool hasCode(ulong code) => false;
             bool dispose() nothrow => false;
             bool isDisposed() => false;
 

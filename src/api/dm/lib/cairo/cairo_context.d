@@ -13,7 +13,7 @@ class CairoContext: CairoObjectWrapper!cairo_t
     this(CairoSurface surface)
     {
         assert(surface);
-        ptr = cairo_create(surface.getObject);
+        ptr = cairo_create(surface.ptr);
         if (!ptr)
         {
             throw new Exception("Cairo context FactoryKit error.");
