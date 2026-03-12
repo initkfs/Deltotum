@@ -44,14 +44,11 @@ class GuiEditor : GuiScene
         graphicsTab.content = new Graphics;
         root.addCreate(graphicsTab);
 
-        version (EnableAddon)
-        {
-            import api.dm.gui.supports.editors.sections.media : Media;
+        import api.dm.gui.supports.editors.sections.media : Media;
 
-            auto audioTab = new Tab("Media");
-            audioTab.content = new Media;
-            root.addCreate(audioTab);
-        }
+        auto audioTab = new Tab("Media");
+        audioTab.content = new Media;
+        root.addCreate(audioTab);
 
         import api.dm.gui.supports.editors.sections.fonts : Fonts;
 
@@ -77,26 +74,23 @@ class GuiEditor : GuiScene
         imagesTab.content = new Images;
         root.addCreate(imagesTab);
 
-        version (EnableAddon)
-        {
-            import api.dm.gui.supports.editors.sections.procedural : Procedural;
+        import api.dm.gui.supports.editors.sections.procedural : Procedural;
 
-            auto procTab = new Tab("Procedural");
-            procTab.content = new Procedural;
-            root.addCreate(procTab);
+        auto procTab = new Tab("Procedural");
+        procTab.content = new Procedural;
+        root.addCreate(procTab);
 
-            import api.dm.gui.supports.editors.sections.curves : Curves;
+        import api.dm.gui.supports.editors.sections.curves : Curves;
 
-            auto curvesTab = new Tab("Curves");
-            curvesTab.content = new Curves;
-            root.addCreate(curvesTab);
+        auto curvesTab = new Tab("Curves");
+        curvesTab.content = new Curves;
+        root.addCreate(curvesTab);
 
-            import api.dm.gui.supports.editors.sections.fractals : Fractals;
+        import api.dm.gui.supports.editors.sections.fractals : Fractals;
 
-            auto fractalsTab = new Tab("Fractals");
-            fractalsTab.content = new Fractals;
-            root.addCreate(fractalsTab);
-        }
+        auto fractalsTab = new Tab("Fractals");
+        fractalsTab.content = new Fractals;
+        root.addCreate(fractalsTab);
 
         root.changeTab(controlsTab);
 

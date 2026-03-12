@@ -1,9 +1,5 @@
 module api.dm.gui.supports.editors.sections.curves;
 
-// dfmt off
-version(EnableAddon):
-// dfmt on
-
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;

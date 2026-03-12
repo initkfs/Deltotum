@@ -1,9 +1,5 @@
 module api.dm.gui.supports.editors.sections.media;
 
-// dfmt off
-version(EnableAddon):
-// dfmt on
-
 import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 
 import api.dm.gui.controls.control : Control;
@@ -32,7 +28,7 @@ import api.dm.gui.controls.meters.spinners.spinner : Spinner;
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
-import api.dm.addon.media.audio.gui.piano : Piano;
+import api.dm.gui.controls.media.audio.piano : Piano;
 import api.dm.kit.media.audio.synthesizers.fm_synthesizer : FMSynthesizer;
 import api.dm.kit.media.audio.mixers.mix_sound : MixSound, SoundHandle;
 

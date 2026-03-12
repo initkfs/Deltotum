@@ -11,7 +11,7 @@
         {
             "name": "app-dev",
             "versions": [
-                "dev"
+                "EnableDebug"
             ],
             "targetType": "executable",
             "targetName": "dm",
@@ -23,21 +23,9 @@
             ]
         },
         {
-            "name": "app-dev-addon",
-            "versions": [
-                "dev",
-                "EnableAddon"
-            ],
-            "targetType": "executable",
-            "targetName": "dm",
-            "platforms": [
-                "linux"
-            ]
-        },
-        {
             "name": "app-dist",
             "versions": [
-                "EnableAddon", "EnableValidation", "EnableTrace"
+                "EnableValidation", "EnableTrace"
             ],
             "targetType": "executable",
             "targetName": "dm-dist",
@@ -48,8 +36,6 @@
         {
             "name": "app-trace",
             "versions": [
-                "dev",
-                "EnableAddon"
             ],
             "targetType": "executable",
             "targetName": "dm",

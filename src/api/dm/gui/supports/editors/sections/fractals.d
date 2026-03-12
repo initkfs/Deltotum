@@ -2,10 +2,6 @@ module api.dm.gui.supports.editors.sections.fractals;
 
 import api.dm.gui.controls.containers.container;
 
-// dfmt off
-version(EnableAddon):
-// dfmt on
-
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -15,9 +11,9 @@ import api.math.random : Random, rands;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 
-import api.dm.addon.procedural.lsystems.textures.lshape : LShape;
-import api.dm.addon.procedural.lsystems.lsystem : LSystemData;
-import LFractals = api.dm.addon.procedural.fractals.lfractals;
+import api.dm.kit.procedural.lsystems.textures.lshape : LShape;
+import api.dm.kit.procedural.lsystems.lsystem : LSystemData;
+import LFractals = api.dm.kit.procedural.fractals.lfractals;
 
 import Math = api.dm.math;
 
@@ -210,18 +206,18 @@ class Fractals : Control
         auto container3 = newHContainer;
         addCreate(container3);
 
-        import api.dm.addon.procedural.fractals.images.mandelbrot : Mandelbrot;
+        import api.dm.kit.procedural.fractals.images.mandelbrot : Mandelbrot;
 
         auto mand = new Mandelbrot(shapeSize, shapeSize);
         mand.foregroundColor = RGBA.hex(MaterialPalette.purpleA100);
         container3.addCreate(createFractalInfo("Mandelbrot", mand));
 
-        import api.dm.addon.procedural.fractals.images.julia : Julia;
+        import api.dm.kit.procedural.fractals.images.julia : Julia;
 
         auto julia = new Julia(shapeSize, shapeSize);
         container3.addCreate(createFractalInfo("Julia", julia));
 
-        import api.dm.addon.procedural.fractals.images.newton : Newton;
+        import api.dm.kit.procedural.fractals.images.newton : Newton;
 
         auto newton = new Newton(shapeSize, shapeSize);
         container3.addCreate(createFractalInfo("Newton", newton));
