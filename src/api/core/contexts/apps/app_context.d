@@ -38,6 +38,12 @@ class AppContext
         string workDir() => _workDir;
         string dataDir() => _dataDir;
         string userDir() => _userDir;
+
+        bool hasWorkDir() => hasDir(_workDir);
+        bool hasDataDir() => hasDir(_dataDir);
+        bool hasUserDir() => hasDir(_userDir);
+
+        protected bool hasDir(string dir) => dir.length != 0;
     }
 
     immutable(AppContext) idup()

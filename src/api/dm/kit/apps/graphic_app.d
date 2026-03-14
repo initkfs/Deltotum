@@ -53,6 +53,8 @@ abstract class GraphicApp : CliApp
 
     bool isQuitOnCloseAllWindows = true;
 
+    string defaultLangDir = "langs";
+
     protected
     {
         MultiMedia _media;
@@ -228,27 +230,11 @@ abstract class GraphicApp : CliApp
 
     I18n createI18n(Logging logging, Config config, Context context)
     {
-        const dataDir = context.app.dataDir;
-        if (dataDir.length == 0)
-        {
-            logging.logger.info("Not found data dir, i18n not loaded");
-            return newI18n;
-        }
-
         import std.path : buildPath;
         import std.file : exists, isDir, dirEntries, SpanMode;
-        import std.algorithm.iteration : filter;
-
-        //TODO from config;
-        auto langDir = buildPath(dataDir, "langs");
-        if (!langDir.exists || !langDir.isDir)
-        {
-            logging.logger.info("Not found language dir: ", langDir);
-            return newI18n;
-        }
-
-        import api.dm.kit.i18n.langs.configs.simple_config_loader : SimpleConfigLoader;
         import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        LangMessages[] messages;
 
         string lang = "en_EN";
         if (config.hasKey(KitConfigKeys.i18nLang))
@@ -256,7 +242,74 @@ abstract class GraphicApp : CliApp
             lang = config.getNotEmptyString(KitConfigKeys.i18nLang);
         }
 
+        if (context.app.hasDataDir)
+        {
+            auto langDir = buildPath(context.app.dataDir, defaultLangDir);
+            if (langDir.exists && langDir.isDir)
+            {
+                messages ~= createLangMessagesFromDir(logging, config, langDir, lang);
+            }
+            else
+            {
+                version (EnableTrace)
+                {
+                    logging.logger.trace("Language data directory not found: " ~ langDir);
+                }
+            }
+        }
+        else
+        {
+            version (EnableTrace)
+            {
+                logging.logger.trace("Not found data directory for languages");
+            }
+        }
+
+        if (context.app.hasUserDir)
+        {
+            auto mustBeUserDir = buildPath(context.app.userDir, defaultLangDir);
+            if (mustBeUserDir.exists && mustBeUserDir.isDir)
+            {
+                messages ~= createLangMessagesFromDir(logging, config, mustBeUserDir, lang);
+            }
+            else
+            {
+                version (EnableTrace)
+                {
+                    logging.logger.tracef("User language directory not found: " ~ mustBeUserDir);
+                }
+            }
+        }
+        else
+        {
+            version (EnableTrace)
+            {
+                logging.logger.tracef("Not found user directory for languages");
+            }
+        }
+
+        auto i18n = newI18n;
+        i18n.lang = lang;
+        i18n.langMessages = messages;
+
+        return i18n;
+    }
+
+    protected LangMessages[] createLangMessagesFromDir(Logging logging, Config config, string langDir, string lang)
+    {
+        import std.path : isAbsolute, buildPath;
+        import std.file: exists, isDir, dirEntries, SpanMode;
+        import std.algorithm.iteration : filter;
+
         LangMessages[] messages;
+
+        if (!langDir.exists || !langDir.isDir)
+        {
+            logging.logger.error("Cannot load from language dir, not found: ", langDir);
+            return messages;
+        }
+
+        import api.dm.kit.i18n.langs.configs.simple_config_loader : SimpleConfigLoader;
 
         auto langLoader = new SimpleConfigLoader;
         langLoader.allowedLangs ~= lang;
@@ -268,15 +321,11 @@ abstract class GraphicApp : CliApp
             messages ~= new LangMessages(newMessages);
             version (EnableTrace)
             {
-                logging.logger.tracef("Load for lang '%s' i18n messages: %s", lang, langFile);
+                logging.logger.tracef("Add language '%s' i18n messages: %s", lang, langFile);
             }
         }
 
-        auto i18n = newI18n;
-        i18n.lang = lang;
-        i18n.langMessages = messages;
-
-        return i18n;
+        return messages;
     }
 
     GraphicComponent newWindowServices()

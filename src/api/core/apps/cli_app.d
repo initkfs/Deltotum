@@ -390,9 +390,10 @@ class CliApp : SimpleUnit
         assert(context);
 
         import std.path : buildPath, isAbsolute;
+        import std.file : isDir, exists;
 
         string configDir = cliConfigDir;
-        if (configDir)
+        if (configDir.length > 0)
         {
             uservices.cli.printer.printIfNotSilent(
                 "Received config directory from cli: " ~ configDir);
@@ -435,36 +436,21 @@ class CliApp : SimpleUnit
 
         if (configDir.length != 0)
         {
-            import std.file : isDir, exists;
-
-            if (!configDir.exists || !configDir.isDir)
-            {
-                uservices.cli.printer.printIfNotSilent(
-                    "Config directory does not exist or not a directory: " ~ configDir);
-            }
-            else
-            {
-                import api.core.configs.keyvalues.properties.property_config : PropertyConfig;
-                import api.core.configs.keyvalues.config_aggregator : ConfigAggregator;
-                import std.file : dirEntries, SpanMode;
-                import std.algorithm.iteration : filter;
-                import std.algorithm.searching : endsWith;
-
-                foreach (configPath; dirEntries(configDir, SpanMode
-                        .depth).filter!(f => f.isFile))
-                {
-                    auto newConfig = newConfigFromFile(
-                        configPath.name);
-                    configs ~= newConfig;
-                    uservices.cli.printer.printIfNotSilent(
-                        "Load config: " ~ configPath.name);
-                }
-            }
+            configs ~= createConfigsFromDir(configDir);
         }
         else
         {
             uservices.cli.printer.printIfNotSilent(
                 "Path to config directory is empty");
+        }
+
+        auto userConfigDir = buildPath(context.app.userDir, defaultConfigsDir);
+        if (userConfigDir.exists && userConfigDir.isDir)
+        {
+            configs ~= createConfigsFromDir(userConfigDir);
+        }else {
+            uservices.cli.printer.printIfNotSilent(
+                    "Check user config, not found: userConfigDir");
         }
 
         auto config = newConfigAggregator(configs);
@@ -482,6 +468,36 @@ class CliApp : SimpleUnit
         }
 
         return config;
+    }
+
+    protected Config[] createConfigsFromDir(string configDir)
+    {
+        import std.file : isDir, exists;
+
+        Config[] configs;
+
+        if (!configDir.exists || !configDir.isDir)
+        {
+            uservices.cli.printer.printIfNotSilent(
+                "Error loading config, directory does not exist or not a directory: " ~ configDir);
+            return configs;
+        }
+
+        import std.file : dirEntries, SpanMode;
+        import std.algorithm.iteration : filter;
+        import std.algorithm.searching : endsWith;
+
+        foreach (configPath; dirEntries(configDir, SpanMode
+                .depth).filter!(f => f.isFile))
+        {
+            auto newConfig = newConfigFromFile(
+                configPath.name);
+            configs ~= newConfig;
+            uservices.cli.printer.printIfNotSilent(
+                "Add config: " ~ configPath.name);
+        }
+
+        return configs;
     }
 
     protected Configuration createConfiguration(Context context)
