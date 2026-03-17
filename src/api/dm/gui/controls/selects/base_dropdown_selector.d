@@ -93,8 +93,7 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
 
         popup.layout.isAutoResize = true;
 
-        assert(sceneProvider);
-        sceneProvider().controlledSprites ~= popup;
+        scene.controlledSprites ~= popup;
 
         popup.onFocusExit ~= (ref e) {
             if (popup.isVisible)
@@ -160,9 +159,9 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
 
     override void onRemoveFromParent()
     {
-        if (popup && sceneProvider)
+        if (popup && hasScene)
         {
-            sceneProvider().removeControlled(popup);
+            scene.removeControlled(popup);
         }
     }
 

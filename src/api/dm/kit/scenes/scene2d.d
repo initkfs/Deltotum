@@ -437,9 +437,9 @@ class Scene2d : EventKitTarget
 
     bool addCreate(Sprite2d obj)
     {
-        if (!obj.sceneProvider)
+        if (!obj.hasScene)
         {
-            obj.sceneProvider = () => this;
+            obj.scene = this;
         }
 
         try
@@ -484,9 +484,9 @@ class Scene2d : EventKitTarget
             }
         }
 
-        if (!object.sceneProvider)
+        if (!object.hasScene)
         {
-            object.sceneProvider = () => this;
+            object.scene = this;
         }
 
         sprites ~= object;

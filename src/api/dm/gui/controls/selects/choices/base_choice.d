@@ -156,8 +156,7 @@ class BaseChoice(T) : BaseSelector!T
                 setSelected(newItem);
             };
 
-            assert(sceneProvider);
-            sceneProvider().controlledSprites ~= menu;
+            scene.controlledSprites ~= menu;
 
             if (onCreatedPopupMenu)
             {
@@ -365,9 +364,9 @@ class BaseChoice(T) : BaseSelector!T
 
     override void onRemoveFromParent()
     {
-        if (popupMenu && sceneProvider)
+        if (popupMenu && hasScene)
         {
-            auto isRemove = sceneProvider().removeControlled(popupMenu);
+            auto isRemove = scene.removeControlled(popupMenu);
             assert(isRemove);
         }
     }

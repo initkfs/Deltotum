@@ -81,6 +81,8 @@ class Sprite2d : EventKitTarget
         Insets _margin;
 
         GraphicCanvas _gContext;
+
+        Scene2d _scene;
     }
 
     float scale = 1;
@@ -203,9 +205,6 @@ class Sprite2d : EventKitTarget
     float multiplyInitWidth = 1.0;
     float multiplyInitHeight = 1.0;
 
-    //TODO replace with field
-    Scene2d delegate() sceneProvider;
-
     void delegate(ref PointerEvent)[] onPointerInBounds;
     void delegate(ref PointerEvent)[] onPointerOutBounds;
 
@@ -214,8 +213,6 @@ class Sprite2d : EventKitTarget
 
     bool isRoundEvenChildX;
     bool isRoundEvenChildY;
-
-    size_t clickCount;
 
     version (SdlBackend)
     {
@@ -239,6 +236,7 @@ class Sprite2d : EventKitTarget
 
     Variant[string] userData;
 
+    size_t clickCount;
     uint maxClickTimeMs = 300;
 
     bool isDrag;
@@ -251,13 +249,11 @@ class Sprite2d : EventKitTarget
     float widthChangeThreshold = defaultTreshold;
     float heightChangeThreshold = defaultTreshold;
 
-    bool isConstructed;
-
     //pragma(msg, __traits(classInstanceSize, Sprite2d));
 
     this()
     {
-        isConstructed = true;
+
     }
 
     void onResume()
@@ -808,7 +804,7 @@ class Sprite2d : EventKitTarget
             isSet = true;
         }
 
-        if (!sprite.sceneProvider)
+        if (!sprite.hasScene && hasScene)
         {
             // if (!sceneProvider)
             // {
@@ -817,7 +813,7 @@ class Sprite2d : EventKitTarget
             //     throw new Exception(format("Scene provider not installed on %s, parent: %s with scene provider: %s", classInfo, parent, (parent ? parent.sceneProvider : null)));
             // }
 
-            sprite.sceneProvider = sceneProvider;
+            sprite.scene = scene;
             isSet |= true;
         }
 
@@ -3012,6 +3008,20 @@ class Sprite2d : EventKitTarget
     void enableNewDomains()
     {
         _domains = new DomainSet;
+    }
+
+    void scene(Scene2d newScene)
+    {
+        assert(newScene);
+        _scene = newScene;
+    }
+
+    bool hasScene() => _scene !is null;
+
+    Scene2d scene()
+    {
+        assert(_scene, "Scene is null");
+        return _scene;
     }
 
     string classInfo()

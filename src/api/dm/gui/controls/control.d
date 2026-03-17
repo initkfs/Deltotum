@@ -1153,9 +1153,9 @@ class Control : GuiComponent
             loadTooltipTheme;
         }
 
-        if (sceneProvider)
+        if (hasScene)
         {
-            sceneProvider().controlledSprites ~= tooltip;
+            scene.controlledSprites ~= tooltip;
         }
         else
         {
@@ -1165,9 +1165,8 @@ class Control : GuiComponent
 
     override void onRemoveFromParent()
     {
-        if (tooltips.length > 0 && sceneProvider)
+        if (tooltips.length > 0 && hasScene)
         {
-            auto scene = sceneProvider();
             foreach (tooltip; tooltips)
             {
                 scene.removeControlled(tooltip);
