@@ -46,7 +46,7 @@ class Sprite3d : Sprite2d
 
     void delegate(float, float) onChangeZOldNew;
 
-    float zChangeThreshold = defaultTrashold;
+    float zChangeThreshold = defaultTreshold;
 
     bool isMatrixRecalc;
 

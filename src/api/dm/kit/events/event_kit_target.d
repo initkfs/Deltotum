@@ -62,7 +62,6 @@ class EventKitTarget : GraphicComponent, EventTarget
     void delegate(ref PointerEvent)[] onPointerMove;
     void delegate(ref PointerEvent)[] onPointerWheel;
 
-    bool isMouseOver;
     void delegate(ref PointerEvent)[] onPointerEnter;
     void delegate(ref PointerEvent)[] onPointerExit;
 
@@ -95,6 +94,8 @@ class EventKitTarget : GraphicComponent, EventTarget
     bool isCreateFocusHandler = true;
     bool isCreateJoystickHandler = true;
     bool isCreateWindowHandler = true;
+
+    bool isMouseOver;
 
     protected void createHandler(E)(ref void delegate(ref E)[] handlerArray)
     {

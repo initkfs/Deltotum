@@ -149,7 +149,7 @@ void applyElectricForce(Sprite2d sprite, FieldSource[] sources, float deltaTime)
     Vec2f electricForce = netField * sprite.charge;
 
     //F = m * a  ->  a = F / m
-    Vec2f accelerationDelta = electricForce * sprite.invMass;
+    Vec2f accelerationDelta = electricForce * sprite.domains.mech.invMass;
     sprite.velocity += accelerationDelta * deltaTime;
 }
 
@@ -190,6 +190,6 @@ void applyElectromagneticForce(Sprite2d sprite, FieldSource[] sources, float del
     // Total Lorentz force
     Vec2f totalForce = electricForce + magneticForce;
 
-    Vec2f accelerationDelta = totalForce * sprite.invMass;
+    Vec2f accelerationDelta = totalForce * sprite.domains.mech.invMass;
     sprite.velocity += accelerationDelta * deltaTime;
 }

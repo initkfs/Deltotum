@@ -76,7 +76,7 @@ void updateTemp(Sprite2d target)
 {
     Therm therm = target.domains.therm;
 
-    therm.temp = therm.heatContent / (target.mass * therm.specificHeat);
+    therm.temp = therm.heatContent / (target.domains.mech.mass * therm.specificHeat);
     //if (newTemp >= therm.meltingPoint)
     //{
     //startMelting;

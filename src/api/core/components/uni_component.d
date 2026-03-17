@@ -22,22 +22,6 @@ import api.core.loggers.builtins.logger : Logger;
  */
 class UniComponent : SimpleUnit
 {
-    bool isBuilt;
-    bool isAllowRebuild;
-    bool isAllowRebuildServices;
-
-    bool isStrictState = true;
-
-    bool isCallBeforeBuild;
-    bool isCallAfterBuild;
-
-    bool delegate(UniComponent component, UniComponent) onPreBuildWithParentIsContinue;
-    void delegate(UniComponent component, UniComponent) onPostBuildWithParent;
-
-    bool isComponentInitialized;
-    bool isComponentCreated;
-    bool isComponentDisposed;
-
     protected
     {
         @Service Context _context;
@@ -49,6 +33,22 @@ class UniComponent : SimpleUnit
         @Service Validation _validation;
         @Service Memory _memory;
     }
+    
+    bool delegate(UniComponent component, UniComponent) onPreBuildWithParentIsContinue;
+    void delegate(UniComponent component, UniComponent) onPostBuildWithParent;
+
+    bool isBuilt;
+    bool isAllowRebuild;
+    bool isAllowRebuildServices;
+
+    bool isStrictState = true;
+
+    bool isCallBeforeBuild;
+    bool isCallAfterBuild;
+
+    bool isComponentInitialized;
+    bool isComponentCreated;
+    bool isComponentDisposed;
 
     void build(UniComponent uniComponent)
     {

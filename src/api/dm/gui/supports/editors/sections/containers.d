@@ -354,7 +354,7 @@ class Containers : Control
         //Complex splitting
 
         auto splitLeft = new VSplitBox;
-        splitLeft.boundsColor = RGBA.blueviolet;
+        //splitLeft.boundsColor = RGBA.blueviolet;
         buildInitCreate(splitLeft);
         auto contentLeftTop = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
                 .greenyellow));
@@ -374,7 +374,7 @@ class Containers : Control
                 .salmon));
         buildInitCreate(contentCenterBottom);
 
-        splitCenter.boundsColor = RGBA.aliceblue;
+        //splitCenter.boundsColor = RGBA.aliceblue;
 
         splitCenter.addContent([contentCenterTop, contentCenterBottom]);
 
@@ -387,7 +387,7 @@ class Containers : Control
                 .salmon));
         buildInitCreate(contentRightBottom);
 
-        splitRight.boundsColor = RGBA.fuchsia;
+        //splitRight.boundsColor = RGBA.fuchsia;
 
         splitRight.addContent([contentRightTop, contentRightBottom]);
 

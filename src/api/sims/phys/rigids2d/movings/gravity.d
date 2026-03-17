@@ -21,11 +21,11 @@ void gravitate(Sprite2d a, Sprite2d b, float deltaTime, float g = 1000, float ma
     auto invDist = 1.0f / Math.sqrt(distSQ);
     auto dirNorm = direction * invDist;
 
-    auto force = g * (a.mass * b.mass / distSQ);
+    auto force = g * (a.domains.mech.mass * b.domains.mech.mass / distSQ);
 
     //  F / m_a
-    auto acceleration = dirNorm * (force / a.mass) * deltaTime;
+    auto acceleration = dirNorm * (force / a.domains.mech.mass) * deltaTime;
 
     a.velocity += acceleration;
-    b.velocity -= acceleration * (a.mass / b.mass);
+    b.velocity -= acceleration * (a.domains.mech.mass / b.domains.mech.mass);
 }

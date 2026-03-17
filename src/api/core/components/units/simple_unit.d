@@ -17,11 +17,11 @@ class SimpleUnit : Unitable
         bool _create;
     }
 
-    bool isThrowInvalidState = true;
-    bool isThrowInvalidChangeState = true;
-
     void delegate(SimpleUnit, UnitState) onInvalidNewState;
     void delegate(SimpleUnit, UnitState) onInvalidChangeNewState;
+
+    bool isThrowInvalidState = true;
+    bool isThrowInvalidChangeState = true;
 
     this(UnitState initState = UnitState.none) pure @safe
     {

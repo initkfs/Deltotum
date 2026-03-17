@@ -27,6 +27,8 @@ class Mech : BaseDomain
     {
         float _inertia = 0;
         float _invInertia = 0;
+        float _mass = 0;
+        float _invMass = 0;
     }
 
     bool isPhysShapeRect() => physShape == PhysShape.rect;
@@ -50,4 +52,20 @@ class Mech : BaseDomain
 
     float inertia() => _inertia;
     float invInertia() => _invInertia;
+
+    void mass(float v)
+    {
+        if (v == 0)
+        {
+            _mass = 0;
+            _invMass = 0;
+            return;
+        }
+
+        _mass = v;
+        _invMass = 1.0 / v;
+    }
+
+    float mass() pure @safe nothrow => _mass;
+    float invMass() pure @safe nothrow => _invMass;
 }

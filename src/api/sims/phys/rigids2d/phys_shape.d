@@ -10,14 +10,14 @@ enum PhysShape
 
 float inertiaRect(Sprite2d target, float scale = 0.0001)
 {
-    return (1.0f / 12.0f) * target.mass * (
+    return (1.0f / 12.0f) * target.domains.mech.mass * (
         target.boundsRect.width * target.boundsRect.width + target.boundsRect.height * target
             .boundsRect.height) * scale;
 }
 
 float inertiaCircle(Sprite2d target, float scale = 0.0001)
 {
-    return 0.5f * target.mass * target.halfWidth * target.halfWidth * scale;
+    return 0.5f * target.domains.mech.mass * target.halfWidth * target.halfWidth * scale;
 }
 
 //TODO cache

@@ -19,10 +19,6 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.scenes.scene2d : Scene2d;
 
-import std.container : DList;
-import std.math.operations : isClose;
-import std.stdio;
-import std.math.algebraic : abs;
 import std.variant : Variant;
 
 import api.dm.com.graphics.com_surface : ComSurface;
@@ -54,19 +50,45 @@ class Sprite2d : EventKitTarget
 
     Sprite2d parent;
 
+    //protected
+    //{
+    //TODO information about children
+    Sprite2d[] children;
+    //}
+
     protected
     {
-        float _angle = 0;
-        float _invMass = 1;
-    }
+        float _width = 0;
+        float _height = 0;
 
-    bool isAngleForChild = true;
+        float _x = 0;
+        float _y = 0;
+
+        float _prevX = 0;
+        float _prevY = 0;
+
+        float offsetX = 0;
+        float offsetY = 0;
+
+        float _angle = 0;
+        float _opacity = 1;
+
+        ulong lastClickTimeMs;
+
+        bool _managed = true;
+
+        Insets _padding;
+        Insets _margin;
+
+        GraphicCanvas _gContext;
+    }
 
     float scale = 1;
 
-    float _opacity = 1;
     float maxOpacity = float.max;
     bool isOpacityForChild;
+
+    bool isAngleForChild = true;
 
     bool isPhysics;
     bool isPhysInterpolateLastXY;
@@ -107,7 +129,6 @@ class Sprite2d : EventKitTarget
     bool isRedraw = true;
     bool isRedrawChildren = true;
     bool isDrawAfterParent = true;
-    bool _managed = true;
     bool isUpdatable = true;
     bool isResizable;
     bool isKeepAspectRatio;
@@ -118,7 +139,6 @@ class Sprite2d : EventKitTarget
     bool _layoutMovable = true;
 
     bool isLayoutForChild;
-
     bool isLayoutOnInvalid;
     bool isLayoutOnInvalidForChild = true;
 
@@ -133,8 +153,6 @@ class Sprite2d : EventKitTarget
 
     bool isManagedByScene = true;
 
-    Insets _padding;
-    Insets _margin;
     bool isHGrow;
     bool isVGrow;
 
@@ -154,10 +172,7 @@ class Sprite2d : EventKitTarget
     bool isDrawBounds;
     bool isDrawCenterBounds;
     bool isDrawInvalidBounds;
-
     RGBA boundsColor = RGBA.red;
-    RGBA boundsCenterColor = RGBA.yellow;
-    RGBA boundsInvalidColor = RGBA.blue;
 
     bool _visible = true;
     bool isVisibilityForChildren;
@@ -167,12 +182,6 @@ class Sprite2d : EventKitTarget
     bool isDispatchChildFromLast;
 
     bool isOutOfBounds;
-
-    //protected
-    //{
-    //TODO information about children
-    Sprite2d[] children;
-    //}
 
     bool delegate(float, float) onDragXY;
     void delegate() onStartDrag;
@@ -230,35 +239,17 @@ class Sprite2d : EventKitTarget
 
     Variant[string] userData;
 
-    protected
-    {
-        GraphicCanvas _gContext;
-
-        float _width = 0;
-        float _height = 0;
-
-        float offsetX = 0;
-        float offsetY = 0;
-
-        float _x = 0;
-        float _y = 0;
-
-        ulong lastClickTimeMs;
-    }
-
-    float _prevX = 0, _prevY = 0;
-
     uint maxClickTimeMs = 300;
 
     bool isDrag;
     bool isNoDragWhenPhysics;
 
-    enum float defaultTrashold = 0.01;
+    enum float defaultTreshold = 0.01;
 
-    float xChangeThreshold = defaultTrashold;
-    float yChangeThreshold = defaultTrashold;
-    float widthChangeThreshold = defaultTrashold;
-    float heightChangeThreshold = defaultTrashold;
+    float xChangeThreshold = defaultTreshold;
+    float yChangeThreshold = defaultTreshold;
+    float widthChangeThreshold = defaultTreshold;
+    float heightChangeThreshold = defaultTreshold;
 
     bool isConstructed;
 
@@ -1342,6 +1333,12 @@ class Sprite2d : EventKitTarget
             return;
         }
 
+        float invMass = 1;
+        if (hasDomains && domains.hasMech)
+        {
+            invMass = domains.mech.invMass;
+        }
+
         //TODO check velocity is 0 || acceleration is 0
         float accelerationDx = acceleration.x * invMass * delta;
         float accelerationDy = acceleration.y * invMass * delta;
@@ -1392,9 +1389,11 @@ class Sprite2d : EventKitTarget
                 physBody.angularVelocity *= (1.0f - frictionFactor * delta);
             }
 
-            if (physBody.maxAngularVelocity != 0 && Math.abs(physBody.angularVelocity) > physBody.maxAngularVelocity)
+            if (physBody.maxAngularVelocity != 0 && Math.abs(
+                    physBody.angularVelocity) > physBody.maxAngularVelocity)
             {
-                physBody.angularVelocity = physBody.maxAngularVelocity * Math.sign(physBody.angularVelocity);
+                physBody.angularVelocity = physBody.maxAngularVelocity * Math.sign(
+                    physBody.angularVelocity);
             }
 
             if (Math.abs(physBody.angularVelocity) < 0.5f)
@@ -2222,6 +2221,9 @@ class Sprite2d : EventKitTarget
         setValid(false);
     }
 
+    RGBA boundsCenterColor() => RGBA.yellow;
+    RGBA boundsInvalidColor() => RGBA.blue;
+
     void drawBounds()
     {
         drawBounds(boundsColor);
@@ -2735,10 +2737,7 @@ class Sprite2d : EventKitTarget
         isVGrow = isGrow;
     }
 
-    bool isVisible() pure @safe
-    {
-        return _visible;
-    }
+    bool isVisible() pure @safe => _visible;
 
     void isVisible(bool value) pure @safe
     {
@@ -2759,10 +2758,7 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    bool isManaged() pure @safe
-    {
-        return _managed;
-    }
+    bool isManaged() pure @safe => _managed;
 
     void isManaged(bool value) pure @safe
     {
@@ -2775,11 +2771,7 @@ class Sprite2d : EventKitTarget
     }
 
     bool hasLayout() => layout !is null;
-
-    bool isLayoutManaged() pure @safe
-    {
-        return _layoutManaged;
-    }
+    bool isLayoutManaged() pure @safe => _layoutManaged;
 
     void isLayoutManaged(bool value) pure @safe
     {
@@ -2792,10 +2784,7 @@ class Sprite2d : EventKitTarget
         _layoutManaged = value;
     }
 
-    bool isLayoutMovable() pure @safe
-    {
-        return _layoutMovable;
-    }
+    bool isLayoutMovable() pure @safe => _layoutMovable;
 
     void isLayoutMovable(bool value) pure @safe
     {
@@ -2806,33 +2795,6 @@ class Sprite2d : EventKitTarget
         }
 
         _layoutMovable = value;
-    }
-
-    float invMass() pure @safe nothrow => _invMass;
-    void invMass(float v)
-    {
-        _invMass = v;
-    }
-
-    void mass(float v)
-    {
-        if (v == 0)
-        {
-            _invMass = 0;
-            return;
-        }
-
-        _invMass = 1.0 / v;
-    }
-
-    float mass() pure @safe nothrow
-    {
-        if (_invMass == 0)
-        {
-            return 0;
-        }
-
-        return 1.0 / _invMass;
     }
 
     float opacity() => _opacity;
@@ -2945,10 +2907,7 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
-    float angle()
-    {
-        return _angle;
-    }
+    float angle() => _angle;
 
     void show()
     {
@@ -2984,10 +2943,7 @@ class Sprite2d : EventKitTarget
         isVGrow = value;
     }
 
-    bool isGrow()
-    {
-        return isHGrow && isVGrow;
-    }
+    bool isGrow() => isHGrow && isVGrow;
 
     void isResizedByParent(bool v)
     {

@@ -83,8 +83,8 @@ class DistanceJoint : Sprite2d
         float rbCrossN = rb.cross(normal);
 
         //TODO calc inertia
-        float invMassA = bodyA.invMass + raCrossN * raCrossN * bodyA.domains.mech.invInertia;
-        float invMassB = bodyB.invMass + rbCrossN * rbCrossN * bodyB.domains.mech.invInertia;
+        float invMassA = bodyA.domains.mech.invMass + raCrossN * raCrossN * bodyA.domains.mech.invInertia;
+        float invMassB = bodyB.domains.mech.invMass + rbCrossN * rbCrossN * bodyB.domains.mech.invInertia;
         float totalInvMass = invMassA + invMassB;
 
         if (totalInvMass < 1e-7f)
@@ -93,8 +93,8 @@ class DistanceJoint : Sprite2d
         float lambda = -(correction * stiffness) / (totalInvMass);
         Vec2f impulse = normal.scale(lambda);
 
-        bodyA.velocity -= impulse.scale(bodyA.invMass);
-        bodyB.velocity += impulse.scale(bodyB.invMass);
+        bodyA.velocity -= impulse.scale(bodyA.domains.mech.invMass);
+        bodyB.velocity += impulse.scale(bodyB.domains.mech.invMass);
 
         bodyA.domains.mech.angularVelocity -= bodyA.domains.mech.invInertia * ra.cross(impulse);
         bodyB.domains.mech.angularVelocity += bodyB.domains.mech.invInertia * rb.cross(impulse);
