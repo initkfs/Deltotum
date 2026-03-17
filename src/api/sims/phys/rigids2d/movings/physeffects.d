@@ -204,7 +204,7 @@ class SpringChain : Sprite2d
         {
             auto ball = new VCircle(25, GraphicStyle(5, RGBA.randomLight, true, RGBA.randomLight));
             ball.isPhysics = true;
-            ball.gravity = 3;
+            ball.domains.mech.gravity = 3;
             ball.damping = 9;
             addCreate(ball);
         }

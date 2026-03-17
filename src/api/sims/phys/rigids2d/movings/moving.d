@@ -31,7 +31,7 @@ class AngleBounce : Sprite2d
         ball.pos = Vec2f(10, 0);
         addCreate(ball);
 
-        ball.gravity = 1;
+        ball.domains.mech.gravity = 1;
         ball.isDraggable = true;
         ball.onPointerRelease ~= (ref e) { ball.isPhysics = true; };
 

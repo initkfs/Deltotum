@@ -6,6 +6,7 @@ import api.math.geom2.circle2 : Circle2f;
 
 import api.sims.phys.rigids2d.collisions.contacts;
 import api.sims.phys.rigids2d.collisions.contact_checker;
+import api.sims.phys.rigids2d.phys_shape : calcInertia;
 
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
@@ -18,7 +19,10 @@ bool resolve(Sprite2d a, Sprite2d b, float delta, bool isCorrectPos = true)
 {
     Contact2d collision;
 
-    if (a.isPhysShapeRect && b.isPhysShapeRect)
+    auto physBodyA = a.domains.mech;
+    auto physBodyB = b.domains.mech;
+
+    if (physBodyA.isPhysShapeRect && physBodyB.isPhysShapeRect)
     {
         if (!a.boundsRect.intersect(b.boundsRect))
         {
@@ -30,7 +34,7 @@ bool resolve(Sprite2d a, Sprite2d b, float delta, bool isCorrectPos = true)
             return false;
         }
     }
-    else if (a.isPhysShapeCircle && b.isPhysShapeCircle)
+    else if (physBodyA.isPhysShapeCircle && physBodyB.isPhysShapeCircle)
     {
         if (!a.boundsCircle.intersect(b.boundsCircle))
         {
@@ -57,13 +61,16 @@ bool resolve(Sprite2d a, Sprite2d b, float delta, bool isCorrectPos = true)
 
 bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorrectPos = true)
 {
+    auto physBodyA = a.domains.mech;
+    auto physBodyB = a.domains.mech;
+
     Vec2f ra = collision.pos.sub(a.center);
     Vec2f rb = collision.pos.sub(b.center);
 
     Vec2f velLinear = b.velocity.sub(a.velocity);
 
-    Vec2f velRotB = Vec2f.cross(rb, b.angularVelocity); // ω_b × r_b
-    Vec2f velRotA = Vec2f.cross(ra, a.angularVelocity); // ω_a × r_a
+    Vec2f velRotB = Vec2f.cross(rb, physBodyB.angularVelocity); // ω_b × r_b
+    Vec2f velRotA = Vec2f.cross(ra, physBodyA.angularVelocity); // ω_a × r_a
 
     Vec2f relativeVel = velLinear.add(velRotB).sub(velRotA);
 
@@ -77,11 +84,14 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
     float raCrossN = ra.cross(collision.normal); // = ra.x*normal.y - ra.y*normal.x
     float rbCrossN = rb.cross(collision.normal); // = rb.x*normal.y - rb.y*normal.x
 
+    // calcInertia(a);
+    // calcInertia(b);
+
     float invMassSum = a.invMass + b.invMass + (
-        raCrossN * raCrossN) * a.invInertia + (rbCrossN * rbCrossN) * b.invInertia;
+        raCrossN * raCrossN) * physBodyA.invInertia + (rbCrossN * rbCrossN) * physBodyB.invInertia;
 
     //float e = Math.min(a.restitution, b.restitution);
-    float e = (a.restitution + b.restitution) / 2;
+    float e = (physBodyA.restitution + physBodyB.restitution) / 2;
 
     float j = (-(1 + e)) * velAlongNormal;
     j /= invMassSum;
@@ -117,19 +127,20 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
 
     //a.angularVelocity -= a.invInertia * ra.cross(impulse);
     //b.angularVelocity += b.invInertia * rb.cross(impulse);
-    
+
     //Friction Ff <= mu * Fn
     Vec2f tangent = (relativeVel.sub(collision.normal.scale(relativeVel.dot(collision.normal))));
-    
+
     if (tangent.lengthSquared > 1e-7f)
     {
         tangent = tangent.normalize;
 
         float raCrossT = ra.cross(tangent);
         float rbCrossT = rb.cross(tangent);
-        
+
         float invMassSumTangent = a.invMass + b.invMass + (
-            raCrossT * raCrossT) * a.invInertia + (rbCrossT * rbCrossT) * b.invInertia;
+            raCrossT * raCrossT) * physBodyA.invInertia + (rbCrossT * rbCrossT) * physBodyB
+            .invInertia;
 
         if (invMassSumTangent > 1e-7f)
         {
@@ -153,14 +164,15 @@ bool resolve(Sprite2d a, Sprite2d b, Contact2d collision, float dt, bool isCorre
 
             a.velocity -= frictionImpulse.scale(a.invMass);
 
-            const angInvInertiaA = a.angularInertia != 0 ? 1.0 / a.angularInertia : a.invInertia;
-            a.angularVelocity -= angInvInertiaA * ra.cross(frictionImpulse);
+            const angInvInertiaA = physBodyA.angularInertia != 0 ? 1.0 / physBodyB.angularInertia
+                : physBodyA.invInertia;
+            physBodyA.angularVelocity -= angInvInertiaA * ra.cross(frictionImpulse);
 
             b.velocity += frictionImpulse.scale(b.invMass);
 
-            const angInvInertiaB = b.angularInertia != 0 ? 1.0 / b.angularInertia : b.invInertia;
-            b.angularVelocity += angInvInertiaB * rb.cross(frictionImpulse);
-
+            const angInvInertiaB = physBodyB.angularInertia != 0 ? 1.0 / physBodyB.angularInertia
+                : physBodyB.invInertia;
+            physBodyB.angularVelocity += angInvInertiaB * rb.cross(frictionImpulse);
         }
 
     }
@@ -197,5 +209,6 @@ void applyImpulse(Sprite2d sprite, Vec2f impulse, Vec2f contactVector)
 {
     //a = F/m
     sprite.velocity.add(impulse.scale(sprite.invMass));
-    sprite.angularVelocity += sprite.invInertia * contactVector.cross(impulse);
+    sprite.domains.mech.angularVelocity += sprite.domains.mech.invInertia * contactVector.cross(
+        impulse);
 }

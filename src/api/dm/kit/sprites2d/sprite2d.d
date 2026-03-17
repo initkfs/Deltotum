@@ -75,24 +75,9 @@ class Sprite2d : EventKitTarget
     Vec2f maxVelocity;
     Vec2f acceleration;
 
-    float angularVelocity = 0;
-    float maxAngularVelocity = 0;
-    float angularAcceleration = 0;
-    float linearAcceleration = 0;
-    float angularAngle = 0;
-
-    import api.sims.phys.rigids2d.phys_shape : PhysShape;
-
-    PhysShape physShape;
-
     float damping = 0;
-    float angularDamping = 0;
-    float angularInertia = 0;
-    float gravity = 0;
-    float restitution = 0.5;
     bool isStopOnSmallVelocity;
     float smallVelocityAbs = 0.5;
-
     size_t physicsIters = 1;
 
     bool delegate(Sprite2d, Sprite2d) onCollision;
@@ -1364,9 +1349,9 @@ class Sprite2d : EventKitTarget
         velocity.x += accelerationDx;
         velocity.y += accelerationDy;
 
-        if (gravity != 0)
+        if (_domains && _domains.hasMech && _domains.mech.gravity != 0)
         {
-            velocity.y += gravity * delta;
+            velocity.y += _domains.mech.gravity * delta;
         }
 
         if (damping != 0)
@@ -1380,15 +1365,42 @@ class Sprite2d : EventKitTarget
             velocity.y *= fdt;
         }
 
-        if (angularAngle != 0)
+        if (_domains && _domains.hasMech)
         {
-            import Math = api.math;
+            import api.dm.kit.domains.phys.mech : Mech;
 
-            float accelX = Math.cosDeg(angle) * linearAcceleration;
-            float accelY = Math.sinDeg(angle) * linearAcceleration;
+            Mech physBody = _domains.mech;
 
-            velocity.x += accelX * delta;
-            velocity.y += accelY * delta;
+            if (physBody.angularAngle != 0)
+            {
+                import Math = api.math;
+
+                float accelX = Math.cosDeg(physBody.angularAngle) * physBody.linearAcceleration;
+                float accelY = Math.sinDeg(physBody.angularAngle) * physBody.linearAcceleration;
+
+                velocity.x += accelX * delta;
+                velocity.y += accelY * delta;
+            }
+
+            physBody.angularVelocity += physBody.angularAcceleration * delta;
+
+            if (physBody.angularDamping != 0)
+            {
+                float angularSpeed = Math.abs(physBody.angularVelocity);
+                float frictionFactor = physBody.angularDamping * (1.0f + angularSpeed * 0.1f);
+
+                physBody.angularVelocity *= (1.0f - frictionFactor * delta);
+            }
+
+            if (physBody.maxAngularVelocity != 0 && Math.abs(physBody.angularVelocity) > physBody.maxAngularVelocity)
+            {
+                physBody.angularVelocity = physBody.maxAngularVelocity * Math.sign(physBody.angularVelocity);
+            }
+
+            if (Math.abs(physBody.angularVelocity) < 0.5f)
+                physBody.angularVelocity = 0.0f;
+
+            angle = angle + physBody.angularVelocity * delta;
         }
 
         if (!maxVelocity.isZero)
@@ -1439,26 +1451,6 @@ class Sprite2d : EventKitTarget
 
         _x += dx;
         _y += dy;
-
-        angularVelocity += angularAcceleration * delta;
-
-        if (angularDamping != 0)
-        {
-            float angularSpeed = Math.abs(angularVelocity);
-            float frictionFactor = angularDamping * (1.0f + angularSpeed * 0.1f);
-
-            angularVelocity *= (1.0f - frictionFactor * delta);
-        }
-
-        if (maxAngularVelocity != 0 && Math.abs(angularVelocity) > maxAngularVelocity)
-        {
-            angularVelocity = maxAngularVelocity * Math.sign(angularVelocity);
-        }
-
-        if (Math.abs(angularVelocity) < 0.5f)
-            angularVelocity = 0.0f;
-
-        angle = angle + angularVelocity * delta;
     }
 
     void update(float delta)
@@ -2956,41 +2948,6 @@ class Sprite2d : EventKitTarget
     float angle()
     {
         return _angle;
-    }
-
-    float inertiaRect(float scale = 0.0001) => (1.0f / 12.0f) * mass * (
-        boundsRect.width * boundsRect.width + boundsRect.height * boundsRect.height) * scale;
-    float inertiaCircle(float scale = 0.0001) => 0.5f * mass * halfWidth * halfWidth * scale;
-
-    //TODO cache
-    float inertia()
-    {
-        final switch (physShape) with (PhysShape)
-        {
-            case rect:
-                return inertiaRect;
-            case circle:
-                return inertiaCircle;
-        }
-    }
-
-    bool isPhysShapeRect() => physShape == PhysShape.rect;
-    bool isPhysShapeCircle() => physShape == PhysShape.circle;
-
-    void setPhysShapeRect()
-    {
-        physShape = PhysShape.rect;
-    }
-
-    void setPhysShapeCircle()
-    {
-        physShape = PhysShape.circle;
-    }
-
-    float invInertia()
-    {
-        const inv = inertia;
-        return (inv > 1e-7f) ? (1.0f / inv) : 0.0f;
     }
 
     void show()
