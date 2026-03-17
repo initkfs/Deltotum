@@ -97,18 +97,18 @@ class Sprite2d : EventKitTarget
 
     bool delegate(Sprite2d, Sprite2d) onCollision;
 
-    //TODO extract therms
-    float _temp = 0;
-    //amount of thermal energy
-    float heatContent = 0;
+    import api.dm.kit.domains.domain_set : DomainSet;
+
+    protected
+    {
+        DomainSet _domains;
+    }
+
+    bool isDomainsForChildren;
 
     //TODO extract
     //+1, -1, 0
     float charge = 0;
-
-    import api.sims.phys.heats.thermal_material : ThermalMaterial;
-
-    ThermalMaterial thermMat;
 
     Rect2f clip;
     bool isMoveClip;
@@ -276,6 +276,8 @@ class Sprite2d : EventKitTarget
     float heightChangeThreshold = defaultTrashold;
 
     bool isConstructed;
+
+    //pragma(msg, __traits(classInstanceSize, Sprite2d));
 
     this()
     {
@@ -851,6 +853,11 @@ class Sprite2d : EventKitTarget
         if (layout && isLayoutForChild)
         {
             sprite.layout = layout;
+        }
+
+        if (isDomainsForChildren && _domains && !sprite.hasDomains)
+        {
+            sprite.domains = domains;
         }
 
         return isSet;
@@ -1452,38 +1459,6 @@ class Sprite2d : EventKitTarget
             angularVelocity = 0.0f;
 
         angle = angle + angularVelocity * delta;
-    }
-
-    void temp(float newTemp)
-    {
-        _temp = newTemp;
-        heatContent = mass * thermMat.specificHeat * _temp;
-    }
-
-    float temp() => _temp;
-
-    void updateTemp()
-    {
-        _temp = heatContent / (mass * thermMat.specificHeat);
-
-        if (_temp >= thermMat.meltingPoint)
-        {
-            //startMelting;
-        }
-
-        if (_temp >= thermMat.boilingPoint)
-        {
-            //startBoiling;
-        }
-
-        //restitution = thermMat.elasticityVsTemp(temp);
-        //friction = thermMat.frictionVsTemp(temp);
-    }
-
-    void addHeat(float joules)
-    {
-        heatContent += joules;
-        updateTemp;
     }
 
     void update(float delta)
@@ -3106,6 +3081,24 @@ class Sprite2d : EventKitTarget
         import api.core.utils.arrays : drop;
 
         return drop(invalidateListeners, dg);
+    }
+
+    bool hasDomains() => _domains !is null;
+    DomainSet domains()
+    {
+        assert(_domains);
+        return _domains;
+    }
+
+    void domains(DomainSet w)
+    {
+        assert(w);
+        _domains = w;
+    }
+
+    void enableNewDomains()
+    {
+        _domains = new DomainSet;
     }
 
     string classInfo()

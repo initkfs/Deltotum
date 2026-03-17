@@ -1,6 +1,7 @@
 module api.sims.phys.heats.heat_transfer;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.domains.phys.therm : Therm;
 
 import Math = api.math;
 
@@ -8,18 +9,38 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-void transfer(Sprite2d a, Sprite2d b, float contactArea = 1, float dt = 1, float eps = 0.001)
+void addHeat(float joules, Sprite2d sprite)
 {
+    if (!sprite.hasDomains || !sprite.domains.hasTherm)
+    {
+        throw new Exception("No therm in sprite");
+    }
+
+    sprite.domains.therm.heatContent += joules;
+
+}
+
+// void temp(float newTemp)
+// {
+//     _temp = newTemp;
+//     heatContent = mass * specificHeat * _temp;
+// }
+
+void transfer(Sprite2d aTarget, Sprite2d bTarget, float contactArea = 1, float dt = 1, float eps = 0.001)
+{
+    Therm a = aTarget.domains.therm;
+    Therm b = aTarget.domains.therm;
+
     if (a.temp == b.temp)
     {
         return;
     }
 
-    //float conductivity = (a.thermMat.thermalConductivity + b.thermMat.thermalConductivity) / 2.0;
+    //float conductivity = (a.thermalConductivity + b.thermalConductivity) / 2.0;
     //float conductivity = 2.0 / (
-    //    1.0 / a.thermMat.thermalConductivity + 1.0 / b.thermMat.thermalConductivity
+    //    1.0 / a.thermalConductivity + 1.0 / b.thermalConductivity
     //);
-    float conductivity = Math.min(a.thermMat.thermalConductivity, b.thermMat.thermalConductivity);
+    float conductivity = Math.min(a.thermalConductivity, b.thermalConductivity);
 
     //b.temp - a.temp > 0 == heatFlow > 0
     //b.temp - a.temp < 0 == heatFlow < 0
@@ -47,8 +68,27 @@ void transfer(Sprite2d a, Sprite2d b, float contactArea = 1, float dt = 1, float
     a.heatContent += heatFlow;
     b.heatContent -= heatFlow;
 
-    a.updateTemp;
-    b.updateTemp;
+    updateTemp(aTarget);
+    updateTemp(bTarget);
+}
+
+void updateTemp(Sprite2d target)
+{
+    Therm therm = target.domains.therm;
+
+    therm.temp = therm.heatContent / (target.mass * therm.specificHeat);
+    //if (newTemp >= therm.meltingPoint)
+    //{
+    //startMelting;
+    //}
+
+    //if (newTemp >= therm.boilingPoint)
+    //{
+    //startBoiling;
+    //}
+
+    //restitution = thermMat.elasticityVsTemp(temp);
+    //friction = thermMat.frictionVsTemp(temp);
 }
 
 unittest
