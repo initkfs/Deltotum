@@ -85,7 +85,7 @@ class Images : Control
         addCreate(container);
         container.enablePadding;
 
-        import api.dm.kit.procedural.fractals.images.newton : Newton;
+        import api.dm.sims.procedural.fractals.images.newton : Newton;
 
         auto original = new Newton(imageSize, imageSize);
 

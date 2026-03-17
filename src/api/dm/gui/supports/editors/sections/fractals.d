@@ -11,9 +11,9 @@ import api.math.random : Random, rands;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 
-import api.dm.kit.procedural.lsystems.textures.lshape : LShape;
-import api.dm.kit.procedural.lsystems.lsystem : LSystemData;
-import LFractals = api.dm.kit.procedural.fractals.lfractals;
+import api.dm.sims.procedural.lsystems.textures.lshape : LShape;
+import api.dm.sims.procedural.lsystems.lsystem : LSystemData;
+import LFractals = api.dm.sims.procedural.fractals.lfractals;
 
 import Math = api.dm.math;
 
@@ -206,18 +206,18 @@ class Fractals : Control
         auto container3 = newHContainer;
         addCreate(container3);
 
-        import api.dm.kit.procedural.fractals.images.mandelbrot : Mandelbrot;
+        import api.dm.sims.procedural.fractals.images.mandelbrot : Mandelbrot;
 
         auto mand = new Mandelbrot(shapeSize, shapeSize);
         mand.foregroundColor = RGBA.hex(MaterialPalette.purpleA100);
         container3.addCreate(createFractalInfo("Mandelbrot", mand));
 
-        import api.dm.kit.procedural.fractals.images.julia : Julia;
+        import api.dm.sims.procedural.fractals.images.julia : Julia;
 
         auto julia = new Julia(shapeSize, shapeSize);
         container3.addCreate(createFractalInfo("Julia", julia));
 
-        import api.dm.kit.procedural.fractals.images.newton : Newton;
+        import api.dm.sims.procedural.fractals.images.newton : Newton;
 
         auto newton = new Newton(shapeSize, shapeSize);
         container3.addCreate(createFractalInfo("Newton", newton));
