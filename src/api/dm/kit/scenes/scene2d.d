@@ -1,13 +1,15 @@
 module api.dm.kit.scenes.scene2d;
 
-import api.core.components.units.simple_unit: SimpleUnit;
+import api.core.components.units.simple_unit : SimpleUnit;
 import api.dm.kit.events.event_kit_target : EventKitTarget;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.factories.factory_kit : FactoryKit;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.math.random : Random, nrands;
+import api.math.geom2.rect2 : Rect2f;
 
 import std.stdio;
 
@@ -54,9 +56,14 @@ class Scene2d : EventKitTarget
 
     Sprite2d[] controlledSprites;
 
+    bool isAutoSizeToWindow;
+
     protected
     {
         FactoryKit _factory;
+
+        float _width = 0;
+        float _height = 0;
     }
 
     void delegate() udaProcessor;
@@ -70,6 +77,7 @@ class Scene2d : EventKitTarget
         initProcessUDA!(ThisType)(isInitUDAProcessor);
 
         udaUserDirPath = "user:";
+        isAutoSizeToWindow = true;
     }
 
     bool initProcessUDA(Type)(bool isInitUDAProcessor)
@@ -342,7 +350,8 @@ class Scene2d : EventKitTarget
     void drawAll(float alpha)
     {
         drawSelfAndChildren(alpha);
-        if(!gpu.isCreated){
+        if (!gpu.isCreated)
+        {
             graphic.rendererPresent;
         }
     }
@@ -435,12 +444,38 @@ class Scene2d : EventKitTarget
         sprites = null;
     }
 
+    protected bool trySetSceneProps(Sprite2d sprite)
+    {
+        assert(sprite);
+
+        bool isSet;
+
+        if (!sprite.hasScene)
+        {
+            sprite.scene = this;
+            isSet |= true;
+        }
+
+        return isSet;
+    }
+
+    import api.dm.kit.components.graphic_component : GraphicComponent;
+    import api.core.components.uni_component : UniComponent;
+
+    alias build = UniComponent.build;
+
+    override void build(GraphicComponent comp)
+    {
+        super.build(comp);
+        if (auto sprite = cast(Sprite2d) comp)
+        {
+            trySetSceneProps(sprite);
+        }
+    }
+
     bool addCreate(Sprite2d obj)
     {
-        if (!obj.hasScene)
-        {
-            obj.scene = this;
-        }
+        trySetSceneProps(obj);
 
         try
         {
@@ -484,10 +519,7 @@ class Scene2d : EventKitTarget
             }
         }
 
-        if (!object.hasScene)
-        {
-            object.scene = this;
-        }
+        trySetSceneProps(object);
 
         sprites ~= object;
         return true;
@@ -569,6 +601,22 @@ class Scene2d : EventKitTarget
         return surf;
     }
 
+    float width() => _width;
+
+    bool width(float v)
+    {
+        _width = v;
+        return true;
+    }
+
+    float height() => _height;
+
+    bool height(float v)
+    {
+        _height = v;
+        return true;
+    }
+
     void snapshot(string path)
     {
         auto surf = snapshot;
@@ -589,4 +637,6 @@ class Scene2d : EventKitTarget
         }
         im.save(surf, path);
     }
+
+    Rect2f boundsRect() => Rect2f(0, 0, _width, _height);
 }

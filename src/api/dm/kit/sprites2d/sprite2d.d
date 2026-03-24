@@ -867,6 +867,16 @@ class Sprite2d : EventKitTarget
                 sprite.y = y + sprite.y;
             }
 
+            try
+            {
+                trySetParentProps(sprite);
+            }
+            catch (Exception e)
+            {
+                logger.error(e.toString);
+                return false;
+            }
+
             if (!sprite.isBuilt)
             {
                 buildInit(sprite);

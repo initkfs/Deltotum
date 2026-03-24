@@ -22,28 +22,28 @@ For fragment shaders:
 */
 class SdlGPUShader : SdlObjectWrapper!SDL_GPUShader
 {
-    this(SDL_GPUShader* shaderPtr)
+    protected
     {
-        super(shaderPtr);
+        SDL_GPUDevice* gpuDevice;
     }
 
-    bool disposeWithGpu(SDL_GPUDevice* gpuPtr){
-        if(!ptr){
-            return false;
-        }
-        
-        SDL_ReleaseGPUShader(gpuPtr, ptr);
-        ptr = null;
-        return true;
+    this(SDL_GPUShader* shaderPtr, SDL_GPUDevice* gpuDevice)
+    {
+        super(shaderPtr);
+        assert(gpuDevice);
+        this.gpuDevice = gpuDevice;
     }
 
     override protected bool disposePtr() nothrow
     {
-        if (ptr)
+        if (!ptr)
         {
-            assert(false, "Unable disposing without GPUDevice");
+            return false;
         }
-        return false;
+
+        SDL_ReleaseGPUShader(gpuDevice, ptr);
+        setNullPtr;
+        return true;
     }
 
 }

@@ -247,6 +247,13 @@ class Window : GraphicComponent
             }
         }
         _scenes ~= scene;
+
+        if (scene.isAutoSizeToWindow)
+        {
+            scene.width = width;
+            scene.height = height;
+        }
+
         return true;
     }
 
@@ -685,6 +692,16 @@ class Window : GraphicComponent
         }
         lastChangedWidth = width;
         lastChangedHeight = height;
+
+        foreach (sc; _scenes)
+        {
+            if (sc.isAutoSizeToWindow)
+            {
+                sc.width = newWidth;
+                sc.height = newHeight;
+            }
+        }
+
         return true;
     }
 
@@ -757,6 +774,7 @@ class Window : GraphicComponent
         {
             logger.error(err.toString);
         }
+
         return width;
     }
 

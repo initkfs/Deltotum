@@ -40,13 +40,14 @@ class Scene3d : Scene2d
     {
         super(isInitUDAProcessor);
         initProcessUDA!ThisType(isInitUDAProcessor);
+        isAutoSizeToWindow = true;
     }
 
     override void create()
     {
         super.create;
 
-        if (gpu.isCreated)
+        if (platform.cap.isGPU)
         {
             camera = createCamera;
             assert(camera);
@@ -167,7 +168,7 @@ class Scene3d : Scene2d
 
     void uploadToGPU()
     {
-        if (!gpu.isCreated)
+        if (!platform.cap.isGPU)
         {
             return;
         }
@@ -240,7 +241,7 @@ class Scene3d : Scene2d
 
     override void drawAll(float alpha)
     {
-        if ((!gpu) || (!gpu.isCreated))
+        if ((!gpu) || (!platform.cap.isGPU))
         {
             super.drawAll(alpha);
             return;

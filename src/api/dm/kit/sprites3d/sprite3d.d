@@ -454,4 +454,18 @@ class Sprite3d : Sprite2d
         return isChangePos;
     }
 
+    override bool toCenterX(bool isUseParent = false)
+    {
+        float fullWidth = (isUseParent && parent) ? parent.width : 0;
+        auto middleX = fullWidth / 2;
+        return x = middleX;
+    }
+
+    override bool toCenterY(bool isUseParent = false)
+    {
+        float fullHeight = (isUseParent && parent) ? parent.height : 0;
+        auto middleY = fullHeight / 2;
+        return (y = middleY);
+    }
+
 }

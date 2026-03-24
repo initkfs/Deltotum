@@ -11,12 +11,7 @@ class Cube : Shape3d
 {
     float depth = 0;
 
-    this()
-    {
-
-    }
-
-    this(float width, float height, float depth)
+    this(float width = 1, float height = 1, float depth = 1)
     {
         this.initSize(width, height);
         this.depth = depth;

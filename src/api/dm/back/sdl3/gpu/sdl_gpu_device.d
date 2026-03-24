@@ -230,7 +230,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             throw new Exception(getError);
         }
 
-        return new SdlGPUShader(shaderPtr);
+        return new SdlGPUShader(shaderPtr, ptr);
     }
 
     SdlGPUPipeline newPipeline(SDL_GPUGraphicsPipelineCreateInfo info)
@@ -365,8 +365,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     void deleteShader(SdlGPUShader shader)
     {
-        shader.disposeWithGpu(ptr);
-        shader.setNullPtr;
+        shader.dispose;
     }
 
     SDL_GPUBuffer* newGPUBufferVertex(size_t size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_VERTEX, size);

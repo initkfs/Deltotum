@@ -1032,10 +1032,10 @@ class SdlApp : GuiApp
 
             window.gpuDevice = gpuDevice;
 
-            if (const err = gpuDevice.attachToWindow(sdlWindow))
-            {
-                uservices.logger.error(err.toString);
-            }
+            // if (const err = gpuDevice.attachToWindow(sdlWindow))
+            // {
+            //     uservices.logger.error(err.toString);
+            // }
         }
         else
         {
