@@ -15,7 +15,7 @@ class DomainSet
         Therm _therm;
     }
 
-    bool hasMech() => _therm !is null;
+    bool hasMech() => _mech !is null;
     Mech mech()
     {
         assert(_mech, "Mechanics is null");
