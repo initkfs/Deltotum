@@ -930,7 +930,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     void bindFragmentSamplers(Texture3d[] textures, uint firstSlot = 0)
     {
         SDL_GPUTextureSamplerBinding[] sampleBinding = new SDL_GPUTextureSamplerBinding[textures
-                .length];
+            .length];
         foreach (ti, texture; textures)
         {
             sampleBinding[ti].texture = texture.texture;
@@ -969,6 +969,19 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
         SDL_BindGPUFragmentStorageBuffers(lastPass, firstSlot, &buffer, 1);
+    }
+
+    bool setViewport(Rect2f bounds, float minDepth = 0, float maxDepth = 1)
+    {
+        if (!lastPass)
+        {
+            return false;
+        }
+        SDL_GPUViewport viewport = {
+            bounds.x, bounds.y, bounds.width, bounds.height, minDepth, maxDepth
+        };
+        SDL_SetGPUViewport(lastPass, &viewport);
+        return true;
     }
 
     bool draw(size_t numVertices = 1, size_t numInstances = 1, size_t firstVertex = 0, size_t firstInstance = 0)

@@ -124,6 +124,12 @@ class PipelineGroup : Sprite3d
         }
 
         gpu.dev.bindPipeline(_pipeline);
+
+        //import api.math.geom2.rect2 : Rect2f;
+
+        //TODO extract to scene?
+        //gpu.dev.setViewport(Rect2f(-1, -1, 1, 1));
+
         return true;
     }
 

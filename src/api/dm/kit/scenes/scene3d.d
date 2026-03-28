@@ -348,6 +348,8 @@ class Scene3d : Scene2d
             gpu.dev.submitCmdBuffer;
             gpu.dev.resetState;
         }
+
+        //TODO flush?
     }
 
     override void update(float dt)
