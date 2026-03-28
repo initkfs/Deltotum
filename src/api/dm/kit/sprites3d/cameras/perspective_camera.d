@@ -100,7 +100,7 @@ class PerspectiveCamera : Sprite2d
         assert(w > 0);
         assert(h > 0);
 
-        projection = perspectiveMatrixRH(fov, w / h, nearPlane, farPlane);
+        projection = perspectiveMatrixGL(fov, w / h, nearPlane, farPlane);
 
         recalcView;
     }
@@ -140,11 +140,11 @@ class PerspectiveCamera : Sprite2d
         if (isOrbital)
         {
 
-            view = lookAt(cameraPos, cameraTarget, cameraUp);
+            view = lookAtGL(cameraPos, cameraTarget, cameraUp);
         }
         else
         {
-            view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
+            view = lookAtGL(cameraPos, cameraPos.add(cameraFront), cameraUp);
         }
 
         if (isAutoRecalcFrustum)
@@ -358,7 +358,7 @@ class PerspectiveCamera : Sprite2d
         cameraRight = cameraFront.cross(Vec3f(0, 1, 0)).normalize;
         cameraUp = cameraRight.cross(cameraFront).normalize;
 
-        view = lookAt(cameraPos, target, cameraUp);
+        view = lookAtGL(cameraPos, target, cameraUp);
     }
 
 }

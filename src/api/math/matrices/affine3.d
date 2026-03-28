@@ -234,7 +234,7 @@ Matrix4x4 scaleMatrix(float scaleX, float scaleY, float scaleZ)
    0        0        zf/(zn-zf)        -1
    0        0        zn*zf/(zn-zf)      0 
  */
-Matrix4x4 perspectiveMatrixRH(float fovYDeg, float aspectRatio, float nearZ = 0.1, float farZ = 100)
+Matrix4x4 perspectiveMatrixGL(float fovYDeg, float aspectRatio, float nearZ = 0.1, float farZ = 100)
 {
     import Math = api.math;
 
@@ -254,7 +254,7 @@ Matrix4x4 perspectiveMatrixRH(float fovYDeg, float aspectRatio, float nearZ = 0.
     return matrix;
 }
 
-Matrix4x4 lookAt(Vec3f eye, Vec3f target, Vec3f up)
+Matrix4x4 lookAtGL(Vec3f eye, Vec3f target, Vec3f up)
 {
     import Math = api.math;
 
