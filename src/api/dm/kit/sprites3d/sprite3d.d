@@ -315,7 +315,7 @@ class Sprite3d : Sprite2d
             newZ = Math.roundEven(newZ);
         }
 
-        if (!Math.greater(_z, newZ, zChangeThreshold))
+        if (zChangeThreshold != 0 && Math.abs(_z - newZ) < zChangeThreshold)
         {
             return false;
         }
@@ -340,6 +340,7 @@ class Sprite3d : Sprite2d
         }
 
         _z = newZ;
+        isMatrixRecalc = true;
 
         if (!isInvalidationProcess)
         {
