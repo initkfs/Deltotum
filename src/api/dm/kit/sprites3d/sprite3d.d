@@ -2,7 +2,7 @@ module api.dm.kit.sprites3d.sprite3d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : SceneTransforms;
-import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
+import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4;
 import api.math.quaternion : Quaternion;
@@ -17,7 +17,7 @@ class Sprite3d : Sprite2d
 
     protected
     {
-        PerspectiveCamera _camera;
+        Camera _camera;
 
         float _z = 0;
 
@@ -396,7 +396,7 @@ class Sprite3d : Sprite2d
         }
     }
 
-    void camera(PerspectiveCamera newCamera)
+    void camera(Camera newCamera)
     {
         if (!newCamera)
         {
@@ -405,7 +405,7 @@ class Sprite3d : Sprite2d
         _camera = newCamera;
     }
 
-    PerspectiveCamera camera()
+    Camera camera()
     {
         assert(_camera, "Camera must not be null");
         return _camera;

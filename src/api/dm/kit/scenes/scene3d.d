@@ -4,6 +4,7 @@ import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.textures.depth_texture : DepthTexture;
+import api.dm.kit.sprites3d.cameras.camera: Camera;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.math.matrices.matrix;
 
@@ -24,7 +25,7 @@ struct SceneTransforms
 
 class Scene3d : Scene2d
 {
-    PerspectiveCamera camera;
+    Camera camera;
 
     bool isDepth = true;
     bool isAntiAliasing;
@@ -113,9 +114,14 @@ class Scene3d : Scene2d
         }
     }
 
-    PerspectiveCamera createCamera()
+    PerspectiveCamera newPerspCamera()
     {
-        camera = new PerspectiveCamera(this);
+        return new PerspectiveCamera(this);
+    }
+
+    Camera createCamera()
+    {
+        camera = newPerspCamera;
         build(camera);
         camera.create;
         assert(camera.isCreated);
@@ -307,8 +313,8 @@ class Scene3d : Scene2d
 
         }
 
-        drawSelfAndChildren(alpha);  
-        graphic.clear;      
+        drawSelfAndChildren(alpha);
+        graphic.clear;
 
         if (isAntiAliasing)
         {
