@@ -1,9 +1,10 @@
 module api.dm.kit.sprites3d.cameras.perspective_camera;
 
-import api.dm.kit.sprites3d.cameras.camera: Camera;
+import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : Scene3d;
-import api.math.geom3.frustum3 : Frustum3f;
+import api.dm.kit.sprites3d.cameras.frustums.frustum3_persp : Frustum3fPersp;
+import api.dm.kit.sprites3d.cameras.frustums.base_frustum3 : BaseFrustum3f;
 
 import Math = api.math;
 import api.math.geom3.vec3 : Vec3f;
@@ -18,9 +19,16 @@ class PerspectiveCamera : Camera
 
     float fov = 45;
 
+    protected
+    {
+        Frustum3fPersp _frustum;
+    }
+
     this(Scene3d targetScene)
     {
         super(targetScene);
+
+        _frustum = new Frustum3fPersp;
     }
 
     override void create()
@@ -50,9 +58,11 @@ class PerspectiveCamera : Camera
         recalcView;
     }
 
+    override BaseFrustum3f frustum() => _frustum;
+
     override void recalcFrustum()
     {
         float ratio = window.width / window.height;
-        _frustum = Frustum3f(cameraPos, cameraFront, cameraUp, cameraRight, Math.degToRad(fov), ratio, nearPlane, farPlane);
+        _frustum.recalc(cameraPos, cameraFront, cameraUp, cameraRight, Math.degToRad(fov), ratio, nearPlane, farPlane);
     }
 }

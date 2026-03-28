@@ -3,7 +3,7 @@ module api.dm.kit.sprites3d.shapes.frustum;
 import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
-import api.math.geom3.frustum3 : Frustum3f;
+import api.dm.kit.sprites3d.cameras.frustums.frustum3_persp : Frustum3fPersp;
 import api.math.geom3.plane3 : Plane3f;
 import api.math.geom3.vec3 : Vec3f;
 
@@ -17,17 +17,17 @@ class Frustum : Shape3d
 {
     protected
     {
-        Frustum3f frustum;
+        Frustum3fPersp frustum;
     }
 
     this(Vec3f cameraPos, Vec3f cameraFront, Vec3f cameraUp, Vec3f cameraRight,
         float fovYRad, float aspectRatio, float nearDist, float farDist)
     {
-        this.frustum = Frustum3f(cameraPos, cameraFront, cameraUp, cameraRight,
+        this.frustum = new Frustum3fPersp(cameraPos, cameraFront, cameraUp, cameraRight,
             Math.degToRad(fovYRad), aspectRatio, nearDist, farDist);
     }
 
-    this(Frustum3f frustum)
+    this(Frustum3fPersp frustum)
     {
         this.frustum = frustum;
     }

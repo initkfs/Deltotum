@@ -2,7 +2,7 @@ module api.dm.kit.sprites3d.cameras.camera;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : Scene3d;
-import api.math.geom3.frustum3 : Frustum3f;
+import api.dm.kit.sprites3d.cameras.frustums.base_frustum3: BaseFrustum3f;
 
 import Math = api.math;
 import api.math.geom3.vec3 : Vec3f;
@@ -18,8 +18,6 @@ class Camera : Sprite2d
     protected
     {
         Scene3d targetScene;
-
-        Frustum3f _frustum;
     }
 
     float lastCursorX = 0;
@@ -72,6 +70,7 @@ class Camera : Sprite2d
     abstract
     {
         void recalcFrustum();
+        BaseFrustum3f frustum();
     }
 
     override void create()
@@ -137,8 +136,6 @@ class Camera : Sprite2d
             recalcFrustum;
         }
     }
-
-    Frustum3f frustum() const => _frustum;
 
     override void update(float dt)
     {

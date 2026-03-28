@@ -4,8 +4,9 @@ import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.textures.depth_texture : DepthTexture;
-import api.dm.kit.sprites3d.cameras.camera: Camera;
+import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
+import api.dm.kit.sprites3d.cameras.orthographic_camera : OrthographicCamera;
 import api.math.matrices.matrix;
 
 //TODO remove native api
@@ -117,6 +118,11 @@ class Scene3d : Scene2d
     PerspectiveCamera newPerspCamera()
     {
         return new PerspectiveCamera(this);
+    }
+
+    OrthographicCamera newOrthoCamera()
+    {
+        return new OrthographicCamera(this);
     }
 
     Camera createCamera()

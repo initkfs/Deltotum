@@ -254,6 +254,28 @@ Matrix4x4 perspectiveMatrixGL(float fovYDeg, float aspectRatio, float nearZ = 0.
     return matrix;
 }
 
+Matrix4x4 orthographicMatrixGL(float left, float right, float bottom, float top, float nearZ = 0.1, float farZ = 100)
+{
+    Matrix4x4 matrix;
+    matrix.fillInit;
+
+    matrix[0][0] = 2.0f / (right - left);
+    matrix[1][1] = 2.0f / (top - bottom);
+    
+    // OpenGL-style: NDC z ∈ [-1, 1]
+    // При z_view = nearZ → z_ndc = -1
+    // При z_view = farZ → z_ndc = 1
+    matrix[2][2] = -2.0f / (farZ - nearZ);
+    matrix[2][3] = 0.0f;
+    matrix[3][2] = -(farZ + nearZ) / (farZ - nearZ);
+    
+    matrix[3][0] = -(right + left) / (right - left);
+    matrix[3][1] = -(top + bottom) / (top - bottom);
+    matrix[3][3] = 1.0f;
+
+    return matrix;
+}
+
 Matrix4x4 lookAtGL(Vec3f eye, Vec3f target, Vec3f up)
 {
     import Math = api.math;
