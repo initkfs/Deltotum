@@ -50,7 +50,8 @@ class GPUGraphic : ApplicationUnit
         this.device = device;
     }
 
-    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* depthInfo) => dev.startRenderPass(colorTargets, currSdlWindow, depthInfo);
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* depthInfo) => dev
+        .startRenderPass(colorTargets, currSdlWindow, depthInfo);
     bool startRenderPass() => dev.startRenderPass(currSdlWindow, clearColor);
     bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets) => dev.startRenderPass(
         colorTargets, currSdlWindow);
@@ -80,7 +81,7 @@ class GPUGraphic : ApplicationUnit
     SDL_GPUTextureFormat getSwapchainTextureFormat() => dev.getSwapchainTextureFormat(
         currSdlWindow);
 
-    string shaderDefaultPath(string fileNameWithoutExt, string shadersDirName = "shaders")
+    string shaderDefaultPath(string fileNameWithoutExt, string shadersDirName = "shaders", string shaderCompiledDirName = "out", string shaderType = "spirv")
     {
         import std.path : buildPath;
         import std.file : exists, isFile;
@@ -94,7 +95,7 @@ class GPUGraphic : ApplicationUnit
             shaderExt = shaderExt[1 .. $];
         }
 
-        immutable path = buildPath(context.app.dataDir, shadersDirName, fileNameWithoutExt ~ shaderExt);
+        immutable path = buildPath(context.app.dataDir, shadersDirName, shaderCompiledDirName, shaderType, fileNameWithoutExt ~ shaderExt);
         if (!path.exists || !path.isFile)
         {
             throw new Exception("Shader file doesn't exist or not a file: " ~ path);
