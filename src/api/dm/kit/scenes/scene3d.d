@@ -29,7 +29,7 @@ class Scene3d : Scene2d
     Camera camera;
 
     bool isDepth = true;
-    bool isAntiAliasing;
+    bool isAntiAliasing = true;
 
     SDL_GPUSampleCount aliasingSampleCount = SDL_GPU_SAMPLECOUNT_4;
 
@@ -98,6 +98,13 @@ class Scene3d : Scene2d
                     int sampleCount = aliasingSampleCount;
                     logger.errorf("Texture format %d not supported with sample count: %d", tformat, sampleCount);
                     isAntiAliasing = false;
+
+                    debug
+                    {
+                        import std.conv : to;
+
+                        throw new Exception("Unsupported msaa format: " ~ format.to!string);
+                    }
                 }
             }
 
@@ -219,17 +226,21 @@ class Scene3d : Scene2d
     protected SDL_GPUColorTargetInfo createTargetInfo()
     {
         SDL_GPUColorTargetInfo colorTargetInfo;
+        SDL_FColor clearColor;
         if (isAntiAliasing)
         {
             colorTargetInfo.texture = msaaTexture;
+            clearColor = SDL_FColor(0, 0, 0, 0);
         }
         else
         {
             colorTargetInfo.texture = gpu.dev.swapchain;
+            clearColor = SDL_FColor(0, 0, 0, 1);
         }
 
-        colorTargetInfo.clear_color = gpu.dev.clearColor;
+        colorTargetInfo.clear_color = clearColor;
         colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+        colorTargetInfo.cycle = true;
 
         if (isAntiAliasing)
         {
@@ -246,8 +257,8 @@ class Scene3d : Scene2d
         else
         {
             colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
-            colorTargetInfo.cycle = true;
         }
+        
         return colorTargetInfo;
     }
 

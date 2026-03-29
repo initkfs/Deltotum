@@ -218,7 +218,7 @@ class PipelineGroup : Sprite3d
         if (isDepth)
         {
             targetInfo.has_depth_stencil_target = true;
-            targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
+            targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
         }
 
         auto stencilState = isDepth ? gpu.dev.depthStencilState : gpu.dev.stencilState;
