@@ -68,6 +68,8 @@ nothrow:
     
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a);
 
+    ComResult convert(int format);
+
     ComResult saveBMP(const(char)[] file);
     ComResult loadBMP(const(char)[] file);
 }

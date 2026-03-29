@@ -234,8 +234,9 @@ Matrix4x4 scaleMatrix(float scaleX, float scaleY, float scaleZ)
    0        0        zf/(zn-zf)        -1
    0        0        zn*zf/(zn-zf)      0 
  */
-Matrix4x4 perspectiveMatrixGL(float fovYDeg, float aspectRatio, float nearZ = 0.1, float farZ = 100)
+Matrix4x4 perspectiveMatrix(float fovYDeg, float aspectRatio, float nearZ = 0.1, float farZ = 100)
 {
+    //Z reverse
     import Math = api.math;
 
     Matrix4x4 matrix;
@@ -247,36 +248,38 @@ Matrix4x4 perspectiveMatrixGL(float fovYDeg, float aspectRatio, float nearZ = 0.
 
     matrix[0][0] = f / aspectRatio;
     matrix[1][1] = f;
-    matrix[2][2] = farZ / (nearZ - farZ);
+    //matrix[2][2] = nearZ / (farZ - nearZ);
+    matrix[2][2] = 0.0f;
     matrix[2][3] = -1.0f;
-    matrix[3][2] = (nearZ * farZ) / (nearZ - farZ);
+    //matrix[3][2] = (nearZ * farZ) / (farZ - nearZ);
+    matrix[3][2] = nearZ;
 
     return matrix;
 }
 
-Matrix4x4 orthographicMatrixGL(float left, float right, float bottom, float top, float nearZ = 0.1, float farZ = 100)
+Matrix4x4 orthoMatrix(float left, float right, float bottom, float top, float nearZ = 0.1, float farZ = 100)
 {
+    //Z reverse
     Matrix4x4 matrix;
     matrix.fillInit;
 
     matrix[0][0] = 2.0f / (right - left);
     matrix[1][1] = 2.0f / (top - bottom);
-    
-    // OpenGL-style: NDC z ∈ [-1, 1]
-    // При z_view = nearZ → z_ndc = -1
-    // При z_view = farZ → z_ndc = 1
-    matrix[2][2] = -2.0f / (farZ - nearZ);
-    matrix[2][3] = 0.0f;
-    matrix[3][2] = -(farZ + nearZ) / (farZ - nearZ);
-    
     matrix[3][0] = -(right + left) / (right - left);
     matrix[3][1] = -(top + bottom) / (top - bottom);
+
+    // Z 0..1\Reversed-Z
+    // viewZ = -near -> ndcZ = 1.0, viewZ = -far -> ndcZ = 0.0
+    // ndcZ = (viewZ + far) / (far - near)
+    matrix[2][2] = 1.0f / (nearZ - farZ);
+    matrix[3][2] = farZ / (farZ - nearZ);
+
     matrix[3][3] = 1.0f;
 
     return matrix;
 }
 
-Matrix4x4 lookAtGL(Vec3f eye, Vec3f target, Vec3f up)
+Matrix4x4 lookAt(Vec3f eye, Vec3f target, Vec3f up)
 {
     import Math = api.math;
 

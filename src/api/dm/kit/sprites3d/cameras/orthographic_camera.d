@@ -64,7 +64,7 @@ class OrthographicCamera : Camera
 
         updateAspectRatio;
         updateOrthoBounds;
-        projection = orthographicMatrixGL(left, right, bottom, top, nearPlane, farPlane);
+        projection = orthoMatrix(left, right, bottom, top, nearPlane, farPlane);
         recalcView;
 
         prevWindowW = window.width;
@@ -109,7 +109,7 @@ class OrthographicCamera : Camera
 
         if (isRecalcProjection)
         {
-            projection = orthographicMatrixGL(left, right, bottom, top, nearPlane, farPlane);
+            projection = orthoMatrix(left, right, bottom, top, nearPlane, farPlane);
             isRecalcProjection = false;
         }
     }

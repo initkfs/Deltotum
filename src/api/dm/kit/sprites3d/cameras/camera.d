@@ -124,11 +124,11 @@ class Camera : Sprite2d
         if (isOrbital)
         {
 
-            view = lookAtGL(cameraPos, cameraTarget, cameraUp);
+            view = lookAt(cameraPos, cameraTarget, cameraUp);
         }
         else
         {
-            view = lookAtGL(cameraPos, cameraPos.add(cameraFront), cameraUp);
+            view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
         }
 
         if (isAutoRecalcFrustum)
@@ -334,7 +334,7 @@ class Camera : Sprite2d
         cameraRight = cameraFront.cross(Vec3f(0, 1, 0)).normalize;
         cameraUp = cameraRight.cross(cameraFront).normalize;
 
-        view = lookAtGL(cameraPos, target, cameraUp);
+        view = lookAt(cameraPos, target, cameraUp);
     }
 
 }

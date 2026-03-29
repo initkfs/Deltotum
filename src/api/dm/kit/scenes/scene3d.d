@@ -268,7 +268,7 @@ class Scene3d : Scene2d
             SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
             depthStencilTargetInfo.texture = depthTexture.texture;
             depthStencilTargetInfo.cycle = true;
-            depthStencilTargetInfo.clear_depth = 1;
+            depthStencilTargetInfo.clear_depth = 0;
             depthStencilTargetInfo.clear_stencil = 0;
             depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
             depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;

@@ -138,6 +138,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
+    ComResult convert(int format) nothrow => convert(cast(SDL_PixelFormat) format);
+
     ComResult convert(SDL_PixelFormat format) nothrow
     {
         // Returns the new SDL_Surface

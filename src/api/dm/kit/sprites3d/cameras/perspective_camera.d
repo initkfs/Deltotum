@@ -53,7 +53,7 @@ class PerspectiveCamera : Camera
         assert(w > 0);
         assert(h > 0);
 
-        projection = perspectiveMatrixGL(fov, w / h, nearPlane, farPlane);
+        projection = perspectiveMatrix(fov, w / h, nearPlane, farPlane);
 
         recalcView;
     }

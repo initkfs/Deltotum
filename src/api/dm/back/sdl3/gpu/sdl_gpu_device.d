@@ -1130,7 +1130,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         stState.enable_depth_test = true;
         stState.enable_depth_write = true;
         stState.enable_stencil_test = false;
-        stState.compare_op = SDL_GPU_COMPAREOP_LESS;
+        stState.compare_op = SDL_GPU_COMPAREOP_GREATER;
         stState.write_mask = 0xFF;
         return stState;
     }
