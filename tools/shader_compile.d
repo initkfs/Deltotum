@@ -36,7 +36,8 @@ void main(string[] args)
             auto startExtIndex = shaderFile.indexOf(".");
             if (startExtIndex != -1)
             {
-                shaderPath = buildPath(shadersSrcDir, shaderFile[0 .. startExtIndex], shaderFile).absolutePath;
+                shaderPath = buildPath(shadersSrcDir, shaderFile[0 .. startExtIndex], shaderFile)
+                    .absolutePath;
             }
         }
 
@@ -88,7 +89,12 @@ void compileShader(string shaderFile, string shadersDir, bool isVerbose = true)
     string shaderOutFile = buildPath(shadersDir, "out", "spirv");
     if (shaderFile.isAbsolute)
     {
-        shaderOutFile = buildPath(shaderOutFile, shaderFile.baseName.stripExtension);
+        auto outName = shaderFile.baseName;
+        if (outName.endsWith(hlslExt))
+        {
+            outName = outName.stripExtension;
+        }
+        shaderOutFile = buildPath(shaderOutFile, outName);
     }
     else
     {

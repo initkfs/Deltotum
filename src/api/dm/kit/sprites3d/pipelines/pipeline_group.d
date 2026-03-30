@@ -211,7 +211,7 @@ class PipelineGroup : Sprite3d
         SDL_GPUGraphicsPipelineTargetInfo targetInfo;
 
         SDL_GPUColorTargetDescription[1] targetDesc;
-        targetDesc[0].format = gpu.getSwapchainTextureFormat;
+        targetDesc[0].format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
         targetInfo.num_color_targets = 1;
         targetInfo.color_target_descriptions = targetDesc
             .ptr;

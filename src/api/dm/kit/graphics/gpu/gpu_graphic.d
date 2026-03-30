@@ -72,10 +72,12 @@ class GPUGraphic : ApplicationUnit
         SDL_GPURasterizerState* rasterState = null,
         SDL_GPUDepthStencilState* stencilState = null,
         SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null,
-        string name = null
+        string name = null,
+        bool isUseDefaultSampling = true,
+        bool isUseVertex = true
     )
     {
-        return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures, rasterState, stencilState, colorDesc, name);
+        return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures, rasterState, stencilState, colorDesc, name, isUseDefaultSampling, isUseVertex);
     }
 
     SDL_GPUTextureFormat getSwapchainTextureFormat() => dev.getSwapchainTextureFormat(

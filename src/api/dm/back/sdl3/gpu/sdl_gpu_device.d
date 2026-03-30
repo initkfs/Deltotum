@@ -258,15 +258,16 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_GPURasterizerState* rasterState = null,
         SDL_GPUDepthStencilState* stencilState = null,
         SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null,
-        string name = null
-
+        string name = null,
+        bool isUseDefaultSampling = true,
+        bool isUseVertex = true,
     )
     {
         auto vertexShader = newVertexSPIRV(vertexPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures);
 
         auto fragmentShader = newFragmentSPIRV(fragmentPath, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
 
-        auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState, targetInfo, name);
+        auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState, targetInfo, name, isUseDefaultSampling, isUseVertex);
 
         deleteShader(vertexShader);
         deleteShader(fragmentShader);
@@ -274,7 +275,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return pipeline;
     }
 
-    SdlGPUPipeline newPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader, SDL_GPURasterizerState* rasterState = null, SDL_GPUDepthStencilState* stencilState = null, SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null, string name = null)
+    SdlGPUPipeline newPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader, SDL_GPURasterizerState* rasterState = null, SDL_GPUDepthStencilState* stencilState = null, SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null, string name = null, bool isUseDefaultSampling = true, bool isUseVertex = true)
     {
         SDL_GPUGraphicsPipelineCreateInfo info;
 
@@ -290,14 +291,21 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         info.vertex_shader = vertexShader.ptr;
         info.fragment_shader = fragmentShader.ptr;
 
-        SDL_GPUVertexBufferDescription[1] vertexBufferDesctiptions = comVertexDesc;
-        info.vertex_input_state.num_vertex_buffers = vertexBufferDesctiptions.length;
-        info.vertex_input_state.vertex_buffer_descriptions = vertexBufferDesctiptions.ptr;
+        if (isUseVertex)
+        {
+            SDL_GPUVertexBufferDescription[1] vertexBufferDesctiptions = comVertexDesc;
+            info.vertex_input_state.num_vertex_buffers = vertexBufferDesctiptions.length;
+            info.vertex_input_state.vertex_buffer_descriptions = vertexBufferDesctiptions.ptr;
 
-        auto vertexAttributes = comVertexAttrs;
+            auto vertexAttributes = comVertexAttrs;
 
-        info.vertex_input_state.num_vertex_attributes = vertexAttributes.length;
-        info.vertex_input_state.vertex_attributes = vertexAttributes.ptr;
+            info.vertex_input_state.num_vertex_attributes = vertexAttributes.length;
+            info.vertex_input_state.vertex_attributes = vertexAttributes.ptr;
+        }
+        else
+        {
+            info.vertex_input_state.num_vertex_buffers = 0;
+        }
 
         if (!targetInfo)
         {
@@ -320,7 +328,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             info.depth_stencil_state = *stencilState;
         }
 
-        if (isUseSampleCount)
+        if (isUseDefaultSampling && isUseSampleCount)
         {
             info.multisample_state.sample_count = sampleCount;
         }
@@ -705,6 +713,13 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         state = GPUGraphicState.renderStart;
 
+        return true;
+    }
+
+    bool beginRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
+    {
+        lastPass = SDL_BeginGPURenderPass(lastCmdBuff, colorTargets.ptr, cast(uint) colorTargets.length, stencilInfo);
+        state = GPUGraphicState.renderStart;
         return true;
     }
 
