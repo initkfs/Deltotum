@@ -657,7 +657,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return vertexAttributes;
     }
 
-    bool startRenderPass(SDL_Window* currSdlWindow, SDL_FColor clearColor, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
+    bool startRenderPass(SDL_Window* currSdlWindow, SDL_FColor clearColor, SDL_GPUDepthStencilTargetInfo* stencilInfo = null, bool isAcquireSwapchain = true)
     {
         SDL_GPUColorTargetInfo target;
         target.clear_color = clearColor;
@@ -667,10 +667,10 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_GPUColorTargetInfo[1] colorTargetInfo;
         colorTargetInfo[0] = target;
 
-        return startRenderPass(colorTargetInfo, currSdlWindow, stencilInfo);
+        return startRenderPass(colorTargetInfo, currSdlWindow, stencilInfo, isAcquireSwapchain);
     }
 
-    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_Window* currSdlWindow, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_Window* currSdlWindow, SDL_GPUDepthStencilTargetInfo* stencilInfo = null, bool isAcquireSwapchain = true)
     {
         assert(currSdlWindow);
 
@@ -686,16 +686,19 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         }
 
         //not SDL_AcquireGPUSwapchainTexture
-        if (!SDL_WaitAndAcquireGPUSwapchainTexture(lastCmdBuff, currSdlWindow, &lastSwapchain, null, null))
+        if (isAcquireSwapchain)
         {
-            submitCmdBuffer;
-            return false;
-        }
+            if (!SDL_WaitAndAcquireGPUSwapchainTexture(lastCmdBuff, currSdlWindow, &lastSwapchain, null, null))
+            {
+                submitCmdBuffer;
+                return false;
+            }
 
-        if (!lastSwapchain)
-        {
-            submitCmdBuffer;
-            return false;
+            if (!lastSwapchain)
+            {
+                submitCmdBuffer;
+                return false;
+            }
         }
 
         assert(colorTargets.length > 0);

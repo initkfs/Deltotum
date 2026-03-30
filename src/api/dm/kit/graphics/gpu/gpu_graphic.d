@@ -50,13 +50,13 @@ class GPUGraphic : ApplicationUnit
         this.device = device;
     }
 
-    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* depthInfo) => dev
-        .startRenderPass(colorTargets, currSdlWindow, depthInfo);
-    bool startRenderPass() => dev.startRenderPass(currSdlWindow, clearColor);
-    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets) => dev.startRenderPass(
-        colorTargets, currSdlWindow);
-    bool startRenderPass(SDL_GPUDepthStencilTargetInfo* depthInfo) => dev.startRenderPass(
-        currSdlWindow, clearColor, depthInfo);
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* depthInfo,  bool isAcquireSwapchain = true) => dev
+        .startRenderPass(colorTargets, currSdlWindow, depthInfo, isAcquireSwapchain);
+    bool startRenderPass(bool isAcquireSwapchain = true) => dev.startRenderPass(currSdlWindow, clearColor, null, isAcquireSwapchain);
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, bool isAcquireSwapchain = true) => dev.startRenderPass(
+        colorTargets, currSdlWindow, null, isAcquireSwapchain);
+    bool startRenderPass(SDL_GPUDepthStencilTargetInfo* depthInfo, bool isAcquireSwapchain = true) => dev.startRenderPass(
+        currSdlWindow, clearColor, depthInfo, isAcquireSwapchain);
 
     SdlGPUPipeline newPipeline(
         string vertexPath,

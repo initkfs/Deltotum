@@ -112,7 +112,7 @@ class GuiScene : Scene3d
         auto debugWrapper = new Slider(SliderPos.right);
         addCreate(debugWrapper);
         debugger = new SceneView(this);
-        debugWrapper.addContent(debugger);
+        addCreate(debugger);
         window.showingTasks ~= (dt) { debugWrapper.setInitialPos; };
     }
 

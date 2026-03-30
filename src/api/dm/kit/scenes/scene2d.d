@@ -306,6 +306,11 @@ class Scene2d : EventKitTarget
         draw(alpha);
     }
 
+    bool checkForDraw(Sprite2d sprite)
+    {
+        return true;
+    }
+
     protected void drawSelfAndChildren(float alpha)
     {
         if (!isDrawAfterAllSprites && !drawBeforeSprite)
@@ -315,6 +320,11 @@ class Scene2d : EventKitTarget
 
         foreach (obj; sprites)
         {
+            if (!checkForDraw(obj))
+            {
+                continue;
+            }
+
             if (drawBeforeSprite && drawBeforeSprite is obj)
             {
                 drawSelf(alpha);
@@ -334,6 +344,10 @@ class Scene2d : EventKitTarget
             //TODO unvalidate?
             foreach (cs; controlledSprites)
             {
+                if (!checkForDraw(cs))
+                {
+                    continue;
+                }
                 cs.draw(alpha);
                 cs.unvalidate;
             }

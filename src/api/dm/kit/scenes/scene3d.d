@@ -35,6 +35,7 @@ class Scene3d : Scene2d
 
     SDL_GPUTexture* msaaTexture;
     SDL_GPUTexture* resultTexture;
+    SDL_GPUTexture* renderTexture;
 
     SDL_GPUTexture* bloomA;
     SDL_GPUSampler* bloomSampler;
@@ -47,6 +48,11 @@ class Scene3d : Scene2d
     SdlGPUPipeline brightPipeline;
     SdlGPUPipeline blurPipeline;
     SdlGPUPipeline composePipeline;
+
+    SDL_Texture* renderWrapper;
+
+    bool isMix2d3dMode = true;
+    bool isMixCurrentPass;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
@@ -104,6 +110,17 @@ class Scene3d : Scene2d
 
                 resultTexture = SDL_CreateGPUTexture(gpu.dev.ptr, &resultTextureInfo);
                 assert(resultTexture);
+
+                renderTexture = SDL_CreateGPUTexture(gpu.dev.ptr, &resultTextureInfo);
+                assert(renderTexture);
+
+                SDL_PropertiesID props = SDL_CreateProperties();
+                SDL_SetPointerProperty(props, SDL_PROP_TEXTURE_CREATE_GPU_TEXTURE_POINTER, renderTexture);
+                SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_CREATE_WIDTH_NUMBER, window.widthu);
+                SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_CREATE_HEIGHT_NUMBER, window.heightu);
+                renderWrapper = SDL_CreateTextureWithProperties(
+                    cast(SDL_Renderer*) window.renderer.rawPtr, props);
+                SDL_DestroyProperties(props);
             }
             else
             {
@@ -163,7 +180,8 @@ class Scene3d : Scene2d
         colorDesc.blend_state.enable_blend = false;
         targetInfo.color_target_descriptions = &colorDesc;
 
-        import std.path: buildPath;
+        import std.path : buildPath;
+
         auto shaderDir = buildPath(context.app.dataDir, "shaders", "out", "spirv");
 
         brightPipeline = gpu.newPipeline(
@@ -174,7 +192,7 @@ class Scene3d : Scene2d
             &raster,
             &depth,
             &targetInfo,
-            "BrightPassPipeline", 
+            "BrightPassPipeline",
             false,
             false
         );
@@ -187,12 +205,12 @@ class Scene3d : Scene2d
             &raster,
             &depth,
             &targetInfo,
-            "BlurPassPipeline", 
+            "BlurPassPipeline",
             false,
             false
         );
 
-         colorDesc.format = gpu.getSwapchainTextureFormat;
+        colorDesc.format = gpu.getSwapchainTextureFormat;
 
         composePipeline = gpu.newPipeline(
             buildPath(shaderDir, "Bright.vert.spv"),
@@ -202,7 +220,7 @@ class Scene3d : Scene2d
             &raster,
             &depth,
             &targetInfo,
-            "BlurComposePassPipeline", 
+            "BlurComposePassPipeline",
             false,
             false
         );
@@ -219,15 +237,8 @@ class Scene3d : Scene2d
 
     }
 
-    PerspectiveCamera newPerspCamera()
-    {
-        return new PerspectiveCamera(this);
-    }
-
-    OrthographicCamera newOrthoCamera()
-    {
-        return new OrthographicCamera(this);
-    }
+    PerspectiveCamera newPerspCamera() => new PerspectiveCamera(this);
+    OrthographicCamera newOrthoCamera() => new OrthographicCamera(this);
 
     Camera createCamera()
     {
@@ -328,15 +339,17 @@ class Scene3d : Scene2d
         {
             colorTargetInfo.texture = msaaTexture;
             clearColor = SDL_FColor(0, 0, 0, 0);
+            colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
         }
         else
         {
             colorTargetInfo.texture = gpu.dev.swapchain;
             clearColor = SDL_FColor(0, 0, 0, 1);
+            colorTargetInfo.load_op = SDL_GPU_LOADOP_DONT_CARE;
         }
 
         colorTargetInfo.clear_color = clearColor;
-        colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+        
         colorTargetInfo.cycle = true;
 
         if (isAntiAliasing)
@@ -367,7 +380,12 @@ class Scene3d : Scene2d
             return;
         }
 
-        //graphic.clear;
+        bool isNeedSwapchain = true;
+        if (isMix2d3dMode)
+        {
+            isMixCurrentPass = false;
+            isNeedSwapchain = false;
+        }
 
         if (isDepth && depthTexture)
         {
@@ -388,7 +406,7 @@ class Scene3d : Scene2d
             {
                 SDL_GPUColorTargetInfo[1] targets;
                 targets[0] = createTargetInfo;
-                if (!gpu.startRenderPass(targets, &depthStencilTargetInfo))
+                if (!gpu.startRenderPass(targets, &depthStencilTargetInfo, isNeedSwapchain))
                 {
                     gpu.dev.resetState;
                     throw new Exception("Error starting gpu rendering with depth");
@@ -396,7 +414,7 @@ class Scene3d : Scene2d
             }
             else
             {
-                if (!gpu.startRenderPass(&depthStencilTargetInfo))
+                if (!gpu.startRenderPass(&depthStencilTargetInfo, isNeedSwapchain))
                 {
                     gpu.dev.resetState;
                     throw new Exception("Error starting gpu rendering with depth");
@@ -410,7 +428,7 @@ class Scene3d : Scene2d
             {
                 SDL_GPUColorTargetInfo[1] targets;
                 targets[0] = createTargetInfo;
-                if (!gpu.startRenderPass(targets))
+                if (!gpu.startRenderPass(targets, isNeedSwapchain))
                 {
                     gpu.dev.resetState;
                     throw new Exception("Error starting gpu rendering with depth");
@@ -418,7 +436,7 @@ class Scene3d : Scene2d
             }
             else
             {
-                if (!gpu.startRenderPass)
+                if (!gpu.startRenderPass(isNeedSwapchain))
                 {
                     gpu.dev.resetState;
                     throw new Exception("Error starting gpu rendering");
@@ -428,7 +446,7 @@ class Scene3d : Scene2d
         }
 
         drawSelfAndChildren(alpha);
-        graphic.clear;
+        isMixCurrentPass = true;
 
         if (isAntiAliasing)
         {
@@ -449,10 +467,10 @@ class Scene3d : Scene2d
 
         if (resultTexture)
         {
-            SDL_GPUBlitInfo blitInfo;
+            //SDL_GPUBlitInfo blitInfo;
 
-            uint w = window.widthu;
-            uint h = window.heightu;
+            //uint w = window.widthu;
+            //uint h = window.heightu;
 
             // blitInfo.source.texture = resultTexture;
             // blitInfo.source.w = w;
@@ -501,7 +519,7 @@ class Scene3d : Scene2d
 
             gpu.dev.beginRenderPass(targets);
             gpu.dev.bindPipeline(blurPipeline);
-            align(16) float[4] data = [1, 0, 1.0/bloomW, 1.0/bloomH];
+            align(16) float[4] data = [1, 0, 1.0 / bloomW, 1.0 / bloomH];
             gpu.dev.pushUniformFragmentData(0, data.ptr, data.sizeof);
             gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 0);
             gpu.dev.draw(3, 1, 0, 0);
@@ -517,15 +535,15 @@ class Scene3d : Scene2d
 
             gpu.dev.beginRenderPass(targets);
             gpu.dev.bindPipeline(blurPipeline);
-            align(16) float[4] data1 = [0, 1, 1.0/bloomW, 1.0/bloomH];
+            align(16) float[4] data1 = [0, 1, 1.0 / bloomW, 1.0 / bloomH];
             gpu.dev.pushUniformFragmentData(0, data1.ptr, data1.sizeof);
             gpu.dev.bindFragmentSamplers(bloomB, bloomSampler, 0);
             gpu.dev.draw(3, 1, 0, 0);
             gpu.dev.endRenderPass(isSubmit : false);
 
             SDL_GPUColorTargetInfo composePassTarget;
-            composePassTarget.texture = gpu.dev.swapchain;
-            composePassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
+            composePassTarget.texture = isMix2d3dMode ? renderTexture : gpu.dev.swapchain;
+            composePassTarget.load_op = SDL_GPU_LOADOP_DONT_CARE;
             composePassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
             composePassTarget.store_op = SDL_GPU_STOREOP_STORE;
             composePassTarget.cycle = true;
@@ -537,7 +555,7 @@ class Scene3d : Scene2d
             gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
             gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 1);
             gpu.dev.draw(3, 1, 0, 0);
-            gpu.dev.endRenderPass(isSubmit : false);
+            gpu.dev.endRenderPass(isSubmit : true);
 
             // blitInfo = SDL_GPUBlitInfo.init;
 
@@ -565,11 +583,44 @@ class Scene3d : Scene2d
             // //gpu.dev.draw(3, 1, 0, 0);
             // gpu.dev.endRenderPass(isSubmit : false);
 
-            gpu.dev.submitCmdBuffer;
-            gpu.dev.resetState;
+            //gpu.dev.submitCmdBuffer;
+            //gpu.dev.resetState;
+
+            if (isMix2d3dMode)
+            {
+                graphic.clear;
+                graphic.rendererFlush;
+
+                assert(renderWrapper);
+                SDL_Renderer* ptr = cast(SDL_Renderer*) window.renderer.rawPtr;
+                SDL_RenderTexture(ptr, renderWrapper, null, null);
+               
+                drawSelfAndChildren(alpha);
+
+                graphic.rendererPresent;
+            }
+
         }
 
         //TODO flush?
+    }
+
+    override bool checkForDraw(Sprite2d sprite)
+    {
+        if (!isMix2d3dMode)
+        {
+            return true;
+        }
+
+        import api.dm.kit.sprites3d.sprite3d : Sprite3d;
+
+        auto sprite3 = cast(Sprite3d) sprite;
+        if (sprite3)
+        {
+            return isMixCurrentPass ? false : true;
+        }
+
+        return true;
     }
 
     override void update(float dt)
