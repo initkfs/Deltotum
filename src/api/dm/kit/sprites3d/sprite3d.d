@@ -44,6 +44,9 @@ class Sprite3d : Sprite2d
 
     bool isPushUniformVertexMatrix;
 
+    Quaternion orientation;
+    bool isPermanentRotationMode;
+
     void delegate(float, float) onChangeZOldNew;
 
     float zChangeThreshold = defaultTreshold;
@@ -62,6 +65,7 @@ class Sprite3d : Sprite2d
         super.create;
 
         _worldMatrix = Matrix4x4.onesDiag;
+        orientation = Quaternion(1.0f, Vec3f(0, 0, 0));
 
         calcWorldMatrix;
     }
@@ -199,10 +203,16 @@ class Sprite3d : Sprite2d
             _worldMatrix = _worldMatrix.mul(translateMatrix(rotateRadius, 0, 0));
         }
 
-        if (angleY != 0 || angleX != 0 || angle != 0)
+        Quaternion rotation = Quaternion.fromEuler(-angleX, -angleY, angle);
+
+        if (!isPermanentRotationMode)
         {
-            Quaternion rotation = Quaternion.fromEuler(angleX, angleY, angle);
-            _worldMatrix = _worldMatrix.mul(rotation.toMatrix4x4LH);
+            _worldMatrix = _worldMatrix.mul(rotation.normalize.toMatrix4x4RH);
+        }
+        else
+        {
+            orientation = orientation.mul(rotation).normalize;
+            _worldMatrix = _worldMatrix.mul(orientation.toMatrix4x4RH);
         }
 
         //TODO all set to 0, pos = 0
@@ -233,6 +243,7 @@ class Sprite3d : Sprite2d
                     return false;
                 }
 
+                //TODO row[3], xyz transforms
                 row[0 .. 3] = _worldMatrix[ri][0 .. 3];
 
                 return true;
@@ -467,6 +478,17 @@ class Sprite3d : Sprite2d
         float fullHeight = (isUseParent && parent) ? parent.height : 0;
         auto middleY = fullHeight / 2;
         return (y = middleY);
+    }
+
+    void rotateTowards(float targetX, float targetY, float targetZ, float smoothness = 0.1f)
+    {
+        import api.math.quaternion : Quaternion;
+
+        //auto deltaQ = Quaternion.fromAngle(angularVelocity.length * dt, angularVelocity.normalize);
+        //orientation = orientation.mul(deltaQ).normalize;
+        Quaternion targetQ = Quaternion.fromEuler(targetX, targetY, targetZ);
+        orientation = Quaternion.slerp(orientation, targetQ, smoothness);
+        isMatrixRecalc = true;
     }
 
 }

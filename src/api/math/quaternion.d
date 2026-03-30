@@ -131,7 +131,7 @@ struct Quaternion
     }
 
     // Spherical Linear Interpolation between two quaternions
-    Quaternion slerp(Quaternion from, Quaternion to, float t)
+    static Quaternion slerp(Quaternion from, Quaternion to, float t)
     {
         //https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
         Quaternion result;
@@ -186,7 +186,6 @@ struct Quaternion
 
     Matrix4x4 toMatrix4x4LH()
     {
-
         Matrix4x4 mat;
         Quaternion q = normalize();
 
@@ -200,19 +199,18 @@ struct Quaternion
         float wy = q.w * q.v.y;
         float wz = q.w * q.v.z;
 
-        // Для левосторонней системы с инвертированным Z:
         mat[0][0] = 1.0 - 2.0 * (yy + zz);
-        mat[0][1] = 2.0 * (xy + wz); // ИЗМЕНЕНО: +wz вместо -wz
-        mat[0][2] = 2.0 * (xz - wy); // ИЗМЕНЕНО: -wy вместо +wy
+        mat[0][1] = 2.0 * (xy + wz);
+        mat[0][2] = 2.0 * (xz - wy);
         mat[0][3] = 0;
 
-        mat[1][0] = 2.0 * (xy - wz); // ИЗМЕНЕНО: -wz вместо +wz
+        mat[1][0] = 2.0 * (xy - wz);
         mat[1][1] = 1.0 - 2.0 * (xx + zz);
-        mat[1][2] = 2.0 * (yz + wx); // ИЗМЕНЕНО: +wx вместо -wx
+        mat[1][2] = 2.0 * (yz + wx);
         mat[1][3] = 0.0;
 
-        mat[2][0] = 2.0 * (xz + wy); // ИЗМЕНЕНО: +wy вместо -wy
-        mat[2][1] = 2.0 * (yz - wx); // ИЗМЕНЕНО: -wx вместо +wx
+        mat[2][0] = 2.0 * (xz + wy);
+        mat[2][1] = 2.0 * (yz - wx);
         mat[2][2] = 1.0 - 2.0 * (xx + yy);
         mat[2][3] = 0.0;
 
