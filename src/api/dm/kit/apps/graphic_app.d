@@ -111,6 +111,7 @@ abstract class GraphicApp : CliApp
     }
 
     abstract ulong ticksMs();
+    abstract ulong ticksNs();
 
     void loadSettings()
     {
@@ -201,7 +202,7 @@ abstract class GraphicApp : CliApp
     {
         auto sysPlaftorm = newComPlatform;
         auto caps = newCapGraphics;
-        auto timing = newTiming(sysPlaftorm, () => ticksMs);
+        auto timing = newTiming(sysPlaftorm, () => ticksMs, () => ticksNs);
         auto screening = newScreening;
         return newPlatform(sysPlaftorm, caps, screening, timing);
     }
@@ -218,9 +219,9 @@ abstract class GraphicApp : CliApp
         return new Platform(platform, caps, screens, timing);
     }
 
-    Timing newTiming(ComPlatform comPlatform, ulong delegate() tickProvider)
+    Timing newTiming(ComPlatform comPlatform, ulong delegate() tickProvider, ulong delegate() tickNsProvider)
     {
-        return new Timing(comPlatform, tickProvider);
+        return new Timing(comPlatform, tickProvider, tickNsProvider);
     }
 
     I18n newI18n()

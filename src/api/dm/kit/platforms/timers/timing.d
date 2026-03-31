@@ -10,6 +10,7 @@ import api.dm.com.platforms.com_platform : ComPlatform;
 class Timing
 {
     ulong delegate() platformTicksProvider;
+    ulong delegate() platformTicksNsProvider;
     enum invalidTimerId = -1;
 
     private
@@ -43,13 +44,16 @@ class Timing
         }
     }
 
-    this(ComPlatform system, ulong delegate() tickProvider) pure @safe
+    this(ComPlatform system, ulong delegate() tickProvider, ulong delegate() tickNsProvider) pure @safe
     {
         assert(system);
         this.system = system;
 
         assert(tickProvider);
         this.platformTicksProvider = tickProvider;
+
+        assert(tickNsProvider);
+        this.platformTicksNsProvider = tickNsProvider;
     }
 
     int add(int intervalMs, int delegate() nothrow  onTimer)
@@ -118,6 +122,12 @@ class Timing
     {
         assert(platformTicksProvider);
         return platformTicksProvider();
+    }
+
+    ulong ticksNs()
+    {
+        assert(platformTicksNsProvider);
+        return platformTicksNsProvider();
     }
 
     private int callTimer(int timerId) nothrow 

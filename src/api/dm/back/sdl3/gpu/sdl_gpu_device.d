@@ -70,6 +70,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     SDL_GPUSampleCount sampleCount;
     bool isUseSampleCount;
+    
+    SDL_GPUTextureFormat pipeLineTargetFormat = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
 
     SDL_FColor clearColor = SDL_FColor(1, 1, 1, 1);
 
@@ -1197,6 +1199,27 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     bool setMaxSubmitFrames(uint frames1to3)
     {
         return SDL_SetGPUAllowedFramesInFlight(ptr, frames1to3);
+    }
+
+    void wait()
+    {
+        SDL_WaitForGPUIdle(ptr);
+    }
+
+    //On Direct3D 12 WinPixEventRuntime.dll
+    void pushLabel(string name)
+    {
+        import std.string : toStringz;
+
+        assert(lastCmdBuff);
+
+        SDL_PushGPUDebugGroup(lastCmdBuff, name.toStringz);
+    }
+
+    void popLabel()
+    {
+        assert(lastCmdBuff);
+        SDL_PopGPUDebugGroup(lastCmdBuff);
     }
 
 }

@@ -823,6 +823,12 @@ class SdlApp : GuiApp
         return sdlLib.ticksMs;
     }
 
+    override ulong ticksNs()
+    {
+        assert(sdlLib);
+        return sdlLib.ticksNs;
+    }
+
     protected void initLoop(Loop loop)
     {
         loop.onExit = () => dispose;

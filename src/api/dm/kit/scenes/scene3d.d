@@ -31,7 +31,7 @@ class Scene3d : Scene2d
     bool isDepth = true;
     bool isAntiAliasing = true;
 
-    SDL_GPUSampleCount aliasingSampleCount = SDL_GPU_SAMPLECOUNT_4;
+    SDL_GPUSampleCount aliasingSampleCount = SDL_GPU_SAMPLECOUNT_2;
 
     SDL_GPUTexture* msaaTexture;
     SDL_GPUTexture* resultTexture;
@@ -80,6 +80,7 @@ class Scene3d : Scene2d
             {
                 gpu.dev.isUseSampleCount = true;
                 gpu.dev.sampleCount = aliasingSampleCount;
+                gpu.dev.pipeLineTargetFormat = format;
 
                 SDL_GPUTextureCreateInfo msaTextureInfo;
                 msaTextureInfo.type = SDL_GPU_TEXTURETYPE_2D;
@@ -510,37 +511,37 @@ class Scene3d : Scene2d
 
             gpu.dev.endRenderPass(isSubmit : false);
 
-            SDL_GPUColorTargetInfo horizontPassTarget;
-            horizontPassTarget.texture = bloomB;
-            horizontPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
-            horizontPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
-            horizontPassTarget.store_op = SDL_GPU_STOREOP_STORE;
-            horizontPassTarget.cycle = true;
-            targets[0] = horizontPassTarget;
+            // SDL_GPUColorTargetInfo horizontPassTarget;
+            // horizontPassTarget.texture = renderTexture;
+            // horizontPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
+            // horizontPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
+            // horizontPassTarget.store_op = SDL_GPU_STOREOP_STORE;
+            // horizontPassTarget.cycle = true;
+            // targets[0] = horizontPassTarget;
 
-            gpu.dev.beginRenderPass(targets);
-            gpu.dev.bindPipeline(blurPipeline);
-            align(16) float[4] data = [1, 0, 1.0 / bloomW, 1.0 / bloomH];
-            gpu.dev.pushUniformFragmentData(0, data.ptr, data.sizeof);
-            gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 0);
-            gpu.dev.draw(3, 1, 0, 0);
-            gpu.dev.endRenderPass(isSubmit : false);
+            // gpu.dev.beginRenderPass(targets);
+            // gpu.dev.bindPipeline(blurPipeline);
+            // align(16) float[4] data = [1, 0, 1.0 / bloomW, 1.0 / bloomH];
+            // gpu.dev.pushUniformFragmentData(0, data.ptr, data.sizeof);
+            // gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 0);
+            // gpu.dev.draw(3, 1, 0, 0);
+            // gpu.dev.endRenderPass(isSubmit : false);
 
-            SDL_GPUColorTargetInfo vertPassTarget;
-            vertPassTarget.texture = bloomA;
-            vertPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
-            vertPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
-            vertPassTarget.store_op = SDL_GPU_STOREOP_STORE;
-            vertPassTarget.cycle = true;
-            targets[0] = vertPassTarget;
+            // SDL_GPUColorTargetInfo vertPassTarget;
+            // vertPassTarget.texture = bloomA;
+            // vertPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
+            // vertPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
+            // vertPassTarget.store_op = SDL_GPU_STOREOP_STORE;
+            // vertPassTarget.cycle = true;
+            // targets[0] = vertPassTarget;
 
-            gpu.dev.beginRenderPass(targets);
-            gpu.dev.bindPipeline(blurPipeline);
-            align(16) float[4] data1 = [0, 1, 1.0 / bloomW, 1.0 / bloomH];
-            gpu.dev.pushUniformFragmentData(0, data1.ptr, data1.sizeof);
-            gpu.dev.bindFragmentSamplers(bloomB, bloomSampler, 0);
-            gpu.dev.draw(3, 1, 0, 0);
-            gpu.dev.endRenderPass(isSubmit : false);
+            // gpu.dev.beginRenderPass(targets);
+            // gpu.dev.bindPipeline(blurPipeline);
+            // align(16) float[4] data1 = [0, 1, 1.0 / bloomW, 1.0 / bloomH];
+            // gpu.dev.pushUniformFragmentData(0, data1.ptr, data1.sizeof);
+            // gpu.dev.bindFragmentSamplers(bloomB, bloomSampler, 0);
+            // gpu.dev.draw(3, 1, 0, 0);
+            // gpu.dev.endRenderPass(isSubmit : false);
 
             SDL_GPUColorTargetInfo composePassTarget;
             composePassTarget.texture = isMix2d3dMode ? renderTexture : gpu.dev.swapchain;
