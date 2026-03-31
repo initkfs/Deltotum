@@ -118,6 +118,7 @@ class Scene3d : Scene2d
                 SDL_SetPointerProperty(props, SDL_PROP_TEXTURE_CREATE_GPU_TEXTURE_POINTER, renderTexture);
                 SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_CREATE_WIDTH_NUMBER, window.widthu);
                 SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_CREATE_HEIGHT_NUMBER, window.heightu);
+                SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_FORMAT_NUMBER, format);
                 renderWrapper = SDL_CreateTextureWithProperties(
                     cast(SDL_Renderer*) window.renderer.rawPtr, props);
                 SDL_DestroyProperties(props);
@@ -210,7 +211,7 @@ class Scene3d : Scene2d
             false
         );
 
-        colorDesc.format = gpu.getSwapchainTextureFormat;
+        //colorDesc.format = gpu.getSwapchainTextureFormat;
 
         composePipeline = gpu.newPipeline(
             buildPath(shaderDir, "Bright.vert.spv"),
@@ -469,8 +470,8 @@ class Scene3d : Scene2d
         {
             //SDL_GPUBlitInfo blitInfo;
 
-            //uint w = window.widthu;
-            //uint h = window.heightu;
+            uint w = window.widthu;
+            uint h = window.heightu;
 
             // blitInfo.source.texture = resultTexture;
             // blitInfo.source.w = w;
@@ -555,11 +556,13 @@ class Scene3d : Scene2d
             gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
             gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 1);
             gpu.dev.draw(3, 1, 0, 0);
+            
             gpu.dev.endRenderPass(isSubmit : true);
+            gpu.dev.resetState;
 
-            // blitInfo = SDL_GPUBlitInfo.init;
+            // SDL_GPUBlitInfo blitInfo = SDL_GPUBlitInfo.init;
 
-            // blitInfo.source.texture = bloomA;
+            // blitInfo.source.texture = renderTexture;
             // blitInfo.source.w = bloomW;
             // blitInfo.source.h = bloomH;
             // blitInfo.destination.texture = gpu.dev.swapchain;

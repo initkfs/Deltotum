@@ -54,6 +54,8 @@ class Window : GraphicComponent
 
     FpsUpdateCounter updateCounter;
     FpsFixedCounter fixedCounter;
+    float timeDrawSceneMs = 0;
+    float timeUpdateSceneMs = 0;
 
     Window parent;
     SingleScreen screen;
@@ -369,6 +371,8 @@ class Window : GraphicComponent
             return false;
         }
 
+        float startTimeMs = platform.timer.ticksMs;
+
         _currentScene.drawAll(alpha);
 
         if (drawingSceneTasks.length > 0)
@@ -379,6 +383,8 @@ class Window : GraphicComponent
             }
             drawingSceneTasks = null;
         }
+
+        timeDrawSceneMs = platform.timer.ticksMs - startTimeMs;
 
         return true;
     }
@@ -889,6 +895,9 @@ class Window : GraphicComponent
 
     void update(float startMs, float deltaMs, float fixedDeltaSec)
     {
+        
+        float startTimeMs = platform.timer.ticksMs;
+
         if (_currentScene)
         {
             _currentScene.update(fixedDeltaSec);
@@ -907,6 +916,8 @@ class Window : GraphicComponent
                 showingTasks = null;
             }
         }
+
+        timeUpdateSceneMs = platform.timer.ticksMs - startTimeMs;
     }
 
     Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1)

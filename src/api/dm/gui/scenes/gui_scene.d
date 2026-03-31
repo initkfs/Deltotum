@@ -126,13 +126,17 @@ class GuiScene : Scene3d
             import std.conv : to;
 
             debugger.invalidNodesCount.text = invalidNodesCount.to!dstring;
-            debugger.updateTimeMs.text = Math.round(timeUpdateProcessingMs).to!dstring;
-            debugger.drawTimeMs.text = Math.round(timeDrawProcessingMs).to!dstring;
 
+            debugger.counterFps.text = Math.round(window.updateCounter.fps).to!dstring;
+            debugger.counterFixedFps.text = Math.round(window.fixedCounter.fps).to!dstring;
+            
+            debugger.timeDrawScene.text = Math.round(window.timeDrawSceneMs).to!dstring;
+            debugger.timeUpdateScene.text = Math.round(window.timeUpdateSceneMs).to!dstring;
+            
             import core.memory : GC;
 
             auto stats = GC.stats;
-            auto usedSize = stats.usedSize / 1000.0;
+            auto usedSize = stats.usedSize / 1000.0 / 1000.0;
             debugger.gcUsedBytes.text = usedSize.to!dstring;
         }
     }

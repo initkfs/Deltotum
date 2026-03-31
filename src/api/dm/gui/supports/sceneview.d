@@ -65,9 +65,11 @@ class SceneView : VBox
     TextField paddingBottom;
     TextField paddingLeft;
 
-    Text updateTimeMs;
-    Text drawTimeMs;
+    Text counterFps;
+    Text counterFixedFps;
     Text invalidNodesCount;
+    Text timeDrawScene;
+    Text timeUpdateScene;
 
     Text gcUsedBytes;
 
@@ -116,27 +118,32 @@ class SceneView : VBox
         // userStyle.fillColor = RGBA.hex("#ffb641");
         // userStyle.isFill = false;
 
+        auto mainInfoContainer = new HBox;
+        mainInfoContainer.layout.isAlignY = true;
+        addCreate(mainInfoContainer);
+        mainInfoContainer.enablePadding;
+
+        counterFps = new Text("");
+        mainInfoContainer.addCreate([new Text("FPS:"), counterFps]);
+
+        counterFixedFps = new Text("");
+        mainInfoContainer.addCreate([new Text("FFS:"), counterFixedFps]);
+
+        invalidNodesCount = new Text("");
+        mainInfoContainer.addCreate([new Text("Inv:"), invalidNodesCount]);
+
         auto infoContainer = new HBox;
         infoContainer.layout.isAlignY = true;
         addCreate(infoContainer);
         infoContainer.enablePadding;
 
-        updateTimeMs = new Text("");
-        infoContainer.addCreate([new Text("Ums:"), updateTimeMs]);
+        timeDrawScene = new Text("");
+        timeUpdateScene = new Text("");
 
-        drawTimeMs = new Text("");
-        infoContainer.addCreate([new Text("Dms:"), drawTimeMs]);
-
-        invalidNodesCount = new Text("");
-        infoContainer.addCreate([new Text("Inv:"), invalidNodesCount]);
-
-        auto infoContainer2 = new HBox;
-        infoContainer2.layout.isAlignY = true;
-        addCreate(infoContainer2);
-        infoContainer2.enablePadding;
+        infoContainer.addCreate([new Text("SD:"), timeDrawScene, new Text("SU:"), timeUpdateScene]);
 
         gcUsedBytes = new Text("");
-        infoContainer2.addCreate([new Text("GCu(KB):"), gcUsedBytes]);
+        infoContainer.addCreate([new Text("GC(MB):"), gcUsedBytes]);
 
         auto btnContainer = new HBox;
         btnContainer.layout.isAlignY = true;
