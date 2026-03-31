@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.controls;
+module api.dm.gui.supports.demos.sections.controls;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;

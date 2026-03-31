@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.fractals;
+module api.dm.gui.supports.demos.sections.fractals;
 
 import api.dm.gui.controls.containers.container;
 

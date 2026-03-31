@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.images;
+module api.dm.gui.supports.demos.sections.images;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

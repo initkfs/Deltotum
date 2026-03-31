@@ -1314,9 +1314,9 @@ class SdlApp : GuiApp
             auto isSceneDebug = uservices.config.getBool(KitConfigKeys.sceneIsDebug);
             if (isSceneDebug)
             {
-                import api.dm.gui.supports.editors.guieditor : GuiEditor;
+                import api.dm.gui.supports.demos.guiviewer : GuiViewer;
 
-                window.add(new GuiEditor);
+                window.add(new GuiViewer);
             }
         }
 

@@ -91,7 +91,14 @@ class BaseMonoText : Control
     {
         if (_color == RGBA.init)
         {
-            _color = theme.colorText;
+            if (style.lineColor != RGBA.init)
+            {
+                _color = style.lineColor;
+            }
+            else
+            {
+                _color = theme.colorText;
+            }
         }
     }
 

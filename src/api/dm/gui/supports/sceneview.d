@@ -1,5 +1,6 @@
 module api.dm.gui.supports.sceneview;
 
+import api.dm.gui.supports.debuggers.info_panel : InfoPanel;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.center_box : CenterBox;
@@ -18,6 +19,7 @@ import api.dm.gui.controls.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.switches.checks.check : Check;
+import api.dm.kit.graphics.colors.rgba: RGBA;
 
 import IconNames = api.dm.gui.themes.icons.pack_bootstrap;
 
@@ -44,6 +46,8 @@ class SceneView : VBox
 {
     Scene2d scene;
 
+    InfoPanel infoPanel;
+
     void delegate() onEnableDebug;
     void delegate() onDisableDebug;
 
@@ -65,14 +69,6 @@ class SceneView : VBox
     TextField paddingBottom;
     TextField paddingLeft;
 
-    Text counterFps;
-    Text counterFixedFps;
-    Text invalidNodesCount;
-    Text timeDrawScene;
-    Text timeUpdateScene;
-
-    Text gcUsedBytes;
-
     Check isDrag;
 
     private
@@ -85,7 +81,7 @@ class SceneView : VBox
         import api.dm.gui.controls.selects.tables.clipped.trees.tree_row : TreeRow;
 
         TreeList!(Sprite2d, BaseTableColumn!Sprite2d, TreeRow!Sprite2d) controlStructure;
-        
+
         Sprite2d objectOnDebug;
         size_t objectOnDebugSceneIndex;
         bool isDebug;
@@ -110,40 +106,27 @@ class SceneView : VBox
         width = 300;
         height = scene.window.height;
 
+        auto infoStyle = theme.newDefaultStyle;
+        infoStyle.lineColor = RGBA.hex("#DDCC66");
+        infoStyle.fillColor = RGBA.hex("#ffb641");
+        infoStyle.isFill = false;
+
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        // userStyle = theme.newDefaultStyle;
-        // userStyle.lineColor = RGBA.hex("#DDCC66");
-        // userStyle.fillColor = RGBA.hex("#ffb641");
-        // userStyle.isFill = false;
+        infoPanel = new InfoPanel;
+        infoPanel.isBorder = true;
+        infoPanel.isBackground = true;
+        infoPanel.style = *infoStyle;
+        //infoPanel.styleFactory = (id) => *infoStyle;
+        infoPanel.isStyleForChild = true;
+        infoPanel.height = theme.controlDefaultHeight;
+        infoPanel.isLayoutManaged = false;
+        infoPanel.x = 300;
+        infoPanel.y = window.height - infoPanel.height - 80;
+        addCreate(infoPanel);
 
-        auto mainInfoContainer = new HBox;
-        mainInfoContainer.layout.isAlignY = true;
-        addCreate(mainInfoContainer);
-        mainInfoContainer.enablePadding;
-
-        counterFps = new Text("");
-        mainInfoContainer.addCreate([new Text("FPS:"), counterFps]);
-
-        counterFixedFps = new Text("");
-        mainInfoContainer.addCreate([new Text("FFS:"), counterFixedFps]);
-
-        invalidNodesCount = new Text("");
-        mainInfoContainer.addCreate([new Text("Inv:"), invalidNodesCount]);
-
-        auto infoContainer = new HBox;
-        infoContainer.layout.isAlignY = true;
-        addCreate(infoContainer);
-        infoContainer.enablePadding;
-
-        timeDrawScene = new Text("");
-        timeUpdateScene = new Text("");
-
-        infoContainer.addCreate([new Text("SD:"), timeDrawScene, new Text("SU:"), timeUpdateScene]);
-
-        gcUsedBytes = new Text("");
-        infoContainer.addCreate([new Text("GC(MB):"), gcUsedBytes]);
+        
 
         auto btnContainer = new HBox;
         btnContainer.layout.isAlignY = true;
@@ -191,11 +174,13 @@ class SceneView : VBox
         btnContainer.addCreate(fillScene);
 
         controlStructure = newTreeList!Sprite2d;
-        controlStructure.itemTextProvider = (Sprite2d item){
-            if(!item){
+        controlStructure.itemTextProvider = (Sprite2d item) {
+            if (!item)
+            {
                 return "null"d;
             }
-            import std.conv: to;
+            import std.conv : to;
+
             return (item.id.length) > 0 ? item.id.to!dstring : item.classNameShort.to!dstring;
         };
         controlStructure.width = width - padding.width;

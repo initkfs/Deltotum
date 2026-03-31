@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.fonts;
+module api.dm.gui.supports.demos.sections.fonts;
 
 import api.dm.gui.controls.control : Control;
 import api.math.geom2.rect2 : Rect2f;

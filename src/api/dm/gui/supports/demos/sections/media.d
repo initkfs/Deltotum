@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.media;
+module api.dm.gui.supports.demos.sections.media;
 
 import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 

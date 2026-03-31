@@ -120,24 +120,41 @@ class GuiScene : Scene3d
     {
         super.update(dt);
 
+        static ubyte statFrameCounter;
+
         if (debugger && debugger.isVisible)
         {
-            import Math = api.dm.math;
-            import std.conv : to;
+            //TODO avg value
+            if (statFrameCounter >= 10)
+            {
+                statFrameCounter = 0;
 
-            debugger.invalidNodesCount.text = invalidNodesCount.to!dstring;
+                import Math = api.dm.math;
+                import std.conv : to;
 
-            debugger.counterFps.text = Math.round(window.updateCounter.fps).to!dstring;
-            debugger.counterFixedFps.text = Math.round(window.fixedCounter.fps).to!dstring;
-            
-            debugger.timeDrawScene.text = Math.round(window.timeDrawSceneMs).to!dstring;
-            debugger.timeUpdateScene.text = Math.round(window.timeUpdateSceneMs).to!dstring;
-            
-            import core.memory : GC;
+                debugger.infoPanel.invalidNodesCount.text = invalidNodesCount.to!dstring;
 
-            auto stats = GC.stats;
-            auto usedSize = stats.usedSize / 1000.0 / 1000.0;
-            debugger.gcUsedBytes.text = usedSize.to!dstring;
+                debugger.infoPanel.counterFps.text = Math.round(window.updateCounter.fps)
+                    .to!dstring;
+                debugger.infoPanel.counterFixedFps.text = Math.round(window.fixedCounter.fps)
+                    .to!dstring;
+
+                debugger.infoPanel.timeDrawScene.text = Math.round(window.timeDrawSceneMs)
+                    .to!dstring;
+                debugger.infoPanel.timeUpdateScene.text = Math.round(window.timeUpdateSceneMs)
+                    .to!dstring;
+
+                import core.memory : GC;
+
+                auto stats = GC.stats;
+                auto usedSize = stats.usedSize / 1000.0 / 1000.0;
+                debugger.infoPanel.gcUsed.text = usedSize.to!dstring;
+            }
+            else
+            {
+                statFrameCounter++;
+            }
+
         }
     }
 }

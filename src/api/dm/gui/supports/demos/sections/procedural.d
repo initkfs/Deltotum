@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.procedural;
+module api.dm.gui.supports.demos.sections.procedural;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
