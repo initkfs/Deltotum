@@ -70,7 +70,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     SDL_GPUSampleCount sampleCount;
     bool isUseSampleCount;
-    
+
     SDL_GPUTextureFormat pipeLineTargetFormat = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
 
     SDL_FColor clearColor = SDL_FColor(1, 1, 1, 1);
@@ -1220,6 +1220,24 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     {
         assert(lastCmdBuff);
         SDL_PopGPUDebugGroup(lastCmdBuff);
+    }
+
+    void blitToSwopchain(SDL_GPUTexture* source, int w, int h)
+    {
+        assert(cmdBuff);
+
+        SDL_GPUBlitInfo blitInfo;
+
+        blitInfo.source.texture = source;
+        blitInfo.source.w = w;
+        blitInfo.source.h = h;
+        blitInfo.destination.texture = swapchain;
+        blitInfo.destination.w = w;
+        blitInfo.destination.h = h;
+        blitInfo.load_op = SDL_GPU_LOADOP_DONT_CARE;
+        blitInfo.filter = SDL_GPU_FILTER_LINEAR;
+
+        SDL_BlitGPUTexture(cmdBuff, &blitInfo);
     }
 
 }
