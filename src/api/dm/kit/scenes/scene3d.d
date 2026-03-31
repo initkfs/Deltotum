@@ -99,7 +99,7 @@ class Scene3d : Scene2d
         {
             assert(renderTexture);
             SDL_PropertiesID props = SDL_CreateProperties();
-            SDL_SetPointerProperty(props, SDL_PROP_TEXTURE_CREATE_GPU_TEXTURE_POINTER, resultTexture);
+            SDL_SetPointerProperty(props, SDL_PROP_TEXTURE_CREATE_GPU_TEXTURE_POINTER, renderTexture);
             SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_CREATE_WIDTH_NUMBER, window.widthu);
             SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_CREATE_HEIGHT_NUMBER, window.heightu);
             SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_FORMAT_NUMBER, gpu
@@ -132,87 +132,87 @@ class Scene3d : Scene2d
         uint bloomW = window.widthu / 4;
         uint bloomH = window.heightu / 4;
 
-        // SDL_GPUTextureCreateInfo bloomInfo;
-        // bloomInfo.type = SDL_GPU_TEXTURETYPE_2D;
-        // bloomInfo.width = bloomW;
-        // bloomInfo.height = bloomH;
-        // bloomInfo.layer_count_or_depth = 1;
-        // bloomInfo.num_levels = 1;
-        // bloomInfo.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
-        // bloomInfo.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
+        SDL_GPUTextureCreateInfo bloomInfo;
+        bloomInfo.type = SDL_GPU_TEXTURETYPE_2D;
+        bloomInfo.width = bloomW;
+        bloomInfo.height = bloomH;
+        bloomInfo.layer_count_or_depth = 1;
+        bloomInfo.num_levels = 1;
+        bloomInfo.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
+        bloomInfo.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
 
-        // bloomA = gpu.dev.newTexture(&bloomInfo);
-        // bloomB = gpu.dev.newTexture(&bloomInfo);
+        bloomA = gpu.dev.newTexture(&bloomInfo);
+        bloomB = gpu.dev.newTexture(&bloomInfo);
 
-        // SDL_GPURasterizerState raster;
-        // raster.fill_mode = SDL_GPU_FILLMODE_FILL;
-        // raster.cull_mode = SDL_GPU_CULLMODE_NONE;
+        SDL_GPURasterizerState raster;
+        raster.fill_mode = SDL_GPU_FILLMODE_FILL;
+        raster.cull_mode = SDL_GPU_CULLMODE_NONE;
 
-        // SDL_GPUDepthStencilState depth;
-        // depth.enable_depth_test = false;
-        // depth.enable_depth_write = false;
+        SDL_GPUDepthStencilState depth;
+        depth.enable_depth_test = false;
+        depth.enable_depth_write = false;
 
-        // SDL_GPUGraphicsPipelineTargetInfo targetInfo;
-        // targetInfo.num_color_targets = 1;
-        // SDL_GPUColorTargetDescription colorDesc;
-        // colorDesc.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
-        // colorDesc.blend_state.enable_blend = false;
-        // targetInfo.color_target_descriptions = &colorDesc;
+        SDL_GPUGraphicsPipelineTargetInfo targetInfo;
+        targetInfo.num_color_targets = 1;
+        SDL_GPUColorTargetDescription colorDesc;
+        colorDesc.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
+        colorDesc.blend_state.enable_blend = false;
+        targetInfo.color_target_descriptions = &colorDesc;
 
-        // import std.path : buildPath;
+        import std.path : buildPath;
 
-        // auto shaderDir = buildPath(context.app.dataDir, "shaders", "out", "spirv");
+        auto shaderDir = buildPath(context.app.dataDir, "shaders", "out", "spirv");
 
-        // brightPipeline = gpu.newPipeline(
-        //     buildPath(shaderDir, "Bright.vert.spv"),
-        //     buildPath(shaderDir, "Bright.frag.spv"),
-        //     0, 0, 0, 0,
-        //     1, 0, 0, 0,
-        //     &raster,
-        //     &depth,
-        //     &targetInfo,
-        //     "BrightPassPipeline",
-        //     false,
-        //     false
-        // );
+        brightPipeline = gpu.newPipeline(
+            buildPath(shaderDir, "Bright.vert.spv"),
+            buildPath(shaderDir, "Bright.frag.spv"),
+            0, 0, 0, 0,
+            1, 0, 0, 0,
+            &raster,
+            &depth,
+            &targetInfo,
+            "BrightPassPipeline",
+            false,
+            false
+        );
 
-        // blurPipeline = gpu.newPipeline(
-        //     buildPath(shaderDir, "Bright.vert.spv"),
-        //     buildPath(shaderDir, "Blur.frag.spv"),
-        //     0, 0, 0, 0,
-        //     1, 0, 1, 0,
-        //     &raster,
-        //     &depth,
-        //     &targetInfo,
-        //     "BlurPassPipeline",
-        //     false,
-        //     false
-        // );
+        blurPipeline = gpu.newPipeline(
+            buildPath(shaderDir, "Bright.vert.spv"),
+            buildPath(shaderDir, "Blur.frag.spv"),
+            0, 0, 0, 0,
+            1, 0, 1, 0,
+            &raster,
+            &depth,
+            &targetInfo,
+            "BlurPassPipeline",
+            false,
+            false
+        );
 
-        // //colorDesc.format = gpu.getSwapchainTextureFormat;
+        //colorDesc.format = gpu.getSwapchainTextureFormat;
 
-        // composePipeline = gpu.newPipeline(
-        //     buildPath(shaderDir, "Bright.vert.spv"),
-        //     buildPath(shaderDir, "BlurCompose.frag.spv"),
-        //     0, 0, 0, 0,
-        //     2, 0, 0, 0,
-        //     &raster,
-        //     &depth,
-        //     &targetInfo,
-        //     "BlurComposePassPipeline",
-        //     false,
-        //     false
-        // );
+        composePipeline = gpu.newPipeline(
+            buildPath(shaderDir, "Bright.vert.spv"),
+            buildPath(shaderDir, "BlurCompose.frag.spv"),
+            0, 0, 0, 0,
+            2, 0, 0, 0,
+            &raster,
+            &depth,
+            &targetInfo,
+            "BlurComposePassPipeline",
+            false,
+            false
+        );
 
-        // SDL_GPUSamplerCreateInfo samplerInfo;
-        // samplerInfo.min_filter = SDL_GPU_FILTER_LINEAR;
-        // samplerInfo.mag_filter = SDL_GPU_FILTER_LINEAR;
-        // samplerInfo.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR;
-        // samplerInfo.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
-        // samplerInfo.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
-        // samplerInfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+        SDL_GPUSamplerCreateInfo samplerInfo;
+        samplerInfo.min_filter = SDL_GPU_FILTER_LINEAR;
+        samplerInfo.mag_filter = SDL_GPU_FILTER_LINEAR;
+        samplerInfo.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR;
+        samplerInfo.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+        samplerInfo.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+        samplerInfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
-        // bloomSampler = gpu.dev.newSampler(&samplerInfo);
+        bloomSampler = gpu.dev.newSampler(&samplerInfo);
 
     }
 
@@ -313,78 +313,77 @@ class Scene3d : Scene2d
         //Bright Pass
         //Horizontal Blur
         //Vertical Blur
-        // SDL_GPUColorTargetInfo[1] targets;
+        SDL_GPUColorTargetInfo[1] targets;
 
-        // SDL_GPUColorTargetInfo brightPassTarget;
-        // brightPassTarget.texture = bloomA;
-        // brightPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
-        // brightPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
-        // brightPassTarget.cycle = true;
-        // brightPassTarget.store_op = SDL_GPU_STOREOP_STORE;
-        // targets[0] = brightPassTarget;
+        SDL_GPUColorTargetInfo brightPassTarget;
+        brightPassTarget.texture = bloomA;
+        brightPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
+        brightPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
+        brightPassTarget.cycle = true;
+        brightPassTarget.store_op = SDL_GPU_STOREOP_STORE;
+        targets[0] = brightPassTarget;
 
-        // uint bloomW = window.widthu / 4;
-        // uint bloomH = window.heightu / 4;
+        uint bloomW = window.widthu / 4;
+        uint bloomH = window.heightu / 4;
 
-        // import api.math.geom2.rect2 : Rect2f;
+        import api.math.geom2.rect2 : Rect2f;
 
-        // gpu.dev.beginRenderPass(targets);
-        // gpu.dev.setViewport(Rect2f(0, 0, bloomW, bloomH), 0, 1);
-        // gpu.dev.bindPipeline(brightPipeline);
-        // gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
-        // gpu.dev.draw(3, 1, 0, 0);
+        gpu.dev.beginRenderPass(targets);
+        gpu.dev.setViewport(Rect2f(0, 0, bloomW, bloomH), 0, 1);
+        gpu.dev.bindPipeline(brightPipeline);
+        gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
+        gpu.dev.draw(3, 1, 0, 0);
+        gpu.dev.endRenderPass(isSubmit : false);
 
-        // gpu.dev.endRenderPass(isSubmit : false);
+        SDL_GPUColorTargetInfo horizontPassTarget;
+        horizontPassTarget.texture = bloomB;
+        horizontPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
+        horizontPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
+        horizontPassTarget.store_op = SDL_GPU_STOREOP_STORE;
+        horizontPassTarget.cycle = true;
+        targets[0] = horizontPassTarget;
 
-        // SDL_GPUColorTargetInfo horizontPassTarget;
-        // horizontPassTarget.texture = renderTexture;
-        // horizontPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
-        // horizontPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
-        // horizontPassTarget.store_op = SDL_GPU_STOREOP_STORE;
-        // horizontPassTarget.cycle = true;
-        // targets[0] = horizontPassTarget;
+        gpu.dev.beginRenderPass(targets);
+        gpu.dev.bindPipeline(blurPipeline);
+        align(16) float[4] data = [1, 0, 1.0 / bloomW, 1.0 / bloomH];
+        gpu.dev.pushUniformFragmentData(0, data.ptr, data.sizeof);
+        gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 0);
+        gpu.dev.draw(3, 1, 0, 0);
+        gpu.dev.endRenderPass(isSubmit : false);
 
-        // gpu.dev.beginRenderPass(targets);
-        // gpu.dev.bindPipeline(blurPipeline);
-        // align(16) float[4] data = [1, 0, 1.0 / bloomW, 1.0 / bloomH];
-        // gpu.dev.pushUniformFragmentData(0, data.ptr, data.sizeof);
-        // gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 0);
-        // gpu.dev.draw(3, 1, 0, 0);
-        // gpu.dev.endRenderPass(isSubmit : false);
+        SDL_GPUColorTargetInfo vertPassTarget;
+        vertPassTarget.texture = bloomA;
+        vertPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
+        vertPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
+        vertPassTarget.store_op = SDL_GPU_STOREOP_STORE;
+        vertPassTarget.cycle = true;
+        targets[0] = vertPassTarget;
 
-        // SDL_GPUColorTargetInfo vertPassTarget;
-        // vertPassTarget.texture = bloomA;
-        // vertPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
-        // vertPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
-        // vertPassTarget.store_op = SDL_GPU_STOREOP_STORE;
-        // vertPassTarget.cycle = true;
-        // targets[0] = vertPassTarget;
+        gpu.dev.beginRenderPass(targets);
+        gpu.dev.bindPipeline(blurPipeline);
+        align(16) float[4] data1 = [0, 1, 1.0 / bloomW, 1.0 / bloomH];
+        gpu.dev.pushUniformFragmentData(0, data1.ptr, data1.sizeof);
+        gpu.dev.bindFragmentSamplers(bloomB, bloomSampler, 0);
+        gpu.dev.draw(3, 1, 0, 0);
+        gpu.dev.endRenderPass(isSubmit : false);
 
-        // gpu.dev.beginRenderPass(targets);
-        // gpu.dev.bindPipeline(blurPipeline);
-        // align(16) float[4] data1 = [0, 1, 1.0 / bloomW, 1.0 / bloomH];
-        // gpu.dev.pushUniformFragmentData(0, data1.ptr, data1.sizeof);
-        // gpu.dev.bindFragmentSamplers(bloomB, bloomSampler, 0);
-        // gpu.dev.draw(3, 1, 0, 0);
-        // gpu.dev.endRenderPass(isSubmit : false);
+        SDL_GPUColorTargetInfo composePassTarget;
+        composePassTarget.texture = isMix2d3dMode ? renderTexture : gpu.dev.swapchain;
+        composePassTarget.load_op = SDL_GPU_LOADOP_DONT_CARE;
+        composePassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
+        composePassTarget.store_op = SDL_GPU_STOREOP_STORE;
+        composePassTarget.cycle = true;
+        targets[0] = composePassTarget;
 
-        // SDL_GPUColorTargetInfo composePassTarget;
-        // composePassTarget.texture = isMix2d3dMode ? renderTexture : gpu.dev.swapchain;
-        // composePassTarget.load_op = SDL_GPU_LOADOP_DONT_CARE;
-        // composePassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
-        // composePassTarget.store_op = SDL_GPU_STOREOP_STORE;
-        // composePassTarget.cycle = true;
-        // targets[0] = composePassTarget;
+        gpu.dev.beginRenderPass(targets);
+        gpu.dev.setViewport(Rect2f(0, 0, window.widthu, window.heightu), 0, 1);
+        gpu.dev.bindPipeline(composePipeline);
+        gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
+        gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 1);
+        gpu.dev.draw(3, 1, 0, 0);
 
-        // gpu.dev.beginRenderPass(targets);
-        // gpu.dev.setViewport(Rect2f(0, 0, window.widthu, window.heightu), 0, 1);
-        // gpu.dev.bindPipeline(composePipeline);
-        // gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
-        // gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 1);
-        // gpu.dev.draw(3, 1, 0, 0);
-
-        // gpu.dev.endRenderPass(isSubmit : true);
-        // gpu.dev.resetState;
+        gpu.dev.endRenderPass(isSubmit : false);
+        //gpu.dev.resetState;
 
         // SDL_GPUBlitInfo blitInfo = SDL_GPUBlitInfo.init;
 
@@ -570,6 +569,11 @@ class Scene3d : Scene2d
         if (resultTexture)
         {
             gpu.dev.deleteTexture(resultTexture);
+        }
+
+        if (renderTexture)
+        {
+            gpu.dev.deleteTexture(renderTexture);
         }
 
         if (msaa)

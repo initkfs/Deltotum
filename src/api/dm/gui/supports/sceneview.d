@@ -126,8 +126,6 @@ class SceneView : VBox
         infoPanel.y = window.height - infoPanel.height - 80;
         addCreate(infoPanel);
 
-        
-
         auto btnContainer = new HBox;
         btnContainer.layout.isAlignY = true;
         addCreate(btnContainer);
@@ -169,7 +167,7 @@ class SceneView : VBox
         btnContainer.addCreate(fillStruct);
         //fillStruct.addCreateIcon(IconNames.enter_outline);
 
-        auto fillScene = new Button("Scene2d");
+        auto fillScene = new Button("Scene");
         fillScene.onAction ~= (ref e) { fillFullScene; };
         btnContainer.addCreate(fillScene);
 
