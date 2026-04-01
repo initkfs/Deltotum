@@ -6,11 +6,20 @@ import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.texts.text_field : TextField;
 import api.dm.kit.scenes.scene2d : Scene2d;
 
+import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
+import api.dm.gui.controls.containers.tabs.tab : Tab;
+import api.dm.gui.supports.debuggers.manages.sprite_manager: SpriteManager;
+import api.dm.gui.controls.containers.splits.vsplit_box: VSplitBox;
+
 /**
  * Authors: initkfs
  */
 class AdditionalPanel : BaseDebuggerPanel
 {
+    VSplitBox mainContainer;
+
+    SpriteManager spriteManager;
+
     this(Scene2d scene)
     {
         super(scene);
@@ -19,6 +28,37 @@ class AdditionalPanel : BaseDebuggerPanel
     override void create()
     {
         super.create();
+
+        spriteManager = new SpriteManager(scene);
+
+        auto mainContainer = new VSplitBox;
+        addCreate(mainContainer);
+        resizeToParent(mainContainer);
+        
+        auto mainBox = new TabBox;
+        buildInitCreate(mainBox);
+        mainBox.enablePadding;
+        if (width != 0)
+        {
+            mainBox.width = width;
+        }
+
+        mainBox.height = window.height / 2;
+
+        auto sceneTab = mainBox.createTab(spriteManager, "Sprite");
+
+        spriteManager.height = window.height / 2;
+        buildInitCreate(spriteManager);
+        mainBox.changeTab(sceneTab);
+
+        import api.dm.gui.controls.containers.vbox: VBox;
+
+        auto additionalContainer = new VBox;
+        additionalContainer.width = width;
+        additionalContainer.height = window.height / 2;
+        buildInitCreate(additionalContainer);
+
+        mainContainer.addContent([mainBox, additionalContainer]);
 
         
     }

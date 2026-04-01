@@ -648,8 +648,10 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    bool isEventInBounds(PointerEvent e){
-        if(inClipBounds(e.x, e.y) && contains(e.x, e.y)){
+    bool isEventInBounds(PointerEvent e)
+    {
+        if (inClipBounds(e.x, e.y) && contains(e.x, e.y))
+        {
             return true;
         }
         return false;
@@ -734,7 +736,7 @@ class Sprite2d : EventKitTarget
             {
                 continue;
             }
-            
+
             if (obj.isDrawAfterParent)
             {
                 try

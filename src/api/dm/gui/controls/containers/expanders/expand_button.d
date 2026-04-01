@@ -8,6 +8,8 @@ import api.dm.gui.controls.control : Control;
  */
 class ExpandButton : Expander
 {
+    bool isDisableBarPadding;
+
     override void configureExpandBar(Control expandBar)
     {
         super.configureExpandBar(expandBar);
@@ -26,6 +28,16 @@ class ExpandButton : Expander
         if (expandButton)
         {
             expandButton.margin = 0;
+        }
+    }
+
+    override void create()
+    {
+        super.create();
+
+        if (isDisableBarPadding && expandBar)
+        {
+            expandBar.padding = 0;
         }
     }
 }

@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.spinners.spinner;
 
 import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
 import api.dm.gui.controls.containers.expanders.expander : ExpanderPosition;
-import api.dm.gui.controls.containers.expanders.expand_button: ExpandButton;
+import api.dm.gui.controls.containers.expanders.expand_button : ExpandButton;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
 import api.dm.gui.controls.texts.text_field : TextField;
@@ -53,6 +53,8 @@ class Spinner(T) : MinMaxValueMeter!T
     void delegate(Button) onConfiguredDecButton;
     void delegate(Button) onCreatedDecButton;
 
+    T delegate(T value) onValueProvider;
+
     float textWidth = 0;
 
     protected
@@ -68,7 +70,7 @@ class Spinner(T) : MinMaxValueMeter!T
 
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
-        this.layout = new HLayout;
+        this.layout = new HLayout(1);
         layout.isAlignY = true;
         layout.isAutoResize = true;
         layout.isParentSizeReduce = true;
@@ -96,7 +98,7 @@ class Spinner(T) : MinMaxValueMeter!T
     {
         if (textWidth == 0)
         {
-            textWidth = theme.controlDefaultWidth / 3;
+            textWidth = theme.controlDefaultWidth / 2;
         }
     }
 
@@ -126,7 +128,7 @@ class Spinner(T) : MinMaxValueMeter!T
                 {
                     return;
                 }
-                value = newValue;
+                value = !onValueProvider ? newValue : onValueProvider(newValue);
             };
 
             if (onConfiguredDecButton)
@@ -256,7 +258,7 @@ class Spinner(T) : MinMaxValueMeter!T
                 {
                     return;
                 }
-                value = newValue;
+                value = !onValueProvider ? newValue : onValueProvider(newValue);
             };
 
             if (onConfiguredIncButton)
@@ -278,7 +280,9 @@ class Spinner(T) : MinMaxValueMeter!T
 
     protected ExpandButton newButtonExpander()
     {
-        return new ExpandButton;
+        auto button = new ExpandButton;
+        button.isDisableBarPadding = true;
+        return button;
     }
 
     protected TextField setText(TextField text)

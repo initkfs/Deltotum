@@ -67,6 +67,7 @@ class SceneView : Container
 
         additionalPanel = new AdditionalPanel(scene);
         applyMainPanel(additionalPanel);
+        additionalPanel.width = 300;
 
         auto additionalSlider = new Slider(SliderPos.right, true);
         addCreate(additionalSlider);
@@ -89,8 +90,7 @@ class SceneView : Container
 
         mainPanel.sceneManager.sceneTree.onSelectedOldNewRow = (oldRow, newRow) {
             auto item = newRow.item;
-            import std;
-            writeln(item);
+            additionalPanel.spriteManager.currentSprite = item;
         };
     }
 
