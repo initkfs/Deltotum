@@ -17,6 +17,10 @@ class TreeTable(T) : BaseClippedTable!(T, BaseTableColumn!T, TreeRow!(T))
     TreeItem!T[] items;
     TreeRow!T[] rows;
 
+    bool isSelectable;
+
+    void delegate(TreeRow!T oldRow, TreeRow!T newRow) onSelectedOldNewRow;
+
     this(size_t columnCount)
     {
         super(columnCount);
@@ -44,6 +48,8 @@ class TreeTable(T) : BaseClippedTable!(T, BaseTableColumn!T, TreeRow!(T))
             row.height = 1;
         }
 
+        row.isSelectable = isSelectable;
+
         row.onExpandOldNewValue = (oldv, newv) {
             if (rowContainer)
             {
@@ -70,18 +76,18 @@ class TreeTable(T) : BaseClippedTable!(T, BaseTableColumn!T, TreeRow!(T))
             row.setItem;
         }
 
-        // row.onSelectedOldNewValue = (oldv, newv) {
-        //     if (row is currentSelected)
-        //     {
-        //         return;
-        //     }
-        //     auto oldSelected = currentSelected ? currentSelected : null;
-        //     currentSelected = row;
-        //     if (onSelectedOldNewRow)
-        //     {
-        //         onSelectedOldNewRow(oldSelected, currentSelected);
-        //     }
-        // };
+        row.onSelectedOldNewValue = (oldv, newv) {
+            if (row is currentSelected)
+            {
+                return;
+            }
+            auto oldSelected = currentSelected ? currentSelected : null;
+            currentSelected = row;
+            if (onSelectedOldNewRow)
+            {
+                onSelectedOldNewRow(oldSelected, currentSelected);
+            }
+        };
 
         if (item.childrenItems.length > 0)
         {

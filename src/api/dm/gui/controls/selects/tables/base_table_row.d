@@ -320,9 +320,9 @@ class BaseTableRow(TItem, TCol:
     void isSelected(bool v)
     {
         _selected = v;
-        if (colContainer && colContainer.hasBackground)
-        {
-            colContainer.backgroundUnsafe.isVisible = v;
-        }
+        // if (colContainer && colContainer.hasBackground)
+        // {
+        //     colContainer.backgroundUnsafe.isVisible = v;
+        // }
     }
 }

@@ -648,6 +648,13 @@ class Sprite2d : EventKitTarget
         }
     }
 
+    bool isEventInBounds(PointerEvent e){
+        if(inClipBounds(e.x, e.y) && contains(e.x, e.y)){
+            return true;
+        }
+        return false;
+    }
+
     void drawContent()
     {
 

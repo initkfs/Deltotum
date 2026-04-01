@@ -25,6 +25,8 @@ class BaseTreeTable(T, TCol:
         TRow currentSelected;
     }
 
+    void delegate(TRow oldRow, TRow newRot) onSelectedOldNewRow;
+
     this(size_t columnCount)
     {
         super(columnCount);
@@ -103,10 +105,10 @@ class BaseTreeTable(T, TCol:
             }
             auto oldSelected = currentSelected ? currentSelected : null;
             currentSelected = row;
-            // if (onSelectedOldNewRow)
-            // {
-            //     onSelectedOldNewRow(oldSelected, currentSelected);
-            // }
+            if (onSelectedOldNewRow)
+            {
+                onSelectedOldNewRow(oldSelected, currentSelected);
+            }
         };
 
         if (item.childrenItems.length > 0)

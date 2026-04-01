@@ -97,7 +97,7 @@ class TreeRowLevelGraphics : Control
                         // }
                         // else
                         // {
-                            graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.middleY));
+                        graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.middleY));
                         //}
                         graphic.line(Vec2f(nextX, b.middleY), Vec2f(b.right, b
                                 .middleY));
@@ -116,7 +116,7 @@ class TreeRowLevelGraphics : Control
             // }
             // else
             // {
-                graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.middleY));
+            graphic.line(Vec2f(nextX, b.y), Vec2f(nextX, b.middleY));
             //}
             graphic.line(Vec2f(nextX, b.middleY), Vec2f(nextX + graphicsGap, b
                     .middleY));
@@ -247,13 +247,25 @@ class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
             }
 
             //TODO reuse
-            onPointerPress ~= (ref e) {
+            expandGraphics.onPointerPress ~= (ref e) {
                 this.isExpand = !isExpand;
                 setExpandGraphics;
                 foreach (ch; childrenRows)
                 {
                     toggleTreeBranch(ch, isExpand);
                 }
+
+                e.isConsumed = true;
+            };
+
+            onPointerPress ~= (ref e) {
+                //TODO margin
+                if (expandGraphics.isEventInBounds(e))
+                {
+                    return;
+                }
+
+                toggleSelected(!isSelected);
             };
 
             setExpandGraphics;
@@ -357,8 +369,10 @@ class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
         }
     }
 
-    void isLastRow(bool v){
-        if(levelGraphics){
+    void isLastRow(bool v)
+    {
+        if (levelGraphics)
+        {
             levelGraphics.isLastRow = v;
         }
     }

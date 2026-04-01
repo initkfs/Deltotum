@@ -31,8 +31,6 @@ import IconNames = api.dm.gui.themes.icons.pack_bootstrap;
 
 import std.conv : to;
 
-
-
 /**
  * Authors: initkfs
  */
@@ -46,7 +44,8 @@ class SceneView : Container
 
     this(Scene2d scene)
     {
-        if(!scene){
+        if (!scene)
+        {
             throw new Exception("Scene must not be null");
         }
         this.scene = scene;
@@ -87,6 +86,12 @@ class SceneView : Container
         infoPanel.isStyleForChild = true;
         infoPanel.isBorder = true;
         addCreate(infoPanel);
+
+        mainPanel.sceneManager.sceneTree.onSelectedOldNewRow = (oldRow, newRow) {
+            auto item = newRow.item;
+            import std;
+            writeln(item);
+        };
     }
 
     void applyMainPanel(Container panel)
