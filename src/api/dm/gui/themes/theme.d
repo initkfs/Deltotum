@@ -192,11 +192,11 @@ class Theme
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 
             backgroundStyle.lineWidth = 1.0;
 
-            newBackground = new ConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
+            newBackground = new Rectangle(width, height, backgroundStyle);
         }
 
         newBackground.angle = angle;

@@ -871,7 +871,7 @@ class SdlApp : GuiApp
                 {
                     restMs *= restFactor;
                 }
-                sdlLib.delayNsPrec(cast(ulong)(restMs * 1_000_000));
+                sdlLib.delayNs(cast(ulong)(restMs * 1_000_000));
             };
             version (EnableTrace)
             {

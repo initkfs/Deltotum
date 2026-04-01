@@ -107,13 +107,8 @@ class GuiScene : Scene3d
 
     void createDebugger()
     {
-        import api.dm.gui.controls.containers.slider : Slider, SliderPos;
-
-        auto debugWrapper = new Slider(SliderPos.right);
-        addCreate(debugWrapper);
         debugger = new SceneView(this);
         addCreate(debugger);
-        window.showingTasks ~= (dt) { debugWrapper.setInitialPos; };
     }
 
     override void update(float dt)

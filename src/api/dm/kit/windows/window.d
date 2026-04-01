@@ -68,7 +68,7 @@ class Window : GraphicComponent
     void delegate(float, float, float, float)[] onResizeOldNewWidthHeight;
 
     void delegate(float)[] showingTasks;
-    size_t showingTaskDelayTicks = 1;
+    size_t showingTaskDelayTicks = 5;
 
     void delegate(float)[] drawingSceneTasks;
 

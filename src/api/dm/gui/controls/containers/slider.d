@@ -35,11 +35,23 @@ class Slider : Container
 
     this(SliderPos position = SliderPos.left, bool expand = false)
     {
-        layout = (position == SliderPos.left || position == SliderPos.right) ? new HLayout(0) : new VLayout(
-            0);
+        if (position == SliderPos.left || position == SliderPos.right)
+        {
+            layout = new HLayout(0);
+            layout.isAlignY = true;
+        }
+        else
+        {
+            layout = new VLayout(0);
+            layout.isAlignX = true;
+        }
+
+        if (position == SliderPos.left || position == SliderPos.top)
+        {
+            layout.isFillStartToEnd = false;
+        }
+
         layout.isAutoResize = true;
-        layout.isAlignX = true;
-        layout.isAlignY = true;
 
         this.position = position;
 
@@ -64,7 +76,8 @@ class Slider : Container
             swap(handleWidth, handleHeight);
         }
 
-        _handle = new VConvexPolygon(handleWidth, handleHeight, GraphicStyle(1, theme.colorAccent, true, theme.colorAccent), 3);
+        _handle = new VConvexPolygon(handleWidth, handleHeight, GraphicStyle(1, theme.colorAccent, true, theme
+                .colorAccent), 3);
         addCreate(_handle);
 
         _content = new CenterBox;
@@ -74,15 +87,10 @@ class Slider : Container
         addCreate(motionAnimation);
         motionAnimation.addTarget(this);
 
-        if (position == SliderPos.left || position == SliderPos.top)
-        {
-            layout.isFillStartToEnd = false;
-        }
-
         _handle.onPointerPress ~= (ref e) {
             if (motionAnimation && motionAnimation.isRunning)
             {
-               return;
+                return;
             }
             toggle;
         };
@@ -90,7 +98,7 @@ class Slider : Container
         setWindowInitialPos;
         if (_expanded)
         {
-            window.showingTasks ~= (dt) { expand; };
+            window.showingTasks ~= (dt) { switchStateForce(true); };
         }
     }
 
@@ -100,22 +108,29 @@ class Slider : Container
     }
 
     bool isAnimationRunning() => motionAnimation && motionAnimation.isRunning;
+    bool canSwitchState() => !isAnimationRunning;
 
-    bool canSwitchState() => !isAnimationRunning; 
-
-    void switchState(bool expand)
+    bool switchState(bool expand)
     {
         if (_expanded == expand)
         {
-            return;
+            return false;
         }
 
+        return switchStateForce(expand);
+    }
+
+    bool switchStateForce(bool expand)
+    {
         if (isAnimationRunning)
         {
             motionAnimation.stop;
-            if(!_expanded){
-                setInitialPos;
-            }else {
+            if (!_expanded)
+            {
+                setStartPos;
+            }
+            else
+            {
                 Vec2f endPoint = getEndPointPanel(true);
                 x = endPoint.x;
                 y = endPoint.y;
@@ -129,9 +144,12 @@ class Slider : Container
         motionAnimation.minValue = Vec2f(x, y);
         motionAnimation.maxValue = endPoint;
         motionAnimation.run;
+
+        return true;
     }
 
-    protected Vec2f getEndPointPanel(bool expand){
+    protected Vec2f getEndPointPanel(bool expand)
+    {
         Vec2f endPoint;
         Vec2f offset = getMotionOffset;
         auto offsetX = offset.x;
@@ -206,23 +224,15 @@ class Slider : Container
         return Vec2f(dx, dy);
     }
 
-    protected float sliderWidth()
-    {
-        return Math.max(_content.width, width);
-    }
-
-    protected float sliderHeight()
-    {
-        return Math.max(_content.height, height);
-    }
+    protected float sliderWidth() => Math.max(_content.width, width);
+    protected float sliderHeight() => Math.max(_content.height, height);
 
     void setWindowInitialPos()
     {
-        assert(window);
-        window.showingTasks ~= (dt) { setInitialPos; };
+        window.showingTasks ~= (dt) { setStartPos; };
     }
 
-    void setInitialPos()
+    void setStartPos()
     {
         import api.math.geom2.rect2 : Rect2f;
 
@@ -260,13 +270,6 @@ class Slider : Container
         _content.addCreate(newContent);
     }
 
-    Sprite2d content()
-    {
-        return _content;
-    }
-
-    Sprite2d handle()
-    {
-        return _handle;
-    }
+    Sprite2d content() => _content;
+    Sprite2d handle() => _handle;
 }

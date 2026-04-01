@@ -234,6 +234,12 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         {
             return getErrorRes("Error getting SDL renderer safe area");
         }
+
+        if (!safeBounds)
+        {
+            return getErrorRes("Safe render bounds is null");
+        }
+
         bounds = Rect2f(safeBounds.x, safeBounds.y, safeBounds.w, safeBounds.h);
         return ComResult.success;
     }
@@ -458,7 +464,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
             auto sdlBuffer = cast(SdlSurface) buffer;
             assert(sdlBuffer);
-            if(const err = sdlBuffer.updatePtr(surface)){
+            if (const err = sdlBuffer.updatePtr(surface))
+            {
                 return err;
             }
         }

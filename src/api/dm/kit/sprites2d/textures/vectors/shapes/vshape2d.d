@@ -27,6 +27,7 @@ class VShape : VectorTexture
     {
         super(width, height);
         this.style = style;
+        this.id = "vshape";
     }
 
     override void createContent()
