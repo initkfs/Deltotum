@@ -9,6 +9,7 @@ import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.supports.debuggers.manages.scene_manager : SceneManager;
+import api.dm.gui.controls.containers.splits.vsplit_box: VSplitBox;
 
 private
 {
@@ -34,7 +35,7 @@ class MainPanel : BaseDebuggerPanel
 
     const string debugUserDataKey = "debugData";
 
-    TabBox mainContainer;
+    VSplitBox mainContainer;
 
     SceneManager sceneManager;
 
@@ -74,20 +75,36 @@ class MainPanel : BaseDebuggerPanel
     {
         super.create();
 
-        mainContainer = new TabBox;
+        mainContainer = new VSplitBox;
         addCreate(mainContainer);
-        mainContainer.enablePadding;
+        resizeToParent(mainContainer);
+        
+        auto mainBox = new TabBox;
+        buildInitCreate(mainBox);
+        mainBox.enablePadding;
         if (width != 0)
         {
-            mainContainer.width = width;
+            mainBox.width = width;
         }
 
-        sceneManager = new SceneManager(scene);
-        auto sceneTab = mainContainer.createTab(sceneManager, "Scene");
+        mainBox.height = window.height / 2;
 
+        sceneManager = new SceneManager(scene);
+        auto sceneTab = mainBox.createTab(sceneManager, "Scene");
+
+        sceneManager.height = window.height / 2;
         buildInitCreate(sceneManager);
         sceneManager.loadSceneTree;
-        mainContainer.changeTab(sceneTab);
+        mainBox.changeTab(sceneTab);
+
+        import api.dm.gui.controls.containers.vbox: VBox;
+
+        auto additionalContainer = new VBox;
+        additionalContainer.width = width;
+        additionalContainer.height = window.height / 2;
+        buildInitCreate(additionalContainer);
+
+        mainContainer.addContent([mainBox, additionalContainer]);
 
         // auto btnContainer = new HBox;
         // btnContainer.layout.isAlignY = true;

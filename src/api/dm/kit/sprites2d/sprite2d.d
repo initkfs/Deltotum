@@ -653,11 +653,21 @@ class Sprite2d : EventKitTarget
 
     }
 
+    bool isNeedDraw(Sprite2d sprite)
+    {
+        if ((!sprite.isVisible) || (!sprite.isDrawable))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     bool draw(float alpha)
     {
         updateDrawPhys(alpha);
 
-        if ((!isVisible) || (!isDrawable))
+        if (!isNeedDraw(this))
         {
             return false;
         }
@@ -671,12 +681,12 @@ class Sprite2d : EventKitTarget
 
         foreach (Sprite2d obj; children)
         {
-            if (!obj.isDrawByParent || !obj.isDrawable)
+            if (!obj.isDrawByParent || !isNeedDraw(obj))
             {
                 continue;
             }
 
-            if (!obj.isDrawAfterParent && obj.isVisible)
+            if (!obj.isDrawAfterParent)
             {
                 try
                 {
@@ -713,12 +723,12 @@ class Sprite2d : EventKitTarget
 
         foreach (Sprite2d obj; children)
         {
-            if (!obj.isDrawByParent || !obj.isDrawable)
+            if (!obj.isDrawByParent || !isNeedDraw(obj))
             {
                 continue;
             }
-
-            if (obj.isDrawAfterParent && obj.isVisible)
+            
+            if (obj.isDrawAfterParent)
             {
                 try
                 {
@@ -2163,6 +2173,30 @@ class Sprite2d : EventKitTarget
         return isResized;
     }
 
+    bool resizeToParent(Sprite2d child)
+    {
+        bool isResized;
+        isResized |= child.width = width;
+        isResized |= child.height = height;
+        return isResized;
+    }
+
+    bool resizeToParentSafe(Sprite2d child)
+    {
+        bool isResized;
+        if (width != 0)
+        {
+            isResized |= child.width = width;
+        }
+
+        if (height != 0)
+        {
+            isResized |= child.height = height;
+        }
+
+        return isResized;
+    }
+
     bool rescale(float factorWidth, float factorHeight)
     {
         if (!isScalable)
@@ -2662,7 +2696,10 @@ class Sprite2d : EventKitTarget
             stop;
         }
 
-        super.dispose;
+        if (!isDisposing)
+        {
+            super.dispose;
+        }
 
         foreach (Sprite2d child; children)
         {
@@ -2673,7 +2710,10 @@ class Sprite2d : EventKitTarget
                 child.stop;
             }
 
-            child.dispose;
+            if (!child.isDisposing)
+            {
+                child.dispose;
+            }
         }
 
         invalidateListeners = null;

@@ -28,7 +28,7 @@ class Slider : Container
     {
         SliderPos position;
         Sprite2d _handle;
-        CenterBox _content;
+        Sprite2d _content;
         LinearMotion motionAnimation;
         bool _expanded;
     }
@@ -56,6 +56,8 @@ class Slider : Container
         this.position = position;
 
         _expanded = expand;
+
+        id = "Slider";
     }
 
     override void create()
@@ -93,6 +95,15 @@ class Slider : Container
                 return;
             }
             toggle;
+        };
+
+        motionAnimation.onEnd ~= () {
+            if (!_content)
+            {
+                return;
+            }
+
+            _content.isVisible = _expanded;
         };
 
         setWindowInitialPos;
@@ -143,6 +154,12 @@ class Slider : Container
         Vec2f endPoint = getEndPointPanel(expand);
         motionAnimation.minValue = Vec2f(x, y);
         motionAnimation.maxValue = endPoint;
+
+        if (_expanded && !_content.isVisible)
+        {
+            _content.isVisible = true;
+        }
+
         motionAnimation.run;
 
         return true;
@@ -265,8 +282,11 @@ class Slider : Container
 
     void addContent(Sprite2d newContent)
     {
-        assert(_content);
-        //TODO replace?
+        if (newContent.isCreated)
+        {
+            throw new Exception("Content for slider must not be created.");
+        }
+
         _content.addCreate(newContent);
     }
 

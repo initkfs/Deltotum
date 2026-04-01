@@ -60,21 +60,19 @@ class SceneView : Container
 
         mainPanel = new MainPanel(scene);
         applyMainPanel(mainPanel);
-        addCreate(mainPanel);
+        //mainPanel.isVisible = false;
 
         auto mainSlider = new Slider(SliderPos.left, true);
         addCreate(mainSlider);
         mainSlider.addContent(mainPanel);
-        //mainSlider.setWindowInitialPos;
 
         additionalPanel = new AdditionalPanel(scene);
         applyMainPanel(additionalPanel);
-        addCreate(additionalPanel);
 
         auto additionalSlider = new Slider(SliderPos.right, true);
         addCreate(additionalSlider);
         additionalSlider.addContent(additionalPanel);
-        //additionalSlider.setWindowInitialPos;
+        additionalSlider.setWindowInitialPos;
 
         auto infoStyle = theme.newDefaultStyle;
         infoStyle.lineColor = RGBA.hex("#DDCC66");

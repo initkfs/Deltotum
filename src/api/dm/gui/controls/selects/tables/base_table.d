@@ -297,6 +297,7 @@ class BaseTable(T, TCol:
             rowContainer = !onNewRowContainer ? nc : onNewRowContainer(nc);
 
             //rowContainer.isBorder = true;
+            resizeToParentSafe(rowContainer);
 
             import api.math.geom2.rect2 : Rect2f;
 

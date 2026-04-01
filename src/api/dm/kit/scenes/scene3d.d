@@ -527,6 +527,10 @@ class Scene3d : Scene2d
 
     override bool checkForDraw(Sprite2d sprite)
     {
+        if(!super.checkForDraw(sprite)){
+            return false;
+        }
+        
         if (!isMix2d3dMode)
         {
             return true;

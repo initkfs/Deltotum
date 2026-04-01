@@ -41,15 +41,8 @@ abstract class BaseClippedTable(T, TCol:
         itemContainer = new VBox(0);
         //itemContainer.isDrawBounds = true;
         //itemContainer.isHGrow = true;
-        if (width != 0)
-        {
-            itemContainer.width = width;
-        }
-        if (height != 0)
-        {
-            itemContainer.height = height;
-        }
-        itemContainer.layout.isDecreaseRootHeight = true;
+        //itemContainer.layout.isDecreaseRootHeight = true;
+        resizeToParentSafe(itemContainer);
 
         auto root = rowContainer ? rowContainer : this;
 

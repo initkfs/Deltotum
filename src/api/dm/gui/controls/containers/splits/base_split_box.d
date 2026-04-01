@@ -25,6 +25,8 @@ class BaseSplitBox : Container
 
     float dividerSize = 0;
 
+    bool isResizeOnly = true;
+
     protected
     {
 
