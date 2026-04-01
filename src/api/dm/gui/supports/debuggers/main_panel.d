@@ -1,10 +1,14 @@
 module api.dm.gui.supports.debuggers.main_panel;
 
-import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.supports.debuggers.base_debugger_panel : BaseDebuggerPanel;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.texts.text_field : TextField;
 import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
+import api.dm.gui.controls.containers.tabs.tab : Tab;
+import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.gui.supports.debuggers.manages.scene_manager : SceneManager;
 
 private
 {
@@ -23,14 +27,16 @@ private
 /**
  * Authors: initkfs
  */
-class MainPanel : Container
+class MainPanel : BaseDebuggerPanel
 {
-    Scene2d scene;
-
     void delegate() onEnableDebug;
     void delegate() onDisableDebug;
 
     const string debugUserDataKey = "debugData";
+
+    TabBox mainContainer;
+
+    SceneManager sceneManager;
 
     // TextArea output;
 
@@ -52,14 +58,6 @@ class MainPanel : Container
 
     // private
     // {
-    //     //TODO remove templates
-    //     import api.dm.gui.controls.selects.tables.clipped.trees.base_tree_table : BaseTreeTable;
-    //     import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
-    //     import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
-    //     import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
-    //     import api.dm.gui.controls.selects.tables.clipped.trees.tree_row : TreeRow;
-
-    //     TreeList!(Sprite2d, BaseTableColumn!Sprite2d, TreeRow!Sprite2d) controlStructure;
 
     //     Sprite2d objectOnDebug;
     //     size_t objectOnDebugSceneIndex;
@@ -67,14 +65,29 @@ class MainPanel : Container
     //     TextArea objectFullInfo;
     // }
 
-    this()
+    this(Scene2d scene)
     {
-        setVLayout;
+        super(scene);
     }
 
     override void create()
     {
         super.create();
+
+        mainContainer = new TabBox;
+        addCreate(mainContainer);
+        mainContainer.enablePadding;
+        if (width != 0)
+        {
+            mainContainer.width = width;
+        }
+
+        sceneManager = new SceneManager(scene);
+        auto sceneTab = mainContainer.createTab(sceneManager, "Scene");
+
+        buildInitCreate(sceneManager);
+        sceneManager.loadSceneTree;
+        mainContainer.changeTab(sceneTab);
 
         // auto btnContainer = new HBox;
         // btnContainer.layout.isAlignY = true;
@@ -118,7 +131,7 @@ class MainPanel : Container
         // //fillStruct.addCreateIcon(IconNames.enter_outline);
 
         // auto fillScene = new Button("Scene");
-        // fillScene.onAction ~= (ref e) { fillFullScene; };
+        // fillScene.onAction ~= (ref e) { loadSceneTree; };
         // btnContainer.addCreate(fillScene);
 
         // controlStructure = newTreeList!Sprite2d;
@@ -515,26 +528,6 @@ class MainPanel : Container
     //     }
     // }
 
-    // private void fillFullScene()
-    // {
-    //     if (!isDebug)
-    //     {
-    //         return;
-    //     }
-    //     auto roots = scene.activeSprites;
-    //     foreach (root; roots)
-    //     {
-    //         if (root is this)
-    //         {
-    //             continue;
-    //         }
-    //         auto treeRootNode = buildSpriteTree(root);
-    //         controlStructure.fill(treeRootNode);
-    //         break;
-    //     }
-
-    // }
-
     // private void fillStructure()
     // {
     //     if (!objectOnDebug)
@@ -543,20 +536,6 @@ class MainPanel : Container
     //     }
     //     auto treeRootNode = buildSpriteTree(objectOnDebug);
     //     controlStructure.fill(treeRootNode);
-    // }
-
-    // private TreeItem!Sprite2d buildSpriteTree(Sprite2d root)
-    // {
-
-    //     auto node = new TreeItem!Sprite2d(root);
-
-    //     foreach (ch; root.children)
-    //     {
-    //         auto childNode = buildSpriteTree(ch);
-    //         node.childrenItems ~= childNode;
-    //     }
-
-    //     return node;
     // }
 
     // private void removeDebugInfo(Sprite2d obj)

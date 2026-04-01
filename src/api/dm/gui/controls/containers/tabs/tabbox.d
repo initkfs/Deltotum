@@ -103,6 +103,15 @@ class TabBox : Container
         }
     }
 
+    Tab createTab(Sprite2d content, dstring name = "Tab")
+    {
+        auto tab = new Tab(name);
+        tab.content = content;
+        content.width = width;
+        addCreate(tab);
+        return tab;
+    }
+
     bool has(Tab tab)
     {
         if (!header)

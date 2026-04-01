@@ -46,6 +46,9 @@ class SceneView : Container
 
     this(Scene2d scene)
     {
+        if(!scene){
+            throw new Exception("Scene must not be null");
+        }
         this.scene = scene;
     }
 
@@ -55,7 +58,7 @@ class SceneView : Container
 
         enablePadding;
 
-        mainPanel = new MainPanel;
+        mainPanel = new MainPanel(scene);
         applyMainPanel(mainPanel);
         addCreate(mainPanel);
 
@@ -64,7 +67,7 @@ class SceneView : Container
         mainSlider.addContent(mainPanel);
         //mainSlider.setWindowInitialPos;
 
-        additionalPanel = new AdditionalPanel;
+        additionalPanel = new AdditionalPanel(scene);
         applyMainPanel(additionalPanel);
         addCreate(additionalPanel);
 

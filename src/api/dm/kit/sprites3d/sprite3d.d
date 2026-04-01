@@ -31,7 +31,7 @@ class Sprite3d : Sprite2d
         float _angleY = 0;
     }
 
-    bool isCalcInverseWorldMatrix = true;
+    bool isCalcInverseWorldMatrix;
 
     Vec3f scale = Vec3f(1, 1, 1);
 

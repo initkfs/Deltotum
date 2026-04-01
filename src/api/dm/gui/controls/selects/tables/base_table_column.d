@@ -24,6 +24,7 @@ class BaseTableColumn(TItem) : Container
     void delegate(Text) onCreatedItemText;
 
     dstring delegate(TItem) itemTextProvider;
+    bool isAllowNullInTextProvider;
 
     Sprite2d leftBorder;
     string leftBorderId = "left_border";
@@ -198,9 +199,20 @@ class BaseTableColumn(TItem) : Container
         {
             return false;
         }
+
+        //TODO or pass to delegate?
+        static if (__traits(compiles, item is null))
+        {
+            if ((!isAllowNullInTextProvider) && item is null)
+            {
+                itemText.text = "null";
+                return true;
+            }
+        }
+
         auto text = itemTextProvider(item);
         itemText.text = text;
-        
+
         return true;
     }
 }
