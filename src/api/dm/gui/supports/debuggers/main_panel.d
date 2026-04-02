@@ -9,6 +9,7 @@ import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.supports.debuggers.manages.scene_manager : SceneManager;
+import api.dm.gui.supports.debuggers.manages.env_manager: EnvManager;
 import api.dm.gui.controls.containers.splits.vsplit_box: VSplitBox;
 
 private
@@ -38,6 +39,7 @@ class MainPanel : BaseDebuggerPanel
     VSplitBox mainContainer;
 
     SceneManager sceneManager;
+    EnvManager envManager;
 
     // TextArea output;
 
@@ -91,6 +93,11 @@ class MainPanel : BaseDebuggerPanel
 
         sceneManager = new SceneManager(scene);
         auto sceneTab = mainBox.createTab(sceneManager, "Scene");
+
+        envManager = new EnvManager(scene);
+        mainBox.createTab(envManager, "Env");
+        envManager.height = window.height / 2;
+        buildInitCreate(envManager);
 
         sceneManager.height = window.height / 2;
         buildInitCreate(sceneManager);

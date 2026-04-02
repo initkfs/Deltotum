@@ -111,11 +111,12 @@ class TextField : Control
             }
 
             clearButton.onPointerPress ~= (ref e) {
-                
-                if(textView.text == defaultValue){
+
+                if (textView.text == defaultValue)
+                {
                     return;
                 }
-                
+
                 if (!textView.clear(defaultValue, isShowCursor:
                         true))
                 {

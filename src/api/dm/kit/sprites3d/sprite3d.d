@@ -429,7 +429,6 @@ class Sprite3d : Sprite2d
 
     bool angleX(float v)
     {
-
         if (_angleX == v)
         {
             return false;

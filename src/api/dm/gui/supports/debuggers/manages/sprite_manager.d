@@ -25,6 +25,10 @@ class SpriteManager : BaseDebuggerPanel
     FracSpinner yField;
     FracSpinner zField;
 
+    FracSpinner xRotateField;
+    FracSpinner yRotateField;
+    FracSpinner zRotateField;
+
     dstring initNumField = "0";
 
     this(Scene2d scene)
@@ -41,12 +45,9 @@ class SpriteManager : BaseDebuggerPanel
         addCreate(transformBox);
         transformBox.isAlignY = true;
 
-        xField = new FracSpinner(-float.max, float.max);
-        setNumericField(xField, (v) { _currentSprite.x = v; });
-        yField = new FracSpinner(-float.max, float.max);
-        setNumericField(yField, (v) { _currentSprite.y = v; });
-        zField = new FracSpinner(-float.max, float.max);
-        setNumericField(zField, (v) {
+        xField = createNumericField((v) { _currentSprite.x = v; });
+        yField = createNumericField((v) { _currentSprite.y = v; });
+        zField = createNumericField((v) {
             if (auto sprite3d = cast(Sprite3d) _currentSprite)
             {
                 sprite3d.z = v;
@@ -54,19 +55,51 @@ class SpriteManager : BaseDebuggerPanel
         });
 
         transformBox.addCreate([
-                new Text("x:"), xField, new Text("y:"), yField, new Text("z:"), zField
-            ]);
+            new Text("x:"), xField, new Text("y:"), yField, new Text("z:"), zField
+        ]);
+
+        xRotateField = createNumericField((v) {
+            callOn3dSprite((sprite) { sprite.angleX = v; });
+        }, 1);
+        yRotateField = createNumericField((v) {
+            callOn3dSprite((sprite) { sprite.angleY = v; });
+        }, 1);
+        zRotateField = createNumericField((v) { _currentSprite.angle = v; }, 1);
+
+        auto rotateBox = new HBox(2);
+        addCreate(rotateBox);
+        rotateBox.isAlignY = true;
+
+        rotateBox.addCreate([
+            new Text("X:"), xRotateField, new Text("Y:"), yRotateField,
+            new Text("Z:"), zRotateField
+        ]);
 
     }
 
     void callOnSprite(void delegate(Sprite2d) onSprite)
     {
-        if (!_currentSprite)
+        if (_currentSprite)
         {
-            return;
+            onSprite(_currentSprite);
         }
+    }
 
-        onSprite(_currentSprite);
+    void callOn3dSprite(void delegate(Sprite3d) onSprite)
+    {
+        if (auto sprite3d = cast(Sprite3d) _currentSprite)
+        {
+            onSprite(sprite3d);
+        }
+    }
+
+    FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1)
+    {
+        auto field = new FracSpinner(-float.max, float.max);
+        field.incValue = dtValue;
+        field.decValue = dtValue;
+        setNumericField(field, onFieldValue);
+        return field;
     }
 
     void setNumericField(FracSpinner field, void delegate(float value) onFieldValue)
@@ -87,32 +120,14 @@ class SpriteManager : BaseDebuggerPanel
             return Math.round(v * factor) / factor;
         };
 
-        field.valueLabel.textView.onTextChange = () {
+        field.onChangeOldNew ~= (oldv, newv) {
 
             if (!_currentSprite)
             {
                 return;
             }
 
-            import std.string : isNumeric;
-
-            try
-            {
-                auto text = field.valueLabel.text;
-                if (!text.isNumeric)
-                {
-                    return;
-                }
-
-                import std.conv : to;
-
-                auto result = text.to!float;
-                onFieldValue(result);
-            }
-            catch (Exception e)
-            {
-                logger.error(e.toString);
-            }
+            onFieldValue(newv);
         };
     }
 

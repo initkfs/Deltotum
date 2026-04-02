@@ -194,6 +194,27 @@ class Spinner(T) : MinMaxValueMeter!T
             auto newLabel = newValueLabel;
             valueLabel = !onNewValueLabel ? newLabel : onNewValueLabel(newLabel);
 
+            valueLabel.onEnter = (ref e) {
+
+                //TODO numeric trait
+                import std.string : isNumeric;
+
+                try
+                {
+                    auto text = valueLabel.text;
+                    if (text.isNumeric)
+                    {
+                        import std.conv : to;
+                        value = text.to!T;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    logger.error(e.toString);
+                }
+            };
+
             if (onConfiguredValueLabel)
             {
                 onConfiguredValueLabel(valueLabel);
@@ -319,4 +340,26 @@ class Spinner(T) : MinMaxValueMeter!T
 
     T incValue() => initInc;
     T decValue() => initDec;
+
+    void incValue(T v)
+    {
+        initInc = v;
+        if (incLabel)
+        {
+            import std.conv : to;
+
+            incLabel.text = initInc.to!dstring;
+        }
+    }
+
+    void decValue(T v)
+    {
+        initDec = v;
+        if (decLabel)
+        {
+            import std.conv : to;
+
+            decLabel.text = initInc.to!dstring;
+        }
+    }
 }

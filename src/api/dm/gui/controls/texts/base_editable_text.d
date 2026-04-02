@@ -930,11 +930,20 @@ class BaseEditableText : BaseMonoText
             cursorPos.glyphIndexAbs--;
         }
 
-        auto glyph = allGlyphs[cursorPos.glyphIndexAbs];
-        auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2f(
-            glyph.pos.x + glyph.geometry.width, glyph.pos.y) : glyph.pos;
-        cursorPos.pos = startGlyphPos.add(newPos);
-        updateCursor;
+        if (allGlyphs.length > 0)
+        {
+            auto glyph = allGlyphs[cursorPos.glyphIndexAbs];
+            auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2f(
+                glyph.pos.x + glyph.geometry.width, glyph.pos.y) : glyph.pos;
+            cursorPos.pos = startGlyphPos.add(newPos);
+            updateCursor;
+        }
+        else
+        {
+            cursorPos.pos = startGlyphPos;
+            updateCursor;
+        }
+
         return true;
     }
 

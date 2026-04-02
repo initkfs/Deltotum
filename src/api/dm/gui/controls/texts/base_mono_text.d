@@ -135,12 +135,17 @@ class BaseMonoText : Control
         bufferCreate;
     }
 
-    void updateRows(bool isForce = false)
+    void updateRows(bool isForce = false, bool isTriggerListeners = true)
     {
         if (!isBuilt && !isForce)
         {
             isRebuildRows = true;
             return;
+        }
+
+        if (onTextChange && isTriggerListeners)
+        {
+            onTextChange();
         }
 
         updateTextLayout;
@@ -703,11 +708,6 @@ class BaseMonoText : Control
         {
             logger.errorf("Error creating buffer text: %s", t);
             return;
-        }
-
-        if (onTextChange && isTriggerListeners)
-        {
-            onTextChange();
         }
 
         updateRows(isForce : true);
