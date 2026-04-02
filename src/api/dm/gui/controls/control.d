@@ -1085,7 +1085,14 @@ class Control : GuiComponent
         }
         catch (Exception e)
         {
-            logger.error(e.toString);
+            if (hasLogging)
+            {
+                logger.error(e.toString);
+            }
+            else
+            {
+                throw e;
+            }
         }
 
         return false;

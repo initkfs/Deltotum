@@ -54,11 +54,28 @@ class Scene3d : Scene2d
     bool isMix2d3dMode = true;
     bool isMixCurrentPass;
 
+    float[4] brightUniformData;
+
+    struct BlurUniformData
+    {
+        float[4] data;
+        align(4):
+        float radius = 1; // radius,  1.0
+        float intensity = 1; // luma 1.0
+    }
+
+    BlurUniformData blurUniformData;
+
+    float[4] composeUniformData;
+
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
         super(isInitUDAProcessor);
         initProcessUDA!ThisType(isInitUDAProcessor);
         isAutoSizeToWindow = true;
+
+        brightUniformData = [1, 0.3, 0, 0];
+        composeUniformData = [2, 1, 0.9, 50];
     }
 
     override void create()
@@ -164,10 +181,10 @@ class Scene3d : Scene2d
         auto shaderDir = buildPath(context.app.dataDir, "shaders", "out", "spirv");
 
         brightPipeline = gpu.newPipeline(
-            buildPath(shaderDir, "Bright.vert.spv"),
+            buildPath(shaderDir, "FullQuad.vert.spv"),
             buildPath(shaderDir, "Bright.frag.spv"),
             0, 0, 0, 0,
-            1, 0, 0, 0,
+            1, 0, 1, 0,
             &raster,
             &depth,
             &targetInfo,
@@ -177,7 +194,7 @@ class Scene3d : Scene2d
         );
 
         blurPipeline = gpu.newPipeline(
-            buildPath(shaderDir, "Bright.vert.spv"),
+            buildPath(shaderDir, "FullQuad.vert.spv"),
             buildPath(shaderDir, "Blur.frag.spv"),
             0, 0, 0, 0,
             1, 0, 1, 0,
@@ -192,10 +209,10 @@ class Scene3d : Scene2d
         //colorDesc.format = gpu.getSwapchainTextureFormat;
 
         composePipeline = gpu.newPipeline(
-            buildPath(shaderDir, "Bright.vert.spv"),
+            buildPath(shaderDir, "FullQuad.vert.spv"),
             buildPath(shaderDir, "BlurCompose.frag.spv"),
             0, 0, 0, 0,
-            2, 0, 0, 0,
+            2, 0, 1, 0,
             &raster,
             &depth,
             &targetInfo,
@@ -213,7 +230,6 @@ class Scene3d : Scene2d
         samplerInfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
         bloomSampler = gpu.dev.newSampler(&samplerInfo);
-
     }
 
     protected SDL_GPUColorTargetInfo createTargetInfo()
@@ -332,6 +348,9 @@ class Scene3d : Scene2d
         gpu.dev.setViewport(Rect2f(0, 0, bloomW, bloomH), 0, 1);
         gpu.dev.bindPipeline(brightPipeline);
         gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
+
+        gpu.dev.pushUniformFragmentData(0, brightUniformData.ptr, brightUniformData.sizeof);
+
         gpu.dev.draw(3, 1, 0, 0);
         gpu.dev.endRenderPass(isSubmit : false);
 
@@ -345,8 +364,10 @@ class Scene3d : Scene2d
 
         gpu.dev.beginRenderPass(targets);
         gpu.dev.bindPipeline(blurPipeline);
-        align(16) float[4] data = [1, 0, 1.0 / bloomW, 1.0 / bloomH];
-        gpu.dev.pushUniformFragmentData(0, data.ptr, data.sizeof);
+
+        blurUniformData.data = [1, 0, 1.0 / bloomW, 1.0 / bloomH];
+        
+        gpu.dev.pushUniformFragmentData(0, &blurUniformData, blurUniformData.sizeof);
         gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 0);
         gpu.dev.draw(3, 1, 0, 0);
         gpu.dev.endRenderPass(isSubmit : false);
@@ -361,8 +382,10 @@ class Scene3d : Scene2d
 
         gpu.dev.beginRenderPass(targets);
         gpu.dev.bindPipeline(blurPipeline);
-        align(16) float[4] data1 = [0, 1, 1.0 / bloomW, 1.0 / bloomH];
-        gpu.dev.pushUniformFragmentData(0, data1.ptr, data1.sizeof);
+
+        blurUniformData.data = [0, 1, 1.0 / bloomW, 1.0 / bloomH];
+
+        gpu.dev.pushUniformFragmentData(0, &blurUniformData, blurUniformData.sizeof);
         gpu.dev.bindFragmentSamplers(bloomB, bloomSampler, 0);
         gpu.dev.draw(3, 1, 0, 0);
         gpu.dev.endRenderPass(isSubmit : false);
@@ -378,38 +401,14 @@ class Scene3d : Scene2d
         gpu.dev.beginRenderPass(targets);
         gpu.dev.setViewport(Rect2f(0, 0, window.widthu, window.heightu), 0, 1);
         gpu.dev.bindPipeline(composePipeline);
+       
+        gpu.dev.pushUniformFragmentData(0, &composeUniformData, composeUniformData.sizeof);
+       
         gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
         gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 1);
         gpu.dev.draw(3, 1, 0, 0);
 
         gpu.dev.endRenderPass(isSubmit : false);
-        //gpu.dev.resetState;
-
-        // SDL_GPUBlitInfo blitInfo = SDL_GPUBlitInfo.init;
-
-        // blitInfo.source.texture = renderTexture;
-        // blitInfo.source.w = bloomW;
-        // blitInfo.source.h = bloomH;
-        // blitInfo.destination.texture = gpu.dev.swapchain;
-        // blitInfo.destination.w = w;
-        // blitInfo.destination.h = h;
-        // blitInfo.load_op = SDL_GPU_LOADOP_DONT_CARE;
-        // blitInfo.filter = SDL_GPU_FILTER_LINEAR;
-
-        // SDL_BlitGPUTexture(gpu.dev.cmdBuff, &blitInfo);
-
-        // SDL_GPUColorTargetInfo resultPassTarget;
-        // resultPassTarget.texture = gpu.dev.swapchain;
-        // resultPassTarget.load_op = SDL_GPU_LOADOP_CLEAR;
-        // resultPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
-        // resultPassTarget.store_op = SDL_GPU_STOREOP_STORE;
-        // resultPassTarget.cycle = true;
-        // targets[0] = resultPassTarget;
-
-        // gpu.dev.beginRenderPass(targets);
-        // gpu.dev.setViewport(Rect2f(0, 0, bloomW, bloomH), 0, 1);
-        // //gpu.dev.draw(3, 1, 0, 0);
-        // gpu.dev.endRenderPass(isSubmit : false);
 
         gpu.dev.submitCmdBuffer;
         gpu.dev.resetState;
@@ -527,10 +526,11 @@ class Scene3d : Scene2d
 
     override bool checkForDraw(Sprite2d sprite)
     {
-        if(!super.checkForDraw(sprite)){
+        if (!super.checkForDraw(sprite))
+        {
             return false;
         }
-        
+
         if (!isMix2d3dMode)
         {
             return true;

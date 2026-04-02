@@ -4,7 +4,7 @@ import api.dm.gui.supports.debuggers.base_debugger_panel: BaseDebuggerPanel;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.texts.text_field : TextField;
-import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
@@ -20,7 +20,7 @@ class AdditionalPanel : BaseDebuggerPanel
 
     SpriteManager spriteManager;
 
-    this(Scene2d scene)
+    this(GuiScene scene)
     {
         super(scene);
     }
@@ -29,7 +29,7 @@ class AdditionalPanel : BaseDebuggerPanel
     {
         super.create();
 
-        spriteManager = new SpriteManager(scene);
+        spriteManager = new SpriteManager(targetScene);
 
         auto mainContainer = new VSplitBox;
         addCreate(mainContainer);

@@ -282,9 +282,9 @@ class Slider : Container
 
     void addContent(Sprite2d newContent)
     {
-        if (newContent.isCreated)
+        if (newContent.parent)
         {
-            throw new Exception("Content for slider must not be created.");
+            throw new Exception("Content for slider must not be created, but parent is: " ~ parent.toString);
         }
 
         _content.addCreate(newContent);

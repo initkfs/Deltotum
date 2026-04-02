@@ -9,7 +9,7 @@ import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_row : TreeRow;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_list : TreeList;
-import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 
 /**
  * Authors: initkfs
@@ -19,7 +19,7 @@ class SceneManager : BaseDebuggerPanel
 {
     TreeList!(Sprite2d, BaseTableColumn!Sprite2d, TreeRow!Sprite2d) sceneTree;
 
-    this(Scene2d scene)
+    this(GuiScene scene)
     {
         super(scene);
     }

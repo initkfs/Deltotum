@@ -7,7 +7,7 @@ import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.text_field : TextField;
-import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 import api.dm.gui.controls.meters.spinners.spinner : Spinner, FracSpinner;
 
 /**
@@ -31,7 +31,7 @@ class SpriteManager : BaseDebuggerPanel
 
     dstring initNumField = "0";
 
-    this(Scene2d scene)
+    this(GuiScene scene)
     {
         super(scene);
         setVLayout;
@@ -93,50 +93,15 @@ class SpriteManager : BaseDebuggerPanel
         }
     }
 
-    FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1)
+    override FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1)
     {
-        auto field = new FracSpinner(-float.max, float.max);
-        field.incValue = dtValue;
-        field.decValue = dtValue;
-        setNumericField(field, onFieldValue);
+        auto field = super.createNumericField((v) {
+            if (_currentSprite)
+            {
+                onFieldValue(v);
+            }
+        }, dtValue);
         return field;
-    }
-
-    void setNumericField(FracSpinner field, void delegate(float value) onFieldValue)
-    {
-        //field.isCreateIncDec = true;
-        buildInitCreate(field);
-
-        field.onValueProvider = (v) {
-            import Math = api.math;
-            import std.math.operations : isClose;
-
-            if (isClose(v, 0, 0, 0.001))
-            {
-                return 0;
-            }
-
-            enum factor = 10.0 ^^ 2;
-            return Math.round(v * factor) / factor;
-        };
-
-        field.onChangeOldNew ~= (oldv, newv) {
-
-            if (!_currentSprite)
-            {
-                return;
-            }
-
-            onFieldValue(newv);
-        };
-    }
-
-    dstring toStringField(float v)
-    {
-        import std.format : format;
-        import std.conv : to;
-
-        return format("%.2g", v).to!dstring;
     }
 
     void currentSprite(Sprite2d sprite)
@@ -154,5 +119,4 @@ class SpriteManager : BaseDebuggerPanel
     }
 
     Sprite2d currentSprite() => _currentSprite;
-
 }

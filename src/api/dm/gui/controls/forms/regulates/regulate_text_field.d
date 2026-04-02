@@ -3,7 +3,7 @@ module api.dm.gui.controls.forms.regulates.regulate_text_field;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegularMonoScroll;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.controls.texts.text_view: TextView;
+import api.dm.gui.controls.texts.text_view : TextView;
 
 /**
  * Authors: initkfs
@@ -21,6 +21,8 @@ class RegulateTextField : Control
     BaseRegularMonoScroll delegate(BaseRegularMonoScroll) onNewScrollField;
     void delegate(BaseRegularMonoScroll) onConfiguredScrollField;
     void delegate(BaseRegularMonoScroll) onCreatedScrollField;
+
+    float scrollDt = 0.1;
 
     TextView valueField;
     bool isCreateValueField = true;
@@ -96,6 +98,11 @@ class RegulateTextField : Control
 
             scrollField.minValue = minValue;
             scrollField.maxValue = maxValue;
+
+            if (scrollDt != 0)
+            {
+                scrollField.valueStep = scrollDt;
+            }
 
             scrollField.onValue ~= (v) {
                 updateValue(v, isTriggerListeners:

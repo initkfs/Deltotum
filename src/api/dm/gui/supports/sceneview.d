@@ -3,6 +3,7 @@ module api.dm.gui.supports.sceneview;
 import api.dm.gui.supports.debuggers.info_panel : InfoPanel;
 import api.dm.gui.supports.debuggers.additional_panel : AdditionalPanel;
 import api.dm.gui.supports.debuggers.main_panel : MainPanel;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 
 import api.dm.gui.controls.containers.slider : Slider, SliderPos;
 import api.dm.gui.controls.containers.container : Container;
@@ -36,13 +37,13 @@ import std.conv : to;
  */
 class SceneView : Container
 {
-    Scene2d scene;
+    GuiScene scene;
 
     MainPanel mainPanel;
     InfoPanel infoPanel;
     AdditionalPanel additionalPanel;
 
-    this(Scene2d scene)
+    this(GuiScene scene)
     {
         if (!scene)
         {

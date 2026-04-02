@@ -3,7 +3,7 @@ module api.dm.gui.supports.debuggers.info_panel;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.containers.hbox : HBox;
-import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 
 /**
  * Authors: initkfs
