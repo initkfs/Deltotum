@@ -86,7 +86,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
 
         createDialog((dialog) {
             dialog.onChangeOldNew = (oldColor, newColor) {
-                updateColor(newColor);
+                updateColor(newColor, true, true);
             };
         });
 

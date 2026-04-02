@@ -164,7 +164,8 @@ class VScroll : BaseRegularMonoScroll
         }
 
         const rangeY = boundsRect.height - thumb.height;
-        auto newThumbY = y + (v + maxValue) * (rangeY / valueRange);
+        auto normalized = (v - minValue) / valueRange;
+        auto newThumbY = y + normalized * rangeY;
         return trySetThumbY(newThumbY);
     }
 }

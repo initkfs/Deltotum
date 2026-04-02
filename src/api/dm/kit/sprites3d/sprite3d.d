@@ -8,6 +8,9 @@ import api.math.matrices.matrix : Matrix4x4;
 import api.math.quaternion : Quaternion;
 import Math = api.math;
 
+//TODO move to material
+import api.dm.kit.graphics.colors.rgba : RGBA;
+
 /**
  * Authors: initkfs
  */
@@ -52,6 +55,10 @@ class Sprite3d : Sprite2d
     float zChangeThreshold = defaultTreshold;
 
     bool isMatrixRecalc;
+
+    //TODO move to materials
+    RGBA albedo = RGBA.white;
+    float albedoIntensity = 1;
 
     this()
     {
@@ -187,6 +194,36 @@ class Sprite3d : Sprite2d
 
             gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
         }
+
+        struct UniformInfo
+        {
+            float[4] albedoNorm = [1, 1, 1, 1];
+        align(4):
+            float intensity = 1;
+            float reserved = 0;
+            float nearPlane = 0;
+            float farPlane = 0;
+        }
+
+        UniformInfo spriteUniform;
+        //TODO lazy
+        if (albedo != RGBA.init)
+        {
+            spriteUniform.albedoNorm = albedo.toArrayRGBAf;
+        }
+
+        if (albedoIntensity != 1)
+        {
+            foreach (ref v; spriteUniform.albedoNorm)
+            {
+                v *= albedoIntensity;
+            }
+        }
+
+        spriteUniform.nearPlane = camera.nearPlane;
+        spriteUniform.farPlane = camera.farPlane;
+
+        gpu.dev.pushUniformFragmentData(0, &spriteUniform, spriteUniform.sizeof);
     }
 
     void calcWorldMatrix()

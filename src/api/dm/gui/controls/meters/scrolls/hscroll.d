@@ -134,7 +134,8 @@ class HScroll : BaseRegularMonoScroll
         }
 
         const rangeX = boundsRect.width - thumb.width;
-        auto newThumbX = x + (v + maxValue) * (rangeX / valueRange);
+        auto normalized = (v - minValue) / valueRange;
+        auto newThumbX = x + normalized * rangeX;
         return trySetThumbX(newThumbX);
     }
 }

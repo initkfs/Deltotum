@@ -385,7 +385,8 @@ class Sprite2d : EventKitTarget
         {
             bool inCurClipBounds = inClipBounds(e.x, e.y);
 
-            if (inCurClipBounds && contains(e.x, e.y))
+            //TODO remove PointerEvent.wheel
+            if (inCurClipBounds && contains(e.x, e.y) && (e.event != PointerEvent.Event.wheel))
             {
                 if (onPointerInBounds.length > 0)
                 {

@@ -28,25 +28,4 @@ class SimpleGroup : PipelineGroup
         buff.numFragUniformBuffers += 1;
         createPipeline(buff);
     }
-
-    override void pushUniforms()
-    {
-        super.pushUniforms;
-
-        struct PlaneInfo
-        {
-        align(4):
-            float nearPlane;
-            float farPlane;
-        }
-
-        struct UniformData
-        {
-            PlaneInfo planeInfo;
-        }
-
-        UniformData planes = UniformData(PlaneInfo(camera.nearPlane, camera.farPlane));
-
-        gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
-    }
 }

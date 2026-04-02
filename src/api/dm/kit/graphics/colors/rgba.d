@@ -26,6 +26,14 @@ struct RGBAb
     ubyte a;
 }
 
+struct RGBAf
+{
+    float r = 0;
+    float g = 0;
+    float b = 0;
+    float a = 0;
+}
+
 /**
  * Authors: initkfs
  */
@@ -466,7 +474,7 @@ struct RGBA
         return HSLA(h, s, l, a);
     }
 
-    import api.dm.kit.graphics.colors.yuva: YUVA;
+    import api.dm.kit.graphics.colors.yuva : YUVA;
 
     YUVA toYUVA()
     {
@@ -504,7 +512,9 @@ struct RGBA
     }
 
     RGBAb toRGBAb() => RGBAb(r, g, b, aByte);
+    RGBAf toRGBAf() => RGBAf(rNorm, gNorm, bNorm, a);
 
+    float[4] toArrayRGBAf() =>  [rNorm, gNorm, bNorm, a];
     float[3] toArrayFRGB() => [rNorm, gNorm, bNorm];
 
     import api.math.geom3.vec3 : Vec3f;
@@ -753,7 +763,7 @@ unittest
     assert(isClose(hsv1.s, 0.68, 0.0001));
     assert(isClose(hsv1.v, 0.196, 0.001));
 
-    import api.dm.kit.graphics.colors.yuva: YUVA;
+    import api.dm.kit.graphics.colors.yuva : YUVA;
 
     YUVA yv1 = RGBA(34, 50, 16).toYUVA;
     assert(yv1.y == 41);

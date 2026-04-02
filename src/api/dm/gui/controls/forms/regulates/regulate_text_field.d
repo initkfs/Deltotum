@@ -56,6 +56,8 @@ class RegulateTextField : Control
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.onScroll = onScroll;
+
+        lastValue = minValue;
     }
 
     this(float fieldSpacing = SpaceableLayout.DefaultSpacing)
@@ -134,6 +136,10 @@ class RegulateTextField : Control
 
             valueField.isReduceWidthHeight = false;
             valueField.isEditable = true;
+
+            import std.conv : to;
+
+            valueField.text = minValue.to!dstring;
 
             valueField.onEnter = (ref e) {
                 import std.conv : to;
@@ -240,6 +246,10 @@ class RegulateTextField : Control
         {
             return false;
         }
+
+        import Math = api.math;
+
+        v = Math.clamp(v, minValue, maxValue);
 
         bool isUpdate;
 

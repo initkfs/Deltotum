@@ -53,11 +53,18 @@ abstract class BaseMonoScroll : BaseScroll
 
         if (valueStep == 0)
         {
-            valueStep = valueRange / 20;
+            //valueStep = valueRange / 20;
+            valueStep = 0.1;
         }
 
         onPointerWheel ~= (ref e) {
             float dy = !onNewWheelDY ? e.y : onNewWheelDY(e.y);
+
+            //FIXME why NaN?
+            import std.math.traits: isNaN;
+            if(dy.isNaN){
+                dy = 1;
+            }
             auto newValue = wheelValue(dy);
             value(newValue);
         };
@@ -141,7 +148,7 @@ abstract class BaseMonoScroll : BaseScroll
         import std.math.operations : isClose;
         import std.math.traits : isFinite;
 
-        if ((isClose(v, _value) && !isUpdateIfEqual) || !isFinite(v))
+        if ((isClose(v, _value) && isUpdateIfEqual) || !isFinite(v))
         {
             return false;
         }

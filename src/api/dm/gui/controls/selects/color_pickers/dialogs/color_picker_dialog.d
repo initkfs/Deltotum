@@ -142,7 +142,6 @@ class ColorPickerDialog : Control
 
     protected void updateColor(RGBA newColor, bool isTriggerListeners = true)
     {
-
         if (onChangeOldNew && isTriggerListeners)
         {
             onChangeOldNew(_lastColor, newColor);
@@ -325,11 +324,13 @@ class ColorPickerDialog : Control
             updateColorHSL;
         });
         form.addCreate(hslSField);
+        hslHField.value(HSLA.maxSaturation, false);
 
         hslLField = new RegulateTextField("L", HSLA.minLightness, HSLA.maxLightness, (v) {
             updateColorHSL;
         });
         form.addCreate(hslLField);
+        hslLField.value(HSLA.maxLightness, false);
 
         form.alignFields;
 
@@ -338,6 +339,7 @@ class ColorPickerDialog : Control
 
     void updateColorHSL(bool isTriggerListeners = true)
     {
+        //Warn! if L == 1 => RGBA.white!
         updateColor(colorHSL.toRGBA, isTriggerListeners);
     }
 
@@ -528,17 +530,17 @@ class ColorPickerDialog : Control
     protected void setColorHSL(HSLA newColor)
     {
         assert(hslHField);
-        hslHField.value = newColor.h;
+        hslHField.value(newColor.h, false, true);
 
         assert(hslSField);
-        hslSField.value = newColor.s;
-
+        hslSField.value(newColor.s, false, true);
+        
         assert(hslLField);
-        hslLField.value = newColor.l;
+        hslLField.value(newColor.l, false, true);
 
         assert(alphaField);
         alphaField.value(newColor.a, isTriggerListeners:
-            false);
+            false, true);
     }
 
     Tab newTab(dstring text) => new Tab(text);

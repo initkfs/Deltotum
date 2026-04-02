@@ -7,8 +7,10 @@ import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.text_field : TextField;
-import api.dm.gui.scenes.gui_scene: GuiScene;
+import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.gui.controls.meters.spinners.spinner : Spinner, FracSpinner;
+import api.dm.gui.controls.selects.color_pickers.color_picker : ColorPicker;
+import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
 /**
  * Authors: initkfs
@@ -28,6 +30,10 @@ class SpriteManager : BaseDebuggerPanel
     FracSpinner xRotateField;
     FracSpinner yRotateField;
     FracSpinner zRotateField;
+
+    ColorPicker albedo;
+
+    RegulateTextField albedoIntensity;
 
     dstring initNumField = "0";
 
@@ -75,6 +81,28 @@ class SpriteManager : BaseDebuggerPanel
             new Text("Z:"), zRotateField
         ]);
 
+        albedo = new ColorPicker;
+        addCreate(albedo);
+
+        albedo.onChangeOldNew ~= (old, newv) {
+            if (_currentSprite)
+            {
+                if (auto sprite3d = cast(Sprite3d) _currentSprite)
+                {
+                    sprite3d.albedo = newv;
+                    return;
+                }
+            }
+        };
+
+        albedoIntensity = new RegulateTextField("Int", 1, 400, (v) {
+            if (auto sprite3d = cast(Sprite3d) _currentSprite)
+            {
+                sprite3d.albedoIntensity = v;
+            }
+        });
+        albedoIntensity.scrollDt = 1;
+        addCreate(albedoIntensity);
     }
 
     void callOnSprite(void delegate(Sprite2d) onSprite)
@@ -114,6 +142,8 @@ class SpriteManager : BaseDebuggerPanel
         if (auto sprite3 = cast(Sprite3d) sprite)
         {
             zField.valueLabel.text = toStringField(sprite3.z);
+            albedo.color(sprite3.albedo, false);
+            albedoIntensity.value(sprite3.albedoIntensity, false);
         }
 
     }
