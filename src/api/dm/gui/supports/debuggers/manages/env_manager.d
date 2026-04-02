@@ -60,7 +60,7 @@ class EnvManager : BaseDebuggerPanel
 
         envPanel.addCreate(brightInsensityField);
 
-        brightTresholdField.value = 1;
+        brightTresholdField.value(0, false, true);
         brightInsensityField.value = 0.2;
 
         blurRadiusField = new RegulateTextField("BlRa", -5, 5, (v) {

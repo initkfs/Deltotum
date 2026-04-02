@@ -111,9 +111,9 @@ abstract class BaseMonoScroll : BaseScroll
 
     float value() => _value;
 
-    bool value(float v, bool isTriggerListeners = true)
+    bool value(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
     {
-        if (!trySetValue(v))
+        if (!trySetValue(v, isUpdateIfEqual))
         {
             return false;
         }
@@ -134,14 +134,14 @@ abstract class BaseMonoScroll : BaseScroll
         }
     }
 
-    bool trySetValue(float v)
+    bool trySetValue(float v, bool isUpdateIfEqual = false)
     {
         import Math = api.math;
 
         import std.math.operations : isClose;
         import std.math.traits : isFinite;
 
-        if (isClose(v, _value) || !isFinite(v))
+        if ((isClose(v, _value) && !isUpdateIfEqual) || !isFinite(v))
         {
             return false;
         }

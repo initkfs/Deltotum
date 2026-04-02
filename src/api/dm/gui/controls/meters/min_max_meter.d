@@ -25,7 +25,7 @@ abstract class MinMaxMeter(ValueType) : Control
             return 0;
         }
 
-        const ValueType range = minValue < maxValue ? (maxValue - minValue) : (minValue - maxValue);
+        const ValueType range = Math.abs(maxValue - minValue);
         return range;
     }
 }

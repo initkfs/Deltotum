@@ -126,15 +126,15 @@ class HScroll : BaseRegularMonoScroll
 
     alias value = BaseRegularMonoScroll.value;
 
-    override bool value(float v, bool isTriggerListeners = true)
+    override bool value(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
     {
-        if (!super.value(v, isTriggerListeners) || !thumb)
+        if (!super.value(v, isTriggerListeners, isUpdateIfEqual) || !thumb)
         {
             return false;
         }
 
         const rangeX = boundsRect.width - thumb.width;
-        auto newThumbX = x + rangeX * v / maxValue;
+        auto newThumbX = x + (v + maxValue) * (rangeX / valueRange);
         return trySetThumbX(newThumbX);
     }
 }

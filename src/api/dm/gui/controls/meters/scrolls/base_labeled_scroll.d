@@ -116,9 +116,9 @@ abstract class BaseLabeledScroll : BaseMonoScroll
 
     alias value = BaseMonoScroll.value;
 
-    override bool value(float v, bool isTriggerListeners = true)
+    override bool value(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
     {
-        if (!super.value(v, isTriggerListeners))
+        if (!super.value(v, isTriggerListeners, isUpdateIfEqual))
         {
             return false;
         }

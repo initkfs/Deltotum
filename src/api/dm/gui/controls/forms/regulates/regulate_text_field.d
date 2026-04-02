@@ -205,14 +205,14 @@ class RegulateTextField : Control
         return true;
     }
 
-    protected bool updateScrollField(float v, bool isTriggerListeners = true)
+    protected bool updateScrollField(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
     {
         if (!scrollField)
         {
             return false;
         }
 
-        scrollField.value(v, isTriggerListeners);
+        scrollField.value(v, isTriggerListeners, isUpdateIfEqual);
         return true;
     }
 
@@ -234,9 +234,9 @@ class RegulateTextField : Control
         return true;
     }
 
-    bool value(float v, bool isTriggerListeners = true)
+    bool value(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
     {
-        if (lastValue == v)
+        if (lastValue == v && !isUpdateIfEqual)
         {
             return false;
         }
@@ -244,7 +244,7 @@ class RegulateTextField : Control
         bool isUpdate;
 
         isUpdate |= updateValue(v, isTriggerListeners);
-        isUpdate |= updateScrollField(v, isTriggerListeners);
+        isUpdate |= updateScrollField(v, isTriggerListeners, isUpdateIfEqual);
         isUpdate |= updateValueField(v, isTriggerListeners);
 
         return isUpdate;
