@@ -13,7 +13,10 @@ string sceneIsDebug = "sceneIsDebug";
 
 string backendIsAudio = "backendIsAudio";
 string backendIsJoystick = "backendIsJoystick";
+
 string backendIsGPU = "backendIsGPU";
+string backendGPUShowLines = "backendGPUShowLines";
+string backendGPUDisableCull= "backendGPUDisableCull";
 
 string backendJoystickIndex = "backendJoystickIndex";
 string backendJoystickIsClassic = "backendJoystickIsClassic";

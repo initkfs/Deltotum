@@ -102,4 +102,11 @@ class SkyBox : PipelineGroup
         buff.numFragSamples = 1;
         createPipeline(buff);
     }
+
+    override SDL_GPURasterizerState createRasterizerState()
+    {
+        auto state = super.createRasterizerState;
+        state.enable_depth_clip = false;
+        return state;
+    }
 }

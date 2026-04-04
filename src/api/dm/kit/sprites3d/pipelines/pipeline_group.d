@@ -218,18 +218,30 @@ class PipelineGroup : Sprite3d
         if (isDepth)
         {
             targetInfo.has_depth_stencil_target = true;
-            targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+            targetInfo.depth_stencil_format = gpu.dev.depthTextureFormat;
         }
 
         auto stencilState = isDepth ? gpu.dev.depthStencilState : gpu.dev.stencilState;
-        auto rastState = isDepth ? gpu.dev
-            .depthRasterizerState : gpu.dev.rasterizerState;
+        auto rastState = createRasterizerState;
 
         createPipelineFull(
             buffers,
             &rastState,
             &stencilState,
             &targetInfo);
+    }
+
+    SDL_GPURasterizerState createRasterizerState()
+    {
+        import KitConfig = api.dm.kit.kit_config_keys;
+
+        bool isLineMode = config.getBoolIfHas(KitConfig.backendGPUShowLines);
+        bool isCullDisable = config.getBoolIfHas(KitConfig.backendGPUDisableCull);
+
+        auto fillMode = !isLineMode ? SDL_GPU_FILLMODE_FILL : SDL_GPU_FILLMODE_LINE;
+        auto cullMode = !isCullDisable ? SDL_GPU_CULLMODE_BACK : SDL_GPU_CULLMODE_NONE;
+
+        return gpu.dev.rasterizerState(fillMode, cullMode);
     }
 
     SdlGPUPipeline pipeline()

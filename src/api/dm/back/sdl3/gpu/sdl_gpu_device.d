@@ -68,6 +68,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         GPUGraphicState state;
     }
 
+    //better for Reverse-Z, but for stencil SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT
+    SDL_GPUTextureFormat depthTextureFormat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+
     SDL_GPUSampleCount sampleCount;
     bool isUseSampleCount;
 
@@ -334,6 +337,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         {
             info.multisample_state.sample_count = sampleCount;
         }
+
+        //TODO disable depth for simple scenes
+        //depth_test_enable = false
+        //transparent: depth_test_enable = true, depth_write_enable = false
+        //gui: depth_test_enable = false, depth_write_enable = false
 
         auto pipeline = newPipeline(info);
         return pipeline;
@@ -1155,12 +1163,37 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return stState;
     }
 
-    SDL_GPURasterizerState depthRasterizerState()
+    SDL_GPURasterizerState rasterizerState(SDL_GPUFillMode fillMode = SDL_GPU_FILLMODE_LINE, SDL_GPUCullMode cullMode = SDL_GPU_CULLMODE_NONE)
     {
         SDL_GPURasterizerState rstate;
-        rstate.cull_mode = SDL_GPU_CULLMODE_FRONT, //SDL_GPU_FILLMODE_LINE, SDL_GPU_FILLMODE_FILL
-            rstate.fill_mode = SDL_GPU_FILLMODE_FILL,
-            rstate.front_face = SDL_GPU_FRONTFACE_CLOCKWISE;
+        rstate.fill_mode = fillMode,
+        rstate.cull_mode = cullMode,
+        rstate.front_face = SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE;
+        
+        //Z-fighting\"Peter Panning"
+        //0.0001 SDL_GPU_TEXTUREFORMAT_D32_FLOAT
+        //Inverse sign for Reverse-Z
+        //rstate.enable_depth_bias
+        rstate.enable_depth_bias = false;
+
+        //Shadow Acne\Noise
+        //depth_bias_constant_factor: 1.25 – 2.5
+        //depth_bias_slope_factor: 1.75 – 4.0
+        //depth_bias_clamp: 0.0
+        
+        //Decals
+        //depth_bias_constant_factor: -1.0 – -2.0
+        //depth_bias_slope_factor: -1.0 – -1.5
+        //depth_bias_clamp: 0.0
+
+        //Outlines / Wireframes
+        //depth_bias_constant_factor: 1.0
+        //depth_bias_slope_factor: 1.0
+        
+        //rstate.enable_depth_clip, clamp for skybox, true to enable depth clip, false to enable depth clamp.
+        //Clamp for SkyBox, Shadow Mapping
+        rstate.enable_depth_clip = true;
+
         return rstate;
     }
 
@@ -1184,16 +1217,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(lastPass);
         //(reference & stencilMask) CompFunc (StencilBufferValue & StencilMask)
         SDL_SetGPUStencilReference(lastPass, reference);
-    }
-
-    SDL_GPURasterizerState rasterizerState()
-    {
-        SDL_GPURasterizerState rstState;
-        rstState.cull_mode = SDL_GPU_CULLMODE_NONE;
-        rstState.fill_mode = SDL_GPU_FILLMODE_FILL;
-        rstState.front_face = SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE;
-
-        return rstState;
     }
 
     bool setMaxSubmitFrames(uint frames1to3)

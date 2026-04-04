@@ -30,7 +30,7 @@ class DepthTexture : Texture3d
         depthInfo.layer_count_or_depth = 1;
         depthInfo.num_levels = 1;
         depthInfo.sample_count = sampleCount;
-        depthInfo.format = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+        depthInfo.format = gpu.dev.depthTextureFormat;
         if (isMultiSampler)
         {
             depthInfo.usage = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;

@@ -35,6 +35,8 @@ abstract class Config
         immutable(Config) idup() const;
     }
 
+    bool getBoolIfHas(string key) const => hasKey(key) && getBool(key);
+
     int getPositiveInt(string key) const
     {
         auto value = getInt(key);

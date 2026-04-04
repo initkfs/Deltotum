@@ -10,6 +10,8 @@ import api.dm.back.sdl3.externs.csdl3;
 
 class Texture3d : Sprite3d
 {
+    bool isCreateSampler;
+
     protected
     {
         SDL_GPUTexture* _texture;
@@ -17,7 +19,8 @@ class Texture3d : Sprite3d
         SDL_GPUTransferBuffer* _transferBuffer;
     }
 
-    this(){
+    this()
+    {
         id = "Texture3d";
     }
 
