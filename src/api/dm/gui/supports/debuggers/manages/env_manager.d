@@ -6,6 +6,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
+import api.dm.gui.controls.selects.color_pickers.color_picker : ColorPicker;
+import api.dm.kit.graphics.colors.rgba: RGBA;
 
 /**
  * Authors: initkfs
@@ -31,6 +33,16 @@ class EnvManager : BaseDebuggerPanel
     RegulateTextField composeBloomIntensityField;
     RegulateTextField composeExposureField;
     RegulateTextField composeThresholdField;
+
+    RegulateTextField contrastField;
+    RegulateTextField saturationField;
+    RegulateTextField vignetteField;
+
+    ColorPicker filterColor;
+    RegulateTextField filterIntensity;
+
+    ColorPicker flashColor;
+    RegulateTextField flashIntensity;
 
     this(GuiScene scene)
     {
@@ -80,29 +92,79 @@ class EnvManager : BaseDebuggerPanel
         blurIntensityField.value = 1;
 
         composeBaseIntensityField = new RegulateTextField("CoIn", -5, 5, (v) {
-            targetScene.composeUniformData[0] = v;
+            targetScene.composeUniformData.baseIntensity = v;
         });
         envPanel.addCreate(composeBaseIntensityField);
 
         composeBloomIntensityField = new RegulateTextField("CoBI", -20, 20, (v) {
-            targetScene.composeUniformData[1] = v;
+            targetScene.composeUniformData.bloomIntensity = v;
         });
         envPanel.addCreate(composeBloomIntensityField);
 
         composeExposureField = new RegulateTextField("CoEx", -20, 20, (v) {
-            targetScene.composeUniformData[2] = v;
+            targetScene.composeUniformData.exposure = v;
         });
         envPanel.addCreate(composeExposureField);
 
         composeThresholdField = new RegulateTextField("CoTr", -200, 200, (v) {
-            targetScene.composeUniformData[3] = v;
+            targetScene.composeUniformData.threshold = v;
         });
         composeThresholdField.scrollDt = 1;
         envPanel.addCreate(composeThresholdField);
 
-        composeBaseIntensityField.value = 2;
-        composeBloomIntensityField.value = 1;
-        composeExposureField.value = 0.9;
-        composeThresholdField.value = 50;
+        composeBaseIntensityField.value = targetScene.composeUniformData.baseIntensity;
+        composeBloomIntensityField.value = targetScene.composeUniformData.bloomIntensity;
+        composeExposureField.value = targetScene.composeUniformData.exposure;
+        composeThresholdField.value = targetScene.composeUniformData.threshold;
+
+        contrastField = new RegulateTextField("Cont", 1, 20, (v) {
+            targetScene.composeUniformData.contrast = v;
+        });
+        composeThresholdField.scrollDt = 0.0001;
+        envPanel.addCreate(contrastField);
+        composeThresholdField.value = targetScene.composeUniformData.contrast;
+
+        saturationField = new RegulateTextField("Satu", 0, 5, (v) {
+            targetScene.composeUniformData.saturation = v;
+        });
+        saturationField.scrollDt = 0.01;
+        envPanel.addCreate(saturationField);
+        saturationField.value = targetScene.composeUniformData.saturation;
+
+        vignetteField = new RegulateTextField("Vign", 0, 5, (v) {
+            targetScene.composeUniformData.vignette = v;
+        });
+        composeThresholdField.scrollDt = 0.01;
+        envPanel.addCreate(vignetteField);
+        vignetteField.value = targetScene.composeUniformData.vignette;
+
+        filterColor = new ColorPicker;
+        addCreate(filterColor);
+        filterColor.onChangeOldNew ~= (old, newv) {
+            targetScene.composeUniformData.colorFilterData[0 .. 3] = newv.toArrayFRGB;
+        };
+        
+        filterColor.color(RGBA.fromArrayFRGB(targetScene.composeUniformData.colorFilterData[0..3]), false);
+
+        filterIntensity = new RegulateTextField("Fint", 0, 1, (v) {
+            targetScene.composeUniformData.colorFilterData[3] = v;
+        });
+        filterIntensity.scrollDt = 0.01;
+        addCreate(filterIntensity);
+        filterIntensity.value(targetScene.composeUniformData.colorFilterData[3], false);
+
+        flashColor = new ColorPicker;
+        addCreate(flashColor);
+        flashColor.onChangeOldNew ~= (old, newv) {
+            targetScene.composeUniformData.colorFlashData[0 .. 3] = newv.toArrayFRGB;
+        };
+        flashColor.color(RGBA.fromArrayFRGB(targetScene.composeUniformData.colorFlashData[0..3]), false);
+
+        flashIntensity = new RegulateTextField("FlIn", 0, 1, (v) {
+            targetScene.composeUniformData.colorFlashData[3] = v;
+        });
+        flashIntensity.scrollDt = 0.01;
+        addCreate(flashIntensity);
+        flashIntensity.value(targetScene.composeUniformData.colorFlashData[3], false);
     }
 }

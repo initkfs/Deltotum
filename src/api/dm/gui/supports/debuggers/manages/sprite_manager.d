@@ -101,7 +101,7 @@ class SpriteManager : BaseDebuggerPanel
                 sprite3d.albedoIntensity = v;
             }
         });
-        albedoIntensity.scrollDt = 1;
+        albedoIntensity.scrollDt = 0.1;
         addCreate(albedoIntensity);
     }
 

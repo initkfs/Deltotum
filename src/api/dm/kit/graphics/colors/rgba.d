@@ -516,6 +516,10 @@ struct RGBA
 
     float[4] toArrayRGBAf() =>  [rNorm, gNorm, bNorm, a];
     float[3] toArrayFRGB() => [rNorm, gNorm, bNorm];
+    
+    static RGBA fromArrayFRGB(float[3] array){
+        return RGBA(RGBA.fromColorNorm(array[0]), RGBA.fromColorNorm(array[1]), RGBA.fromColorNorm(array[2]), 1);
+    }
 
     import api.math.geom3.vec3 : Vec3f;
 

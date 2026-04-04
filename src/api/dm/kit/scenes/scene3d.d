@@ -59,14 +59,29 @@ class Scene3d : Scene2d
     struct BlurUniformData
     {
         float[4] data;
-        align(4):
+    align(4):
         float radius = 1; // radius,  1.0
         float intensity = 1; // luma 1.0
     }
 
     BlurUniformData blurUniformData;
 
-    float[4] composeUniformData;
+    struct ComposeUniformData
+    {
+    align(16):
+        float[4] colorFilterData; //Color + intensity 0..1
+        float[4] colorFlashData;
+    align(4):
+        float baseIntensity = 2;
+        float bloomIntensity = 1;
+        float exposure = 0.9;
+        float threshold = 50;
+        float contrast = 1;
+        float saturation = 1;
+        float vignette = 0;
+    }
+
+    ComposeUniformData composeUniformData;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
@@ -75,7 +90,9 @@ class Scene3d : Scene2d
         isAutoSizeToWindow = true;
 
         brightUniformData = [1, 0.3, 0, 0];
-        composeUniformData = [2, 1, 0.9, 50];
+
+        composeUniformData.colorFilterData = [1, 1, 1, 0];
+        composeUniformData.colorFlashData = [0, 0, 0, 0];
     }
 
     override void create()
@@ -366,7 +383,7 @@ class Scene3d : Scene2d
         gpu.dev.bindPipeline(blurPipeline);
 
         blurUniformData.data = [1, 0, 1.0 / bloomW, 1.0 / bloomH];
-        
+
         gpu.dev.pushUniformFragmentData(0, &blurUniformData, blurUniformData.sizeof);
         gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 0);
         gpu.dev.draw(3, 1, 0, 0);
@@ -401,9 +418,9 @@ class Scene3d : Scene2d
         gpu.dev.beginRenderPass(targets);
         gpu.dev.setViewport(Rect2f(0, 0, window.widthu, window.heightu), 0, 1);
         gpu.dev.bindPipeline(composePipeline);
-       
+
         gpu.dev.pushUniformFragmentData(0, &composeUniformData, composeUniformData.sizeof);
-       
+
         gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
         gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 1);
         gpu.dev.draw(3, 1, 0, 0);

@@ -653,4 +653,7 @@ class Scene2d : EventKitTarget
     }
 
     Rect2f boundsRect() => Rect2f(0, 0, _width, _height);
+
+    float timeSec() => platform.timer.ticksMs / 1000.0;
+    float timeMs() => platform.timer.ticksMs;
 }
