@@ -732,6 +732,24 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
+        ubyte r, g, b, a;
+        if (const err = renderer.getDrawColor(r, g, b, a))
+        {
+            return err;
+        }
+
+        if (const err = renderer.setDrawColor(0, 0, 0, 0))
+        {
+            return err;
+        }
+
+        renderer.tryClearAndFill;
+
+        if (const err = renderer.setDrawColor(r, g, b, a))
+        {
+            return err;
+        }
+
         if (!draw(srcRect, destRect, angle, flip))
         {
             return ComResult.error("Error texture drawing: " ~ lastError);

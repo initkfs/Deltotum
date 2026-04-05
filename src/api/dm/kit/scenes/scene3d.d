@@ -320,6 +320,9 @@ class Scene3d : Scene2d
             }
         }
 
+        //import api.math.geom2.rect2: Rect2f;
+        //gpu.dev.setScissorRect(Rect2f(0, 0, window.width, window.height));
+
         drawSelfAndChildren(alpha);
         isMixCurrentPass = true;
 

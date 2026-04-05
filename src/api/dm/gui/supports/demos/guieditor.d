@@ -94,7 +94,7 @@ class GuiViewer : GuiScene
 
         root.changeTab(controlsTab);
 
-        // createDebugger;
+        createDebugger;
     }
 
 }

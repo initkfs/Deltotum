@@ -183,25 +183,7 @@ class Theme
         GraphicStyle backgroundStyle = parentStyle ? *parentStyle : GraphicStyle(
             lineThickness, colorAccent, true, colorControlBackground);
 
-        Sprite2d newBackground;
-        if (isUseVectorGraphics)
-        {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-
-            newBackground = new VConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
-        }
-        else
-        {
-            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-
-            backgroundStyle.lineWidth = 1.0;
-
-            newBackground = new Rectangle(width, height, backgroundStyle);
-        }
-
-        newBackground.angle = angle;
-
-        return newBackground;
+        return shape(width, height, angle, backgroundStyle);
     }
 
     Sprite2d shape(float width, float height, float angle, GraphicStyle style)

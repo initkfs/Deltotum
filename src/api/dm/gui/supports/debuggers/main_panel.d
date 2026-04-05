@@ -95,7 +95,7 @@ class MainPanel : BaseDebuggerPanel
         auto sceneTab = mainBox.createTab(sceneManager, "Scene");
         sceneManager.height = window.height / 2;
         buildInitCreate(sceneManager);
-        sceneManager.loadSceneTree;
+        //sceneManager.loadSceneTree;
 
         envManager = new EnvManager(targetScene);
         buildInitCreate(envManager);

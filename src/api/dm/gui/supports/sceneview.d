@@ -60,7 +60,6 @@ class SceneView : Container
 
         mainPanel = new MainPanel(scene);
         applyMainPanel(mainPanel);
-        //mainPanel.isVisible = false;
 
         auto mainSlider = new Slider(SliderPos.left, true);
         addCreate(mainSlider);
