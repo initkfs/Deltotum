@@ -68,8 +68,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         GPUGraphicState state;
     }
 
+    bool isStencil;
+
     //better for Reverse-Z, but for stencil SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT
     SDL_GPUTextureFormat depthTextureFormat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
+    SDL_GPUTextureFormat depthTextureStencilFormat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT;
 
     SDL_GPUSampleCount sampleCount;
     bool isUseSampleCount;
@@ -1125,41 +1128,37 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         throw new Exception("Not found stencil format");
     }
 
-    SDL_GPUDepthStencilState stencilState()
-    {
-        SDL_GPUDepthStencilState stState;
-
-        stState.enable_stencil_test = true;
-
-        SDL_GPUStencilOpState frontState;
-        frontState.compare_op = SDL_GPU_COMPAREOP_NEVER;
-        frontState.fail_op = SDL_GPU_STENCILOP_REPLACE;
-        frontState.pass_op = SDL_GPU_STENCILOP_KEEP;
-        frontState.depth_fail_op = SDL_GPU_STENCILOP_KEEP;
-
-        stState.front_stencil_state = frontState;
-
-        SDL_GPUStencilOpState backState;
-        backState.compare_op = SDL_GPU_COMPAREOP_NEVER;
-        backState.fail_op = SDL_GPU_STENCILOP_REPLACE;
-        backState.pass_op = SDL_GPU_STENCILOP_KEEP;
-        backState.depth_fail_op = SDL_GPU_STENCILOP_KEEP;
-
-        stState.back_stencil_state = backState;
-        stState.write_mask = 0xFF;
-
-        return stState;
-    }
-
     SDL_GPUDepthStencilState depthStencilState()
     {
         SDL_GPUDepthStencilState stState;
-
         stState.enable_depth_test = true;
         stState.enable_depth_write = true;
         stState.enable_stencil_test = false;
         stState.compare_op = SDL_GPU_COMPAREOP_GREATER;
         stState.write_mask = 0xFF;
+
+        if (isStencil)
+        {
+            stState.compare_mask = 0xFF;
+            stState.enable_stencil_test = true;
+
+            SDL_GPUStencilOpState frontState;
+            frontState.compare_op = SDL_GPU_COMPAREOP_NEVER;
+            frontState.fail_op = SDL_GPU_STENCILOP_REPLACE;
+            frontState.pass_op = SDL_GPU_STENCILOP_KEEP;
+            frontState.depth_fail_op = SDL_GPU_STENCILOP_KEEP;
+
+            stState.front_stencil_state = frontState;
+
+            SDL_GPUStencilOpState backState;
+            backState.compare_op = SDL_GPU_COMPAREOP_NEVER;
+            backState.fail_op = SDL_GPU_STENCILOP_REPLACE;
+            backState.pass_op = SDL_GPU_STENCILOP_KEEP;
+            backState.depth_fail_op = SDL_GPU_STENCILOP_KEEP;
+
+            stState.back_stencil_state = backState;
+        }
+
         return stState;
     }
 
@@ -1169,7 +1168,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         rstate.fill_mode = fillMode,
         rstate.cull_mode = cullMode,
         rstate.front_face = SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE;
-        
+
         //Z-fighting\"Peter Panning"
         //0.0001 SDL_GPU_TEXTUREFORMAT_D32_FLOAT
         //Inverse sign for Reverse-Z
@@ -1180,7 +1179,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         //depth_bias_constant_factor: 1.25 – 2.5
         //depth_bias_slope_factor: 1.75 – 4.0
         //depth_bias_clamp: 0.0
-        
+
         //Decals
         //depth_bias_constant_factor: -1.0 – -2.0
         //depth_bias_slope_factor: -1.0 – -1.5
@@ -1189,7 +1188,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         //Outlines / Wireframes
         //depth_bias_constant_factor: 1.0
         //depth_bias_slope_factor: 1.0
-        
+
         //rstate.enable_depth_clip, clamp for skybox, true to enable depth clip, false to enable depth clamp.
         //Clamp for SkyBox, Shadow Mapping
         rstate.enable_depth_clip = true;
@@ -1262,5 +1261,4 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         SDL_BlitGPUTexture(cmdBuff, &blitInfo);
     }
-
 }

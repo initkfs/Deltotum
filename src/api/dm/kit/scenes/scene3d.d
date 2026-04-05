@@ -30,6 +30,7 @@ class Scene3d : Scene2d
     Camera camera;
 
     bool isAntiAliasing = true;
+    bool isStencil;
 
     MSAA msaa;
 
@@ -115,6 +116,8 @@ class Scene3d : Scene2d
             gpu.dev.pipeLineTargetFormat = msaa.textureFormat;
         }
 
+        gpu.dev.isStencil = isStencil;
+
         SDL_GPUTextureCreateInfo resultTextureInfo;
         resultTextureInfo.type = SDL_GPU_TEXTURETYPE_2D;
         resultTextureInfo.width = window.widthu;
@@ -143,6 +146,11 @@ class Scene3d : Scene2d
             SDL_DestroyProperties(props);
         }
 
+        if (isStencil)
+        {
+            gpu.dev.depthTextureFormat = gpu.dev.depthTextureStencilFormat;
+        }
+
         depthTexture = new DepthTexture;
         if (isAntiAliasing && msaa)
         {
@@ -158,10 +166,11 @@ class Scene3d : Scene2d
         depthStencilTargetInfo.clear_depth = 0;
         depthStencilTargetInfo.clear_stencil = 0;
         depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-        depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
-        //depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_DONT_CARE;
+        //depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+        depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_DONT_CARE;
         depthStencilTargetInfo.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
-        depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
+        //depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
+        depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_DONT_CARE;
 
         uint bloomW = window.widthu / 4;
         uint bloomH = window.heightu / 4;

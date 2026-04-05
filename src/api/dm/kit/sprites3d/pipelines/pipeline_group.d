@@ -221,7 +221,7 @@ class PipelineGroup : Sprite3d
             targetInfo.depth_stencil_format = gpu.dev.depthTextureFormat;
         }
 
-        auto stencilState = isDepth ? gpu.dev.depthStencilState : gpu.dev.stencilState;
+        auto stencilState = gpu.dev.depthStencilState;
         auto rastState = createRasterizerState;
 
         createPipelineFull(
