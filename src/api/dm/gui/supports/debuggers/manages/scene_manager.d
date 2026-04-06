@@ -9,7 +9,8 @@ import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_row : TreeRow;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_list : TreeList;
-import api.dm.gui.scenes.gui_scene: GuiScene;
+import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.gui.scenes.gui_scene : GuiScene;
 
 /**
  * Authors: initkfs
@@ -27,6 +28,10 @@ class SceneManager : BaseDebuggerPanel
     override void create()
     {
         super.create;
+
+        auto sceneLoadBtn = new Button("Load");
+        sceneLoadBtn.onAction ~= (ref e) { loadSceneTree; };
+        addCreate(sceneLoadBtn);
 
         sceneTree = new typeof(sceneTree);
         if (width != 0)
