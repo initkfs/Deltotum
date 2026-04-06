@@ -1,7 +1,8 @@
 /.vscode
 /.dub
-/data
+/data/docs
 /data/userdata
+/data/shaders/out
 /dist
 /libs
 /dub.selections.json

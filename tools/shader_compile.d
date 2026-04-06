@@ -8,127 +8,128 @@ import std;
 immutable
 {
     string hlslExt = ".hlsl";
+    string hlslExtInclude = hlslExt ~ "i";
 }
 
 void main(string[] args)
 {
     string shaderFile;
     bool isCompileAll;
+
     auto cli = getopt(
         args,
-        "f", &shaderFile,
         "a", &isCompileAll);
 
-    if (!isCompileAll && shaderFile.length == 0)
+    if (!isCompileAll)
     {
-        stderr.writeln("Not found shader file");
-        return;
+        if (args.length < 2)
+        {
+            stderr.writeln("Not found shader file");
+            return;
+        }
+
+        shaderFile = args[1];
     }
 
     string shadersDir = buildPath(getcwd, "data", "shaders");
     string shadersSrcDir = buildPath(shadersDir, "src");
+    string startShaderCrossArgs = "-s HLSL -t ";
+    static const types = [".frag": "fragment", ".vert": "vertex"];
+    string sdl3Path = buildPath(getcwd, "libs", "sdl3");
 
-    if (!isCompileAll)
-    {
-        auto shaderPath = shaderFile;
-        if (!shaderPath.isAbsolute)
-        {
-            auto startExtIndex = shaderFile.indexOf(".");
-            if (startExtIndex != -1)
-            {
-                shaderPath = buildPath(shadersSrcDir, shaderFile[0 .. startExtIndex], shaderFile)
-                    .absolutePath;
-            }
-        }
-
-        compileShader(shaderPath, shadersDir);
-        return;
-    }
+    bool isVerbose = !isCompileAll;
+    bool isCompile;
 
     foreach (string dirFile; dirEntries(shadersSrcDir, SpanMode.depth))
     {
-        if (!dirFile.isFile)
+        if (!dirFile.isFile || dirFile.endsWith(hlslExtInclude))
         {
             continue;
         }
 
-        compileShader(dirFile, shadersDir, isVerbose:
-            false);
-    }
-}
-
-void compileShader(string shaderFile, string shadersDir, bool isVerbose = true)
-{
-    string shaderCrossArgs = "-s HLSL -t ";
-
-    static const types = [".frag": "fragment", ".vert": "vertex"];
-    string mustBeShaderType;
-    foreach (fileType, shaderType; types)
-    {
-        if (canFind(shaderFile, fileType))
+        if (isCompileAll)
         {
-            mustBeShaderType = shaderType;
-            break;
+            shaderFile = dirFile;
         }
-    }
-
-    if (mustBeShaderType.length == 0)
-    {
-        throw new Exception("Not found shader type in " ~ shaderFile);
-    }
-
-    shaderCrossArgs ~= mustBeShaderType;
-
-    string sdl3Path = buildPath(getcwd, "libs", "sdl3");
-    string shaderInFile = shaderFile;
-    if (!shaderFile.endsWith(hlslExt))
-    {
-        shaderInFile ~= hlslExt;
-    }
-
-    string shaderOutFile = buildPath(shadersDir, "out", "spirv");
-    if (shaderFile.isAbsolute)
-    {
-        auto outName = shaderFile.baseName;
-        if (outName.endsWith(hlslExt))
+        else
         {
-            outName = outName.stripExtension;
+            if (!dirFile.baseName.startsWith(shaderFile))
+            {
+                continue;
+            }
         }
-        shaderOutFile = buildPath(shaderOutFile, outName);
-    }
-    else
-    {
-        auto rawShaderName = shaderFile;
-        if (shaderFile.endsWith(hlslExt))
+
+        string mustBeShaderType;
+        foreach (fileType, shaderType; types)
         {
-            rawShaderName = rawShaderName.stripExtension;
+            if (canFind(shaderFile, fileType))
+            {
+                mustBeShaderType = shaderType;
+                break;
+            }
         }
-        shaderOutFile = buildPath(shaderOutFile, rawShaderName);
+
+        if (mustBeShaderType.length == 0)
+        {
+            throw new Exception("Not found shader type in " ~ shaderFile);
+        }
+
+        string shaderCrossArgs = startShaderCrossArgs;
+        shaderCrossArgs ~= mustBeShaderType;
+
+        string shaderInFile = dirFile;
+        string shaderOutFile = buildPath(shadersDir, "out", "spirv");
+        
+        if (shaderFile.isAbsolute)
+        {
+            auto outName = shaderFile.baseName;
+            if (outName.endsWith(hlslExt))
+            {
+                outName = outName.stripExtension;
+            }
+            shaderOutFile = buildPath(shaderOutFile, outName);
+        }
+        else
+        {
+            auto rawShaderName = shaderFile;
+            if (shaderFile.endsWith(hlslExt))
+            {
+                rawShaderName = rawShaderName.stripExtension;
+            }
+            shaderOutFile = buildPath(shaderOutFile, rawShaderName);
+        }
+
+        shaderOutFile ~= ".spv";
+
+        string compileCmd = i"export LD_LIBRARY_PATH=$(sdl3Path):$LD_LIBRARY_PATH && shadercross $(shaderInFile) $(shaderCrossArgs) -I $(shadersSrcDir) -e main -d SPIRV -o $(shaderOutFile)"
+            .text;
+
+        if (isVerbose)
+        {
+            writeln(compileCmd);
+        }
+
+        auto result = executeShell(compileCmd);
+        if (result.output.length != 0)
+        {
+            writeln(result.output);
+        }
+
+        if (result.status != 0)
+        {
+            throw new Exception("Failed shader compilation: " ~ dirFile);
+        }
+
+        if (!isVerbose)
+        {
+            writeln("Compiled: ", shaderOutFile);
+        }
+
+        isCompile = true;
     }
 
-    shaderOutFile ~= ".spv";
-
-    string compileCmd = i"export LD_LIBRARY_PATH=$(sdl3Path):$LD_LIBRARY_PATH && shadercross $(shaderInFile) $(shaderCrossArgs) -e main -d SPIRV -o $(shaderOutFile)"
-        .text;
-
-    if (isVerbose)
+    if (!isCompileAll && !isCompile)
     {
-        writeln(compileCmd);
-    }
-
-    auto result = executeShell(compileCmd);
-    if (result.output.length != 0)
-    {
-        writeln(result.output);
-    }
-
-    if (result.status != 0)
-    {
-        throw new Exception("Failed shader compilation");
-    }
-
-    if (!isVerbose)
-    {
-        writeln("Compiled: ", shaderOutFile);
+        stderr.writeln("Error. Target shader not found: ", shaderFile);
     }
 }

@@ -236,7 +236,7 @@ class Scene3d : Scene2d
 
         composePipeline = gpu.newPipeline(
             buildPath(shaderDir, "FullQuad.vert.spv"),
-            buildPath(shaderDir, "BlurCompose.frag.spv"),
+            buildPath(shaderDir, "Compose.frag.spv"),
             0, 0, 0, 0,
             2, 0, 1, 0,
             &raster,

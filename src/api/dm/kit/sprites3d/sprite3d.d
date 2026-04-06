@@ -203,6 +203,9 @@ class Sprite3d : Sprite2d
             float reserved = 0;
             float nearPlane = 0;
             float farPlane = 0;
+            float iTime = 0;
+            float iResolutionX = 0;
+            float iResolutionY = 0;
         }
 
         UniformInfo spriteUniform;
@@ -222,6 +225,12 @@ class Sprite3d : Sprite2d
 
         spriteUniform.nearPlane = camera.nearPlane;
         spriteUniform.farPlane = camera.farPlane;
+
+        //TODO time > 100000 
+        spriteUniform.iTime = platform.timer.ticksMs / 1000.0;
+        
+        spriteUniform.iResolutionX = window.width;
+        spriteUniform.iResolutionY = window.height;
 
         gpu.dev.pushUniformFragmentData(0, &spriteUniform, spriteUniform.sizeof);
     }
