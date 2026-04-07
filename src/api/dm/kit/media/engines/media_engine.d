@@ -52,6 +52,9 @@ class MediaEngine(
 
     string path;
 
+    bool isFoundVideo;
+    bool isFoundAudio;
+
     this(string path, float width = 200, float height = 200, AudioEngine audioEngine)
     {
         this.path = path;
@@ -71,7 +74,6 @@ class MediaEngine(
 
         AVCodecParameters* vidpar, audpar;
         AVCodec* vidCodec, audCodec;
-        bool foundVideo, foundAudio;
     }
 
     void delegate(ubyte[] yplane, ulong ypitch, ubyte[] uplane, ulong upitch, ubyte[] vplane, ulong vpitch) onUpdateYV;
@@ -120,7 +122,7 @@ class MediaEngine(
 
             AVCodecParameters* codecParam = stream.codecpar;
             AVCodec* codec = avcodec_find_decoder(codecParam.codec_id);
-            if (codecParam.codec_type == AVMediaType.AVMEDIA_TYPE_VIDEO && !foundVideo)
+            if (codecParam.codec_type == AVMediaType.AVMEDIA_TYPE_VIDEO && !isFoundVideo)
             {
                 //fmt_ctx.streams[i].discard = AVDISCARD_ALL;
                 vidCodec = codec;
@@ -131,27 +133,27 @@ class MediaEngine(
                 videoAvgRate = stream.avg_frame_rate;
 
                 //fpsrendering = 1.0 / (cast(float) rational.num / cast(float)(rational.den));
-                foundVideo = true;
+                isFoundVideo = true;
             }
-            else if (codecParam.codec_type == AVMediaType.AVMEDIA_TYPE_AUDIO && !foundAudio)
+            else if (codecParam.codec_type == AVMediaType.AVMEDIA_TYPE_AUDIO && !isFoundAudio)
             {
                 audCodec = codec;
                 audpar = codecParam;
                 audId = i;
-                foundAudio = true;
+                isFoundAudio = true;
             }
 
-            if (foundVideo && foundAudio)
+            if (isFoundVideo && isFoundAudio)
             {
                 break;
             }
         }
 
-        logger.infof("Open media file, video %s, audio %s, target w:%s,h:%s", foundVideo, foundAudio, width, height);
+        logger.infof("Open media file, video %s, audio %s, target w:%s,h:%s", isFoundVideo, isFoundAudio, width, height);
 
         demuxer = new typeof(demuxer)(
             logger,
-            DemuxerContext(contextMutex, foundVideo, foundAudio, widthi, heighti, pFormatCtx, vidId, audId),
+            DemuxerContext(contextMutex, isFoundVideo, isFoundAudio, widthi, heighti, pFormatCtx, vidId, audId),
             &videoPacketQueue,
             &audioPacketQueue,
             &videoBuffer,
@@ -170,8 +172,15 @@ class MediaEngine(
             &audioPacketQueue,
             &audioBuffer, audioEngine);
 
-        videoDecoder.start;
-        audioDecoder.start;
+        if (isFoundVideo)
+        {
+            videoDecoder.start;
+        }
+
+        if (isFoundAudio)
+        {
+            audioDecoder.start;
+        }
 
         demuxer.start;
     }
@@ -183,12 +192,12 @@ class MediaEngine(
         //if (!audioBuffer.isEmpty)
         //{
 
-        static float[4096] frames;
-        const readSize = audioBuffer.read(frames);
-        if (readSize == frames.length)
-        {
-            media.audio.writeAudio(frames[]);
-        }
+        // static float[4096] frames;
+        // const readSize = audioBuffer.read(frames);
+        // if (readSize == frames.length)
+        // {
+        //     media.audio.writeAudio(frames[]);
+        // }
         //}
 
         //if (!audioBuffer.isEmpty && audioStream)

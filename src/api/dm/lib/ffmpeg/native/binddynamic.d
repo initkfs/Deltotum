@@ -41,6 +41,7 @@ __gshared extern (C) nothrow
     int function(uint8_t** audio_data, int* linesize, int nb_channels,
         int nb_samples, AVSampleFormat sample_fmt, int _align) av_samples_alloc;
     int function(const AVChannelLayout* channel_layout, char* buf, size_t buf_size) av_channel_layout_describe;
+    void function(AVChannelLayout * ch_layout, int 	nb_channels) av_channel_layout_default;	
 
     void function(int arg) av_log_set_flags;
     void function(int level) av_log_set_level;
@@ -117,6 +118,7 @@ __gshared extern (C) nothrow
     //     const uint8_t* _in, int in_count) swr_convert;
     int function(SwrContext* s, const uint8_t** _out, int out_count,
         uint8_t** _in, int in_count) swr_convert;
+    int function(SwrContext * s, int 	in_samples) swr_get_out_samples;	
 
 }
 
@@ -147,6 +149,7 @@ class FfmpegLib : DynamicLoader
             bind(lib, &av_get_sample_fmt_name, "av_get_sample_fmt_name");
             bind(lib, &av_samples_alloc, "av_samples_alloc");
             bind(lib, &av_channel_layout_describe, "av_channel_layout_describe");
+            bind(lib, &av_channel_layout_default, "av_channel_layout_default");
 
             bind(lib, &av_log_set_flags, "av_log_set_flags");
             bind(lib, &av_log_set_level, "av_log_set_level");
@@ -211,6 +214,7 @@ class FfmpegLib : DynamicLoader
             bind(lib, &swr_init, "swr_init");
             bind(lib, &swr_alloc, "swr_alloc");
             bind(lib, &swr_convert, "swr_convert");
+            bind(lib, &swr_get_out_samples, "swr_get_out_samples");
         }
     }
 

@@ -99,11 +99,6 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
     {
         super(logger);
 
-        assert(context.windowWidth > 0);
-        assert(context.windowHeight > 0);
-        assert(context.codec);
-        assert(context.codecParams);
-
         this.context = context;
 
         assert(videoPacketQueue);
@@ -127,6 +122,11 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
     override void run()
     {
+        assert(context.windowWidth > 0);
+        assert(context.windowHeight > 0);
+        assert(context.codec);
+        assert(context.codecParams);
+
         try
         {
             logger.trace("Run video decoder");

@@ -3,7 +3,7 @@ module api.dm.kit.media.engines.audio_decoder;
 import api.dm.kit.media.audio.streams.audio_spec : AudioSpec, AudioFormat;
 import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.dm.kit.media.engines.base_media_worker : BaseMediaWorker;
-import api.dm.kit.media.audio.engines.audio_engine: AudioEngine;
+import api.dm.kit.media.audio.engines.audio_engine : AudioEngine;
 
 import api.core.loggers.builtins.logger : Logger;
 import std.string : toStringz, fromStringz;
@@ -41,7 +41,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
         typeof(packetQueue) audioPacketQueue,
         typeof(buffer) audioBuffer,
         AudioEngine audioEngine
-        )
+    )
     {
         super(logger);
 
@@ -97,12 +97,12 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
             }
 
             AVSampleFormat srcFormat = cast(AVSampleFormat) context.codecParams.format;
-            auto destEngineFormat = toLibFormat(AudioFormat.f32);
+            auto destEngineFormat = toLibFormat(context.audioOutSpec.format);
             AVSampleFormat destFormat = av_get_packed_sample_fmt(destEngineFormat);
 
             srcSpec = AudioSpec.init;
             //TODO check cast av_get_sample_fmt_name((enum AVSampleFormat)codecpar->format) == NULL
-            srcSpec.format = AudioFormat.f32;
+            srcSpec.format = fromLibFormat(srcFormat);
             srcSpec.freqHz = context.codecParams.sample_rate;
             srcSpec.channels = context.codecParams.ch_layout.nb_channels;
 
@@ -113,14 +113,16 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
             SwrContext* audioConvertContext;
 
+            auto destLayout = fromSpec(context.audioOutSpec);
+
             if (srcFormat != destFormat)
             {
                 int isAllocSoundConvert = swr_alloc_set_opts2(
                     &audioConvertContext,
 
-                    &context.codecParams.ch_layout,
+                    &destLayout,
                     destFormat,
-                    context.codecParams.sample_rate,
+                    cast(int) context.audioOutSpec.freqHz,
 
                     &context.codecParams.ch_layout,
                     srcFormat,
@@ -171,7 +173,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 logger.trace("Start audiodecoder loop");
             }
 
-            size_t maxBufferFull = cast(size_t) (audioEngine.AudioQueueSize * 0.8);
+            size_t maxBufferFull = cast(size_t)(audioEngine.AudioQueueSize * 0.8);
 
             while (true)
             {
@@ -252,10 +254,13 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
                 ubyte* audioBuff;
 
-                int audioBuffSize = av_samples_alloc(&audioBuff,
+                int outSamples = swr_get_out_samples(audioConvertContext, frame.nb_samples);
+
+                int audioBuffSize = av_samples_alloc(
+                    &audioBuff,
                     null,
-                    frame.ch_layout.nb_channels,
-                    frame.nb_samples,
+                    destLayout.nb_channels,
+                    outSamples,
                     destFormat,
                     0
                 );
@@ -308,7 +313,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 size_t writeBytes = audioBuffSize;
 
                 float[] writeSlice = cast(float[]) audioBuff[0 .. audioBuffSize];
-                
+
                 const sizeWrite = audioEngine.writeAudio(writeSlice);
 
                 if (sizeWrite != writeSlice.length)
@@ -318,7 +323,8 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                         import std.stdio : writefln;
 
                         writefln(
-                            "Error write to audio buffer %d bytes: %d, queue size: %d", writeSlice.length, sizeWrite,audioEngine.buffer
+                            "Error write to audio buffer %d bytes: %d, queue size: %d", writeSlice.length, sizeWrite, audioEngine
+                                .buffer
                                 .size);
                     }
                 }
@@ -382,6 +388,13 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 break;
         }
         return libFormat;
+    }
+
+    AVChannelLayout fromSpec(AudioSpec spec)
+    {
+        AVChannelLayout layout;
+        av_channel_layout_default(&layout, cast(int) spec.channels);
+        return layout;
     }
 
     protected string audioParams(AVCodecParameters* codecpar)
