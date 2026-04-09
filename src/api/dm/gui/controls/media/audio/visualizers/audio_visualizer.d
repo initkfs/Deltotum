@@ -7,6 +7,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_fill_level : RectFillLevel;
 import api.dm.kit.media.dsp.analog_signals : AnalogSignal;
+import core.atomic : atomicLoad, atomicStore;
 
 import Math = api.math;
 
@@ -29,10 +30,7 @@ class AudioVisualizer : Control
     AnalogSignal[] fftBuffer;
 
     float smoothFactor = 0.2f;
-
-    double streamStartSec = 0;
-
-    size_t numLevels = 50;
+    size_t numLevels = 10;
 
     this()
     {
@@ -108,100 +106,121 @@ class AudioVisualizer : Control
     bool isStartRead;
 
     double fftTimeSec() => (readCount * media.audio.DspWindowSize) / media.audioOutSpec.freqHz;
-    double audioTimeSec() => media.audio.buffer.streamTimeSec - streamStartSec - media
-        .audio.buffer.streamLatencySec;
+    double audioTimeSec() => media.audio.buffer.streamTimeSec - atomicLoad(
+        media.audio.bufferStartTimeSec);
+    //- media.audio.buffer.streamLatencySec;
+
+    double lastUpdateMs = 0;
 
     override void update(float dt)
     {
-        super.update(dt);
+        // super.update(dt);
 
-        if (!isStartRead)
+        auto now = platform.timer.ticksMs;
+        auto elapsed = now - lastUpdateMs;
+
+        if (elapsed >= media.audio.CallbackIntervalMs)
         {
             auto readSize = media.audio.dspProcessor.fftQueue.read(fftBuffer);
             if (readSize > 0)
             {
-                isStartRead = true;
-                streamStartSec = media.audio.bufferStartTime;
                 readCount++;
             }
         }
-
-        if (!isStartRead)
-        {
-            return;
-        }
-
-        double fftSec = fftTimeSec;
-        double audioSec = audioTimeSec;
-
-        enum allowDt = 0.02;
-
-        if (fftSec < audioSec)
-        {
-            float needOffsetSec = audioSec - fftSec;
-            if (needOffsetSec > allowDt)
-            {
-                size_t needReadSkip = cast(size_t) Math.round(
-                    (needOffsetSec * media.audioOutSpec.freqHz) / media.audio.DspWindowSize);
-
-                size_t dropFrames;
-                enum maxDrop = 5;
-                foreach (i; 0 .. needReadSkip)
-                {
-                    auto readSize = media.audio.dspProcessor.fftQueue.read(fftBuffer);
-                    if (readSize > 0)
-                    {
-                        readCount++;
-                        dropFrames++;
-                    }
-                    else
-                    {
-                        //fftBuffer[] = 0;
-                        //break;
-                    }
-                }
-
-                if (dropFrames >= maxDrop)
-                {
-                    import std.stdio : writeln;
-
-                    writeln("Warn. FFT drop sync frames: ", dropFrames);
-                }
-
-                // import std;
-
-                // writeln("Drop fft ", fftTimeSec, " ", audioTimeSec, " dt:", audioTimeSec - fftTimeSec, " drop: ", dropFrames);
-            }
-
-        }
         else
         {
-            auto dtf = fftSec - audioSec;
-            enum fftDtSec = 0.1;
-            if (dtf < fftDtSec)
+            foreach (ref v; fftBuffer)
             {
-                auto readSize = media.audio.dspProcessor.fftQueue.read(fftBuffer);
-                if (readSize > 0)
-                {
-                    readCount++;
-                }
+                v.magn *= 0.9;
             }
-            else
-            {
-                foreach (ref v; fftBuffer)
-                {
-                    //Value = Value * pow(DecayBase, DeltaTime * 60)
-                    //0.85–0.90
-                    auto newv = v.magn * 0.999;
-                    v.magn = newv;
-                }
-            }
-
-            // import std;
-
-            // writeln(dtf);
-
         }
+
+        // if (!isStartRead)
+        // {
+        //     auto readSize = media.audio.dspProcessor.fftQueue.read(fftBuffer);
+        //     if (readSize > 0)
+        //     {
+        //         isStartRead = true;
+        //         readCount++;
+        //     }
+        // }
+
+        // if (!isStartRead)
+        // {
+        //     return;
+        // }
+
+        // double fftSec = fftTimeSec;
+        // double audioSec = audioTimeSec;
+
+        // enum allowDt = 0.02;
+
+        // if (fftSec < audioSec)
+        // {
+        //     float needOffsetSec = audioSec - fftSec;
+        //     if (needOffsetSec > allowDt)
+        //     {
+        //         size_t needReadSkip = cast(size_t) Math.round(
+        //             (needOffsetSec * media.audioOutSpec.freqHz) / media.audio.DspWindowSize);
+
+        //         size_t dropFrames;
+        //         enum maxDrop = 5;
+        //         foreach (i; 0 .. needReadSkip)
+        //         {
+        //             auto readSize = media.audio.dspProcessor.fftQueue.read(fftBuffer);
+        //             if (readSize > 0)
+        //             {
+        //                 readCount++;
+        //                 dropFrames++;
+        //             }
+        //             else
+        //             {
+        //                 //fftBuffer[] = 0;
+        //                 //break;
+        //             }
+        //         }
+
+        //         if (dropFrames >= maxDrop)
+        //         {
+        //             import std.stdio : writeln;
+
+        //             writeln("Warn. FFT drop sync frames: ", dropFrames);
+        //         }
+
+        //         // import std;
+
+        //         // writeln("Drop fft ", fftTimeSec, " ", audioTimeSec, " dt:", audioTimeSec - fftTimeSec, " drop: ", dropFrames);
+        //     }
+
+        // }
+        // else
+        // {
+        //     auto dtf = fftSec - audioSec;
+        //     enum fftDtSec = 0.5;
+        //     if (dtf < fftDtSec)
+        //     {
+        //         auto readSize = media.audio.dspProcessor.fftQueue.read(fftBuffer);
+        //         if (readSize > 0)
+        //         {
+        //             readCount++;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         foreach (ref v; fftBuffer)
+        //         {
+        //             //Value = Value * pow(DecayBase, DeltaTime * 60)
+        //             //0.85–0.90
+        //             auto newv = v.magn * 0.98;
+        //             v.magn = newv;
+        //         }
+        //     }
+
+        //     // import std;
+
+        //     // writeln(dtf);
+
+        // }
 
         equalizer.update;
     }

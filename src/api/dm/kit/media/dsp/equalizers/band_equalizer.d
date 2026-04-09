@@ -47,8 +47,9 @@ class BandEqualizer
 
     float minFreq = 20.0f;
     float maxFreq = 22050.0f;
+
     float minDB = -60.0f;
-    float maxDB = 0.0f;
+    float maxDB = 0f;
 
     void update()
     {
@@ -67,102 +68,48 @@ class BandEqualizer
 
         import Math = api.math;
 
-        // size_t numBands = bandValues.length;
-        // size_t lastEnd = 0;
+        size_t numBands = bandValues.length;
+        size_t lastEnd = 0;
 
-        // foreach (i, ref float v; bandValues)
-        // {
-        //     float fEnd = minFreq * Math.pow(maxFreq / minFreq, cast(float)(i + 1) / numBands);
-        //     size_t start = lastEnd;
-        //     size_t end = cast(size_t) Math.round((fEnd * sampleWindowSize / 2) / sampleRateHz);
-        //     if (end > maxIndex)
-        //         end = maxIndex;
-        //     if (end <= start)
-        //         end = start + 1;
-
-        //     size_t count = 0;
-        //     float sum = 0;
-        //     foreach (j; start .. end)
-        //     {
-        //         if (j >= maxIndex)
-        //             break;
-
-        //         auto signal = signalProvider(j);
-        //         sum += signal.magn;
-        //         count++;
-        //         if (onUpdate)
-        //             onUpdate(signal);
-        //     }
-
-        //     import std.math.exponential : log10;
-
-        //     auto magnV = (count > 0) ? (sum / count) : 0;
-        //     float db = 20.0f * log10(magnV + 0.000001f);
-        //     float normalized = (db - minDB) / (maxDB - minDB);
-
-        //     v = Math.clamp01(normalized);
-
-        //     lastEnd = end;
-
-        //     import std.format : format;
-        //     import Math = api.math;
-
-        //     if (onUpdateIndexFreqStartEnd)
-        //     {
-        //         auto startFreq = signalProvider(start).freqHz;
-        //         auto endFreq = signalProvider(end).freqHz;
-        //         onUpdateIndexFreqStartEnd(i, startFreq, endFreq);
-
-        //         // import std;
-
-        //         // writeln("Start index:", start, ", end: ", end, " Start freq hz:", startFreq, " end:", endFreq, " v: ", v);
-        //     }
-
-        // }
-
-        float bandWidth = sampleWindowSize / 2 / 2 / numFreqBands;
-
-        size_t count;
         foreach (i, ref float v; bandValues)
         {
-            size_t start = cast(size_t)(i * bandWidth);
-            size_t end = cast(size_t)((i + 1) * bandWidth);
-
+            float fEnd = minFreq * Math.pow(maxFreq / minFreq, cast(float)(i + 1) / numBands);
+            size_t start = lastEnd;
+            size_t end = cast(size_t) Math.round((fEnd * sampleWindowSize / 2) / sampleRateHz);
             if (end > maxIndex)
-            {
                 end = maxIndex;
-            }
+            if (end <= start)
+                end = start + 1;
 
+            size_t count = 0;
+            float sum = 0;
+            float sumSq = 0;
             foreach (j; start .. end)
             {
+                if (j >= maxIndex)
+                    break;
+
                 auto signal = signalProvider(j);
-                auto magn = signal.magn;
-
-                if (onUpdate)
-                {
-                    onUpdate(signal);
-                }
-
-                v += magn;
+                sum += signal.magn;
+                sumSq += signal.magn * signal.magn;
                 count++;
+                if (onUpdate)
+                    onUpdate(signal);
             }
 
-            if (count > 0)
-            {
-                v /= count;
-            }
+            import std.math.exponential : log10;
 
-            float normalized = v / (sampleWindowSize / 2.0f);
-            if (normalized < 0.00001)
-            {
-                normalized = 0;
-            }
-            else
-            {
-                normalized = Math.clamp(normalized * 500, 0.0f, 1.0f);
-            }
+            auto magnV = (count > 0) ? (sum / count) : 0;
+            float rms = (count > 0) ? Math.sqrt(sumSq / count) : 0.0f;
+            rms /= (sampleWindowSize / 2.0f);
 
-            v = normalized;
+            float db = 20.0f * log10(rms + 0.000001f);
+            float normalized = (db - minDB) / (maxDB - minDB);
+            //normalized = pow(clamp01(normalized), 1.5f); 
+
+            v = Math.clamp01(normalized);
+
+            lastEnd = end;
 
             import std.format : format;
             import Math = api.math;
@@ -175,11 +122,71 @@ class BandEqualizer
 
                 // import std;
 
-                // writeln("Start index:", start, ", end: ", end, " Start freq hz:", startFreq, " end:", endFreq);
+                // writeln("Start index:", start, ", end: ", end, " Start freq hz:", startFreq, " end:", endFreq, " v: ", v);
             }
 
-            //     //v /= bandWidth;
         }
+
+        // float bandWidth = sampleWindowSize / 2 / 2 / numFreqBands;
+
+        // size_t count;
+        // foreach (i, ref float v; bandValues)
+        // {
+        //     size_t start = cast(size_t)(i * bandWidth);
+        //     size_t end = cast(size_t)((i + 1) * bandWidth);
+
+        //     if (end > maxIndex)
+        //     {
+        //         end = maxIndex;
+        //     }
+
+        //     foreach (j; start .. end)
+        //     {
+        //         auto signal = signalProvider(j);
+        //         auto magn = signal.magn;
+
+        //         if (onUpdate)
+        //         {
+        //             onUpdate(signal);
+        //         }
+
+        //         v += magn;
+        //         count++;
+        //     }
+
+        //     if (count > 0)
+        //     {
+        //         v /= count;
+        //     }
+
+        //     float normalized = v / (sampleWindowSize / 2.0f);
+        //     if (normalized < 0.00001)
+        //     {
+        //         normalized = 0;
+        //     }
+        //     else
+        //     {
+        //         normalized = Math.clamp(normalized * 500, 0.0f, 1.0f);
+        //     }
+
+        //     v = normalized;
+
+        //     import std.format : format;
+        //     import Math = api.math;
+
+        //     if (onUpdateIndexFreqStartEnd)
+        //     {
+        //         auto startFreq = signalProvider(start).freqHz;
+        //         auto endFreq = signalProvider(end).freqHz;
+        //         onUpdateIndexFreqStartEnd(i, startFreq, endFreq);
+
+        //         // import std;
+
+        //         // writeln("Start index:", start, ", end: ", end, " Start freq hz:", startFreq, " end:", endFreq);
+        //     }
+
+        //     //     //v /= bandWidth;
+        // }
 
         if (onUpdateEnd)
         {
@@ -189,8 +196,48 @@ class BandEqualizer
 
     float ampToDb(float amp)
     {
-        import std.math : log10;
+        import std.math.exponential : log10;
 
-        return 20 * log10(amp == 0 ? float.epsilon : amp);
+        return 20.0 * log10(amp + 1e-7);
+    }
+
+    double calculateRMS(float[] samples, double startFreq, double endFreq)
+    {
+        import Math = api.math;
+
+        if (samples.length == 0)
+        {
+            return 0;
+        }
+
+        size_t startIndex = cast(size_t)((startFreq * sampleWindowSize) / sampleRateHz);
+        size_t endIndex = cast(size_t)((endFreq * sampleWindowSize) / sampleRateHz);
+
+        if (startIndex > endIndex)
+        {
+            return 0;
+        }
+
+        if (endIndex >= samples.length)
+        {
+            endIndex = samples.length - 1;
+        }
+
+        double sumSq = 0.0;
+        int count = 0;
+
+        for (size_t i = startIndex; i <= endIndex; i++)
+        {
+            // abs for complex == sqrt(re^2 + im^2)
+            double mag = Math.abs(samples[i]);
+            // sin amplitude 1.0 ==  1.0
+            sumSq += mag * mag;
+            count++;
+        }
+
+        auto rms = (count > 0) ? Math.sqrt(sumSq / count) : 0;
+        rms /= (sampleWindowSize / 2.0f);
+        //float smoothRMS = lerp(prevSmoothRMS, currentRMS, 0.2f); 
+        return rms;
     }
 }

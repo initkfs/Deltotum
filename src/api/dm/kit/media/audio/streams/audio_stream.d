@@ -40,8 +40,9 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
     //TODO shared
     __gshared RingBuffer!(float, Size, false, true) buffer;
 
-    shared double callbackTimeDACSec;
-    shared size_t callbackFramesCount;
+    __gshared double callbackTimeSec = 0;
+    __gshared double callbackTimeDACSec = 0;
+    __gshared size_t callbackFramesCount;
 
     //FIXME bug without static?
     static shared size_t frameClock;
@@ -262,9 +263,16 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
                 }
             }
 
-            //double currentTime = timeInfo.currentTime;
-            //double outputTime = timeInfo.outputBufferDacTime;
-            //double totalLatency = outputTime - currentTime;
+            double callbackTime = 0;
+            double callbackDACTime = 0;
+            if (timeInfo)
+            {
+                callbackTime = timeInfo.currentTime;
+                callbackDACTime = timeInfo.outputBufferDacTime;
+            }
+
+            atomicStore(player.callbackTimeSec, callbackTime);
+            atomicStore(player.callbackTimeDACSec, callbackDACTime);
 
             float* _out = cast(float*) outputBuffer;
             size_t samplesNeeded = framesPerBuffer * Channels;
@@ -280,14 +288,6 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
                 outBuff[] = 0;
                 return paContinue;
             }
-
-            // size_t dacTime;
-            // if (timeInfo)
-            // {
-            //     dacTime = timeInfo.outputBufferDacTime;
-            // }
-
-            // atomicStore(player.callbackTimeDACSec, dacTime);
 
             size_t samplesRead = player.buffer.read(outBuff);
 

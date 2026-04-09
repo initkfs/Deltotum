@@ -7,7 +7,6 @@ import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.dm.kit.media.audio.streams.audio_spec : AudioSpec;
 import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
-
 import core.atomic : atomicLoad, atomicStore;
 import core.thread.osthread : Thread;
 import core.sync.mutex : Mutex;
@@ -31,7 +30,7 @@ class AudioEngine : Thread
     enum FRAMES_PER_BUFFER = 2048;
 
     enum CallbackIntervalMs = (FRAMES_PER_BUFFER / (cast(float) SAMPLE_RATE)) * 1000.0;
-    enum float MIX_INTERVAL_MS = CallbackIntervalMs * 0.8;
+    enum float MIX_INTERVAL_MS = CallbackIntervalMs * 0.95;
 
     enum AudioQueueSize = SAMPLE_RATE * AUDIO_QUEUE_SIZE_SEC * 2;
 
@@ -42,12 +41,15 @@ class AudioEngine : Thread
     __gshared float[] samples;
 
     shared Mutex mixerMutex;
-    private double lastMixTimeMs = 0;
+    
 
-    enum DspWindowSize = 2048;
+    enum DspWindowSize = 4096;
 
     shared Mutex dspMutex;
     __gshared DspProcessor!(DspWindowSize * 24, 2, DspWindowSize) dspProcessor;
+
+    __gshared double bufferStartTimeSec = 0;
+    __gshared double lastMixTimeMs = 0;
 
     this(AudioSpec spec)
     {
@@ -77,7 +79,7 @@ class AudioEngine : Thread
         //Thread.yield;
     }
 
-    double bufferStartTime = 0;
+    double callbackPrevTimeSec = 0;
 
     void mix()
     {
@@ -104,12 +106,12 @@ class AudioEngine : Thread
                 //}
 
                 auto nowMs = timestampMsProvider();
-                auto elapsedMs = nowMs - lastMixTimeMs;
+                auto elapsedMs = nowMs - atomicLoad(lastMixTimeMs);
+
+                //auto streamTimeSec = buffer.streamTimeSec;
 
                 if (elapsedMs >= MIX_INTERVAL_MS)
                 {
-                    lastMixTimeMs = nowMs;
-
                     auto mixSize = mixer.mix(samples, 2, true);
                     if (mixSize == 0)
                     {
@@ -123,7 +125,7 @@ class AudioEngine : Thread
                         import std;
 
                         writeln("Start audio stream");
-                        bufferStartTime = buffer.streamTimeSec;
+                        atomicStore(bufferStartTimeSec, buffer.streamTimeSec);
                     }
 
                     auto fillSlice = samples[0 .. mixSize];
@@ -145,31 +147,13 @@ class AudioEngine : Thread
                         //}
                     }
 
+                    atomicStore(lastMixTimeMs, timestampMsProvider());
+
+                    //TODO correct from callback interval
+                    //auto nowCallbackTime = atomicLoad(buffer.callbackTimeSec);
+                    //auto el = nowCallbackTime - callbackPrevTimeSec;
+                    //callbackPrevTimeSec = nowCallbackTime;  
                 }
-                else
-                {
-                    //sleep;
-                }
-
-                // auto mixSize = mixer.mix(samples, 2, true);
-                // if (mixSize == 0)
-                // {
-                //     continue;
-                // }
-
-                // if (!buffer.isOpen)
-                // {
-                //     buffer.open;
-                // }
-
-                // auto fillSlice = samples[0 .. mixSize];
-
-                // auto size = buffer.writeAudio(fillSlice);
-                // if (size != fillSlice.length)
-                // {
-                //     isSend = false;
-                //     continue;
-                // }
             }
             catch (Exception e)
             {

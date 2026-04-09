@@ -89,10 +89,12 @@ class DspProcessor(size_t SignalBufferSize, size_t SignalChannels = 1, size_t Sa
 
         if (!isPowerOf2(samples.length))
         {
-            import std.conv: to;
-            import std.stdio: writeln, stderr;
+            import std.conv : to;
+            import std.stdio : writeln, stderr;
+
             // throw new Exception("Samples length must be power of 2, but received: " ~ samples.length.to!string);
-            stderr.writeln("Samples length must be power of 2, but received: ", samples.length.to!string);
+            stderr.writeln("Samples length must be power of 2, but received: ", samples
+                    .length.to!string);
             return false;
         }
 
@@ -101,8 +103,8 @@ class DspProcessor(size_t SignalBufferSize, size_t SignalChannels = 1, size_t Sa
         const halfWinSize = windowSize / 2;
         if (halfWinSize != outBuffer.length)
         {
-            import std.conv: to;
-            import std.stdio: writeln, stderr;
+            import std.conv : to;
+            import std.stdio : writeln, stderr;
             import std.format : format;
 
             stderr.writeln(format("Output buffer must be window size / 2 == %d, but received: %d", halfWinSize, outBuffer
@@ -112,12 +114,13 @@ class DspProcessor(size_t SignalBufferSize, size_t SignalChannels = 1, size_t Sa
 
         import std.numeric : fft;
 
-        auto fftRes = fft(samples[0..halfWinSize]);
+        auto fftRes = fft(samples[0 .. halfWinSize]);
         const fftResLen = fftRes.length;
 
         if (fftResLen > halfWinSize)
         {
-            import std.stdio: stderr, writeln;
+            import std.stdio : stderr, writeln;
+
             stderr.writeln("FFT size overflow");
             return false;
         }
