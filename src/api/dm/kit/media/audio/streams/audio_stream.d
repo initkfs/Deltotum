@@ -42,13 +42,13 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
 
     shared double callbackTimeDACSec;
     shared size_t callbackFramesCount;
-    
+
     //FIXME bug without static?
     static shared size_t frameClock;
 
     protected
     {
-        PaStream* _stream;
+        __gshared PaStream* _stream;
 
         shared AudioStreamState _state;
     }
@@ -184,6 +184,27 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
             _stream = null;
         }
         atomicStore(_state, AudioStreamState.close);
+    }
+
+    double streamTimeSec()
+    {
+        if (_stream && isStart)
+        {
+            return Pa_GetStreamTime(_stream); // - Pa_GetStreamOutputLatency(_stream);
+        }
+
+        return 0;
+    }
+
+    double streamLatencySec()
+    {
+        //TODO cache
+        if (_stream && isStart)
+        {
+            return Pa_GetStreamInfo(_stream).outputLatency;
+        }
+
+        return 0;
     }
 
     size_t writeSine(float[] audioData, float soundHz = 440.0, float freqHz = 44100)

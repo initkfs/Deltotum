@@ -348,7 +348,7 @@ class SdlApp : GuiApp
             AudioSpec spec;
 
             auto player = new AudioEngine(spec);
-            player.timestampMsProvider = () { return SDL_GetTicksNS() / 1e-6; };
+            player.timestampMsProvider = () { return ticksMs; };
 
             _media = new MultiMedia(spec, player);
             _media.initialize;
@@ -1427,6 +1427,12 @@ class SdlApp : GuiApp
                 }
             }
         }
+
+        //TODO all services;
+        // if (gservices.hasMedia)
+        // {
+        //     gservices.media.audio.dispose;
+        // }
 
         super.dispose;
     }

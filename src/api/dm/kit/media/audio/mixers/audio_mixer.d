@@ -2,8 +2,9 @@ module api.dm.kit.media.audio.sounds.audio_mixer;
 
 import api.dm.kit.media.audio.streams.audio_stream : AudioStream;
 import api.dm.kit.media.audio.mixers.mix_sound : MixSound, SoundHandle;
+import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 
-import core.atomic: atomicLoad, atomicStore;
+import core.atomic : atomicLoad, atomicStore;
 
 import api.dm.lib.portaudio.native;
 import api.math.geom3.vec3 : Vec3f;
@@ -17,8 +18,18 @@ class AudioMixer
 {
     MixSound[] _sounds;
 
+    enum MixerMusicQueueSize = 4096 * 100;
+    __gshared RingBuffer!(float, MixerMusicQueueSize, false, true) musicChannel1;
+
     //TODO for chans
     float volume = 1;
+
+    size_t mixMusicCount;
+
+    this()
+    {
+        musicChannel1.initialize;
+    }
 
     SoundHandle play(MixSound sound)
     {
@@ -71,7 +82,7 @@ class AudioMixer
             if (!sound.playing && sound.freeFunPtr)
             {
                 sound.free;
-                sound.freeFunPtr = null;
+                sound.reset;
             }
         }
     }
@@ -140,14 +151,25 @@ class AudioMixer
             return 0;
         }
 
-        if (!isPlaying)
-        {
-            return 0;
-        }
+        // if (!isPlaying)
+        // {
+        //     return 0;
+        // }
 
         if (isClearBuffer)
         {
             output[] = 0;
+        }
+
+        auto musicSize = musicChannel1.read(output);
+        if (musicSize > 0)
+        {
+            mixMusicCount++;
+        }
+
+        if (!isPlaying)
+        {
+            return musicSize;
         }
 
         size_t numFrames = output.length / chanCount;

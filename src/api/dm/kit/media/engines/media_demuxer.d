@@ -78,7 +78,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
         {
             //version (EnableTrace)
             //{
-                logger.tracef("Run demuxer");
+            logger.tracef("Run demuxer");
             //}
 
             //data_size + AV_INPUT_BUFFER_PADDING_SIZE
@@ -98,7 +98,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
 
             //version (EnableTrace)
             //{
-                logger.trace("Start demuxer loop");
+            logger.trace("Start demuxer loop");
             //}
 
             while (true)
@@ -112,6 +112,7 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
 
                 if (packetRet == codeEOF)
                 {
+                    //avcodec_send_packet(codec_ctx, NULL)
                     logger.infof("Received EOF for media demuxer, break");
                     break;
                 }
@@ -156,7 +157,8 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                     lastCheckDropTimeMcs = nowMcs;
                 }
 
-                AVPacket* copy = allocCopy(packet);
+                //AVPacket* copy = allocCopy(packet);
+                AVPacket* copy = av_packet_clone(packet);
                 AVPacket*[1] packets = [copy];
                 size_t isSend;
                 if (context.isVideo && packet.stream_index == context.videoFrameIndex)
@@ -180,6 +182,8 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
                         //av_packet_unref(packet);
                     }
                 }
+
+                av_packet_unref(packet);
             }
 
             av_packet_free(&packet);

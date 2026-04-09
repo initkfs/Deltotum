@@ -6,6 +6,7 @@ import api.dm.kit.media.audio.mixers.mix_sound : MixSound, SoundHandle;
 import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.dm.kit.media.audio.streams.audio_spec : AudioSpec;
 import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
+import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
 
 import core.atomic : atomicLoad, atomicStore;
 import core.thread.osthread : Thread;
@@ -27,7 +28,7 @@ class AudioEngine : Thread
     //enum MIX_INTERVAL_MS = 10;
     enum SAMPLE_RATE = 44100;
     enum CHANNELS = 2;
-    enum FRAMES_PER_BUFFER = 512;
+    enum FRAMES_PER_BUFFER = 2048;
 
     enum CallbackIntervalMs = (FRAMES_PER_BUFFER / (cast(float) SAMPLE_RATE)) * 1000.0;
     enum float MIX_INTERVAL_MS = CallbackIntervalMs * 0.8;
@@ -35,13 +36,18 @@ class AudioEngine : Thread
     enum AudioQueueSize = SAMPLE_RATE * AUDIO_QUEUE_SIZE_SEC * 2;
 
     __gshared AudioStream!(AudioQueueSize, FRAMES_PER_BUFFER, CHANNELS) buffer;
-    AudioMixer mixer;
+    __gshared AudioMixer mixer;
 
     //length % channels == 0
     __gshared float[] samples;
 
     shared Mutex mixerMutex;
     private double lastMixTimeMs = 0;
+
+    enum DspWindowSize = 2048;
+
+    shared Mutex dspMutex;
+    __gshared DspProcessor!(DspWindowSize * 24, 2, DspWindowSize) dspProcessor;
 
     this(AudioSpec spec)
     {
@@ -58,6 +64,8 @@ class AudioEngine : Thread
         samples = new float[](FRAMES_PER_BUFFER * 2);
         samples[] = 0;
 
+        dspProcessor = new typeof(dspProcessor)(dspMutex, SAMPLE_RATE, DspWindowSize);
+
         super(&mix);
     }
 
@@ -68,6 +76,8 @@ class AudioEngine : Thread
         Thread.sleep(dur!("msecs")(1));
         //Thread.yield;
     }
+
+    double bufferStartTime = 0;
 
     void mix()
     {
@@ -110,9 +120,10 @@ class AudioEngine : Thread
                     if (!buffer.isStart)
                     {
                         buffer.start;
-                        // import std;
+                        import std;
 
-                        // writeln("Start audio stream");
+                        writeln("Start audio stream");
+                        bufferStartTime = buffer.streamTimeSec;
                     }
 
                     auto fillSlice = samples[0 .. mixSize];
@@ -122,6 +133,18 @@ class AudioEngine : Thread
                     {
                         //TODO log
                     }
+
+                    if (dspProcessor)
+                    {
+                        //auto fftLen = mixSize % 2 != 0 ? Math.prevPowerOfTwo(
+                        //    cast(uint) mixSize) : mixSize;
+                        //if (fftLen > 0 && fftLen <= fillSlice.length)
+                        //{
+                        //dspProcessor.process(fillSlice[0 .. fftLen]);
+                        dspProcessor.process(samples);
+                        //}
+                    }
+
                 }
                 else
                 {

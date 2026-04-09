@@ -12,11 +12,26 @@ import api.dm.lib.ffmpeg.native;
 
 import core.stdc.errno : EAGAIN;
 
+// struct AudioDecoderData {
+//     ubyte* buffer;
+//     float ptsSec = 0;
+//     void function(void*) freeFuncPtr;
+
+//     void free(){
+//         if(buffer && freeFuncPtr){
+//             freeFuncPtr(buffer);
+//             buffer = null;
+//         }
+//     }
+// }
+
 struct AudioDecoderContext
 {
     AVCodec* codec;
     AVCodecParameters* codecParams;
     AudioSpec audioOutSpec;
+    AVRational audioTimeBase;
+    AVRational audioAvgRate;
 }
 
 /**
@@ -173,12 +188,12 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 logger.trace("Start audiodecoder loop");
             }
 
-            size_t maxBufferFull = cast(size_t)(audioEngine.AudioQueueSize * 0.8);
+            size_t maxBufferFull = cast(size_t)(audioEngine.mixer.MixerMusicQueueSize * 0.7);
 
             while (true)
             {
 
-                if (packetQueue.isEmpty || (audioEngine.buffer.buffer.size > maxBufferFull))
+                if (packetQueue.isEmpty || (audioEngine.mixer.musicChannel1.size > maxBufferFull))
                 {
                     waitInLoop;
                     //import std;
@@ -310,11 +325,9 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                     audioBuff[0 .. audioBuffSize] = frame.data[0][0 .. dataSize];
                 }
 
-                size_t writeBytes = audioBuffSize;
-
                 float[] writeSlice = cast(float[]) audioBuff[0 .. audioBuffSize];
 
-                const sizeWrite = audioEngine.writeAudio(writeSlice);
+                auto sizeWrite = audioEngine.mixer.musicChannel1.write(writeSlice);
 
                 if (sizeWrite != writeSlice.length)
                 {
@@ -324,8 +337,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
                         writefln(
                             "Error write to audio buffer %d bytes: %d, queue size: %d", writeSlice.length, sizeWrite, audioEngine
-                                .buffer
-                                .size);
+                                .mixer.musicChannel1);
                     }
                 }
             }

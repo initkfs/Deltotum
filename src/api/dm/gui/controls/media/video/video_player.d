@@ -30,6 +30,8 @@ class VideoPlayer : Control
     VideoPlayerPanel panel;
     string path;
 
+    void delegate() onStart;
+
     this(string path, size_t width = 200, size_t height = 200)
     {
         initSize(width, height);
@@ -59,12 +61,12 @@ class VideoPlayer : Control
 
         //IYUV
         const fillColor = RGBA.gray.toYUVA;
-        
-        size_t ysize = cast(size_t) (width * height);
+
+        size_t ysize = cast(size_t)(width * height);
         ubyte[] yplane = new ubyte[ysize];
 
         int uvWidth = cast(int)((width + 1) / 2);
-        int uvHeight = cast(int) ((height + 1) / 2);
+        int uvHeight = cast(int)((height + 1) / 2);
         int uvSize = uvWidth * uvHeight;
         ubyte[] uplane = new ubyte[uvSize];
         ubyte[] vplane = new ubyte[uvSize];
@@ -73,13 +75,22 @@ class VideoPlayer : Control
         uplane[] = fillColor.u;
         vplane[] = fillColor.v;
 
-        if(!texture.updateTextureUV(yplane, widthi, uplane, uvWidth, vplane, uvWidth)){
+        if (!texture.updateTextureUV(yplane, widthi, uplane, uvWidth, vplane, uvWidth))
+        {
             logger.error(texture.lastErrorNew);
         }
 
         panel = new VideoPlayerPanel;
         addCreate(panel);
-        panel.onPlay = () { engine.load; };
+        panel.onPlay = () {
+
+            if (onStart)
+            {
+                onStart();
+            }
+
+            engine.load;
+        };
 
         engine.onUpdateYV = (yplane, ypitch, uplane, upitch, vplane, vpitch) {
             if (!texture.updateTextureUV(yplane, cast(int) ypitch, uplane, cast(int) upitch, vplane, cast(

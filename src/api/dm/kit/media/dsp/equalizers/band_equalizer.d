@@ -11,10 +11,6 @@ class BandEqualizer
 {
     size_t numFreqBands;
 
-    size_t bandScale;
-    float bandStartOffset = 0;
-    float bandEndOffset = 0;
-
     void delegate() onUpdateStart;
     void delegate(AnalogSignal) onUpdate;
     void delegate() onUpdateEnd;
@@ -31,7 +27,7 @@ class BandEqualizer
     float sampleWindowSize = 0;
     float sampleRateHz = 0;
 
-    this(float sampleWindowSize, float sampleRateHz, AnalogSignal delegate(size_t fftIndex) signalProvider, size_t numFregBands = 10, size_t bandScale = 1, float bandStartOffset = 0, float bandEndOffset = 0)
+    this(float sampleWindowSize, float sampleRateHz, AnalogSignal delegate(size_t fftIndex) signalProvider, size_t numFregBands = 10)
     {
         assert(sampleWindowSize > 0);
         this.sampleWindowSize = sampleWindowSize;
@@ -45,13 +41,14 @@ class BandEqualizer
         assert(signalProvider);
         this.signalProvider = signalProvider;
 
-        this.bandStartOffset = bandStartOffset;
-        this.bandEndOffset = bandEndOffset;
-        this.bandScale = bandScale;
-
         bandValues = new float[](numFreqBands);
         bandValues[] = 0;
     }
+
+    float minFreq = 20.0f;
+    float maxFreq = 22050.0f;
+    float minDB = -60.0f;
+    float maxDB = 0.0f;
 
     void update()
     {
@@ -62,59 +59,78 @@ class BandEqualizer
             onUpdateStart();
         }
 
-        size_t startIndexOffset = 0;
-
-        const float df = sampleRateHz / sampleWindowSize;
-
-        size_t maxEndIndex = cast(size_t)(sampleWindowSize / 2);
-        if (bandEndOffset > 0)
+        size_t maxIndex = cast(size_t)(sampleWindowSize / 2);
+        if (maxIndex > 0)
         {
-            maxEndIndex = cast(size_t)(bandEndOffset / df);
+            maxIndex--;
         }
 
-        float bandWidth = 0;
+        import Math = api.math;
 
-        if (bandEndOffset > 0)
-        {
-            startIndexOffset = cast(size_t)(bandStartOffset / df);
-            assert(bandEndOffset > bandStartOffset);
+        // size_t numBands = bandValues.length;
+        // size_t lastEnd = 0;
 
-            //float totalBandwidth = bandEndOffset - bandStartOffset;
-            //bandWidth = totalBandwidth / numFreqBands;
-            bandWidth = (maxEndIndex - startIndexOffset) / numFreqBands;
-            
-        }
-        else if (bandStartOffset > 0)
-        {
-            float fMax = sampleRateHz / 2.0;
-            float effectiveWidth = (fMax - bandStartOffset) / numFreqBands;
-            bandWidth = effectiveWidth / df;
-            startIndexOffset = cast(size_t)(bandStartOffset / df);
-        }
-        else
-        {
-            bandWidth = (sampleWindowSize / 2 / bandScale) / cast(float) numFreqBands;
-        }
+        // foreach (i, ref float v; bandValues)
+        // {
+        //     float fEnd = minFreq * Math.pow(maxFreq / minFreq, cast(float)(i + 1) / numBands);
+        //     size_t start = lastEnd;
+        //     size_t end = cast(size_t) Math.round((fEnd * sampleWindowSize / 2) / sampleRateHz);
+        //     if (end > maxIndex)
+        //         end = maxIndex;
+        //     if (end <= start)
+        //         end = start + 1;
 
+        //     size_t count = 0;
+        //     float sum = 0;
+        //     foreach (j; start .. end)
+        //     {
+        //         if (j >= maxIndex)
+        //             break;
+
+        //         auto signal = signalProvider(j);
+        //         sum += signal.magn;
+        //         count++;
+        //         if (onUpdate)
+        //             onUpdate(signal);
+        //     }
+
+        //     import std.math.exponential : log10;
+
+        //     auto magnV = (count > 0) ? (sum / count) : 0;
+        //     float db = 20.0f * log10(magnV + 0.000001f);
+        //     float normalized = (db - minDB) / (maxDB - minDB);
+
+        //     v = Math.clamp01(normalized);
+
+        //     lastEnd = end;
+
+        //     import std.format : format;
+        //     import Math = api.math;
+
+        //     if (onUpdateIndexFreqStartEnd)
+        //     {
+        //         auto startFreq = signalProvider(start).freqHz;
+        //         auto endFreq = signalProvider(end).freqHz;
+        //         onUpdateIndexFreqStartEnd(i, startFreq, endFreq);
+
+        //         // import std;
+
+        //         // writeln("Start index:", start, ", end: ", end, " Start freq hz:", startFreq, " end:", endFreq, " v: ", v);
+        //     }
+
+        // }
+
+        float bandWidth = sampleWindowSize / 2 / 2 / numFreqBands;
+
+        size_t count;
         foreach (i, ref float v; bandValues)
         {
-            size_t start = startIndexOffset + cast(size_t)(i * bandWidth);
-            size_t end = startIndexOffset + cast(size_t)((i + 1) * bandWidth);
+            size_t start = cast(size_t)(i * bandWidth);
+            size_t end = cast(size_t)((i + 1) * bandWidth);
 
-            if (i == numFreqBands - 1){
-                end = maxEndIndex;
-            }
-
-            if (start >= maxEndIndex){
-                break;
-            }
-
-            //TODO check start
-            if (end > maxEndIndex)
+            if (end > maxIndex)
             {
-                import std.format : format;
-
-                throw new Exception(format("Out of bounds array index: %s, max: %s", end, maxEndIndex));
+                end = maxIndex;
             }
 
             foreach (j; start .. end)
@@ -128,7 +144,25 @@ class BandEqualizer
                 }
 
                 v += magn;
+                count++;
             }
+
+            if (count > 0)
+            {
+                v /= count;
+            }
+
+            float normalized = v / (sampleWindowSize / 2.0f);
+            if (normalized < 0.00001)
+            {
+                normalized = 0;
+            }
+            else
+            {
+                normalized = Math.clamp(normalized * 500, 0.0f, 1.0f);
+            }
+
+            v = normalized;
 
             import std.format : format;
             import Math = api.math;
@@ -136,11 +170,15 @@ class BandEqualizer
             if (onUpdateIndexFreqStartEnd)
             {
                 auto startFreq = signalProvider(start).freqHz;
-                auto endFreq = signalProvider(end - 1).freqHz;
+                auto endFreq = signalProvider(end).freqHz;
                 onUpdateIndexFreqStartEnd(i, startFreq, endFreq);
+
+                // import std;
+
+                // writeln("Start index:", start, ", end: ", end, " Start freq hz:", startFreq, " end:", endFreq);
             }
 
-            v /= bandWidth;
+            //     //v /= bandWidth;
         }
 
         if (onUpdateEnd)

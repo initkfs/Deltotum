@@ -5,7 +5,6 @@ import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 import api.dm.gui.controls.control : Control;
 
 import api.dm.kit.media.dsp.analog_signals : AnalogSignal;
-import api.dm.kit.media.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
 import api.dm.kit.media.audio.mixers.mix_sound : MixSound;
 import api.dm.kit.media.audio.music.music_notes;
 

@@ -115,6 +115,9 @@ class MediaEngine(
 
         AVRational videoTimeBase;
         AVRational videoAvgRate;
+        
+        AVRational audioTimeBase;
+        AVRational audioAvgRate;
 
         foreach (int i; 0 .. pFormatCtx.nb_streams)
         {
@@ -140,6 +143,10 @@ class MediaEngine(
                 audCodec = codec;
                 audpar = codecParam;
                 audId = i;
+
+                audioTimeBase = stream.time_base;
+                audioAvgRate = stream.avg_frame_rate;
+                
                 isFoundAudio = true;
             }
 
@@ -168,7 +175,7 @@ class MediaEngine(
 
         audioDecoder = new typeof(audioDecoder)(
             logger,
-            AudioDecoderContext(audCodec, audpar, media.audioOutSpec),
+            AudioDecoderContext(audCodec, audpar, media.audioOutSpec, audioTimeBase, audioAvgRate),
             &audioPacketQueue,
             &audioBuffer, audioEngine);
 

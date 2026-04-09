@@ -21,6 +21,10 @@ struct MixSound
     bool playing;
     string name;
 
+    void reset(){
+        this = MixSound.init;
+    }
+
     bool free()
     {
         if (!freeFunPtr || samples.length == 0)

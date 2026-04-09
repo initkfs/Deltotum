@@ -48,6 +48,7 @@ __gshared extern (C) nothrow
 
     //libavcodec
     AVPacket* function() av_packet_alloc;
+    AVPacket* function(AVPacket*) av_packet_clone;
     void function(AVPacket**) av_packet_free;
     void function(AVPacket*) av_packet_unref;
     int function(AVPacket* dst, const AVPacket* src) av_packet_ref;
@@ -160,6 +161,7 @@ class FfmpegLib : DynamicLoader
         if (lib.name == "libavcodec")
         {
             bind(lib, &av_packet_alloc, "av_packet_alloc");
+            bind(lib, &av_packet_clone, "av_packet_clone");
             bind(lib, &av_packet_free, "av_packet_free");
             bind(lib, &av_packet_ref, "av_packet_ref");
             bind(lib, &av_packet_unref, "av_packet_unref");
