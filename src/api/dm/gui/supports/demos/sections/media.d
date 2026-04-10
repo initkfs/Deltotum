@@ -13,9 +13,7 @@ import api.dm.gui.controls.switches.buttons.button : Button;
 
 import core.sync.mutex;
 
-import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
 import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
-import api.dm.gui.controls.meters.levels.rect_fill_level : RectFillLevel;
 import api.dm.kit.media.dsp.synthesis.signal_synthesis;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -30,6 +28,7 @@ import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextFie
 import api.dm.gui.controls.media.audio.piano : Piano;
 import api.dm.kit.media.audio.synthesizers.fm_synthesizer : FMSynthesizer;
 import api.dm.kit.media.audio.mixers.mix_sound : MixSound, SoundHandle;
+import api.dm.gui.controls.media.audio.visualizers.audio_visualizer : AudioVisualizer;
 
 import Math = api.math;
 import api.math.geom2.rect2 : Rect2f;
@@ -39,9 +38,8 @@ import api.math.geom2.rect2 : Rect2f;
  */
 class Media : Control
 {
-    BandEqualizer equalizer;
-    RectFillLevel level;
     Piano piano;
+    AudioVisualizer audioLevel;
 
     this()
     {
@@ -59,42 +57,15 @@ class Media : Control
         enablePadding;
     }
 
-    alias SignalType = float;
-
-    DspProcessor!(sampleBufferSize * 2, 2) dspProcessor;
-
-    shared static
-    {
-        enum sampleWindowSize = 4096;
-        enum sampleBufferSize = 40960;
-    }
-
     float sampleFreq = 0;
 
-    static shared Mutex sampleBufferMutex;
-
-    import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
-    import api.math.numericals.interp;
-
     FMSynthesizer synt;
-    FMSynthesizer drumSynt;
 
     override void create()
     {
         super.create;
 
         sampleFreq = media.audioOutSpec.freqHz;
-
-        sampleBufferMutex = new shared Mutex();
-
-        // dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
-        // dspProcessor.dspBuffer.block;
-
-        // equalizer = new BandEqualizer(sampleWindowSize, sampleFreq, (fftIndex) {
-        //     return dspProcessor.fftBuffer[fftIndex];
-        // }, 100, 8);
-
-        // dspProcessor.onUpdateFTBuffer = () { equalizer.update; };
 
         auto root = new VBox;
         addCreate(root);
@@ -118,8 +89,6 @@ class Media : Control
         piano.settings.isFcMulFm = true;
         piano.settings.fmIndex = 1;
         piano.settings.noteType = NoteType.note1_4;
-
-        drumSynt = new FMSynthesizer(sampleFreq);
 
         piano.onPianoKey = (key, ref e) {
 
@@ -150,6 +119,7 @@ class Media : Control
 
             auto noteType = piano.settings.noteType;
 
+            synt.isADSR = piano.settings.isADSR;
             synt.adsr = piano.settings.adsr;
 
             float amp = piano.settings.amp;
@@ -173,44 +143,9 @@ class Media : Control
             media.audio.play(MixSound);
         };
 
-        // level = new RectFillLevel((i) {
-        //     if (i < equalizer.bandValues.length)
-        //     {
-        //         return equalizer.bandValues[i] * 2;
-        //     }
-        //     return 0;
-        // }, () { return 1; });
-        // level.levels = 100;
-        // level.rows = 2;
-
-        // level.marginTop = 10;
-
-        // equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
-        //     import std.format : format;
-
-        //     auto label = format("%s\n%s", Math.round(startFreq), Math.round(
-        //             endFreq));
-        //     level.labels[band].text = label;
-        // };
-
-        // addCreate(level);
-
-        // import api.dm.kit.media.engines.media_engine : mediaPlayer;
-        // import api.dm.gui.controls.containers.hbox : HBox;
-
-        // auto playerBox = new HBox;
-        // playerBox.isAlignY = true;
-        // addCreate(playerBox);
-    }
-
-    override void pause()
-    {
-        super.pause;
-    }
-
-    override void run()
-    {
-        super.run;
+        audioLevel = new AudioVisualizer;
+        audioLevel.numLevels = 50;
+        root.addCreate(audioLevel);
     }
 
     override void update(float delta)
@@ -221,9 +156,5 @@ class Media : Control
     override void dispose()
     {
         super.dispose;
-        // foreach (chunk; chunks)
-        // {
-        //     chunk.dispose;
-        // }
     }
 }

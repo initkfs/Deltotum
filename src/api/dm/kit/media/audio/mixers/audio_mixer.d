@@ -101,7 +101,15 @@ class AudioMixer
         return count;
     }
 
-    bool isPlaying() => playingCount != 0;
+    bool isMusicPlaying() => musicChannel1.size != 0;
+    bool isSoundPlaying() => playingCount != 0;
+
+    bool isPlaying() => isMusicPlaying || isSoundPlaying;
+
+    void reset()
+    {
+        mixMusicCount = 0;
+    }
 
     void reset(SoundHandle id)
     {
@@ -167,7 +175,7 @@ class AudioMixer
             mixMusicCount++;
         }
 
-        if (!isPlaying)
+        if (!isSoundPlaying)
         {
             return musicSize;
         }

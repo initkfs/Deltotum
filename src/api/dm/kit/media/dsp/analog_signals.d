@@ -56,6 +56,7 @@ void onBuffer(float[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, siz
     }
 }
 
+//Coherent Gain 2.0
 void hann(float[] data)
 {
     import Math = std.math;
@@ -73,6 +74,7 @@ void hann(float[] data)
     }
 }
 
+//Coherent Gain 1.852 -5.35 dB
 void hamming(float[] data)
 {
     import Math = std.math;
@@ -91,6 +93,7 @@ void hamming(float[] data)
     }
 }
 
+//Coherent Gain 2.381 -7.53 dB
 void blackman(float[] data)
 {
     import Math = std.math;

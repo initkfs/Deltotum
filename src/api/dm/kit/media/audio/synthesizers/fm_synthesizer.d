@@ -51,7 +51,7 @@ class FMSynthesizer : SoundSynthesizer
         };
     }
 
-    void sequence(FMdata[] notes, float amplitude0to1, float[] delegate(float) bufferOnTimeProvider)
+    void sequence(FMdata[] notes, float amplitude0to1, float[]delegate(float) bufferOnTimeProvider)
     {
         sequence(notes, amplitude0to1, (scopeBuff, time) {
             float[] outBuff = bufferOnTimeProvider(time);
@@ -104,7 +104,10 @@ class FMSynthesizer : SoundSynthesizer
             onBuffer(noteBuff.buffer, sampleRateHz, amplitude0to1, channels, (i, frameTime, time) {
                 auto sample = fmodulator(frameTime, 0, n.fc, targetFm, n.index);
                 sample *= amplitude0to1;
-                sample *= adsr.adsr(time);
+                if (isADSR)
+                {
+                    sample *= adsr.adsr(time);
+                }
                 return sample;
             });
 

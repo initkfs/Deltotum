@@ -45,7 +45,7 @@ class SoundSynthesizer : BaseSynthesizer
             noteBuff.dispose;
         }
 
-        MixSound(noteBuff.buffer, n.freqHz, amplitude0to1);
+        mix(noteBuff.buffer, n.freqHz, amplitude0to1);
 
         if (isFadeInOut)
         {
@@ -59,7 +59,7 @@ class SoundSynthesizer : BaseSynthesizer
     {
         auto time = n.durationMs;
         auto noteBuff = new AudioChunk(sampleRateHz, time, channels);
-        MixSound(noteBuff.buffer, n.freqHz, amplitude0to1);
+        mix(noteBuff.buffer, n.freqHz, amplitude0to1);
 
         if (isFadeInOut)
         {
@@ -132,7 +132,7 @@ class SoundSynthesizer : BaseSynthesizer
             //     }
             // }
 
-            MixSound(noteBuff.buffer, n.freqHz, amplitude0to1, phase);
+            mix(noteBuff.buffer, n.freqHz, amplitude0to1, phase);
 
             auto endIndex = buffIndex + noteBuff.buffer.length;
             seqBuff.buffer[buffIndex .. endIndex][] = noteBuff.buffer;

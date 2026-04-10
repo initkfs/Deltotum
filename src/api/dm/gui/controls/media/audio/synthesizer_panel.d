@@ -39,6 +39,8 @@ class SynthesizerPanel : Container
 
     Check isFcMulFmField;
 
+    Check isADSRField;
+
     FracSpinner aADSR;
     FracSpinner dADSR;
     FracSpinner sADSR;
@@ -59,8 +61,13 @@ class SynthesizerPanel : Container
     {
         super.create;
 
-        auto adsrBox = new HBox;
+        auto adsrBox = new HBox(0);
+        adsrBox.isAlignY = true;
         addCreate(adsrBox);
+
+        isADSRField = new Check("ADSR");
+        isADSRField.isOn = true;
+        adsrBox.addCreate(isADSRField);
 
         aADSR = newADSRField(adsrBox);
         aADSR.onChangeOldNew ~= (oldv, newv) {
@@ -183,6 +190,7 @@ class SynthesizerPanel : Container
 
     void reset()
     {
+        isADSRField.isOn(false, false);
         ampField.value(0.5, false);
         fcField.value(0, false);
         fmField.value(0, false);
@@ -209,6 +217,16 @@ class SynthesizerPanel : Container
         value.sustain = sADSR.value;
         value.release = rADSR.value;
         return value;
+    }
+
+    bool isADSR()
+    {
+        if (!isADSRField)
+        {
+            throw new Exception("ADSR bool field not found");
+        }
+
+        return isADSRField.isOn;
     }
 
     void adsr(ADSR v, bool isTriggerListeners = true)

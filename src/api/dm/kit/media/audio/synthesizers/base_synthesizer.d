@@ -19,6 +19,7 @@ class BaseSynthesizer
 
     bool isFadeInOut = true;
 
+    bool isADSR = true;
     ADSR adsr;
 
     float function(float time, float freq, float phase) sampleFunc = &sinovertones;
@@ -33,13 +34,18 @@ class BaseSynthesizer
         this.sampleRateHz = sampleRateHz;
     }
 
-    void MixSound(float[] buffer, float freqHz = 0, float amplitude0to1 = 0.9, float phase = 0)
+    void mix(float[] buffer, float freqHz = 0, float amplitude0to1 = 0.9, float phase = 0)
     {
         onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, frameTime, time) {
             //time = time / channels;
             auto sample = sampleProvider ? sampleProvider(frameTime, freqHz, phase) : sampleFunc(frameTime, freqHz, phase);
             sample *= amplitude0to1;
-            sample *= adsr.adsr(time);
+
+            if (isADSR)
+            {
+                sample *= adsr.adsr(time);
+            }
+
             return sample;
         });
     }
