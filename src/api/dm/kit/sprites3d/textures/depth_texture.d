@@ -1,6 +1,6 @@
 module api.dm.kit.sprites3d.textures.depth_texture;
 
-import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
+import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
 /**
  * Authors: initkfs
@@ -8,7 +8,7 @@ import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
 
 import api.dm.back.sdl3.externs.csdl3;
 
-class DepthTexture : Texture3d
+class DepthTexture : TextureGPU
 {
     SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1;
     bool isMultiSampler;

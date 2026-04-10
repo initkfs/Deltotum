@@ -5,8 +5,8 @@
 Texture2D<float4> diffuseMap : register(t0, space2);
 SamplerState diffuseSampler : register(s0, space2);
 
-//Texture2D<float4> specularMap : register(t1, space2);
-//SamplerState specularSampler : register(s1, space2);
+Texture2D<float4> specularMap : register(t1, space2);
+SamplerState specularSampler : register(s1, space2);
 
 struct SimpleDataBuffer
 {

@@ -71,6 +71,7 @@ import api.dm.kit.sprites2d.images.codecs.jpeg_image_codec : JpegImageCodec;
 import api.dm.lib.libpng.native.binddynamic : PngLib;
 import api.dm.kit.sprites2d.images.codecs.png_image_codec : PngImageCodec;
 import api.dm.kit.sprites2d.images.codecs.bmp_image_codec : BmpImageCodec;
+import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -108,6 +109,13 @@ class SdlApp : GuiApp
 
         JpegLib jpegLib;
         PngLib pngLib;
+
+        SDL_GPUSampler* defaultSampler;
+        TextureGPU diffuseMap;
+        TextureGPU specularMap;
+        TextureGPU normalMap;
+        TextureGPU aoMap;
+        TextureGPU emissionMap;
     }
 
     protected
@@ -1247,6 +1255,62 @@ class SdlApp : GuiApp
 
         windowBuilder.isBuilt = true;
 
+        //TODO move
+        if (windowBuilder.platform.cap.isGPU)
+        {
+            import api.dm.kit.graphics.colors.rgba : RGBA;
+
+            enum defaultMapSize = 1;
+
+            defaultSampler = gpuDevice.newSampler;
+            windowBuilder.gpu.defaultSampler = defaultSampler;
+
+            import api.dm.kit.graphics.colors.rgba : RGBA;
+
+            TextureGPU createDefaultMap(RGBA color)
+            {
+                auto map = new TextureGPU;
+                map.isNeedCamera = false;
+                map.isNeedDispose = false;
+                windowBuilder.buildInit(map);
+                map.create(defaultMapSize, defaultMapSize, color);
+                return map;
+            }
+
+            diffuseMap = createDefaultMap(RGBA.white);
+            windowBuilder.gpu.defaultDiffuse = diffuseMap;
+
+            specularMap = createDefaultMap(RGBA.hex("#404040"));
+            windowBuilder.gpu.defaultSpecular = specularMap;
+
+            normalMap = createDefaultMap(RGBA.hex("#8080FF"));
+            windowBuilder.gpu.defaultNormal = normalMap;
+
+            aoMap = createDefaultMap(RGBA.white);
+            windowBuilder.gpu.defaultAO = aoMap;
+
+            emissionMap = createDefaultMap(RGBA.black);
+            windowBuilder.gpu.defaultEmission = emissionMap;
+
+            TextureGPU[5] defaultTextures = [
+                diffuseMap, specularMap, normalMap, aoMap, emissionMap
+            ];
+
+            gpuDevice.startCopyPass;
+
+            foreach (tex; defaultTextures)
+            {
+                tex.uploadStart;
+            }
+
+            gpuDevice.endCopyPass;
+
+            foreach (tex; defaultTextures)
+            {
+                tex.uploadEnd;
+            }
+        }
+
         //TODO from locale\config;
         if (mode == SdlWindowMode.none)
         {
@@ -1403,6 +1467,26 @@ class SdlApp : GuiApp
         // {
         //     vipsLib.unload;
         // }
+
+        if (diffuseMap)
+        {
+            diffuseMap.dispose;
+        }
+
+        if (specularMap)
+        {
+            specularMap.dispose;
+        }
+
+        if (normalMap)
+        {
+            normalMap.dispose;
+        }
+
+        if (defaultSampler)
+        {
+            gpuDevice.removeSampler(defaultSampler);
+        }
 
         if (gpuDevice)
         {

@@ -17,6 +17,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 class Sprite3d : Sprite2d
 {
     bool isNoDrawOutOfFrustum;
+    bool isNeedCamera = true;
 
     protected
     {
@@ -142,7 +143,7 @@ class Sprite3d : Sprite2d
         {
             if (!sprite3d.hasCamera)
             {
-                if (!_camera)
+                if (!_camera && sprite3d.isNeedCamera)
                 {
                     import std.format : format;
 
@@ -161,7 +162,7 @@ class Sprite3d : Sprite2d
         {
             if (!sprite3d.hasCamera)
             {
-                if (!_camera)
+                if (!_camera && sprite3d.isNeedCamera)
                 {
                     import std.format : format;
 

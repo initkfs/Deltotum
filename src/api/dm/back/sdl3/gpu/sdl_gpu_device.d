@@ -96,6 +96,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     SDL_GPUCopyPass* copyPass() => lastCopyPass;
     SDL_GPUTexture* swapchain() => lastSwapchain;
 
+    SDL_PixelFormat textureFormat()
+    {
+        return SDL_GetPixelFormatFromGPUTextureFormat(pipeLineTargetFormat);
+    }
+
     ComResult createRenderer(SDL_Window* window, ref SDL_Renderer* renderer)
     {
         auto ptr = SDL_CreateGPURenderer(ptr, window);
@@ -948,9 +953,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         bindIndexBuffer(&indexBinding, indexElementSize);
     }
 
-    import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
+    import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
-    void bindFragmentSamplers(Texture3d texture, uint firstSlot = 0)
+    void bindFragmentSamplers(TextureGPU texture, uint firstSlot = 0)
     {
         SDL_GPUTextureSamplerBinding[1] sampleBinding;
         sampleBinding[0].texture = texture.texture;
@@ -958,7 +963,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         bindFragmentSamplers(sampleBinding, firstSlot);
     }
 
-    void bindFragmentSamplers(Texture3d[] textures, uint firstSlot = 0)
+    void bindFragmentSamplers(TextureGPU[] textures, uint firstSlot = 0)
     {
         SDL_GPUTextureSamplerBinding[] sampleBinding = new SDL_GPUTextureSamplerBinding[textures
             .length];
@@ -1096,6 +1101,17 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             throw new Exception("Sampler pointer is null: " ~ getError);
         }
         return samplerPtr;
+    }
+
+    SDL_GPUSampler* newSampler()
+    {
+        SDL_GPUSamplerCreateInfo info = nearestRepeat;
+        return newSampler(&info);
+    }
+
+    void removeSampler(SDL_GPUSampler* sampler)
+    {
+        SDL_ReleaseGPUSampler(ptr, sampler);
     }
 
     void setScissorRect(Rect2f scissor)
@@ -1261,4 +1277,5 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         SDL_BlitGPUTexture(cmdBuff, &blitInfo);
     }
+
 }

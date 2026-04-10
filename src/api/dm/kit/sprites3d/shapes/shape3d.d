@@ -25,7 +25,7 @@ class Shape3d : Sprite3d
     bool isCreateLightingMaterial;
 
     bool isBindDiffuseMap = true;
-    bool isBindSpecularMap;
+    bool isBindSpecularMap = true;
 
     string diffuseMapPath;
     string specularMapPath;
@@ -109,10 +109,7 @@ class Shape3d : Sprite3d
         }
         else
         {
-            if (!lightingMaterial.isCreated)
-            {
-                addCreate(lightingMaterial);
-            }
+            addCreate(lightingMaterial);
         }
     }
 

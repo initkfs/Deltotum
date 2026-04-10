@@ -25,6 +25,7 @@ interface ComSurface : ComPointerable, ComErrorManageable
 
 nothrow:
 
+    ComResult create(int width, int height, uint format);
     ComResult createRGBA32(int width, int height);
     ComResult createBGRA32(int width, int height);
     ComResult createRGB24(int width, int height);

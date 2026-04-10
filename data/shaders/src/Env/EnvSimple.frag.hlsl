@@ -1,13 +1,30 @@
 /**
 * Author: initkfs
 */
+Texture2D<float4> diffuseMap : register(t0, space2);
+SamplerState diffuseSampler : register(s0, space2);
 
-struct SimpleDataBuffer
-{
-     float4 value1;
-};
+Texture2D<float4> specularMap : register(t1, space2);
+SamplerState specularSampler : register(s1, space2);
 
-RWStructuredBuffer<SimpleDataBuffer> sdataBuffer : register(u0, space2);
+Texture2D<float4> normalMap : register(t2, space2);
+SamplerState normalSampler : register(s2, space2);
+
+Texture2D<float4> aoMap : register(t3, space2);
+SamplerState aoSampler : register(s3, space2);
+
+Texture2D<float4> emissionMap : register(t4, space2);
+SamplerState emissionSampler : register(s4, space2);
+
+//TODO one sampler for all
+//SamplerState mainSampler : register(s0, space2);
+
+// struct SimpleDataBuffer
+// {
+//      float4 value1;
+// };
+
+// RWStructuredBuffer<SimpleDataBuffer> sdataBuffer : register(u0, space2);
 
 struct Config {
     float4 albedo;
@@ -44,26 +61,34 @@ FragOutput main(FragInput input)
     //dbuff.value1 = float4(0, lights[1].position);
     //sdataBuffer[0] = dbuff;
 
+    //float ao = aoMap.Sample(sampler, texcoord).r;
+    //float3 ambient = lightAmbientColor * materialDiffuse * ao;
+
     result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 
-    float3 p = input.localPos; 
-    float t = config.iTime * 0.4;
+    result.color = diffuseMap.Sample(diffuseSampler, input.texcoord);
 
-    // 3D Domain Warping
-    p.x += 0.15 * sin(t + p.y * 4.0);
-    p.y += 0.15 * cos(t + p.z * 4.0);
-    p.z += 0.15 * sin(t + p.x * 4.0);
+    //float3 emissive = emissionMap.Sample(sampler, texcoord).rgb * emissionStrength;
+    //finalColor.rgb += emissive;
+
+    // float3 p = input.localPos; 
+    // float t = config.iTime * 0.4;
+
+    // // 3D Domain Warping
+    // p.x += 0.15 * sin(t + p.y * 4.0);
+    // p.y += 0.15 * cos(t + p.z * 4.0);
+    // p.z += 0.15 * sin(t + p.x * 4.0);
     
-    // Wave summation
-    float v = 0.0;
-    v += cos(p.x * 8.0 + t);
-    v += cos(p.y * 7.0 + t * 1.1);
-    v += cos(p.z * 9.0 + t * 1.3);
-    v += cos(length(p.xyz) * 12.0 - t);
+    // // Wave summation
+    // float v = 0.0;
+    // v += cos(p.x * 8.0 + t);
+    // v += cos(p.y * 7.0 + t * 1.1);
+    // v += cos(p.z * 9.0 + t * 1.3);
+    // v += cos(length(p.xyz) * 12.0 - t);
     
-    v = saturate(v * 0.25 + 0.5);
-    float3 color = palette(v + t * 0.1);
-    result.color = float4(config.albedo.rgb * color, 1.0);
+    // v = saturate(v * 0.25 + 0.5);
+    // float3 color = palette(v + t * 0.1);
+    // result.color = float4(config.albedo.rgb * color, 1.0);
     return result;
 }
 

@@ -1,6 +1,6 @@
 module api.dm.kit.sprites3d.textures.cubemap;
 
-import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
+import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
 /**
  * Authors: initkfs
@@ -8,9 +8,9 @@ import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
 
 import api.dm.back.sdl3.externs.csdl3;
 
-class CubeMap : Texture3d
+class CubeMap : TextureGPU
 {
-    alias create = Texture3d.create;
+    alias create = TextureGPU.create;
 
     string[6] faces;
     string basePath;

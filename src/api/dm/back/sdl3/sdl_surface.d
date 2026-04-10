@@ -148,7 +148,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         {
             return getErrorRes("New surface сonverted pointer is null.");
         }
-        SDL_DestroySurface(ptr);
+        dispose;
         ptr = newPtr;
         return ComResult.success;
     }

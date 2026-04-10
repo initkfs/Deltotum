@@ -249,6 +249,8 @@ class Sprite2d : EventKitTarget
     float widthChangeThreshold = defaultTreshold;
     float heightChangeThreshold = defaultTreshold;
 
+    bool isNeedDispose = true;
+
     //pragma(msg, __traits(classInstanceSize, Sprite2d));
 
     this()
@@ -2713,6 +2715,11 @@ class Sprite2d : EventKitTarget
 
         foreach (Sprite2d child; children)
         {
+            if (!child.isNeedDispose)
+            {
+                continue;
+            }
+
             child.parent = null;
 
             if (child.isRunning)
@@ -2725,8 +2732,6 @@ class Sprite2d : EventKitTarget
                 child.dispose;
             }
         }
-
-        invalidateListeners = null;
     }
 
     bool canExpandW(float value)

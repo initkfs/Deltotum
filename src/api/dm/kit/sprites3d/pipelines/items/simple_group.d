@@ -26,6 +26,7 @@ class SimpleGroup : PipelineGroup
         auto buff = pipeBuffers;
         buff.numVertexUniformBuffers += 1;
         buff.numFragUniformBuffers += 1;
+        buff.numFragSamples += 5;
         createPipeline(buff);
     }
 }
