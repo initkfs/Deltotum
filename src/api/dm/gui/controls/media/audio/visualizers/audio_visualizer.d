@@ -32,6 +32,8 @@ class AudioVisualizer : Control
     float smoothFactor = 0.2f;
     size_t numLevels = 10;
 
+    void delegate(AnalogSignal[]) onFftBuffer;
+
     this()
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
@@ -125,6 +127,11 @@ class AudioVisualizer : Control
             if (readSize > 0)
             {
                 readCount++;
+
+                if (onFftBuffer)
+                {
+                    onFftBuffer(fftBuffer);
+                }
             }
         }
         else

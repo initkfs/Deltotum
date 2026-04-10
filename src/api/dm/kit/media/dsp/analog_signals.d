@@ -61,7 +61,7 @@ void hann(float[] data)
     import Math = std.math;
 
     auto size = data.length;
-    if (size == 0)
+    if (size <= 1)
     {
         return;
     }

@@ -43,10 +43,10 @@ class AudioEngine : Thread
     shared Mutex mixerMutex;
     
 
-    enum DspWindowSize = 4096;
+    enum DspWindowSize = 2048;
 
     shared Mutex dspMutex;
-    __gshared DspProcessor!(DspWindowSize * 24, 2, DspWindowSize) dspProcessor;
+    __gshared DspProcessor!(DspWindowSize * 100, 2, DspWindowSize) dspProcessor;
 
     __gshared double bufferStartTimeSec = 0;
     __gshared double lastMixTimeMs = 0;

@@ -102,6 +102,8 @@ class BandEqualizer
             auto magnV = (count > 0) ? (sum / count) : 0;
             float rms = (count > 0) ? Math.sqrt(sumSq / count) : 0.0f;
             rms /= (sampleWindowSize / 2.0f);
+            //Hann compensation
+            rms *= 2.0; 
 
             float db = 20.0f * log10(rms + 0.000001f);
             float normalized = (db - minDB) / (maxDB - minDB);
@@ -201,7 +203,7 @@ class BandEqualizer
         return 20.0 * log10(amp + 1e-7);
     }
 
-    double calculateRMS(float[] samples, double startFreq, double endFreq)
+    double calculateRMSNorm(AnalogSignal[] samples, double startFreq, double endFreq)
     {
         import Math = api.math;
 
@@ -229,7 +231,7 @@ class BandEqualizer
         for (size_t i = startIndex; i <= endIndex; i++)
         {
             // abs for complex == sqrt(re^2 + im^2)
-            double mag = Math.abs(samples[i]);
+            double mag = samples[i].magn;
             // sin amplitude 1.0 ==  1.0
             sumSq += mag * mag;
             count++;
@@ -237,7 +239,18 @@ class BandEqualizer
 
         auto rms = (count > 0) ? Math.sqrt(sumSq / count) : 0;
         rms /= (sampleWindowSize / 2.0f);
+        //Hann compensation
+        rms *= 2.0; 
         //float smoothRMS = lerp(prevSmoothRMS, currentRMS, 0.2f); 
         return rms;
+    }
+
+    double calculateRMSNormDb(AnalogSignal[] samples, double startFreq, double endFreq)
+    {
+        import std.math.exponential : log10;
+
+        auto rms = calculateRMSNorm(samples, startFreq, endFreq);
+        auto db = (rms > 0) ? 20.0 * log10(rms) : -100.0;
+        return db;
     }
 }
