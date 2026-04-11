@@ -31,7 +31,7 @@ class MSAA : GraphicComponent
 
         gpu.dev.isUseSampleCount = true;
         gpu.dev.sampleCount = aliasingSampleCount;
-        gpu.dev.pipeLineTargetFormat = textureFormat;
+        gpu.dev.pipelineTextureFormat = textureFormat;
 
         SDL_GPUTextureCreateInfo msaTextureInfo;
         msaTextureInfo.type = SDL_GPU_TEXTURETYPE_2D;

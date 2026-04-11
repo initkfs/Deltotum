@@ -113,7 +113,7 @@ class Scene3d : Scene2d
             msaa = new MSAA;
             buildInitCreate(msaa);
 
-            gpu.dev.pipeLineTargetFormat = msaa.textureFormat;
+            gpu.dev.pipelineTextureFormat = msaa.textureFormat;
         }
 
         gpu.dev.isStencil = isStencil;
@@ -124,7 +124,7 @@ class Scene3d : Scene2d
         resultTextureInfo.height = window.heightu;
         resultTextureInfo.layer_count_or_depth = 1;
         resultTextureInfo.num_levels = 1;
-        resultTextureInfo.format = gpu.dev.pipeLineTargetFormat;
+        resultTextureInfo.format = gpu.dev.pipelineTextureFormat;
         resultTextureInfo.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
         resultTexture = SDL_CreateGPUTexture(gpu.dev.ptr, &resultTextureInfo);
         assert(resultTexture);
@@ -140,7 +140,7 @@ class Scene3d : Scene2d
             SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_CREATE_WIDTH_NUMBER, window.widthu);
             SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_CREATE_HEIGHT_NUMBER, window.heightu);
             SDL_SetNumberProperty(props, SDL_PROP_TEXTURE_FORMAT_NUMBER, gpu
-                    .dev.pipeLineTargetFormat);
+                    .dev.pipelineTextureFormat);
             renderWrapper = SDL_CreateTextureWithProperties(
                 cast(SDL_Renderer*) window.renderer.rawPtr, props);
             SDL_DestroyProperties(props);

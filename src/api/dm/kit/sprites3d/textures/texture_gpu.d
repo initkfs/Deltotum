@@ -127,7 +127,7 @@ class TextureGPU : Sprite3d
 
         ubyte[] imagePtr = (cast(ubyte*) rawImagePtr)[0 .. imageLen];
 
-        auto newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, gpu.dev.pipeLineTargetFormat, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
+        auto newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, gpu.dev.pipelineTextureFormat, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
 
         if (!newTexture)
         {

@@ -211,7 +211,7 @@ class PipelineGroup : Sprite3d
         SDL_GPUGraphicsPipelineTargetInfo targetInfo;
 
         SDL_GPUColorTargetDescription[1] targetDesc;
-        targetDesc[0].format = gpu.dev.pipeLineTargetFormat;
+        targetDesc[0].format = gpu.dev.pipelineTextureFormat;
         targetInfo.num_color_targets = 1;
         targetInfo.color_target_descriptions = targetDesc
             .ptr;

@@ -77,7 +77,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     SDL_GPUSampleCount sampleCount;
     bool isUseSampleCount;
 
-    SDL_GPUTextureFormat pipeLineTargetFormat = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
+    //SDL_GPU_TEXTUREFORMAT_R11G11B10_UFLOAT, SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT
+    SDL_GPUTextureFormat pipelineTextureFormat = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
 
     SDL_FColor clearColor = SDL_FColor(1, 1, 1, 1);
 
@@ -98,7 +99,12 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     SDL_PixelFormat textureFormat()
     {
-        return SDL_GetPixelFormatFromGPUTextureFormat(pipeLineTargetFormat);
+        auto mustBeFormat = SDL_GetPixelFormatFromGPUTextureFormat(pipelineTextureFormat);
+        if (mustBeFormat == SDL_PIXELFORMAT_UNKNOWN)
+        {
+            throw new Exception("Inknown format from gpu format");
+        }
+        return mustBeFormat;
     }
 
     ComResult createRenderer(SDL_Window* window, ref SDL_Renderer* renderer)
