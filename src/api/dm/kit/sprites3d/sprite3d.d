@@ -58,7 +58,7 @@ class Sprite3d : Sprite2d
     bool isMatrixRecalc;
 
     //TODO move to materials
-    RGBA albedo = RGBA.black;
+    RGBA albedo = RGBA.white;
     float albedoIntensity = 1;
 
     this()

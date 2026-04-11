@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.pipelines.items.simple_group;
+module api.dm.kit.sprites3d.pipelines.env.env_group;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.lightings.phongs.materials.material : Light, Material;
@@ -33,13 +33,15 @@ align(4):
 align(16):
     Light[4] lights;
     Material material;
+align(4):
+    uint isLamp;
 }
 
 /**
  * Authors: initkfs
  */
 
-class SimpleGroup : PipelineGroup
+class EnvGroup : PipelineGroup
 {
     bool isCreateDefaultLight = true;
 
@@ -51,7 +53,7 @@ class SimpleGroup : PipelineGroup
     {
         super();
         vertexShaderName = "EnvFull.vert";
-        fragmentShaderName = "EnvSimple.frag";
+        fragmentShaderName = "EnvFull.frag";
 
         isPushUniformVertexMatrix = true;
     }
@@ -144,6 +146,8 @@ class SimpleGroup : PipelineGroup
         config.time = platform.timer.ticksMs / 1000.0;
         config.lightCount = lightCount;
 
+        auto isLamp = (cast(BaseLight) sprite) !is null;
+
         foreach (li; 0 .. lightCount)
         {
             auto lamp = lights[li];
@@ -204,6 +208,9 @@ class SimpleGroup : PipelineGroup
         }
 
         config.material = mat;
+
+        //TODO lamp pipeline
+        config.isLamp = isLamp;
 
         gpu.dev.pushUniformFragmentData(0, &config, config.sizeof);
     }

@@ -16,6 +16,8 @@ struct Material
 align(4):
     float shininess = 32;
     float intensity = 0;
+    float reserve1;
+    float reserve2;
 }
 
 struct Light
