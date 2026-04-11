@@ -83,9 +83,78 @@ float3 palette(float t) {
     return a + b * cos(6.28318 * (c * t + d));
 }
 
+float3 calcDir(float3 diffuseColor, float3 specularColor, Light light, FragInput input, Material material, float3 viewDir){
+    float3 lightDir = normalize(-light.direction);
+    float diff = max(dot(input.normal, lightDir), 0.0);
+    //float3 reflectDir = reflect(-lightDir, input.normal);
+    float3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(input.normal, halfwayDir), 0.0), material.shininess);
+    //float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.shininess);
+    float specMask = diff > 0.0 ? 1.0 : 0.0;
+    float3 ambient  = light.ambient  * diffuseColor;
+    float3 diffuse  = light.diffuse  * diff * diffuseColor;
+    float3 specular = light.specular * spec * specMask  * specularColor;
+
+    return ambient + diffuse + specular;
+}
+
+float3 calcPoint(float3 diffuseColor, float3 specularColor, Light light, FragInput input, Material material, float3 viewDir){
+    float3 lightDir = normalize(light.position - input.worldPos);
+    float diff = max(dot(input.normal, lightDir), 0.0);
+    //float3 reflectDir = reflect(-lightDir, input.normal);
+    float3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(input.normal, halfwayDir), 0.0), material.shininess);
+    
+    float distance = length(light.position - input.worldPos);
+    
+    float attenuation = 1.0 / (light.constantCoeff + light.linearCoeff * distance + 
+  			     light.quadraticCoeff * (distance * distance));   
+    float specMask = diff > 0.0 ? 1.0 : 0.0;
+
+    float3 ambient = light.ambient  * diffuseColor;
+    float3 diffuse = light.diffuse  * diff * diffuseColor;
+    float3 specular = light.specular * spec * specMask * specularColor;
+
+    //return ambient + (diffuse * attenuation) + (specular * attenuation);
+    return (ambient + diffuse + specular) * attenuation;
+}
+
+float3 calcSpot(float3 diffuseColor, float3 specularColor, Light light, FragInput input, Material material, float3 viewDir)
+{
+    float3 lightDir = normalize(light.position - input.worldPos);
+    float diff = max(dot(input.normal, lightDir), 0.0);
+    //float3 reflectDir = reflect(-lightDir, input.normal);
+    float3 halfwayDir = normalize(lightDir + viewDir);
+    
+    float spec = pow(max(dot(input.normal, halfwayDir), 0.0), material.shininess);
+    float specMask = diff > 0.0 ? 1.0 : 0.0;
+
+    float distance = length(light.position - input.worldPos);
+    float attenuation = 1.0 / (light.constantCoeff + light.linearCoeff * distance + light.quadraticCoeff * (distance * distance));    
+    float theta = dot(lightDir, normalize(-light.lightDirection)); 
+    
+    //float epsilon = light.cutoff - light.outerCutoff;
+    float epsilon = max(light.cutoff - light.outerCutoff, 0.0001);
+    float intensity = clamp((theta - light.outerCutoff) / epsilon, 0.0, 1.0);
+    
+    float3 ambient = light.ambient * diffuseColor;
+    float3 diffuse = light.diffuse * diff * diffuseColor;
+    float3 specular = light.specular * spec * specMask * specularColor;
+
+    float combinedFactor = attenuation * intensity;
+
+    float3 finalAmbient = ambient * attenuation;
+    float3 finalDiffuse = diffuse * combinedFactor;
+    float3 finalSpecular = specular * combinedFactor;
+    
+    return finalAmbient + finalDiffuse + finalSpecular;
+}
+
 FragOutput main(FragInput input)
 {
     FragOutput result;
+
+    result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 
     //SimpleDataBuffer dbuff;
     //dbuff.value1 = float4(0, lights[1].position);
@@ -94,30 +163,48 @@ FragOutput main(FragInput input)
     //float ao = aoMap.Sample(sampler, texcoord).r;
     //float3 ambient = lightAmbientColor * materialDiffuse * ao;
 
-    result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
-
-    result.color = diffuseMap.Sample(diffuseSampler, input.texcoord);
-
     //float3 emissive = emissionMap.Sample(sampler, texcoord).rgb * emissionStrength;
     //finalColor.rgb += emissive;
 
-    // float3 p = input.localPos; 
-    // float t = config.iTime * 0.4;
+    float3 resultColor = config.material.albedo.rgb;
+
+    float3 p = input.localPos; 
+    float t = config.time * 0.4;
 
     // // 3D Domain Warping
-    // p.x += 0.15 * sin(t + p.y * 4.0);
-    // p.y += 0.15 * cos(t + p.z * 4.0);
-    // p.z += 0.15 * sin(t + p.x * 4.0);
+    p.x += 0.15 * sin(t + p.y * 4.0);
+    p.y += 0.15 * cos(t + p.z * 4.0);
+    p.z += 0.15 * sin(t + p.x * 4.0);
     
     // // Wave summation
-    // float v = 0.0;
-    // v += cos(p.x * 8.0 + t);
-    // v += cos(p.y * 7.0 + t * 1.1);
-    // v += cos(p.z * 9.0 + t * 1.3);
-    // v += cos(length(p.xyz) * 12.0 - t);
+    float v = 0.0;
+    v += cos(p.x * 8.0 + t);
+    v += cos(p.y * 7.0 + t * 1.1);
+    v += cos(p.z * 9.0 + t * 1.3);
+    v += cos(length(p.xyz) * 12.0 - t);
     
     // v = saturate(v * 0.25 + 0.5);
-    // float3 color = palette(v + t * 0.1);
+    float3 effectColor = palette(v + t * 0.1);
+    resultColor += effectColor;
+
+    float3 viewDir = normalize(config.cameraPos - input.worldPos);
+    float3 diffuseColor = diffuseMap.Sample(diffuseSampler, input.texcoord).rgb;
+    float3 specularColor = specularMap.Sample(specularSampler, input.texcoord).rgb;
+
+    for (int li = 0; li < config.lightCount; li++) {
+         Light light = config.lights[li];
+
+         if(light.lightType == LightType::Directional){
+            resultColor += calcDir(diffuseColor, specularColor, light, input, config.material, viewDir);
+         }else if(light.lightType == LightType::Point){
+            resultColor += calcPoint(diffuseColor, specularColor, light, input, config.material, viewDir);
+         }else if(light.lightType == LightType::Spot){
+            resultColor += calcSpot(diffuseColor, specularColor, light, input, config.material, viewDir);
+         }
+    }
+
+    result.color = float4(resultColor, 1);
+
     // result.color = float4(config.albedo.rgb * color, 1.0);
     return result;
 }

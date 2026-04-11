@@ -69,10 +69,11 @@ class SimpleGroup : PipelineGroup
         if (isCreateDefaultLight)
         {
             import api.dm.kit.sprites3d.lightings.lights.point_light : PointLight;
+            import api.dm.kit.sprites3d.lightings.lights.dir_light: DirLight;
 
             auto light = new PointLight;
-            light.y = 0.5;
-            light.z = 2;
+            light.y = 1;
+            light.z = 0.5;
             light.scale = Vec3f(0.1, 0.1, 0.1);
             addCreate(light);
         }
