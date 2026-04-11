@@ -45,6 +45,8 @@ class PipelineGroup : Sprite3d
         bool _hasSprites;
     }
 
+    bool isPushUniformVertexMatrix;
+
     string vertexShaderName;
     string fragmentShaderName;
 
@@ -98,11 +100,6 @@ class PipelineGroup : Sprite3d
         }
 
         return false;
-    }
-
-    override void bindAll()
-    {
-        super.bindAll;
     }
 
     void bindDataBuffer()

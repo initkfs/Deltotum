@@ -56,7 +56,7 @@ cbuffer UBO : register(b0, space3)
     PlaneInfo planes;
     float3 cameraPos;
     Material material;
-    Light lights[6];
+    Light lights[4];
     uint lightCount; 
 };
 

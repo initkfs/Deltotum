@@ -1,40 +1,37 @@
 module api.dm.kit.sprites3d.lightings.phongs.materials.material;
 
 import api.math.geom3.vec3 : Vec3f;
+import api.math.geom4.vec4 : Vec4f;
 
 /**
  * Authors: initkfs
  */
 
-struct PhongData
+struct Material
 {
-    align(16):
-    Vec3f ambient;
-    Vec3f diffuse;
-    Vec3f specular;
-    Vec3f color;
-    align(4):
+    float[4] albedo;
+    float[4] ambient;
+    float[4] diffuse;
+    float[4] specular;
+align(4):
     float shininess = 32;
+    float intensity = 0;
 }
 
-static assert(PhongData.sizeof % 16 == 0);
-
-struct LightData {
-    align(16):
+struct Light
+{
     Vec3f position;
+    uint lightType;
     Vec3f direction;
+    float linearCoeff = 0;
     Vec3f lightDirection;
+    float constantCoeff = 0;
     Vec3f ambient;
+    float quadraticCoeff = 0;
     Vec3f diffuse;
-    Vec3f specular;
-    align(4):
-    float constant = 0;
-    float linear = 0;
-    float quadratic = 0;
     float cutoff = 0;
+    Vec3f specular;
     float outerCutoff = 0;
-    uint type;
 }
 
-static assert(LightData.sizeof % 16 == 0);
-
+static assert(Light.sizeof == 96);

@@ -52,8 +52,8 @@ class Shape3d : Sprite3d
     this()
     {
         id = "Shape3d";
-        isPushUniformVertexMatrix = true;
-        isCreateLightingMaterial = true;
+        //isPushUniformVertexMatrix = true;
+        //isCreateLightingMaterial = true;
     }
 
     void createMesh()

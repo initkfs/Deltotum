@@ -26,20 +26,50 @@ SamplerState emissionSampler : register(s4, space2);
 
 // RWStructuredBuffer<SimpleDataBuffer> sdataBuffer : register(u0, space2);
 
-struct Config {
+namespace LightType {
+    static const uint Directional = 0;
+    static const uint Point = 1;
+    static const uint Spot = 2;
+};
+
+struct Material
+{
     float4 albedo;
+    float4 ambient;
+    float4 diffuse;
+    float4 specular;
+    float shininess;
     float intensity;
-    float reserve;
+};
+
+struct Light {
+    float3 position;
+    uint lightType;
+    float3 direction;
+    float linearCoeff;
+    float3 lightDirection;
+    float constantCoeff;
+    float3 ambient;
+    float quadraticCoeff;
+    float3 diffuse;
+    float cutoff;
+    float3 specular;
+    float outerCutoff;   
+};
+
+struct SceneConfig {
+    float3 cameraPos;
     float nearPlane;
     float farPlane;
-    float iTime;
-    float iResolutionX;
-    float iResolutionY;
+    float time;
+    uint lightCount;
+    Light lights[4];
+    Material material;
 };
 
 cbuffer UBO : register(b0, space3)
 {
-    Config config;
+    SceneConfig config;
 };
 
 #include "Com/ComTypes.hlsli"

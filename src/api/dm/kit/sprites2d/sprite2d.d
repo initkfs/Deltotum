@@ -675,6 +675,16 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
+    void onBeforeDrawChild(Sprite2d child)
+    {
+
+    }
+
+    void onAfterDrawChild(Sprite2d child)
+    {
+
+    }
+
     bool draw(float alpha)
     {
         updateDrawPhys(alpha);
@@ -729,8 +739,18 @@ class Sprite2d : EventKitTarget
 
         if (isRedraw)
         {
+            if (parent)
+            {
+                parent.onBeforeDrawChild(this);
+            }
+            
             drawContent;
             redraw = true;
+
+            if (parent)
+            {
+                parent.onAfterDrawChild(this);
+            }
         }
 
         foreach (Sprite2d obj; children)

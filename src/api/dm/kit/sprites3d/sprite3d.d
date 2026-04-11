@@ -19,6 +19,8 @@ class Sprite3d : Sprite2d
     bool isNoDrawOutOfFrustum;
     bool isNeedCamera = true;
 
+    //bool isPushUniformVertexMatrix;
+
     protected
     {
         Camera _camera;
@@ -45,8 +47,6 @@ class Sprite3d : Sprite2d
 
     bool isRoundEvenZ;
     bool isRoundEvenChildZ;
-
-    bool isPushUniformVertexMatrix;
 
     Quaternion orientation;
     bool isPermanentRotationMode;
@@ -78,56 +78,22 @@ class Sprite3d : Sprite2d
         calcWorldMatrix;
     }
 
-    override bool draw(float alpha)
+    override bool isNeedDraw(Sprite2d sprite)
     {
-        if (!isVisible)
+        if (!super.isNeedDraw(sprite))
         {
             return false;
         }
 
-        bindAll;
-        pushUniforms;
-
-        if (isNoDrawOutOfFrustum && !isInCameraFrustum)
+        if (auto sprite3d = cast(Sprite3d) sprite)
         {
-            return false;
-        }
-
-        bool redraw;
-
-        foreach (Sprite2d obj; children)
-        {
-            if (!obj.isDrawByParent)
+            if (sprite3d.isNoDrawOutOfFrustum && !sprite3d.isInCameraFrustum)
             {
-                continue;
-            }
-
-            if (!obj.isDrawAfterParent && obj.isVisible)
-            {
-                obj.draw(alpha);
+                return false;
             }
         }
 
-        if (isRedraw)
-        {
-            drawContent;
-            redraw = true;
-        }
-
-        foreach (Sprite2d obj; children)
-        {
-            if (!obj.isDrawByParent)
-            {
-                continue;
-            }
-
-            if (obj.isDrawAfterParent && obj.isVisible)
-            {
-                obj.draw(alpha);
-            }
-        }
-
-        return redraw;
+        return true;
     }
 
     bool isInCameraFrustum() => true;
@@ -173,67 +139,6 @@ class Sprite3d : Sprite2d
         }
 
         return super.addCreate(object, index);
-    }
-
-    void pushUniforms()
-    {
-        foreach (child; children)
-        {
-            if (auto sprite3d = cast(Sprite3d) child)
-            {
-                sprite3d.pushUniforms;
-            }
-        }
-
-        if (isPushUniformVertexMatrix)
-        {
-            SceneTransforms transforms;
-            transforms.world = worldMatrix;
-            transforms.camera = camera.view;
-            transforms.projection = camera.projection;
-            transforms.normal = worldMatrixInverse;
-
-            gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
-        }
-
-        struct UniformInfo
-        {
-            float[4] albedoNorm = [1, 1, 1, 1];
-        align(4):
-            float intensity = 1;
-            float reserved = 0;
-            float nearPlane = 0;
-            float farPlane = 0;
-            float iTime = 0;
-            float iResolutionX = 0;
-            float iResolutionY = 0;
-        }
-
-        UniformInfo spriteUniform;
-        //TODO lazy
-        if (albedo != RGBA.init)
-        {
-            spriteUniform.albedoNorm = albedo.toArrayRGBAf;
-        }
-
-        if (albedoIntensity != 1)
-        {
-            foreach (ref v; spriteUniform.albedoNorm)
-            {
-                v *= albedoIntensity;
-            }
-        }
-
-        spriteUniform.nearPlane = camera.nearPlane;
-        spriteUniform.farPlane = camera.farPlane;
-
-        //TODO time > 100000 
-        spriteUniform.iTime = platform.timer.ticksMs / 1000.0;
-        
-        spriteUniform.iResolutionX = window.width;
-        spriteUniform.iResolutionY = window.height;
-
-        gpu.dev.pushUniformFragmentData(0, &spriteUniform, spriteUniform.sizeof);
     }
 
     void calcWorldMatrix()
@@ -421,6 +326,17 @@ class Sprite3d : Sprite2d
 
     override float angle() => _angle;
 
+    void bindAll()
+    {
+        foreach (ch; children)
+        {
+            if (auto sprite3d = cast(Sprite3d) ch)
+            {
+                sprite3d.bindAll;
+            }
+        }
+    }
+
     void uploadStart()
     {
         foreach (child; children)
@@ -439,17 +355,6 @@ class Sprite3d : Sprite2d
             if (auto sprite3d = cast(Sprite3d) child)
             {
                 sprite3d.uploadEnd;
-            }
-        }
-    }
-
-    void bindAll()
-    {
-        foreach (sprite; children)
-        {
-            if (auto sprite3d = cast(Sprite3d) sprite)
-            {
-                sprite3d.bindAll;
             }
         }
     }
