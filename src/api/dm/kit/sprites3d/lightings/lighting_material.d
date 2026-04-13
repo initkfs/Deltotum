@@ -33,6 +33,8 @@ class LightingMaterial : Sprite3d
     {
         this.diffuseMapPath = diffuseMapPath;
         this.specularMapPath = specularMapPath;
+
+        id = "LightMaterial";
     }
 
     override void create()

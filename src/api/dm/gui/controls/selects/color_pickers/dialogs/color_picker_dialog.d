@@ -51,6 +51,8 @@ class ColorPickerDialog : Control
 
     size_t paletteColorSize = 14;
 
+    float valueStep = 0.01;
+
     protected
     {
         RGBA _lastColor;
@@ -131,6 +133,7 @@ class ColorPickerDialog : Control
             _lastColor.a = alpha;
             updateColor(_lastColor);
         });
+        alphaField.scrollDt = valueStep;
         addCreate(alphaField);
         alphaField.enablePadding;
 
@@ -192,6 +195,7 @@ class ColorPickerDialog : Control
         auto field = new RegulateTextField(text, minValue, maxValue, (v) {
             updateColorRGBA;
         });
+        field.scrollDt = valueStep;
         return field;
     }
 
@@ -235,6 +239,7 @@ class ColorPickerDialog : Control
         hslHField = new RegulateTextField("H", HSLA.minHue, HSLA.maxHue, (v) {
             updateColorHSL;
         });
+        hslHField.scrollDt = valueStep;
         hslHField.onNewScrollField = (scroll) {
             auto thumbStyle = createStyle;
             thumbStyle.isFill = false;
@@ -323,12 +328,14 @@ class ColorPickerDialog : Control
         hslSField = new RegulateTextField("S", HSLA.minSaturation, HSLA.maxSaturation, (v) {
             updateColorHSL;
         });
+        hslSField.scrollDt = valueStep;
         form.addCreate(hslSField);
         hslHField.value(HSLA.maxSaturation, false);
 
         hslLField = new RegulateTextField("L", HSLA.minLightness, HSLA.maxLightness, (v) {
             updateColorHSL;
         });
+        hslLField.scrollDt = valueStep;
         form.addCreate(hslLField);
         hslLField.value(HSLA.maxLightness, false);
 

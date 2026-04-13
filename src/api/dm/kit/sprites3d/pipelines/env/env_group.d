@@ -52,6 +52,7 @@ class EnvGroup : PipelineGroup
     this()
     {
         super();
+        id = "EnvGroup";
         vertexShaderName = "EnvFull.vert";
         fragmentShaderName = "EnvFull.frag";
 
@@ -71,12 +72,15 @@ class EnvGroup : PipelineGroup
         if (isCreateDefaultLight)
         {
             import api.dm.kit.sprites3d.lightings.lights.point_light : PointLight;
-            import api.dm.kit.sprites3d.lightings.lights.dir_light: DirLight;
+            import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
+            import api.dm.kit.graphics.colors.hsla: HSLA;
+            import api.dm.kit.graphics.colors.rgba: RGBA;
 
             auto light = new PointLight;
-            light.y = 1;
-            light.z = 0.5;
+            light.pos3 = Vec3f(-1, 1, 2);
+            light.direction = (Vec3f(0, 0, 0).sub(light.pos3)).normalize;
             light.scale = Vec3f(0.1, 0.1, 0.1);
+            light.ambient = RGBA.black;
             addCreate(light);
         }
     }
@@ -156,15 +160,16 @@ class EnvGroup : PipelineGroup
 
             lightData.position = lamp.pos3;
             lightData.lightType = 0;
-            lightData.direction = camera.cameraFront;
+            //lightData.direction = camera.cameraFront;
+            lightData.direction = lamp.direction;
             lightData.linearCoeff = 0.09f;
             //lightData.lightDirection;
             lightData.constantCoeff = 1.0;
-            lightData.ambient = lamp.ambient;
+            lightData.ambient = lamp.ambient.toArrayFRGB;
             lightData.quadraticCoeff = 0;
-            lightData.diffuse = lamp.diffuse;
+            lightData.diffuse = lamp.diffuse.toArrayFRGB;
             lightData.cutoff = Math.cosDeg(12.5);
-            lightData.specular = lamp.specular;
+            lightData.specular = lamp.specular.toArrayFRGB;
             lightData.outerCutoff = Math.cosDeg(17.5);
 
             uint type;
@@ -178,7 +183,7 @@ class EnvGroup : PipelineGroup
             }
             else if (cast(SpotLight) lamp)
             {
-                lightData.lightDirection = lamp.lightDirection;
+                lightData.direction = lamp.direction;
                 type = 2;
             }
             else if (cast(PointLight) lamp)
@@ -236,5 +241,20 @@ class EnvGroup : PipelineGroup
         }
 
         return true;
+    }
+
+    BaseLight lamp(size_t lampIndex = 0)
+    {
+        if (lights.length == 0)
+        {
+            throw new Exception("Not found any lamp");
+        }
+
+        if (lampIndex >= lights.length)
+        {
+            throw new Exception("Out of bounds lamp index");
+        }
+
+        return lights[lampIndex];
     }
 }

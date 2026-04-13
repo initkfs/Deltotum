@@ -28,11 +28,11 @@ struct Light
     float linearCoeff = 0;
     Vec3f lightDirection;
     float constantCoeff = 0;
-    Vec3f ambient;
+    float[3] ambient;
     float quadraticCoeff = 0;
-    Vec3f diffuse;
+    float[3] diffuse;
     float cutoff = 0;
-    Vec3f specular;
+    float[3] specular;
     float outerCutoff = 0;
 }
 

@@ -58,7 +58,7 @@ class Sprite3d : Sprite2d
     bool isMatrixRecalc;
 
     //TODO move to materials
-    RGBA albedo = RGBA.white;
+    RGBA albedo = RGBA.gray;
     float albedoIntensity = 1;
 
     this()
@@ -378,6 +378,7 @@ class Sprite3d : Sprite2d
 
     float angleX() => _angleX;
     float angleY() => _angleY;
+    alias angleZ = angle;
 
     bool angleX(float v)
     {
@@ -406,6 +407,7 @@ class Sprite3d : Sprite2d
     alias pos = typeof(super).pos;
 
     Vec3f pos3() @safe pure nothrow => Vec3f(_x, _y, _z);
+    bool pos3(Vec3f p) => pos(p);
 
     bool pos(Vec3f newPos) => pos(newPos.x, newPos.y, newPos.z);
 

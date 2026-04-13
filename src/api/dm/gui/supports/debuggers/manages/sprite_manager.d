@@ -2,6 +2,7 @@ module api.dm.gui.supports.debuggers.manages.sprite_manager;
 
 import api.dm.gui.supports.debuggers.base_debugger_panel : BaseDebuggerPanel;
 
+import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -11,6 +12,7 @@ import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.gui.controls.meters.spinners.spinner : Spinner, FracSpinner;
 import api.dm.gui.controls.selects.color_pickers.color_picker : ColorPicker;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
+import api.dm.kit.sprites3d.lightings.lights.base_light : BaseLight;
 
 /**
  * Authors: initkfs
@@ -36,6 +38,8 @@ class SpriteManager : BaseDebuggerPanel
     RegulateTextField albedoIntensity;
 
     dstring initNumField = "0";
+
+    LightPanel lightPanel;
 
     this(GuiScene scene)
     {
@@ -103,6 +107,16 @@ class SpriteManager : BaseDebuggerPanel
         });
         albedoIntensity.scrollDt = 0.1;
         addCreate(albedoIntensity);
+
+        lightPanel = new LightPanel;
+        addCreate(lightPanel);
+        enablePanel(lightPanel, false);
+    }
+
+    void enablePanel(Control panel, bool value)
+    {
+        panel.isVisible = value;
+        panel.isManaged = value;
     }
 
     void callOnSprite(void delegate(Sprite2d) onSprite)
@@ -144,9 +158,74 @@ class SpriteManager : BaseDebuggerPanel
             zField.valueLabel.text = toStringField(sprite3.z);
             albedo.color(sprite3.albedo, false);
             albedoIntensity.value(sprite3.albedoIntensity, false);
+
+            xRotateField.value(sprite3.angleX);
+            yRotateField.value(sprite3.angleY);
+            zRotateField.value(sprite3.angle);
+        }
+
+        if (auto lamp = cast(BaseLight) sprite)
+        {
+            enablePanel(lightPanel, true);
+            lightPanel.lamp = lamp;
+            lightPanel.ambientField.color(lamp.ambient, false);
+            lightPanel.diffuseField.color(lamp.diffuse, false);
+            lightPanel.specularField.color(lamp.specular, false);
+        }
+        else
+        {
+            enablePanel(lightPanel, false);
+            lightPanel.lamp = null;
         }
 
     }
 
     Sprite2d currentSprite() => _currentSprite;
+}
+
+class LightPanel : Control
+{
+    ColorPicker ambientField;
+    ColorPicker diffuseField;
+    ColorPicker specularField;
+
+    BaseLight lamp;
+
+    this()
+    {
+        setVLayout;
+    }
+
+    override void create()
+    {
+        super.create;
+
+        ambientField = new ColorPicker;
+        addCreate(ambientField);
+        ambientField.onChangeOldNew ~= (old, newv) {
+            if (lamp)
+            {
+                lamp.ambient = newv;
+            }
+        };
+
+        diffuseField = new ColorPicker;
+        addCreate(diffuseField);
+        diffuseField.onChangeOldNew ~= (old, newv) {
+            if (lamp)
+            {
+                lamp.diffuse = newv;
+            }
+        };
+
+        specularField = new ColorPicker;
+        addCreate(specularField);
+        specularField.onChangeOldNew ~= (old, newv) {
+            if (lamp)
+            {
+                lamp.specular = newv;
+            }
+        };
+
+    }
 }

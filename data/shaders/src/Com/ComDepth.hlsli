@@ -18,6 +18,6 @@ float linearizeDepth(float depth, float near, float far)
 
 float linearizeDepthReversedDX(float depth, float near, float far)
 {
-    float linearDepth = (near * far) / (far + depth * (near - far));
+    //float linearDepth = (near * far) / (far + depth * (near - far));
     return (near * far) / (depth * (far - near) + near);
 }
