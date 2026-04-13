@@ -73,8 +73,8 @@ class EnvGroup : PipelineGroup
         {
             import api.dm.kit.sprites3d.lightings.lights.point_light : PointLight;
             import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
-            import api.dm.kit.graphics.colors.hsla: HSLA;
-            import api.dm.kit.graphics.colors.rgba: RGBA;
+            import api.dm.kit.graphics.colors.hsla : HSLA;
+            import api.dm.kit.graphics.colors.rgba : RGBA;
 
             auto light = new PointLight;
             light.pos3 = Vec3f(-1, 1, 2);
@@ -155,6 +155,12 @@ class EnvGroup : PipelineGroup
         foreach (li; 0 .. lightCount)
         {
             auto lamp = lights[li];
+
+            if (!lamp.isVisible && config.lightCount >= 0)
+            {
+                config.lightCount--;
+                continue;
+            }
 
             Light lightData;
 

@@ -13,6 +13,7 @@ import api.dm.gui.controls.meters.spinners.spinner : Spinner, FracSpinner;
 import api.dm.gui.controls.selects.color_pickers.color_picker : ColorPicker;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 import api.dm.kit.sprites3d.lightings.lights.base_light : BaseLight;
+import api.dm.gui.controls.switches.checks.check : Check;
 
 /**
  * Authors: initkfs
@@ -29,6 +30,10 @@ class SpriteManager : BaseDebuggerPanel
     FracSpinner yField;
     FracSpinner zField;
 
+    FracSpinner xScaleField;
+    FracSpinner yScaleField;
+    FracSpinner zScaleField;
+
     FracSpinner xRotateField;
     FracSpinner yRotateField;
     FracSpinner zRotateField;
@@ -40,6 +45,8 @@ class SpriteManager : BaseDebuggerPanel
     dstring initNumField = "0";
 
     LightPanel lightPanel;
+
+    Check isVisibleField;
 
     this(GuiScene scene)
     {
@@ -68,6 +75,25 @@ class SpriteManager : BaseDebuggerPanel
             new Text("x:"), xField, new Text("y:"), yField, new Text("z:"), zField
         ]);
 
+        xScaleField = createNumericField((v) {
+            callOn3dSprite((sprite) { sprite.scale.x = v; });
+        });
+        yScaleField = createNumericField((v) {
+            callOn3dSprite((sprite) { sprite.scale.y = v; });
+        });
+        zScaleField = createNumericField((v) {
+            callOn3dSprite((sprite) { sprite.scale.z = v; });
+        });
+
+        auto scaleBox = new HBox(2);
+        addCreate(scaleBox);
+        scaleBox.isAlignY = true;
+
+        scaleBox.addCreate([
+            new Text("sx"), xScaleField, new Text("sy"), yScaleField,
+            new Text("sz"), zScaleField
+        ]);
+
         xRotateField = createNumericField((v) {
             callOn3dSprite((sprite) { sprite.angleX = v; });
         }, 1);
@@ -81,8 +107,8 @@ class SpriteManager : BaseDebuggerPanel
         rotateBox.isAlignY = true;
 
         rotateBox.addCreate([
-            new Text("X:"), xRotateField, new Text("Y:"), yRotateField,
-            new Text("Z:"), zRotateField
+            new Text("rx"), xRotateField, new Text("ry"), yRotateField,
+            new Text("rz"), zRotateField
         ]);
 
         albedo = new ColorPicker;
@@ -107,6 +133,15 @@ class SpriteManager : BaseDebuggerPanel
         });
         albedoIntensity.scrollDt = 0.1;
         addCreate(albedoIntensity);
+
+        isVisibleField = new Check("Vis:");
+        addCreate(isVisibleField);
+        isVisibleField.onOldNewValue ~= (oldv, newv) {
+            if (_currentSprite)
+            {
+                _currentSprite.isVisible = newv;
+            }
+        };
 
         lightPanel = new LightPanel;
         addCreate(lightPanel);
@@ -159,9 +194,13 @@ class SpriteManager : BaseDebuggerPanel
             albedo.color(sprite3.albedo, false);
             albedoIntensity.value(sprite3.albedoIntensity, false);
 
-            xRotateField.value(sprite3.angleX);
-            yRotateField.value(sprite3.angleY);
-            zRotateField.value(sprite3.angle);
+            xScaleField.value(sprite3.scale.x, false);
+            yScaleField.value(sprite3.scale.y, false);
+            zScaleField.value(sprite3.scale.z, false);
+
+            xRotateField.value(sprite3.angleX, false);
+            yRotateField.value(sprite3.angleY, false);
+            zRotateField.value(sprite3.angle, false);
         }
 
         if (auto lamp = cast(BaseLight) sprite)
@@ -178,6 +217,7 @@ class SpriteManager : BaseDebuggerPanel
             lightPanel.lamp = null;
         }
 
+        isVisibleField.isOn(sprite.isVisible, false);
     }
 
     Sprite2d currentSprite() => _currentSprite;
