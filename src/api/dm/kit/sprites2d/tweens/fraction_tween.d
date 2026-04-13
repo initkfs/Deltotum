@@ -27,7 +27,7 @@ class FractionTween : MinMaxTween!float
             value = maxValue;
         }
 
-        onOldNewValue ~= (oldV, newV) {
+        onChangeOldNew ~= (oldV, newV) {
             const oldFrac = value - (value * oldV);
             const newFrac = value - (value * newV);
             if (onOldNewFrac.length > 0)

@@ -13,7 +13,7 @@ import api.dm.gui.controls.texts.text : Text;
  */
 class BaseBiswitch : Labeled
 {
-    void delegate(bool, bool)[] onOldNewValue;
+    void delegate(bool, bool)[] onChangeOldNew;
 
     bool isSwitchIcon;
     bool isSwitchLabel;
@@ -110,9 +110,9 @@ class BaseBiswitch : Labeled
 
     void runSwitchListeners(bool oldValue, bool newValue)
     {
-        if (onOldNewValue.length > 0)
+        if (onChangeOldNew.length > 0)
         {
-            foreach (dg; onOldNewValue)
+            foreach (dg; onChangeOldNew)
             {
                 dg(oldValue, newValue);
             }

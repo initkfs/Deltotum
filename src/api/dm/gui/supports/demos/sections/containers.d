@@ -88,7 +88,7 @@ class Containers : Control
         auto checkFill = configureControl(new Check("StoE"));
         hbox1.addCreate(checkFill);
         checkFill.isOn = true;
-        checkFill.onOldNewValue ~= (oldv, newv) { hbox1.isFillStartToEnd = newv; };
+        checkFill.onChangeOldNew ~= (oldv, newv) { hbox1.isFillStartToEnd = newv; };
 
         auto hboxInc10 = configureControl(createButtonInc10("MT10+=10"));
         hboxInc10.marginTop = 10;
@@ -101,7 +101,7 @@ class Containers : Control
         hboxMarginLeft15.marginLeft = 15;
         hboxMarginLeft15.marginRight = hboxMarginLeft15.marginLeft;
         hboxMarginLeft15.isOn = false;
-        hboxMarginLeft15.onOldNewValue ~= (oldv, newv) { hbox1.isAlignY = newv; };
+        hboxMarginLeft15.onChangeOldNew ~= (oldv, newv) { hbox1.isAlignY = newv; };
         hbox1.addCreate(hboxMarginLeft15);
 
         auto hboxGrow1Child = configureControl(new HBox);
@@ -158,7 +158,7 @@ class Containers : Control
         auto checkFill = configureControl(new Check("StoE"));
         vbox1.addCreate(checkFill);
         checkFill.isOn = true;
-        checkFill.onOldNewValue ~= (oldv, newv) { vbox1.isFillStartToEnd = newv; };
+        checkFill.onChangeOldNew ~= (oldv, newv) { vbox1.isFillStartToEnd = newv; };
 
         auto vboxInc10 = configureControl(createButtonInc10("ML10+=10"));
         vboxInc10.marginLeft = 10;

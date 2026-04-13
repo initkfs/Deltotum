@@ -17,7 +17,7 @@ abstract class BaseProgressBar : MinMaxMeter!float
 
     float progressStep = 0.1;
 
-    void delegate(float oldV, float newV)[] onOldNewValue;
+    void delegate(float oldV, float newV)[] onChangeOldNew;
 
     this(float minValue = 0, float maxValue = 1.0)
     {
@@ -27,9 +27,9 @@ abstract class BaseProgressBar : MinMaxMeter!float
 
     void triggerListeners(float oldV, float newV)
     {
-        if (onOldNewValue.length > 0)
+        if (onChangeOldNew.length > 0)
         {
-            foreach (dg; onOldNewValue)
+            foreach (dg; onChangeOldNew)
             {
                 assert(dg);
                 dg(oldV, newV);

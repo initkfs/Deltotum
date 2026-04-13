@@ -119,7 +119,7 @@ class MainPanel : BaseDebuggerPanel
         // auto tb = new Toggle;
         // btnContainer.addCreate(tb);
 
-        // tb.onOldNewValue ~= (oldValue, newValue) {
+        // tb.onChangeOldNew ~= (oldValue, newValue) {
         //     if (newValue)
         //     {
         //         if (onEnableDebug !is null)
@@ -373,7 +373,7 @@ class MainPanel : BaseDebuggerPanel
     //     controlInfo.addCreate(updateBtn);
 
     //     isDrag = new Check("IsDrag");
-    //     isDrag.onOldNewValue ~= (old, newValue) {
+    //     isDrag.onChangeOldNew ~= (old, newValue) {
     //         onObjectDebug((object) { object.isDraggable = newValue; });
     //     };
     //     controlInfo.addCreate(isDrag);

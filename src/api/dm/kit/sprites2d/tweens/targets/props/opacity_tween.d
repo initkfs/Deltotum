@@ -15,7 +15,7 @@ class OpacityTween : ValueTween
         this.isReverse = isReverse;
         this.isInfinite = isInfinite;
 
-        onOldNewValue ~= (oldValue, value) {
+        onChangeOldNew ~= (oldValue, value) {
             onTargetsIsContinue((object) { object.opacity = value; return true; });
         };
     }

@@ -36,7 +36,7 @@ class SliceTween(T) : MinMaxTween!float
     {
         super.initialize;
 
-        onOldNewValue ~= (oldValue, newValue) {
+        onChangeOldNew ~= (oldValue, newValue) {
             if (range.length == 0)
             {
                 return;

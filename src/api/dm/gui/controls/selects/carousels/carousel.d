@@ -92,7 +92,7 @@ class Carousel : BaseSelector!Sprite2d
             itemChangeAnimation = !onNewItemChangeAnimation ? newAnim : onNewItemChangeAnimation(
                 newAnim);
 
-            itemChangeAnimation.onOldNewValue ~= (oldValue, newValue) {
+            itemChangeAnimation.onChangeOldNew ~= (oldValue, newValue) {
 
                 auto itemRoot = itemRootContainer;
 

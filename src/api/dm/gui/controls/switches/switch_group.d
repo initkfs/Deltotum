@@ -21,7 +21,7 @@ class SwitchGroup : Container
         if (auto toggle = cast(BaseBiswitch) sprite)
         {
             //TODO delete repeated calls
-            toggle.onOldNewValue ~= (oldState, newState) {
+            toggle.onChangeOldNew ~= (oldState, newState) {
                 if (!newState)
                 {
                     return;

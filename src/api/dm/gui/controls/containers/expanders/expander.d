@@ -255,7 +255,7 @@ class Expander : Control
         clipTween = new MinMaxTween!float(0, 1, 250);
         addCreate(clipTween);
 
-        clipTween.onOldNewValue ~= (oldValue, newValue) {
+        clipTween.onChangeOldNew ~= (oldValue, newValue) {
             clip.height = newValue;
 
             if (state == ExpanderState.opened)

@@ -17,7 +17,7 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2f)) : Tween2d
 {
     Interpolator interpolator;
 
-    void delegate(T, T)[] onOldNewValue;
+    void delegate(T, T)[] onChangeOldNew;
 
     //enum x = 10; tween.onDeltaValue ~= (dv) { sprite.x += x * dv; }
     void delegate(T)[] onDeltaValue;
@@ -96,9 +96,9 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2f)) : Tween2d
 
     protected void triggerListeners(T oldValue, T newValue)
     {
-        if (onOldNewValue.length > 0)
+        if (onChangeOldNew.length > 0)
         {
-            foreach (dg; onOldNewValue)
+            foreach (dg; onChangeOldNew)
             {
                 dg(oldValue, newValue);
             }
@@ -176,13 +176,13 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2f)) : Tween2d
     {
         import api.core.utils.arrays : drop;
 
-        return drop(onOldNewValue, dg);
+        return drop(onChangeOldNew, dg);
     }
 
     override void dispose()
     {
         super.dispose;
-        onOldNewValue = null;
+        onChangeOldNew = null;
     }
 }
 

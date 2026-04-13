@@ -68,7 +68,7 @@ class Tab : Container
             labelButton.width = width;
             labelButton.height = height;
 
-            labelButton.onOldNewValue ~= (bool oldv, bool newv) {
+            labelButton.onChangeOldNew ~= (bool oldv, bool newv) {
                 if (newv && onAction)
                 {
                     onAction();

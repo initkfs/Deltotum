@@ -13,7 +13,7 @@ class LinearMotion : TargetTween!(Vec2f, Sprite2d)
     this(Vec2f start, Vec2f end, int timeMs = 200, Interpolator interpolator = null)
     {
         super(start, end, timeMs, interpolator);
-        onOldNewValue ~= (oldValue, value) {
+        onChangeOldNew ~= (oldValue, value) {
             onTargetsIsContinue((object) {
                 object.x = value.x;
                 object.y = value.y;

@@ -136,7 +136,7 @@ class SpriteManager : BaseDebuggerPanel
 
         isVisibleField = new Check("Vis:");
         addCreate(isVisibleField);
-        isVisibleField.onOldNewValue ~= (oldv, newv) {
+        isVisibleField.onChangeOldNew ~= (oldv, newv) {
             if (_currentSprite)
             {
                 _currentSprite.isVisible = newv;

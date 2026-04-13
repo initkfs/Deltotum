@@ -183,7 +183,7 @@ class RadialGauge : BaseRadialGauge
         if (!handTween && isCreateHandTween)
         {
             auto newTween = newHandTween;
-            newTween.onOldNewValue ~= (oldValue, value) { handAngleDeg(value); };
+            newTween.onChangeOldNew ~= (oldValue, value) { handAngleDeg(value); };
             newTween.onStop ~= () { labelText(_value); };
             handTween = onNewHandTween ? onNewHandTween(newTween) : newTween;
 

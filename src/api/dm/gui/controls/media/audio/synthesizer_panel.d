@@ -157,7 +157,7 @@ class SynthesizerPanel : Container
             tryChangePattern((p) { p.noteType = newv; return true; });
         };
 
-        isFcMulFmField.onOldNewValue ~= (oldv, newv) {
+        isFcMulFmField.onChangeOldNew ~= (oldv, newv) {
             tryChangePattern((p) { p.isFcMulFm = newv; return true; });
         };
     }
