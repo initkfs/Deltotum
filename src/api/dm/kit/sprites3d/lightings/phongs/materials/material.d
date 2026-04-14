@@ -45,7 +45,7 @@ import api.math.geom3 : Vec3f;
 * under Creative Commons Attribution-ShareAlike License https://wiki.ogre3d.org/Creative+Commons+Attribution-ShareAlike+License?copyrightpage=-Point%20Light%20Attenuation
 */
 //Range Constant Linear Quadratic
-Vec2f[size_t] coeffMap = [
+Vec3f[size_t] coeffMap = [
     7: Vec3f(1.0, 0.7, 1.8),
     13: Vec3f(1.0, 0.35, 0.44),
     20: Vec3f(1.0, 0.22, 0.20),

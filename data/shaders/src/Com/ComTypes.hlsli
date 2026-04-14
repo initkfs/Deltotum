@@ -25,3 +25,8 @@ struct FragOutput
     float4 color : SV_Target0;
     float depth : SV_Depth;
 };
+
+struct FragOutputColor
+{
+    float4 color : SV_Target0;
+};

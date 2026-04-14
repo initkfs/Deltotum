@@ -158,11 +158,11 @@ float3 calcSpot(float3 diffuseColor, float3 specularColor, Light light, FragInpu
     return finalAmbient + finalDiffuse + finalSpecular;
 }
 
-FragOutput main(FragInput input)
+FragOutputColor main(FragInput input)
 {
-    FragOutput result;
+    FragOutputColor result;
 
-    result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
+    //result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 
     //SimpleDataBuffer dbuff;
     //dbuff.value1 = float4(0, lights[1].position);
