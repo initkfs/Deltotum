@@ -89,12 +89,12 @@ float3 palette(float t) {
     return a + b * cos(6.28318 * (c * t + d));
 }
 
-float3 calcDir(float3 diffuseColor, float3 specularColor, Light light, FragInput input, Material material, float3 viewDir){
+float3 calcDir(float3 diffuseColor, float3 specularColor, float3 normal ,Light light, FragInput input, Material material, float3 viewDir){
     float3 lightDir = normalize(-light.direction);
-    float diff = max(dot(input.normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.0);
     //float3 reflectDir = reflect(-lightDir, input.normal);
     float3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(input.normal, halfwayDir), 0.0), material.shininess);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     //float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.shininess);
     float specMask = diff > 0.0 ? 1.0 : 0.0;
     float3 ambient  = light.ambient  * diffuseColor * material.albedo.rgb;
@@ -104,12 +104,12 @@ float3 calcDir(float3 diffuseColor, float3 specularColor, Light light, FragInput
     return ambient + diffuse + specular;
 }
 
-float3 calcPoint(float3 diffuseColor, float3 specularColor, Light light, FragInput input, Material material, float3 viewDir){
+float3 calcPoint(float3 diffuseColor, float3 specularColor, float3 normal, Light light, FragInput input, Material material, float3 viewDir){
     float3 lightDir = normalize(light.position - input.worldPos);
-    float diff = max(dot(input.normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.0);
     //float3 reflectDir = reflect(-lightDir, input.normal);
     float3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(input.normal, halfwayDir), 0.0), material.shininess);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     
     float distance = length(light.position - input.worldPos);
     
@@ -125,14 +125,14 @@ float3 calcPoint(float3 diffuseColor, float3 specularColor, Light light, FragInp
     return (ambient + diffuse + specular) * attenuation;
 }
 
-float3 calcSpot(float3 diffuseColor, float3 specularColor, Light light, FragInput input, Material material, float3 viewDir)
+float3 calcSpot(float3 diffuseColor, float3 specularColor, float3 normal, Light light, FragInput input, Material material, float3 viewDir)
 {
     float3 lightDir = normalize(light.position - input.worldPos);
-    float diff = max(dot(input.normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.0);
     //float3 reflectDir = reflect(-lightDir, input.normal);
     float3 halfwayDir = normalize(lightDir + viewDir);
     
-    float spec = pow(max(dot(input.normal, halfwayDir), 0.0), material.shininess);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     float specMask = diff > 0.0 ? 1.0 : 0.0;
 
     float distance = length(light.position - input.worldPos);
@@ -158,7 +158,7 @@ float3 calcSpot(float3 diffuseColor, float3 specularColor, Light light, FragInpu
     return finalAmbient + finalDiffuse + finalSpecular;
 }
 
-FragOutputColor main(FragInput input)
+FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 {
     FragOutputColor result;
 
@@ -181,6 +181,15 @@ FragOutputColor main(FragInput input)
         result.color = config.material.albedo;
         return result;
     }
+
+    float3 normal = input.normal;
+    if (!isFrontFace) {
+         normal = -normal;
+    }
+
+    //diff = max(dot(N, lightDir), 0.0); 
+    //Two side light
+    //float diff = abs(dot(N, lightDir)); 
 
     // float3 p = input.localPos; 
     // float t = config.time * 0.4;
@@ -209,11 +218,11 @@ FragOutputColor main(FragInput input)
          Light light = config.lights[li];
 
          if(light.lightType == LightType::Directional){
-            resultColor += calcDir(diffuseColor, specularColor, light, input, config.material, viewDir);
+            resultColor += calcDir(diffuseColor, specularColor, normal, light, input, config.material, viewDir);
          }else if(light.lightType == LightType::Point){
-            resultColor += calcPoint(diffuseColor, specularColor, light, input, config.material, viewDir);
+            resultColor += calcPoint(diffuseColor, specularColor, normal, light, input, config.material, viewDir);
          }else if(light.lightType == LightType::Spot){
-            resultColor += calcSpot(diffuseColor, specularColor, light, input, config.material, viewDir);
+            resultColor += calcSpot(diffuseColor, specularColor, normal, light, input, config.material, viewDir);
          }
     }
 
