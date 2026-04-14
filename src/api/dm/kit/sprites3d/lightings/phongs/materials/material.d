@@ -37,3 +37,25 @@ struct Light
 }
 
 static assert(Light.sizeof == 96);
+
+import api.math.geom3 : Vec3f;
+
+/*
+* https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+* under Creative Commons Attribution-ShareAlike License https://wiki.ogre3d.org/Creative+Commons+Attribution-ShareAlike+License?copyrightpage=-Point%20Light%20Attenuation
+*/
+//Range Constant Linear Quadratic
+Vec2f[size_t] coeffMap = [
+    7: Vec3f(1.0, 0.7, 1.8),
+    13: Vec3f(1.0, 0.35, 0.44),
+    20: Vec3f(1.0, 0.22, 0.20),
+    32: Vec3f(1.0, 0.14, 0.07),
+    50: Vec3f(1.0, 0.09, 0.032),
+    65: Vec3f(1.0, 0.07, 0.017),
+    100: Vec3f(1.0, 0.045, 0.0075),
+    160: Vec3f(1.0, 0.027, 0.0028),
+    200: Vec3f(1.0, 0.022, 0.0019),
+    325: Vec3f(1.0, 0.014, 0.0007),
+    600: Vec3f(1.0, 0.007, 0.0002),
+    3250: Vec3f(1.0, 0.0014, 0.000007),
+];
