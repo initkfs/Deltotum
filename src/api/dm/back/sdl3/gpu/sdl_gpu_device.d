@@ -69,6 +69,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     }
 
     bool isStencil;
+    bool isNeedA2C;
+    bool isA2C;
 
     //better for Reverse-Z, but for stencil SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT
     SDL_GPUTextureFormat depthTextureFormat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
@@ -350,6 +352,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         if (isUseDefaultSampling && isUseSampleCount)
         {
             info.multisample_state.sample_count = sampleCount;
+            if (isNeedA2C)
+            {
+                info.multisample_state.enable_alpha_to_coverage = true;
+                isA2C = true;
+            }
         }
 
         //TODO disable depth for simple scenes

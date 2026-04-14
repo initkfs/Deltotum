@@ -210,8 +210,11 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     // float3 effectColor = palette(v + t * 0.1);
     // resultColor += effectColor;
 
+    float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, input.texcoord);
+
     float3 viewDir = normalize(config.cameraPos - input.worldPos);
-    float3 diffuseColor = diffuseMap.Sample(diffuseSampler, input.texcoord).rgb;
+    
+    float3 diffuseColor = fullDiffuseColor.rgb;
     float3 specularColor = specularMap.Sample(specularSampler, input.texcoord).rgb;
 
     for (int li = 0; li < config.lightCount; li++) {
@@ -228,9 +231,10 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 
     //resultColor = clamp(resultColor, 0.0, 1.0);
 
-    result.color = float4(resultColor, 1);
-
+    result.color = float4(resultColor, fullDiffuseColor.a);
+    //output.a = max(texColor.a, luminance(specular));
     // result.color = float4(config.albedo.rgb * color, 1.0);
+    //or if (texColor.a < 0.1) discard;
     return result;
 }
 

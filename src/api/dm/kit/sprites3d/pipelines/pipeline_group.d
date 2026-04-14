@@ -36,6 +36,8 @@ struct SimpleDataBuffer
 
 class PipelineGroup : Sprite3d
 {
+    bool isBlend;
+
     protected
     {
         SdlGPUPipeline _pipeline;
@@ -218,7 +220,34 @@ class PipelineGroup : Sprite3d
             targetInfo.depth_stencil_format = gpu.dev.depthTextureFormat;
         }
 
+        if (isBlend)
+        {
+            SDL_GPUColorTargetBlendState blendState;
+            if (!gpu.dev.isA2C)
+            {
+                blendState.enable_blend = true;
+            }
+
+            blendState.src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
+            blendState.dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+            blendState.color_blend_op = SDL_GPU_BLENDOP_ADD,
+            blendState.src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
+            blendState.dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ZERO,
+            blendState.alpha_blend_op = SDL_GPU_BLENDOP_ADD;
+
+            // blendState.color_write_mask = cast(ubyte) (SDL_GPU_COLORCOMPONENT_R |
+            //     SDL_GPU_COLORCOMPONENT_G |
+            //     SDL_GPU_COLORCOMPONENT_B |
+            //     SDL_GPU_COLORCOMPONENT_A);
+            
+            targetDesc[0].blend_state = blendState;
+        }
+
         auto stencilState = gpu.dev.depthStencilState;
+        if(isBlend){
+            stencilState.enable_depth_write = false;
+        }
+
         auto rastState = createRasterizerState;
 
         createPipelineFull(
