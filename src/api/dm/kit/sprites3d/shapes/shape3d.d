@@ -27,13 +27,14 @@ class Shape3d : Sprite3d
     string diffuseMapPath;
     string specularMapPath;
     string normalMapPath;
+    string dispMapPath;
 
     protected
     {
         SDL_GPUTransferBuffer* transferBuffer;
     }
 
-    this(ComVertex[] vertices, ushort[] indices = null, string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null)
+    this(ComVertex[] vertices, ushort[] indices = null, string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath)
     {
         this();
         this.vertices = vertices;
@@ -41,6 +42,7 @@ class Shape3d : Sprite3d
         this.diffuseMapPath = diffuseMapPath;
         this.specularMapPath = specularMapPath;
         this.normalMapPath = normalMapPath;
+        this.dispMapPath = dispMapPath;
 
         if (diffuseMapPath.length > 0 || specularMapPath.length > 0)
         {
@@ -99,7 +101,7 @@ class Shape3d : Sprite3d
             {
                 import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
 
-                lightingMaterial = new LightingMaterial(diffuseMapPath, specularMapPath, normalMapPath);
+                lightingMaterial = new LightingMaterial(diffuseMapPath, specularMapPath, normalMapPath, dispMapPath);
                 addCreate(lightingMaterial);
             }
         }

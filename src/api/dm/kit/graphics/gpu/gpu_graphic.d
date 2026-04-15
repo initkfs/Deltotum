@@ -40,6 +40,7 @@ class GPUGraphic : ApplicationUnit
         TextureGPU _defaultNormal;
         TextureGPU _defaultAO;
         TextureGPU _defaultEmission;
+        TextureGPU _defaultDisp;
     }
 
     SdlGPUDevice dev() => device;
@@ -195,6 +196,17 @@ class GPUGraphic : ApplicationUnit
     {
         assert(_defaultEmission);
         return _defaultEmission;
+    }
+
+    void defaultDisp(TextureGPU tex)
+    {
+        _defaultDisp = tex;
+    }
+
+    TextureGPU defaultDisp()
+    {
+        assert(_defaultDisp);
+        return _defaultDisp;
     }
 
     SDL_GPUSampler* defaultSampler()

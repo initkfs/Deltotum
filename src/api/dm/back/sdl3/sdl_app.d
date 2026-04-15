@@ -116,6 +116,7 @@ class SdlApp : GuiApp
         TextureGPU normalMap;
         TextureGPU aoMap;
         TextureGPU emissionMap;
+        TextureGPU dispMap;
     }
 
     protected
@@ -1292,8 +1293,11 @@ class SdlApp : GuiApp
             emissionMap = createDefaultMap(RGBA.black);
             windowBuilder.gpu.defaultEmission = emissionMap;
 
-            TextureGPU[5] defaultTextures = [
-                diffuseMap, specularMap, normalMap, aoMap, emissionMap
+            dispMap = createDefaultMap(RGBA.black);
+            windowBuilder.gpu.defaultDisp = dispMap;
+
+            TextureGPU[6] defaultTextures = [
+                diffuseMap, specularMap, normalMap, aoMap, emissionMap, dispMap
             ];
 
             gpuDevice.startCopyPass;
@@ -1481,6 +1485,21 @@ class SdlApp : GuiApp
         if (normalMap)
         {
             normalMap.dispose;
+        }
+
+        if (dispMap)
+        {
+            dispMap.dispose;
+        }
+
+        if (aoMap)
+        {
+            aoMap.dispose;
+        }
+
+        if (emissionMap)
+        {
+            emissionMap.dispose;
         }
 
         if (defaultSampler)

@@ -66,7 +66,7 @@ class EnvGroup : PipelineGroup
         auto buff = pipeBuffers;
         buff.numVertexUniformBuffers += 1;
         buff.numFragUniformBuffers += 1;
-        buff.numFragSamples += 5;
+        buff.numFragSamples += 6;
         createPipeline(buff);
 
         if (isCreateDefaultLight)
@@ -114,11 +114,14 @@ class EnvGroup : PipelineGroup
             : gpu.defaultSpecular;
         auto normalMap = (mat && mat.normalMap && mat.isBindNormalMap) ? mat.normalMap
             : gpu.defaultNormal;
-        auto auMap = gpu.defaultAO;
+        auto aoMap = gpu.defaultAO;
         auto emissionMap = gpu.defaultEmission;
 
-        TextureGPU[5] maps = [
-            diffuseMap, specularMap, normalMap, auMap, emissionMap
+        auto dispMap = (mat && mat.dispMap && mat.isBindDispMap) ? mat.dispMap
+            : gpu.defaultDisp;
+
+        TextureGPU[6] maps = [
+            diffuseMap, specularMap, normalMap, aoMap, emissionMap, dispMap
         ];
         gpu.dev.bindFragmentSamplers(maps);
     }

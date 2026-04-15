@@ -16,6 +16,9 @@ SamplerState aoSampler : register(s3, space2);
 Texture2D<float4> emissionMap : register(t4, space2);
 SamplerState emissionSampler : register(s4, space2);
 
+Texture2D<float4> dispMap : register(t5, space2);
+SamplerState dispMapSampler : register(s5, space2);
+
 //TODO one sampler for all
 //SamplerState mainSampler : register(s0, space2);
 
@@ -204,6 +207,18 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     //mapNormal.y = -mapNormal.y;
     float3 normal = normalize(mul(mapNormal, TBN)); 
 
+    float3 viewDir = normalize(config.cameraPos - input.worldPos);
+
+    //Disp map
+    float3 viewDirTS = mul(viewDir, TBN); 
+    float height = dispMap.Sample(dispMapSampler, input.texcoord).r;
+    float scale = 0.03;
+    float2 texUV = input.texcoord - (viewDirTS.xy / viewDirTS.z) * (height * scale);
+    if(texUV.x > 1.0 || texUV.y > 1.0 || texUV.x < 0.0 || texUV.y < 0.0){
+        discard; 
+    }
+    
+
     //diff = max(dot(N, lightDir), 0.0); 
     //Two side light
     //float diff = abs(dot(N, lightDir)); 
@@ -227,12 +242,10 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     // float3 effectColor = palette(v + t * 0.1);
     // resultColor += effectColor;
 
-    float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, input.texcoord);
-
-    float3 viewDir = normalize(config.cameraPos - input.worldPos);
+    float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, texUV);
     
     float3 diffuseColor = fullDiffuseColor.rgb;
-    float3 specularColor = specularMap.Sample(specularSampler, input.texcoord).rgb;
+    float3 specularColor = specularMap.Sample(specularSampler, texUV).rgb;
 
     for (int li = 0; li < config.lightCount; li++) {
          Light light = config.lights[li];

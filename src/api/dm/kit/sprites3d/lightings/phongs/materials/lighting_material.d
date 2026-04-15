@@ -14,6 +14,7 @@ class LightingMaterial : Sprite3d
     TextureGPU diffuseMap;
     TextureGPU specularMap;
     TextureGPU normalMap;
+    TextureGPU dispMap;
 
     Vec3f ambient;
     Vec3f diffuse;
@@ -24,19 +25,22 @@ class LightingMaterial : Sprite3d
     bool isBindDiffuseMap = true;
     bool isBindSpecularMap = true;
     bool isBindNormalMap = true;
+    bool isBindDispMap = true;
 
     protected
     {
         string diffuseMapPath;
         string specularMapPath;
         string normalMapPath;
+        string dispMapPath;
     }
 
-    this(string diffuseMapPath, string specularMapPath = null, string normalMapPath = null)
+    this(string diffuseMapPath, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null)
     {
         this.diffuseMapPath = diffuseMapPath;
         this.specularMapPath = specularMapPath;
         this.normalMapPath = normalMapPath;
+        this.dispMapPath = dispMapPath;
 
         id = "LightMaterial";
     }
@@ -75,7 +79,7 @@ class LightingMaterial : Sprite3d
             addCreate(specularMap);
         }
 
-         if (!normalMap)
+        if (!normalMap)
         {
             if (normalMapPath.length > 0)
             {
@@ -88,6 +92,21 @@ class LightingMaterial : Sprite3d
         else
         {
             addCreate(normalMap);
+        }
+
+        if (!dispMap)
+        {
+            if (dispMapPath.length > 0)
+            {
+                dispMap = new TextureGPU;
+                build(dispMap);
+                dispMap.create(dispMapPath);
+                addCreate(dispMap);
+            }
+        }
+        else
+        {
+            addCreate(dispMap);
         }
     }
 }
