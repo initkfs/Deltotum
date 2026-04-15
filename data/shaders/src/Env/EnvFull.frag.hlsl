@@ -191,10 +191,10 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     //result.color = float4(input.tangent * 0.5 + 0.5, 1.0);
     //return result;
 
-    if (!isFrontFace) {
-        normalV = -normalV;
-        tangentV = -tangentV;
-    }
+    // if (!isFrontFace) {
+    //     normalV = -normalV;
+    //     tangentV = -tangentV;
+    // }
 
     //* 2.0 - 1.0 for SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM 
     float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
@@ -202,10 +202,14 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 
     //OpenGL-style
     float3 bitangent = cross(normalV, tangentV);
+    //result.color = float4(bitangent * 0.5 + 0.5, 1.0);
+    //return result;
     
     float3x3 TBN = float3x3(tangentV, bitangent, normalV);
     //mapNormal.y = -mapNormal.y;
     float3 normal = normalize(mul(mapNormal, TBN)); 
+    //result.color = float4(normal * 0.5 + 0.5, 1.0);
+    //return result;
 
     float3 viewDir = normalize(config.cameraPos - input.worldPos);
 
@@ -217,7 +221,6 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     if(texUV.x > 1.0 || texUV.y > 1.0 || texUV.x < 0.0 || texUV.y < 0.0){
         discard; 
     }
-    
 
     //diff = max(dot(N, lightDir), 0.0); 
     //Two side light
