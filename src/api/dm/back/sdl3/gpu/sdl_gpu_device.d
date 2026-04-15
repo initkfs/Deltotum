@@ -370,34 +370,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return pipeline;
     }
 
-    SDL_GPUColorTargetDescription[1] colorTarget(SDL_Window* window)
-    {
-        SDL_GPUColorTargetDescription[1] colorTargetDescriptions;
-
-        colorTargetDescriptions[0] = SDL_GPUColorTargetDescription();
-        colorTargetDescriptions[0].format = getSwapchainTextureFormat(window);
-
-        return colorTargetDescriptions;
-    }
-
-    SDL_GPUColorTargetDescription[1] blendingAlpha(SDL_Window* window)
-    {
-        SDL_GPUColorTargetDescription[1] colorTargetDescriptions;
-
-        colorTargetDescriptions[0] = SDL_GPUColorTargetDescription();
-
-        colorTargetDescriptions[0].blend_state.enable_blend = true;
-        colorTargetDescriptions[0].blend_state.color_blend_op = SDL_GPU_BLENDOP_ADD;
-        colorTargetDescriptions[0].blend_state.alpha_blend_op = SDL_GPU_BLENDOP_ADD;
-        colorTargetDescriptions[0].blend_state.src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
-        colorTargetDescriptions[0].blend_state.dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-        colorTargetDescriptions[0].blend_state.src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
-        colorTargetDescriptions[0].blend_state.dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-        colorTargetDescriptions[0].format = getSwapchainTextureFormat(window);
-
-        return colorTargetDescriptions;
-    }
-
     void deletePipeline(SdlGPUPipeline pipe)
     {
         SDL_ReleaseGPUGraphicsPipeline(ptr, pipe.ptr);
@@ -690,23 +662,25 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return vertexAttributes;
     }
 
-    bool startRenderPass(SDL_Window* currSdlWindow, SDL_FColor clearColor, SDL_GPUDepthStencilTargetInfo* stencilInfo = null, bool isAcquireSwapchain = true)
-    {
-        SDL_GPUColorTargetInfo target;
-        target.clear_color = clearColor;
-        target.load_op = SDL_GPU_LOADOP_CLEAR;
-        target.store_op = SDL_GPU_STOREOP_STORE;
-
-        SDL_GPUColorTargetInfo[1] colorTargetInfo;
-        colorTargetInfo[0] = target;
-
-        return startRenderPass(colorTargetInfo, currSdlWindow, stencilInfo, isAcquireSwapchain);
-    }
-
-    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_Window* currSdlWindow, SDL_GPUDepthStencilTargetInfo* stencilInfo = null, bool isAcquireSwapchain = true)
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* stencilInfo = null, bool isAcquireSwapchain = true, SDL_Window* currSdlWindow = null)
     {
         assert(currSdlWindow);
 
+        if (state != GPUGraphicState.none)
+        {
+            return false;
+        }
+
+        if (!startCmdBuffer(stencilInfo, isAcquireSwapchain, currSdlWindow))
+        {
+            return false;
+        }
+
+        return beginRenderPass(colorTargets, stencilInfo);
+    }
+
+    bool startCmdBuffer(SDL_GPUDepthStencilTargetInfo* stencilInfo = null, bool isAcquireSwapchain = true, SDL_Window* currSdlWindow = null)
+    {
         if (state != GPUGraphicState.none)
         {
             return false;
@@ -721,6 +695,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         //not SDL_AcquireGPUSwapchainTexture
         if (isAcquireSwapchain)
         {
+            assert(currSdlWindow, "SDL window is null for swapchain acquire");
             if (!SDL_WaitAndAcquireGPUSwapchainTexture(lastCmdBuff, currSdlWindow, &lastSwapchain, null, null))
             {
                 submitCmdBuffer;
@@ -734,27 +709,23 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             }
         }
 
-        assert(colorTargets.length > 0);
-        if (!colorTargets[0].texture)
-        {
-            colorTargets[0].texture = lastSwapchain;
-        }
-
-        lastPass = SDL_BeginGPURenderPass(lastCmdBuff, colorTargets.ptr, cast(uint) colorTargets.length, stencilInfo);
-        if (!lastPass)
-        {
-            submitCmdBuffer;
-            return false;
-        }
-
-        state = GPUGraphicState.renderStart;
-
         return true;
     }
 
     bool beginRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
     {
-        lastPass = SDL_BeginGPURenderPass(lastCmdBuff, colorTargets.ptr, cast(uint) colorTargets.length, stencilInfo);
+        if (state != GPUGraphicState.none)
+        {
+            return false;
+        }
+
+        SDL_GPUColorTargetInfo* colorTargetsPtr;
+        uint colorTargetsLen = cast(uint) colorTargets.length;
+        if (colorTargetsLen > 0)
+        {
+            colorTargetsPtr = colorTargets.ptr;
+        }
+        lastPass = SDL_BeginGPURenderPass(lastCmdBuff, colorTargetsPtr, colorTargetsLen, stencilInfo);
         state = GPUGraphicState.renderStart;
         return true;
     }

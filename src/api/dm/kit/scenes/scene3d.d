@@ -332,7 +332,15 @@ class Scene3d : Scene2d
         }
         else
         {
-            if (!gpu.startRenderPass(&depthStencilTargetInfo, isNeedSwapchain))
+            if (!gpu.startCmdBuffer(&depthStencilTargetInfo, isNeedSwapchain))
+            {
+                gpu.dev.resetState;
+                throw new Exception("Error starting gpu command buffer");
+            }
+
+            auto target = gpu.defaultSwapchainTarget;
+
+            if (!gpu.beginRenderPass(target, &depthStencilTargetInfo))
             {
                 gpu.dev.resetState;
                 throw new Exception("Error starting gpu rendering with depth");

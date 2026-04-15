@@ -63,16 +63,18 @@ class GPUGraphic : ApplicationUnit
         this.device = device;
     }
 
-    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* depthInfo, bool isAcquireSwapchain = true) => dev
-        .startRenderPass(colorTargets, currSdlWindow, depthInfo, isAcquireSwapchain);
-    bool startRenderPass(bool isAcquireSwapchain = true) => dev.startRenderPass(
-        currSdlWindow, clearColor, null, isAcquireSwapchain);
-    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, bool isAcquireSwapchain = true) => dev
-        .startRenderPass(
-            colorTargets, currSdlWindow, null, isAcquireSwapchain);
-    bool startRenderPass(SDL_GPUDepthStencilTargetInfo* depthInfo, bool isAcquireSwapchain = true) => dev
-        .startRenderPass(
-            currSdlWindow, clearColor, depthInfo, isAcquireSwapchain);
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* depthInfo = null, bool isAcquireSwapchain = true) => dev
+        .startRenderPass(colorTargets, depthInfo, isAcquireSwapchain, currSdlWindow);
+
+    bool startCmdBuffer(SDL_GPUDepthStencilTargetInfo* stencilInfo = null, bool isAcquireSwapchain = true)
+    {
+        return dev.startCmdBuffer(stencilInfo, isAcquireSwapchain, currSdlWindow);
+    }
+
+    bool beginRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
+    {
+        return dev.beginRenderPass(colorTargets, stencilInfo);
+    }
 
     SdlGPUPipeline newPipeline(
         string vertexPath,
@@ -115,6 +117,29 @@ class GPUGraphic : ApplicationUnit
         }
 
         return path;
+    }
+
+    SDL_GPUColorTargetInfo[1] defaultColorTarget()
+    {
+        SDL_GPUColorTargetInfo target;
+        target.clear_color = clearColor;
+        target.load_op = SDL_GPU_LOADOP_CLEAR;
+        target.store_op = SDL_GPU_STOREOP_STORE;
+
+        SDL_GPUColorTargetInfo[1] targets;
+        targets[0] = target;
+
+        return targets;
+    }
+
+    SDL_GPUColorTargetInfo[1] defaultSwapchainTarget()
+    {
+        auto targets = defaultColorTarget;
+        if (targets.length > 0)
+        {
+            targets[0].texture = dev.swapchain;
+        }
+        return targets;
     }
 
     void defaultDiffuse(TextureGPU tex)
