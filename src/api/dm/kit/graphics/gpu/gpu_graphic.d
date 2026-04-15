@@ -8,6 +8,8 @@ import api.core.contexts.context : Context;
 import api.core.configs.keyvalues.config : Config;
 import api.core.utils.types : ProviderFactory;
 
+import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
+
 //TODO extract COM interfaces
 import api.dm.back.sdl3.externs.csdl3;
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
@@ -75,23 +77,18 @@ class GPUGraphic : ApplicationUnit
     SdlGPUPipeline newPipeline(
         string vertexPath,
         string fragmentPath,
-        uint numVertexSamples = 0,
-        uint numVertexStorageBuffers = 0,
-        uint numVertexUniformBuffers = 0,
-        uint numVertexStorageTextures = 0,
-        uint numFragSamples = 0,
-        uint numFragStorageBuffers = 0,
-        uint numFragUniformBuffers = 0,
-        uint numFragStorageTextures = 0,
+        ComPipelineBuffers pipeBuffers,
+        SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null,
         SDL_GPURasterizerState* rasterState = null,
         SDL_GPUDepthStencilState* stencilState = null,
-        SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null,
         string name = null,
+        scope void delegate(
+            ref SDL_GPUGraphicsPipelineCreateInfo) onPipeSettings = null,
         bool isUseDefaultSampling = true,
         bool isUseVertex = true
     )
     {
-        return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures, rasterState, stencilState, colorDesc, name, isUseDefaultSampling, isUseVertex);
+        return dev.newPipeline(vertexPath, fragmentPath, pipeBuffers, targetInfo, rasterState, stencilState, name, onPipeSettings, isUseDefaultSampling, isUseVertex);
     }
 
     SDL_GPUTextureFormat getSwapchainTextureFormat() => dev.getSwapchainTextureFormat(

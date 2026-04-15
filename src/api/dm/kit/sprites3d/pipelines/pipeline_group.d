@@ -3,27 +3,9 @@ module api.dm.kit.sprites3d.pipelines.pipeline_group;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
+import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 
 import api.dm.back.sdl3.externs.csdl3;
-
-struct PipelineBuffers
-{
-    uint numVertexSamples;
-    uint numVertexStorageBuffers;
-    uint numVertexUniformBuffers;
-    uint numVertexStorageTextures;
-    uint numFragSamples;
-    uint numFragStorageBuffers;
-    uint numFragUniformBuffers;
-    uint numFragStorageTextures;
-
-    string toString() const
-    {
-        import std.format : format;
-
-        return format("VertexSample:%d, VertexStorage:%d, VertexUniform:%d, VertexStorageTexture:%d, FragSample:%d, FragStorage:%d, FragUniform:%d, FragStorageTexture:%d", numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
-    }
-}
 
 struct SimpleDataBuffer
 {
@@ -157,9 +139,9 @@ class PipelineGroup : Sprite3d
         return true;
     }
 
-    PipelineBuffers pipeBuffers()
+    ComPipelineBuffers pipeBuffers()
     {
-        PipelineBuffers buffers;
+        ComPipelineBuffers buffers;
         if (isCreateDataBuffer)
         {
             buffers.numFragStorageBuffers = 1;
@@ -167,11 +149,13 @@ class PipelineGroup : Sprite3d
         return buffers;
     }
 
-    void createPipelineFull(
-        in PipelineBuffers buffers,
+    void createPipeline(
+        in ComPipelineBuffers buffers,
+        SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null,
         SDL_GPURasterizerState* rasterState = null,
         SDL_GPUDepthStencilState* stencilState = null,
-        SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null
+        scope void delegate(
+            ref SDL_GPUGraphicsPipelineCreateInfo) onPipeSettings = null
     )
     {
         assert(!_pipeline, "Found old pipeline");
@@ -188,24 +172,21 @@ class PipelineGroup : Sprite3d
         _pipeline = gpu.newPipeline(
             vertShaderPath,
             fragShaderPath,
-            buffers.numVertexSamples,
-            buffers.numVertexStorageBuffers,
-            buffers.numVertexUniformBuffers,
-            buffers.numVertexStorageTextures,
-            buffers.numFragSamples,
-            buffers.numFragStorageBuffers,
-            buffers.numFragUniformBuffers,
-            buffers.numFragStorageTextures,
+            buffers,
+            colorDesc,
             rasterState,
             stencilState,
-            colorDesc);
+            id,
+            onPipeSettings
+            );
         if (!_pipeline)
         {
             throw new Exception("Pipeline is null");
         }
     }
 
-    void createPipeline(in PipelineBuffers buffers)
+    void createPipeline(ComPipelineBuffers buffers, scope void delegate(
+            ref SDL_GPUGraphicsPipelineCreateInfo) onPipeSettings = null)
     {
         SDL_GPUGraphicsPipelineTargetInfo targetInfo;
 
@@ -239,22 +220,24 @@ class PipelineGroup : Sprite3d
             //     SDL_GPU_COLORCOMPONENT_G |
             //     SDL_GPU_COLORCOMPONENT_B |
             //     SDL_GPU_COLORCOMPONENT_A);
-            
+
             targetDesc[0].blend_state = blendState;
         }
 
         auto stencilState = gpu.dev.depthStencilState;
-        if(isBlend){
+        if (isBlend)
+        {
             stencilState.enable_depth_write = false;
         }
 
         auto rastState = createRasterizerState;
 
-        createPipelineFull(
+        createPipeline(
             buffers,
+            &targetInfo,
             &rastState,
             &stencilState,
-            &targetInfo);
+            onPipeSettings);
     }
 
     SDL_GPURasterizerState createRasterizerState()

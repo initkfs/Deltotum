@@ -3,6 +3,7 @@ module api.dm.back.sdl3.gpu.sdl_gpu_device;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_window : ComWindow;
 import api.dm.com.graphics.com_renderer : ComRenderer;
+import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
@@ -29,20 +30,6 @@ enum ComShaderType
 {
     vertex,
     fragment
-}
-
-struct GPUPipelineData
-{
-    SDL_GPUShader* vertex_shader;
-    SDL_GPUShader* fragment_shader;
-    SDL_GPUVertexInputState vertex_input_state;
-    SDL_GPUPrimitiveType primitive_type;
-    SDL_GPURasterizerState rasterizer_state;
-    SDL_GPUMultisampleState multisample_state;
-    SDL_GPUDepthStencilState depth_stencil_state;
-    SDL_GPUGraphicsPipelineTargetInfo target_info;
-
-    SDL_PropertiesID props;
 }
 
 enum GPUGraphicState
@@ -265,38 +252,51 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return new SdlGPUPipeline(pipePtr);
     }
 
-    SdlGPUPipeline newPipeline(SDL_Window* window,
+    SdlGPUPipeline newPipeline(
         string vertexPath,
         string fragmentPath,
-        uint numVertexSamples = 0,
-        uint numVertexStorageBuffers = 0,
-        uint numVertexUniformBuffers = 0,
-        uint numVertexStorageTextures = 0,
-        uint numFragSamples = 0,
-        uint numFragStorageBuffers = 0,
-        uint numFragUniformBuffers = 0,
-        uint numFragStorageTextures = 0,
+        ComPipelineBuffers pipelineBuffers,
+        SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null,
         SDL_GPURasterizerState* rasterState = null,
         SDL_GPUDepthStencilState* stencilState = null,
-        SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null,
         string name = null,
+        scope void delegate(ref SDL_GPUGraphicsPipelineCreateInfo) onPipeSettings,
         bool isUseDefaultSampling = true,
         bool isUseVertex = true,
     )
     {
-        auto vertexShader = newVertexSPIRV(vertexPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures);
+        auto vertexShader = newVertexSPIRV(vertexPath, pipelineBuffers.numVertexSamples, pipelineBuffers.numVertexStorageBuffers, pipelineBuffers
+                .numVertexUniformBuffers, pipelineBuffers.numVertexStorageTextures);
 
-        auto fragmentShader = newFragmentSPIRV(fragmentPath, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
+        scope (exit)
+        {
+            deleteShader(vertexShader);
+        }
 
-        auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState, targetInfo, name, isUseDefaultSampling, isUseVertex);
+        auto fragmentShader = newFragmentSPIRV(fragmentPath, pipelineBuffers.numFragSamples, pipelineBuffers.numFragStorageBuffers, pipelineBuffers
+                .numFragUniformBuffers, pipelineBuffers.numFragStorageTextures);
 
-        deleteShader(vertexShader);
-        deleteShader(fragmentShader);
+        scope (exit)
+        {
+            deleteShader(fragmentShader);
+        }
+
+        auto pipeline = newPipeline(vertexShader, fragmentShader, targetInfo, rasterState, stencilState, name, onPipeSettings, isUseDefaultSampling, isUseVertex);
 
         return pipeline;
     }
 
-    SdlGPUPipeline newPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader, SDL_GPURasterizerState* rasterState = null, SDL_GPUDepthStencilState* stencilState = null, SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null, string name = null, bool isUseDefaultSampling = true, bool isUseVertex = true)
+    SdlGPUPipeline newPipeline(
+        SdlGPUShader vertexShader,
+        SdlGPUShader fragmentShader,
+        SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null,
+        SDL_GPURasterizerState* rasterState = null,
+        SDL_GPUDepthStencilState* stencilState = null,
+        string name = null,
+        scope void delegate(
+            ref SDL_GPUGraphicsPipelineCreateInfo) onPipeSettings = null,
+        bool isUseDefaultSampling = true,
+        bool isUseVertex = true)
     {
         SDL_GPUGraphicsPipelineCreateInfo info;
 
@@ -328,14 +328,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             info.vertex_input_state.num_vertex_buffers = 0;
         }
 
-        if (!targetInfo)
+        if (targetInfo)
         {
-            SDL_GPUColorTargetDescription[1] colorTargetDescriptions = colorTarget(window);
-            info.target_info.num_color_targets = colorTargetDescriptions.length;
-            info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
-        }
-        else
-        {
+            //SDL_GPUColorTargetDescription[1] colorTargetDescriptions = colorTarget(window);
+            //info.target_info.num_color_targets = colorTargetDescriptions.length;
+            //info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
             info.target_info = *targetInfo;
         }
 
@@ -363,6 +360,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         //depth_test_enable = false
         //transparent: depth_test_enable = true, depth_write_enable = false
         //gui: depth_test_enable = false, depth_write_enable = false
+
+        if (onPipeSettings)
+        {
+            onPipeSettings(info);
+        }
 
         auto pipeline = newPipeline(info);
         return pipeline;

@@ -8,6 +8,7 @@ import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.kit.sprites3d.cameras.orthographic_camera : OrthographicCamera;
 import api.dm.kit.scenes.antialiasings.msaa : MSAA;
+import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.math.matrices.matrix;
 
 //TODO remove native api
@@ -20,6 +21,7 @@ import api.dm.back.sdl3.externs.csdl3;
 struct SceneTransforms
 {
     Matrix4x4 world;
+
     Matrix4x4 camera;
     Matrix4x4 projection;
     Matrix4x4 normal;
@@ -206,15 +208,19 @@ class Scene3d : Scene2d
 
         auto shaderDir = buildPath(context.app.dataDir, "shaders", "out", "spirv");
 
+        ComPipelineBuffers glowBuffers;
+        glowBuffers.numFragSamples = 1;
+        glowBuffers.numFragUniformBuffers = 1;
+
         brightPipeline = gpu.newPipeline(
             buildPath(shaderDir, "FullQuad.vert.spv"),
             buildPath(shaderDir, "Bright.frag.spv"),
-            0, 0, 0, 0,
-            1, 0, 1, 0,
+            glowBuffers,
+            &targetInfo,
             &raster,
             &depth,
-            &targetInfo,
             "BrightPassPipeline",
+            null,
             false,
             false
         );
@@ -222,27 +228,31 @@ class Scene3d : Scene2d
         blurPipeline = gpu.newPipeline(
             buildPath(shaderDir, "FullQuad.vert.spv"),
             buildPath(shaderDir, "Blur.frag.spv"),
-            0, 0, 0, 0,
-            1, 0, 1, 0,
+            glowBuffers,
+            &targetInfo,
             &raster,
             &depth,
-            &targetInfo,
             "BlurPassPipeline",
+            null,
             false,
             false
         );
 
         //colorDesc.format = gpu.getSwapchainTextureFormat;
 
+        ComPipelineBuffers composeBuffers;
+        composeBuffers.numFragSamples = 2;
+        composeBuffers.numFragUniformBuffers = 1;
+
         composePipeline = gpu.newPipeline(
             buildPath(shaderDir, "FullQuad.vert.spv"),
             buildPath(shaderDir, "Compose.frag.spv"),
-            0, 0, 0, 0,
-            2, 0, 1, 0,
+            composeBuffers,
+            &targetInfo,
             &raster,
             &depth,
-            &targetInfo,
             "BlurComposePassPipeline",
+            null,
             false,
             false
         );
