@@ -112,7 +112,8 @@ class EnvGroup : PipelineGroup
             : gpu.defaultDiffuse;
         auto specularMap = (mat && mat.specularMap && mat.isBindSpecularMap) ? mat.specularMap
             : gpu.defaultSpecular;
-        auto normalMap = gpu.defaultNormal;
+        auto normalMap = (mat && mat.normalMap && mat.isBindNormalMap) ? mat.normalMap
+            : gpu.defaultNormal;
         auto auMap = gpu.defaultAO;
         auto emissionMap = gpu.defaultEmission;
 

@@ -38,7 +38,7 @@ class TextureGPU : Sprite3d
             isDisposeSampler = false;
         }
 
-        SDL_GPUSamplerCreateInfo samplerInfo = gpu.dev.nearestRepeat;
+        SDL_GPUSamplerCreateInfo samplerInfo = gpu.dev.linearRepeat;
         _sampler = gpu.dev.newSampler(&samplerInfo);
         isDisposeSampler = true;
     }

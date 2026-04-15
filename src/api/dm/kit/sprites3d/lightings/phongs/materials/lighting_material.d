@@ -13,6 +13,7 @@ class LightingMaterial : Sprite3d
 {
     TextureGPU diffuseMap;
     TextureGPU specularMap;
+    TextureGPU normalMap;
 
     Vec3f ambient;
     Vec3f diffuse;
@@ -22,17 +23,20 @@ class LightingMaterial : Sprite3d
 
     bool isBindDiffuseMap = true;
     bool isBindSpecularMap = true;
+    bool isBindNormalMap = true;
 
     protected
     {
         string diffuseMapPath;
         string specularMapPath;
+        string normalMapPath;
     }
 
-    this(string diffuseMapPath, string specularMapPath)
+    this(string diffuseMapPath, string specularMapPath = null, string normalMapPath = null)
     {
         this.diffuseMapPath = diffuseMapPath;
         this.specularMapPath = specularMapPath;
+        this.normalMapPath = normalMapPath;
 
         id = "LightMaterial";
     }
@@ -47,10 +51,6 @@ class LightingMaterial : Sprite3d
             {
                 diffuseMap = new TextureGPU;
                 build(diffuseMap);
-                if (diffuseMapPath.length == 0)
-                {
-                    throw new Exception("Diffuse map path must not be empty");
-                }
                 diffuseMap.create(diffuseMapPath);
                 addCreate(diffuseMap);
             }
@@ -66,10 +66,6 @@ class LightingMaterial : Sprite3d
             {
                 specularMap = new TextureGPU;
                 build(specularMap);
-                if (specularMapPath.length == 0)
-                {
-                    throw new Exception("Specural map path must not be empty");
-                }
                 specularMap.create(specularMapPath);
                 addCreate(specularMap);
             }
@@ -77,6 +73,21 @@ class LightingMaterial : Sprite3d
         else
         {
             addCreate(specularMap);
+        }
+
+         if (!normalMap)
+        {
+            if (normalMapPath.length > 0)
+            {
+                normalMap = new TextureGPU;
+                build(normalMap);
+                normalMap.create(normalMapPath);
+                addCreate(normalMap);
+            }
+        }
+        else
+        {
+            addCreate(normalMap);
         }
     }
 }

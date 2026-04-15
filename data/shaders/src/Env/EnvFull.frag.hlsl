@@ -182,10 +182,27 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
         return result;
     }
 
-    float3 normal = input.normal;
+    float3 normalV = normalize(input.normal);
+    float3 tangentV = normalize(input.tangent);
+    
+    //result.color = float4(input.tangent * 0.5 + 0.5, 1.0);
+    //return result;
+
     if (!isFrontFace) {
-         normal = -normal;
+        normalV = -normalV;
+        tangentV = -tangentV;
     }
+
+    //* 2.0 - 1.0 for SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM 
+    float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
+    mapNormal = normalize(mapNormal);
+
+    //OpenGL-style
+    float3 bitangent = cross(normalV, tangentV);
+    
+    float3x3 TBN = float3x3(tangentV, bitangent, normalV);
+    //mapNormal.y = -mapNormal.y;
+    float3 normal = normalize(mul(mapNormal, TBN)); 
 
     //diff = max(dot(N, lightDir), 0.0); 
     //Two side light

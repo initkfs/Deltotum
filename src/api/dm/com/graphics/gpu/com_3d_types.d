@@ -10,6 +10,7 @@ struct ComVertex
     float x = 0, y = 0, z = 0;
     float[3] normals = 0;
     float u = 0, v = 0;
+    float tx = 0, ty = 0, tz = 0;
 
     static ComVertex fromVec(Vec3f position)
     {

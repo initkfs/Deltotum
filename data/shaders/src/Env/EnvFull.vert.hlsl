@@ -25,6 +25,7 @@ VertOutput main(VertInput input)
     output.texcoord = float2(input.texcoord.x, 1.0 - input.texcoord.y);
     
     output.normal = normalize(mul((float3x3) normal, input.normal));
+    output.tangent = normalize(mul((float3x3) normal, input.tangent));
     output.localPos = input.position;
     output.worldPos = (mul(float4(input.position, 1.0f), model)).xyz;
     

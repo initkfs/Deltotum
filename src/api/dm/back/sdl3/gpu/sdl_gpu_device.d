@@ -637,27 +637,33 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return vertexBufferDesctiptions;
     }
 
-    SDL_GPUVertexAttribute[3] comVertexAttrs()
+    SDL_GPUVertexAttribute[4] comVertexAttrs()
     {
-        SDL_GPUVertexAttribute[3] vertexAttributes;
+        SDL_GPUVertexAttribute[4] vertexAttributes;
 
         //position
         vertexAttributes[0].buffer_slot = 0;
-        vertexAttributes[0].location = 0; //location = 0 in shader
-        vertexAttributes[0].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3; //vec3
-        vertexAttributes[0].offset = 0; // start from the first byte from current buffer position
+        vertexAttributes[0].location = 0;
+        vertexAttributes[0].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3;
+        vertexAttributes[0].offset = 0;
 
         //normals
         vertexAttributes[1].buffer_slot = 0;
-        vertexAttributes[1].location = 1; // layout (location = 1) in shader
-        vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3; //vec4
-        vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
+        vertexAttributes[1].location = 1;
+        vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3;
+        vertexAttributes[1].offset = float.sizeof * 3;
 
         //uv
         vertexAttributes[2].buffer_slot = 0;
-        vertexAttributes[2].location = 2; // layout (location = 2) in shader
-        vertexAttributes[2].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2; //vec2
-        vertexAttributes[2].offset = float.sizeof * 6; // 4th float from current buffer position
+        vertexAttributes[2].location = 2;
+        vertexAttributes[2].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2;
+        vertexAttributes[2].offset = float.sizeof * 6;
+
+        //tg
+        vertexAttributes[3].buffer_slot = 0;
+        vertexAttributes[3].location = 3;
+        vertexAttributes[3].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3;
+        vertexAttributes[3].offset = float.sizeof * 8;
 
         return vertexAttributes;
     }
@@ -1053,6 +1059,21 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         ];
 
         return desc;
+    }
+
+    SDL_GPUSamplerCreateInfo linearRepeat(){
+        SDL_GPUSamplerCreateInfo info;
+        info.min_filter = SDL_GPU_FILTER_LINEAR,
+        info.mag_filter = SDL_GPU_FILTER_LINEAR,
+        info.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
+        info.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+        info.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+        info.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+
+        info.enable_anisotropy = true;
+        info.max_anisotropy = 16;
+
+        return info;
     }
 
     SDL_GPUSamplerCreateInfo nearestRepeat()
