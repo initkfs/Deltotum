@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.lightings.lighting_material;
+module api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;

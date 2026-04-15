@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.lightings.phongs.materials.material;
+module api.dm.kit.sprites3d.lightings.phongs.materials.material_data;
 
 import api.math.geom3.vec3 : Vec3f;
 import api.math.geom4.vec4 : Vec4f;

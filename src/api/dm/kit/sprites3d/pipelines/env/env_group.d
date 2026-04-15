@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.pipelines.env.env_group;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
-import api.dm.kit.sprites3d.lightings.phongs.materials.material : Light, Material;
+import api.dm.kit.sprites3d.lightings.phongs.materials.material_data : Light, Material;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.math.geom3.vec3 : Vec3f;
@@ -98,7 +98,7 @@ class EnvGroup : PipelineGroup
 
     void bindAll(Sprite3d sprite)
     {
-        import api.dm.kit.sprites3d.lightings.lighting_material : LightingMaterial;
+        import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
         import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
         import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
 
