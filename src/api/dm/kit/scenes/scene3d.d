@@ -51,6 +51,8 @@ class Scene3d : Scene2d
     SdlGPUPipeline brightPipeline;
     SdlGPUPipeline blurPipeline;
     SdlGPUPipeline composePipeline;
+    uint bloomW;
+    uint bloomH;
 
     SDL_Texture* renderWrapper;
 
@@ -174,8 +176,8 @@ class Scene3d : Scene2d
         //depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
         depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_DONT_CARE;
 
-        uint bloomW = window.widthu / 4;
-        uint bloomH = window.heightu / 4;
+        bloomW = window.widthu / 16;
+        bloomH = window.heightu / 16;
 
         SDL_GPUTextureCreateInfo bloomInfo;
         bloomInfo.type = SDL_GPU_TEXTURETYPE_2D;
@@ -385,9 +387,6 @@ class Scene3d : Scene2d
         brightPassTarget.cycle = true;
         brightPassTarget.store_op = SDL_GPU_STOREOP_STORE;
         targets[0] = brightPassTarget;
-
-        uint bloomW = window.widthu / 4;
-        uint bloomH = window.heightu / 4;
 
         import api.math.geom2.rect2 : Rect2f;
 
