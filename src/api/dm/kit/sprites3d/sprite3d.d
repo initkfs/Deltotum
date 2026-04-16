@@ -39,7 +39,7 @@ class Sprite3d : Sprite2d
 
     bool isCalcInverseWorldMatrix = true;
 
-    Vec3f scale = Vec3f(1, 1, 1);
+    Vec3f _scale = Vec3f(1, 1, 1);
 
     Vec3f rotatePivot;
     float rotateRadius = 1;
@@ -402,6 +402,19 @@ class Sprite3d : Sprite2d
         _angleY = v;
         isMatrixRecalc = true;
         return true;
+    }
+
+    Vec3f scale() => _scale;
+    void scale(Vec3f vec)
+    {
+        _scale = vec;
+        isMatrixRecalc = true;
+    }
+
+    void scale(float x, float y, float z)
+    {
+        _scale = Vec3f(x, y, z);
+        isMatrixRecalc = true;
     }
 
     alias pos = typeof(super).pos;

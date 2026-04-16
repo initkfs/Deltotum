@@ -186,11 +186,11 @@ class SpriteManager : BaseDebuggerPanel
         _currentSprite = sprite;
 
         //TODO reset oldValue
-        xField.valueLabel.text = toStringField(sprite.x);
-        yField.valueLabel.text = toStringField(sprite.y);
+        xField.value(sprite.x, false);
+        yField.value(sprite.y, false);
         if (auto sprite3 = cast(Sprite3d) sprite)
         {
-            zField.valueLabel.text = toStringField(sprite3.z);
+            zField.value(sprite3.z, false);
             albedo.color(sprite3.albedo, false);
             albedoIntensity.value(sprite3.albedoIntensity, false);
 

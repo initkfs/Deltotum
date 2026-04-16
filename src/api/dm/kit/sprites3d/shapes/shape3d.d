@@ -34,7 +34,7 @@ class Shape3d : Sprite3d
         SDL_GPUTransferBuffer* transferBuffer;
     }
 
-    this(ComVertex[] vertices, ushort[] indices = null, string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath)
+    this(ComVertex[] vertices, ushort[] indices = null, string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null)
     {
         this();
         this.vertices = vertices;

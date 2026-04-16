@@ -27,12 +27,20 @@ abstract class MinMaxValueMeter(ValueType) : MinMaxMeter!ValueType
     {
     }
 
-    bool value(ValueType v, bool isTriggerListeners = true)
+    bool value(ValueType v, bool isTriggerListeners = true, bool isForce = false)
     {
         auto oldValue = _value;
         if (!trySetValue(v))
         {
-            return false;
+            if (isForce)
+            {
+                _value = v;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
         updateState;
@@ -105,30 +113,12 @@ abstract class MinMaxValueMeter(ValueType) : MinMaxMeter!ValueType
 
         if (v < minValue)
         {
-            if (_value == minValue)
-            {
-                return false;
-            }
-            else
-            {
-                lastValueDelta = minValue - _value;
-                _value = minValue;
-                return true;
-            }
+            return false;
         }
 
         if (v > maxValue)
         {
-            if (_value == maxValue)
-            {
-                return false;
-            }
-            else
-            {
-                lastValueDelta = maxValue - _value;
-                _value = maxValue;
-                return true;
-            }
+            return false;
         }
 
         lastValueDelta = v - _value;

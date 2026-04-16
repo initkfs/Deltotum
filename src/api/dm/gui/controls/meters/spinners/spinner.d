@@ -18,6 +18,15 @@ class FracSpinner : Spinner!float
     this(float minValue = 0.0, float maxValue = 1.0, float initValue = 0.0, float initInc = 0.1, float initDec = 0.1)
     {
         super(minValue, maxValue, initValue, initInc, initDec);
+
+        onValueFormat = (float v) {
+            import std.format : format;
+            import std.conv : to;
+            import std.algorithm.mutation: stripRight;
+
+            //TODO without strip?
+            return format("%.2f", v).stripRight('0').stripRight('.').to!dstring;
+        };
     }
 }
 
@@ -54,6 +63,7 @@ class Spinner(T) : MinMaxValueMeter!T
     void delegate(Button) onCreatedDecButton;
 
     T delegate(T value) onValueProvider;
+    dstring delegate(T value) onValueFormat;
 
     float textWidth = 0;
 
@@ -108,7 +118,7 @@ class Spinner(T) : MinMaxValueMeter!T
         {
             import std.conv : to;
 
-            valueLabel.text = value.to!dstring;
+            valueLabel.text = onValueFormat ? onValueFormat(value) : value.to!dstring;
         }
     }
 
@@ -205,6 +215,7 @@ class Spinner(T) : MinMaxValueMeter!T
                     if (text.isNumeric)
                     {
                         import std.conv : to;
+
                         value = text.to!T;
                     }
 

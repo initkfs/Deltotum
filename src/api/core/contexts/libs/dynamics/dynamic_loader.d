@@ -16,14 +16,14 @@ struct DynLib
 class DynamicLoader
 {
     string workDirPath;
-    bool isChangeCwd = true;
+    bool isChangeCwd;
     bool isLocalPath;
 
     void delegate() onBeforeLoad;
     void delegate() onLoad;
 
     bool isUnloadOnErrors = true;
-    bool isExceptionOnErrors;
+    bool isExceptionOnErrors = true;
 
     void delegate(string[]) onErrors;
     void delegate(string) onErrorsStr;
@@ -61,7 +61,8 @@ class DynamicLoader
         {
             import std.conv : to;
 
-            throw new Exception("Bind without libs, but libs count not 1: " ~ libs
+            throw new Exception(
+                "Expected 1 lib for bindings, but received: " ~ libs
                     .length.to!string);
         }
         return bind(libs[0], funcPtr, name, isCheckError);
@@ -130,11 +131,11 @@ class DynamicLoader
             string loadPath = path.to!string;
             if (!loadPath.isAbsolute && isLocalPath)
             {
-                auto cwdDir = workDirPath.length > 0 ? workDirPath : lastWorkDir;
-                auto cwdPath = buildPath(cwdDir, path);
-
                 if (isChangeCwd)
                 {
+                    auto cwdDir = workDirPath.length > 0 ? workDirPath : lastWorkDir;
+                    auto cwdPath = buildPath(cwdDir, path);
+
                     version (Posix)
                     {
                         //TODO check symlink
@@ -153,9 +154,9 @@ class DynamicLoader
                             chdir(newCwd);
                         }
                     }
-                }
 
-                loadPath = cwdPath;
+                    loadPath = cwdPath;
+                }
             }
 
             if (!loadFromPath(loadPath))
@@ -186,6 +187,16 @@ class DynamicLoader
             import std.format : format;
 
             errors ~= format("Need version: %d, but loaded: %d", needVersion, libVersion);
+        }
+
+        if (libs.length == 0)
+        {
+            if ((!onErrors) && (!onErrorsStr) && isExceptionOnErrors)
+            {
+                import std.conv : text;
+
+                throw new Exception(text("Not found any library: ", errors));
+            }
         }
 
         bindAll;
@@ -312,6 +323,10 @@ class DynamicLoader
         {
             errors ~= message.length > 0 ? (message ~ err) : (err);
             return true;
+        }
+        else
+        {
+            errors ~= message;
         }
         return false;
     }
