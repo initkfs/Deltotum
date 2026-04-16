@@ -57,6 +57,16 @@ class EnvGroup : PipelineGroup
         fragmentShaderName = "EnvFull.frag";
 
         isPushUniformVertexMatrix = true;
+
+        onBeforeDrawChildDg = (Sprite2d child) {
+            if (auto sprite3d = cast(Sprite3d) child)
+            {
+                sprite3d.bindAll;
+                //vertex, index buffers, textures
+                bindAll(sprite3d);
+                pushUniforms(sprite3d);
+            }
+        };
     }
 
     override void create()
@@ -85,17 +95,6 @@ class EnvGroup : PipelineGroup
         }
     }
 
-    override void onBeforeDrawChild(Sprite2d child)
-    {
-        if (auto sprite3d = cast(Sprite3d) child)
-        {
-            //vertex, index buffers, textures
-            sprite3d.bindAll;
-            bindAll(sprite3d);
-            pushUniforms(sprite3d);
-        }
-    }
-
     void bindAll(Sprite3d sprite)
     {
         import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
@@ -117,8 +116,7 @@ class EnvGroup : PipelineGroup
         auto aoMap = gpu.defaultAO;
         auto emissionMap = gpu.defaultEmission;
 
-        auto dispMap = (mat && mat.dispMap && mat.isBindDispMap) ? mat.dispMap
-            : gpu.defaultDisp;
+        auto dispMap = (mat && mat.dispMap && mat.isBindDispMap) ? mat.dispMap : gpu.defaultDisp;
 
         TextureGPU[6] maps = [
             diffuseMap, specularMap, normalMap, aoMap, emissionMap, dispMap

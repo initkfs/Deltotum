@@ -56,6 +56,8 @@ class Sprite2d : EventKitTarget
     Sprite2d[] children;
     //}
 
+    void delegate(Sprite2d child) onBeforeDrawChildDg;
+
     protected
     {
         float _width = 0;
@@ -746,6 +748,11 @@ class Sprite2d : EventKitTarget
                 parent.onBeforeDrawChild(this);
             }
 
+            if (onBeforeDrawChildDg)
+            {
+                onBeforeDrawChildDg(this);
+            }
+
             drawContent;
             redraw = true;
 
@@ -874,6 +881,11 @@ class Sprite2d : EventKitTarget
         if (isDomainsForChildren && _domains && !sprite.hasDomains)
         {
             sprite.domains = domains;
+        }
+
+        if (!sprite.onBeforeDrawChildDg && onBeforeDrawChildDg)
+        {
+            sprite.onBeforeDrawChildDg = onBeforeDrawChildDg;
         }
 
         return isSet;
