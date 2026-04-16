@@ -105,38 +105,38 @@ class Sprite3d : Sprite2d
             return false;
         }
 
-        if (auto sprite3d = cast(Sprite3d) object)
-        {
-            if (!sprite3d.hasCamera)
-            {
-                if (!_camera && sprite3d.isNeedCamera)
-                {
-                    import std.format : format;
+        // if (auto sprite3d = cast(Sprite3d) object)
+        // {
+        //     if (!sprite3d.hasCamera)
+        //     {
+        //         if (!_camera && sprite3d.isNeedCamera && isBuildOnAdd)
+        //         {
+        //             import std.format : format;
 
-                    throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
-                }
-                sprite3d.camera = _camera;
-            }
-        }
+        //             throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
+        //         }
+        //         sprite3d.camera = _camera;
+        //     }
+        // }
 
         return true;
     }
 
     override bool addCreate(Sprite2d object, long index = -1)
     {
-        if (auto sprite3d = cast(Sprite3d) object)
-        {
-            if (!sprite3d.hasCamera)
-            {
-                if (!_camera && sprite3d.isNeedCamera)
-                {
-                    import std.format : format;
+        // if (auto sprite3d = cast(Sprite3d) object)
+        // {
+        //     if (!sprite3d.hasCamera)
+        //     {
+        //         if (!_camera && sprite3d.isNeedCamera && isBuildOnAdd)
+        //         {
+        //             import std.format : format;
 
-                    throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
-                }
-                sprite3d.camera = _camera;
-            }
-        }
+        //             throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
+        //         }
+        //         sprite3d.camera = _camera;
+        //     }
+        // }
 
         return super.addCreate(object, index);
     }
@@ -357,6 +357,33 @@ class Sprite3d : Sprite2d
                 sprite3d.uploadEnd;
             }
         }
+    }
+
+    override protected bool trySetParentProps(Sprite2d sprite)
+    {
+        bool isSet = super.trySetParentProps(sprite);
+        if (auto sprite3d = cast(Sprite3d) sprite)
+        {
+            if (!sprite3d.hasCamera)
+            {
+                if (!_camera)
+                {
+                    if (sprite3d.isNeedCamera && isBuildOnAdd)
+                    {
+                        import std.format : format;
+
+                        throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
+                    }
+                }
+                else
+                {
+                    sprite3d.camera = _camera;
+                    isSet |= true;
+                }
+            }
+        }
+
+        return isSet;
     }
 
     void camera(Camera newCamera)

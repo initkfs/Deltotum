@@ -92,6 +92,8 @@ class Sprite2d : EventKitTarget
 
     bool isAngleForChild = true;
 
+    bool isBuildOnAdd = true;
+
     bool isPhysics;
     bool isPhysInterpolateLastXY;
 
@@ -743,7 +745,7 @@ class Sprite2d : EventKitTarget
             {
                 parent.onBeforeDrawChild(this);
             }
-            
+
             drawContent;
             redraw = true;
 
@@ -984,7 +986,16 @@ class Sprite2d : EventKitTarget
         }
         catch (Exception e)
         {
-            logger.error(e.toString);
+            if (hasLogging)
+            {
+                logger.error(e.toString);
+            }
+            else
+            {
+                import std.stdio : stderr, writeln;
+
+                stderr.writeln(e.toString);
+            }
             return false;
         }
 
@@ -1045,6 +1056,37 @@ class Sprite2d : EventKitTarget
             }
         }
         return false;
+    }
+
+    void rebuildCreateChildren()
+    {
+        isBuildOnAdd = true;
+
+        foreach (object; children)
+        {
+            object.isBuildOnAdd = true;
+            if (!object.isBuilt)
+            {
+                buildInit(object);
+
+                try
+                {
+                    trySetParentProps(object);
+                }
+                catch (Exception e)
+                {
+                    logger.error(e.toString);
+                }
+
+                object.create;
+                if (!object.isCreated)
+                {
+                    throw new Exception("Sprite not created");
+                }
+            }
+
+            object.rebuildCreateChildren;
+        }
     }
 
     bool removeAll(bool isDestroy = true)
