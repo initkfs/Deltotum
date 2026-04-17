@@ -7,7 +7,7 @@ import api.math.geom3.vec3 : Vec3f;
 import Math = api.math;
 
 import std.string : toStringz, fromStringz;
-import std.path: buildPath;
+import std.path : buildPath;
 import api.dm.lib.assimp;
 
 /**
@@ -19,6 +19,8 @@ class NodeLoader
     AssimpLib assimp;
 
     string baseDir;
+
+    bool isFlatScene = true;
 
     this(AssimpLib loaderLib)
     {
@@ -46,7 +48,13 @@ class NodeLoader
         sceneMatrix.c2 = Math.sin(angle);
         sceneMatrix.c3 = Math.cos(angle);
 
-        return processNode(scene.mRootNode, scene, sceneMatrix);
+        Sprite3d root = isFlatScene ? new Sprite3d : null;
+        if (root)
+        {
+            root.isBuildOnAdd = false;
+        }
+
+        return processNode(scene.mRootNode, scene, sceneMatrix, root);
     }
 
     Sprite3d processNode(const(aiNode)* node, const(aiScene)* scene, aiMatrix4x4 parentTransform, Sprite3d parent = null)
@@ -57,12 +65,16 @@ class NodeLoader
         worldMatrix = parentTransform;
         aiMultiplyMatrix4(&worldMatrix, &node.mTransformation);
 
-        Sprite3d root = new Sprite3d;
-        root.isBuildOnAdd = false;
-        if (parent)
+        Sprite3d root = parent;
+        if (!root || !isFlatScene)
         {
-            root.parent = parent;
-            parent.add(root);
+            root = new Sprite3d;
+            root.isBuildOnAdd = false;
+            if (parent)
+            {
+                root.parent = parent;
+                parent.add(root);
+            }
         }
 
         for (uint i = 0; i < node.mNumMeshes; i++)
