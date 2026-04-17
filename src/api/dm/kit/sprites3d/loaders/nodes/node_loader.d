@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.loaders.trees.node_loader;
+module api.dm.kit.sprites3d.loaders.nodes.node_loader;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
@@ -22,7 +22,7 @@ class NodeLoader
 
     bool isFlatScene = true;
 
-    this(AssimpLib loaderLib)
+    this(AssimpLib loaderLib = null)
     {
         this.assimp = loaderLib;
     }
@@ -36,8 +36,23 @@ class NodeLoader
         }
 
         auto scene = assimp.loadScene(path);
+        if (!scene)
+        {
+            import std.string : fromStringz;
 
-        assert(scene.mRootNode);
+            assert(aiGetErrorString);
+            throw new Exception(aiGetErrorString().fromStringz.idup);
+        }
+
+        scope (exit)
+        {
+            aiReleaseImport(scene);
+        }
+
+        if (!scene.mRootNode)
+        {
+            throw new Exception("Not found root node in scene: " ~ path);
+        }
 
         aiMatrix4x4 sceneMatrix;
         aiIdentityMatrix4(&sceneMatrix);

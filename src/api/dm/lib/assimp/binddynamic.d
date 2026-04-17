@@ -6,7 +6,7 @@ module api.dm.lib.assimp.binddynamic;
 import api.core.contexts.libs.dynamics.dynamic_loader : DynamicLoader;
 import api.dm.lib.assimp.types;
 
-extern (C) nothrow
+__gshared extern (C) nothrow
 {
     const(aiScene)* function(const char* pFile, uint pFlags) aiImportFile;
     void function(const(aiScene)* pScene) aiReleaseImport;
