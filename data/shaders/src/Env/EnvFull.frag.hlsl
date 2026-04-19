@@ -53,7 +53,7 @@ struct Light {
     float3 direction;
     float linearCoeff;
     float3 reserve1;
-    float constantCoeff;
+    float radius;
     float3 ambient;
     float quadraticCoeff;
     float3 diffuse;
@@ -64,6 +64,7 @@ struct Light {
 
 struct SceneConfig {
     float3 cameraPos;
+    uint isLamp;
     float nearPlane;
     float farPlane;
     float time;
@@ -71,7 +72,6 @@ struct SceneConfig {
     Light lights[4];
     Material material;
     //TODO replace with lamp pipeline
-    uint isLamp;
 };
 
 cbuffer UBO : register(b0, space3)
@@ -116,14 +116,21 @@ float3 calcPoint(float3 diffuseColor, float3 specularColor, float3 normal, float
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     
     float distance = length(light.position - input.worldPos);
+    float radius = light.radius;
+    if (distance > radius) return 0.0;
+
+    float constantCoeff = 1;
     
-    float attenuation = 1.0 / (light.constantCoeff + light.linearCoeff * distance + 
+    float attenuation = 1.0 / (constantCoeff + light.linearCoeff * distance + 
   			     light.quadraticCoeff * (distance * distance));   
-    float specMask = diff > 0.0 ? 1.0 : 0.0;
+    float alpha = distance / radius;
+    float damping = 1.0 - (alpha * alpha);  // smooth
+    //or damping = 1.0 - pow(alpha, 4);
+    attenuation = clamp(attenuation * damping, 0, 1);
 
     float3 ambient = light.ambient  * diffuseColor * material.albedo.rgb * ao;
     float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
-    float3 specular = light.specular * spec * specMask * specularColor;
+    float3 specular = light.specular * spec * specularColor;
 
     //return ambient + (diffuse * attenuation) + (specular * attenuation);
     return (ambient + diffuse + specular) * attenuation;
@@ -140,7 +147,16 @@ float3 calcSpot(float3 diffuseColor, float3 specularColor, float3 normal, float 
     float specMask = diff > 0.0 ? 1.0 : 0.0;
 
     float distance = length(light.position - input.worldPos);
-    float attenuation = 1.0 / (light.constantCoeff + light.linearCoeff * distance + light.quadraticCoeff * (distance * distance));    
+    float radius = light.radius;
+    if (distance > radius) return 0.0;
+
+    float constantCoeff = 1;
+
+    float attenuation = 1.0 / (constantCoeff + light.linearCoeff * distance + light.quadraticCoeff * (distance * distance));  
+    float alpha = distance / radius;
+    float damping = 1.0 - (alpha * alpha);  // smooth
+    //or damping = 1.0 - pow(alpha, 4);
+    attenuation = clamp(attenuation * damping, 0, 1);  
     
     //float theta = dot(lightDir, normalize(-light.lightDirection)); 
     float theta = dot(lightDir, normalize(-light.direction));
@@ -166,6 +182,11 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 {
     FragOutputColor result;
 
+    if(config.isLamp == 1){
+        result.color = config.material.albedo;
+        return result;
+    }
+
     //result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 
     //SimpleDataBuffer dbuff;
@@ -180,11 +201,6 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 
     //light.ambient * material.albedo; 
     float3 resultColor = (float3) 0;
-
-    if(config.isLamp == 1){
-        result.color = config.material.albedo;
-        return result;
-    }
 
     float3 normalV = normalize(input.normal);
     float3 tangentV = normalize(input.tangent);
@@ -219,9 +235,9 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     float height = dispMap.Sample(dispMapSampler, input.texcoord).r;
     float scale = 0.03;
     float2 texUV = input.texcoord - (viewDirTS.xy / viewDirTS.z) * (height * scale);
-    if(texUV.x > 1.0 || texUV.y > 1.0 || texUV.x < 0.0 || texUV.y < 0.0){
-        discard; 
-    }
+    // if(texUV.x > 1.0 || texUV.y > 1.0 || texUV.x < 0.0 || texUV.y < 0.0){
+    //     discard; 
+    // }
 
     //diff = max(dot(N, lightDir), 0.0); 
     //Two side light

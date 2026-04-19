@@ -76,13 +76,13 @@ class SpriteManager : BaseDebuggerPanel
         ]);
 
         xScaleField = createNumericField((v) {
-            callOn3dSprite((sprite) { sprite.scale.x = v; });
+            callOn3dSprite((sprite) { sprite.scaleX = v; });
         });
         yScaleField = createNumericField((v) {
-            callOn3dSprite((sprite) { sprite.scale.y = v; });
+            callOn3dSprite((sprite) { sprite.scaleY = v; });
         });
         zScaleField = createNumericField((v) {
-            callOn3dSprite((sprite) { sprite.scale.z = v; });
+            callOn3dSprite((sprite) { sprite.scaleZ = v; });
         });
 
         auto scaleBox = new HBox(2);
@@ -194,9 +194,9 @@ class SpriteManager : BaseDebuggerPanel
             albedo.color(sprite3.albedo, false);
             albedoIntensity.value(sprite3.albedoIntensity, false);
 
-            xScaleField.value(sprite3.scale.x, false);
-            yScaleField.value(sprite3.scale.y, false);
-            zScaleField.value(sprite3.scale.z, false);
+            xScaleField.value(sprite3.scaleX, false);
+            yScaleField.value(sprite3.scaleY, false);
+            zScaleField.value(sprite3.scaleZ, false);
 
             xRotateField.value(sprite3.angleX, false);
             yRotateField.value(sprite3.angleY, false);
@@ -210,6 +210,9 @@ class SpriteManager : BaseDebuggerPanel
             lightPanel.ambientField.color(lamp.ambient, false);
             lightPanel.diffuseField.color(lamp.diffuse, false);
             lightPanel.specularField.color(lamp.specular, false);
+
+            lightPanel.linearCoeff.value(lamp.linearCoeff, false);
+            lightPanel.quadraticCoeff.value(lamp.quadraticCoeff, false);
         }
         else
         {
@@ -228,6 +231,9 @@ class LightPanel : Control
     ColorPicker ambientField;
     ColorPicker diffuseField;
     ColorPicker specularField;
+
+    RegulateTextField linearCoeff;
+    RegulateTextField quadraticCoeff;
 
     BaseLight lamp;
 
@@ -266,6 +272,18 @@ class LightPanel : Control
                 lamp.specular = newv;
             }
         };
+
+        linearCoeff = new RegulateTextField("Lin", 0, 1, (v) {
+            lamp.linearCoeff = v;
+        });
+        linearCoeff.scrollDt = 0.01;
+        addCreate(linearCoeff);
+
+        quadraticCoeff = new RegulateTextField("Qua", 0, 3, (v) {
+            lamp.quadraticCoeff = v;
+        });
+        quadraticCoeff.scrollDt = 0.01;
+        addCreate(quadraticCoeff);
 
     }
 }

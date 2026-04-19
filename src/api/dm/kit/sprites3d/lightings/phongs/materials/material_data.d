@@ -27,7 +27,7 @@ struct Light
     Vec3f direction;
     float linearCoeff = 0;
     Vec3f lightDirection;
-    float constantCoeff = 0;
+    float radius = 0;
     float[3] ambient;
     float quadraticCoeff = 0;
     float[3] diffuse;
@@ -45,7 +45,7 @@ import api.math.geom3 : Vec3f;
 * under Creative Commons Attribution-ShareAlike License https://wiki.ogre3d.org/Creative+Commons+Attribution-ShareAlike+License?copyrightpage=-Point%20Light%20Attenuation
 */
 //Range Constant Linear Quadratic
-Vec3f[size_t] coeffMap = [
+immutable Vec3f[size_t] coeffMap = [
     7: Vec3f(1.0, 0.7, 1.8),
     13: Vec3f(1.0, 0.35, 0.44),
     20: Vec3f(1.0, 0.22, 0.20),
@@ -59,3 +59,57 @@ Vec3f[size_t] coeffMap = [
     600: Vec3f(1.0, 0.007, 0.0002),
     3250: Vec3f(1.0, 0.0014, 0.000007),
 ];
+
+import std.array : array;
+import std.algorithm.sorting : sort;
+
+immutable size_t[] coeffMapKeys = coeffMap.keys.sort.array;
+
+Vec3f interpFromDist(float distance)
+{
+    //float distance = (objectPosition - position).length();
+    //TODO binary search
+    assert(coeffMapKeys.length != 0);
+    const lastIdx = coeffMapKeys.length - 1;
+
+    size_t lowerIdx, upperIdx;
+    foreach (i; 0 .. lastIdx)
+    {
+        const nextIdx = i + 1;
+        if (distance >= coeffMapKeys[i] && distance <= coeffMapKeys[nextIdx])
+        {
+            lowerIdx = i;
+            upperIdx = nextIdx;
+            break;
+        }
+    }
+
+    if (distance < coeffMapKeys[0])
+    {
+        return coeffMap[coeffMapKeys[0]];
+    }
+    if (distance > coeffMapKeys[lastIdx])
+    {
+        return coeffMap[coeffMapKeys[lastIdx]];
+    }
+
+    float d1 = coeffMapKeys[lowerIdx];
+    float d2 = coeffMapKeys[upperIdx];
+    float t = (distance - d1) / (d2 - d1); //[0, 1]
+
+    Vec3f c1 = coeffMap[coeffMapKeys[lowerIdx]];
+    Vec3f c2 = coeffMap[coeffMapKeys[upperIdx]];
+
+    return Vec3f(
+        c1.x + t * (c2.x - c1.x),
+        c1.y + t * (c2.y - c1.y),
+        c1.z + t * (c2.z - c1.z)
+    );
+}
+
+unittest
+{
+    import std.math.operations : isClose;
+    auto res1 = interpFromDist(10);
+    assert(isClose(res1.staticArr[], [1, 0.52, 1.12], 0.01)); 
+}

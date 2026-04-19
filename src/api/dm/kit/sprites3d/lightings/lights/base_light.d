@@ -26,9 +26,14 @@ class BaseLight : Sprite3d
 
     Sprite3d target;
 
+    float radius = 5;
+    float linearCoeff = 0.09;
+    float quadraticCoeff = 0;
+
     this()
     {
         id = "BaseLight";
+        albedo = RGBA.white;
     }
 
     override void create()

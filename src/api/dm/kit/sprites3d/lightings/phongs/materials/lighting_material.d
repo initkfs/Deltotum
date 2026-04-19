@@ -4,6 +4,7 @@ import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
 import api.math.geom3.vec3 : Vec3f;
+import Math = api.math;
 
 /**
  * Authors: initkfs

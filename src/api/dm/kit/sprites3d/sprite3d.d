@@ -148,7 +148,7 @@ class Sprite3d : Sprite2d
         //Scale -> Rotate -> Translate
         import api.math.matrices.affine3;
 
-        _worldMatrix = _worldMatrix.mul(scaleMatrix(scale));
+        _worldMatrix = _worldMatrix.mul(scaleMatrix(_scale));
 
         if (isRotateAroundPivot)
         {
@@ -431,7 +431,24 @@ class Sprite3d : Sprite2d
         return true;
     }
 
-    Vec3f scale() => _scale;
+    float scaleX() => _scale.x;
+    void scaleX(float v) {
+        _scale.x = v;
+        isMatrixRecalc = true;
+    }
+
+    float scaleY() => _scale.y;
+    void scaleY(float v) {
+        _scale.y = v;
+        isMatrixRecalc = true;
+    }
+
+    float scaleZ() => _scale.z;
+    void scaleZ(float v) {
+        _scale.z = v;
+        isMatrixRecalc = true;
+    }
+
     void scale(Vec3f vec)
     {
         _scale = vec;

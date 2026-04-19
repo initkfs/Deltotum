@@ -29,6 +29,8 @@ class Shape3d : Sprite3d
     string normalMapPath;
     string dispMapPath;
 
+    bool isLamp;
+
     protected
     {
         SDL_GPUTransferBuffer* transferBuffer;

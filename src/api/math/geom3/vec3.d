@@ -469,6 +469,8 @@ struct Vec3f
         mixin("z" ~ op ~ "=" ~ otherId ~ ".z;");
     }
 
+    float[3] staticArr() pure => [x, y, z];
+
     string toString() const
     {
         import std.format : format;

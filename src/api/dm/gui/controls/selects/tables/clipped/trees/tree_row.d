@@ -232,44 +232,47 @@ class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
         }
 
         //TODO child !is null
-        if (rowItem.childrenItems.length > 0 && !expandGraphics && isCreateExpandGraphics)
+        if (rowItem.childrenItems.length > 0)
         {
-            auto eg = newExpandGraphics;
-            expandGraphics = !onNewExpandGraphics ? eg : onNewExpandGraphics(eg);
-
-            expandGraphics.padding = Insets(0);
-            expandGraphics.text = isExpand ? expandSymbol : hidingSymbol;
-
-            addCreate(expandGraphics);
-            if (onCreatedExpandGraphics)
+            if (!expandGraphics && isCreateExpandGraphics)
             {
-                onCreatedExpandGraphics(expandGraphics);
+                auto eg = newExpandGraphics;
+                expandGraphics = !onNewExpandGraphics ? eg : onNewExpandGraphics(eg);
+
+                expandGraphics.padding = Insets(0);
+                expandGraphics.text = isExpand ? expandSymbol : hidingSymbol;
+
+                addCreate(expandGraphics);
+                if (onCreatedExpandGraphics)
+                {
+                    onCreatedExpandGraphics(expandGraphics);
+                }
+
+                //TODO reuse
+                expandGraphics.onPointerPress ~= (ref e) {
+                    this.isExpand = !isExpand;
+                    setExpandGraphics;
+                    foreach (ch; childrenRows)
+                    {
+                        toggleTreeBranch(ch, isExpand);
+                    }
+
+                    e.isConsumed = true;
+                };
+
+                setExpandGraphics;
+            }
+        }
+
+        onPointerPress ~= (ref e) {
+            //TODO margin
+            if (expandGraphics && expandGraphics.isEventInBounds(e))
+            {
+                return;
             }
 
-            //TODO reuse
-            expandGraphics.onPointerPress ~= (ref e) {
-                this.isExpand = !isExpand;
-                setExpandGraphics;
-                foreach (ch; childrenRows)
-                {
-                    toggleTreeBranch(ch, isExpand);
-                }
-
-                e.isConsumed = true;
-            };
-
-            onPointerPress ~= (ref e) {
-                //TODO margin
-                if (expandGraphics.isEventInBounds(e))
-                {
-                    return;
-                }
-
-                toggleSelected(!isSelected);
-            };
-
-            setExpandGraphics;
-        }
+            toggleSelected(!isSelected);
+        };
 
         super.create;
     }

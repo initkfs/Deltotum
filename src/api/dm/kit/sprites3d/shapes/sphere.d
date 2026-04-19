@@ -78,15 +78,15 @@ class Sphere : Shape3d
                 int k3 = k1 + (sectors + 1); // bottom-left
                 int k4 = k3 + 1; // bottom-right
 
-                // First triangle: top-left -> bottom-left -> top-right
+                // top-left -> bottom-left -> bottom-right
                 indices[index++] = cast(ushort) k1;
                 indices[index++] = cast(ushort) k3;
-                indices[index++] = cast(ushort) k2;
-
-                // Second triangle: top-right -> bottom-left -> bottom-right
-                indices[index++] = cast(ushort) k2;
-                indices[index++] = cast(ushort) k3;
                 indices[index++] = cast(ushort) k4;
+
+                // top-left -> bottom-right -> top-right
+                indices[index++] = cast(ushort) k1;
+                indices[index++] = cast(ushort) k4;
+                indices[index++] = cast(ushort) k2;
             }
         }
 

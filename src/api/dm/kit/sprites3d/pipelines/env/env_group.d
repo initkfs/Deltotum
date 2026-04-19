@@ -26,6 +26,7 @@ struct SceneConfig
 align(16):
     Vec3f cameraPos;
 align(4):
+    uint isLamp;
     float nearPlane;
     float farPlane;
     float time;
@@ -33,8 +34,6 @@ align(4):
 align(16):
     Light[4] lights;
     Material material;
-align(4):
-    uint isLamp;
 }
 
 /**
@@ -87,7 +86,7 @@ class EnvGroup : PipelineGroup
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
             auto light = new PointLight;
-            light.pos3 = Vec3f(-1, 1, 2);
+            light.pos3 = Vec3f(0, 1, 3);
             light.direction = (Vec3f(0, 0, 0).sub(light.pos3)).normalize;
             light.scale = Vec3f(0.1, 0.1, 0.1);
             light.ambient = RGBA.black;
@@ -152,7 +151,10 @@ class EnvGroup : PipelineGroup
         config.time = platform.timer.ticksMs / 1000.0;
         config.lightCount = lightCount;
 
-        auto isLamp = (cast(BaseLight) sprite) !is null;
+        if (cast(BaseLight) sprite.parent)
+        {
+            config.isLamp = true;
+        }
 
         foreach (li; 0 .. lightCount)
         {
@@ -170,15 +172,15 @@ class EnvGroup : PipelineGroup
             lightData.lightType = 0;
             //lightData.direction = camera.cameraFront;
             lightData.direction = lamp.direction;
-            lightData.linearCoeff = 0.09f;
+            lightData.linearCoeff = lamp.linearCoeff;
+            lightData.radius = lamp.radius;
             //lightData.lightDirection;
-            lightData.constantCoeff = 1.0;
             lightData.ambient = lamp.ambient.toArrayFRGB;
-            lightData.quadraticCoeff = 0;
+            lightData.quadraticCoeff = lamp.quadraticCoeff;
             lightData.diffuse = lamp.diffuse.toArrayFRGB;
-            lightData.cutoff = Math.cosDeg(12.5);
+            lightData.cutoff = 0;
             lightData.specular = lamp.specular.toArrayFRGB;
-            lightData.outerCutoff = Math.cosDeg(17.5);
+            lightData.outerCutoff = 0;
 
             uint type;
             import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
@@ -189,10 +191,13 @@ class EnvGroup : PipelineGroup
             {
                 type = 0;
             }
-            else if (cast(SpotLight) lamp)
+            else if (auto spotLamp = cast(SpotLight) lamp)
             {
                 lightData.direction = lamp.direction;
                 type = 2;
+
+                lightData.cutoff = spotLamp.cutoff;
+                lightData.outerCutoff = spotLamp.outerCutoff;
             }
             else if (cast(PointLight) lamp)
             {
@@ -222,9 +227,6 @@ class EnvGroup : PipelineGroup
 
         config.material = mat;
 
-        //TODO lamp pipeline
-        config.isLamp = isLamp;
-
         gpu.dev.pushUniformFragmentData(0, &config, config.sizeof);
     }
 
@@ -241,6 +243,7 @@ class EnvGroup : PipelineGroup
             {
                 if (oldLight is light)
                 {
+                    //TODO remove from parent
                     return true;
                 }
             }
