@@ -2,21 +2,39 @@ module api.dm.kit.sprites3d.lightings.phongs.materials.material_data;
 
 import api.math.geom3.vec3 : Vec3f;
 import api.math.geom4.vec4 : Vec4f;
+import api.dm.kit.graphics.colors.rgba : RGBAf;
 
 /**
  * Authors: initkfs
+ */
+
+/** 
+ * Chalk (Dielectric, Matte):
+   Albedo: White/Beige.
+   Specular RGB: Almost black (e.g., 0.02, 0.02, 0.02). 
+   Specular A (Gloss): Low value (0.1).
+
+   Plastic (Dielectric, Glossy):
+   Albedo: Any color.
+   Specular RGB: Gray/White (e.g., 0.05, 0.05, 0.05).
+   Specular A (Gloss): High value (0.8).
+   
+   Gold (Metal):
+   Albedo: Black (metals physically have no diffuse).
+   Specular RGB: Yellow/Gold (1.0, 0.8, 0.2).
+   Specular A (Gloss): High value (0.9)
  */
 
 struct Material
 {
     float[4] albedo;
     float[4] ambient;
-    float[4] diffuse;
-    float[4] specular;
+    float[4] reserve0;
+    float[4] specular; //A - gloss, 0 to 1
 align(4):
     float shininess = 32;
     float intensity = 0;
-    float reserve1;
+    float gloss = 0.5;
     float reserve2;
 }
 
@@ -110,6 +128,24 @@ Vec3f interpFromDist(float distance)
 unittest
 {
     import std.math.operations : isClose;
+
     auto res1 = interpFromDist(10);
-    assert(isClose(res1.staticArr[], [1, 0.52, 1.12], 0.01)); 
+    assert(isClose(res1.staticArr[], [1, 0.52, 1.12], 0.01));
 }
+
+struct MatPreset
+{
+    string name;
+    RGBAf albedo;
+    RGBAf specular;
+    float gloss;
+}
+
+MatPreset chalkPlaster = MatPreset("Chalk / Plaster", RGBAf(0.9, 0.9, 0.9, 1.0), RGBAf(0.02, 0.02, 0.02, 1.0), 0.075); //gloss 0.05-0.1
+MatPreset woodMatte = MatPreset("Wood (Matte)", RGBAf(0.5, 0.3, 0.1, 1.0), RGBAf(0.03, 0.03, 0.03, 1.0), 0.25); // 0.2-0.3 avg
+MatPreset leather = MatPreset("Leather", RGBAf(0.6, 0.4, 0.3, 1.0), RGBAf(0.04, 0.04, 0.04, 1.0), 0.35); // 0.3-0.4 avg
+MatPreset plasticSmooth = MatPreset("Plastic (Smooth)", RGBAf(0.1, 0.1, 0.1, 1.0), RGBAf(0.05, 0.05, 0.05, 1.0), 0.75); // 0.7-0.8 avg
+MatPreset glassIce = MatPreset("Glass / Ice", RGBAf(0.0, 0.0, 0.0, 1.0), RGBAf(0.04, 0.04, 0.04, 1.0), 0.95);
+MatPreset steelIron = MatPreset("Steel / Iron", RGBAf(0.05, 0.05, 0.05, 1.0), RGBAf(0.5, 0.5, 0.5, 1.0), 0.70); // 0.6-0.8 avg
+MatPreset gold = MatPreset("Gold", RGBAf(0.02, 0.02, 0.02, 1.0), RGBAf(1.0, 0.8, 0.3, 1.0), 0.90);
+MatPreset copper = MatPreset("Copper", RGBAf(0.02, 0.02, 0.02, 1.0), RGBAf(0.9, 0.5, 0.4, 1.0), 0.70);

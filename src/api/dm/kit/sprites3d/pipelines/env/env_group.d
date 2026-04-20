@@ -211,9 +211,23 @@ class EnvGroup : PipelineGroup
 
         Material mat;
         mat.albedo = sprite.albedo.toArrayRGBAf;
-        mat.ambient = RGBA.white.toArrayRGBAf;
-        mat.diffuse = RGBA.white.toArrayRGBAf;
-        mat.specular = RGBA.white.toArrayRGBAf;
+
+        import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+
+        if (auto shape = cast(Shape3d) sprite)
+        {
+            if(shape.lightingMaterial){
+                mat.specular = shape.lightingMaterial.specular.toArrayRGBAf;
+                mat.ambient = shape.lightingMaterial.ambient.toArrayRGBAf;
+                mat.gloss = shape.lightingMaterial.gloss;
+            }
+        }
+        else
+        {
+            mat.ambient = RGBA.white.toArrayRGBAf;
+            mat.specular = RGBA.white.toArrayRGBAf;
+        }
+
         mat.shininess = 32;
         mat.intensity = sprite.albedoIntensity;
 

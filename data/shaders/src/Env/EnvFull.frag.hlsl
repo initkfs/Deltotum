@@ -39,11 +39,11 @@ struct Material
 {
     float4 albedo;
     float4 ambient;
-    float4 diffuse;
+    float4 reserve0;
     float4 specular;
     float shininess;
     float intensity;
-    float reserve1;
+    float gloss;
     float reserve2;
 };
 
@@ -92,7 +92,7 @@ float3 palette(float t) {
     return a + b * cos(6.28318 * (c * t + d));
 }
 
-float3 calcDir(float3 diffuseColor, float3 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir){
+float3 calcDir(float3 diffuseColor, float4 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir){
     float3 lightDir = normalize(-light.direction);
     float diff = max(dot(normal, lightDir), 0.0);
     //float3 reflectDir = reflect(-lightDir, input.normal);
@@ -102,24 +102,34 @@ float3 calcDir(float3 diffuseColor, float3 specularColor, float3 normal, float a
     float specMask = diff > 0.0 ? 1.0 : 0.0;
     float3 ambient  = light.ambient  * diffuseColor * material.albedo.rgb * ao;
     float3 diffuse  = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
-    float3 specular = light.specular * spec * specMask  * specularColor;
+    float3 specular = light.specular * spec * specMask  * specularColor.rgb;
 
     //hard shadow return (ambient + diffuse) * attenuation * ao + specular;
     return ambient + diffuse + specular;
 }
 
-float3 calcPoint(float3 diffuseColor, float3 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir){
+float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir){
     float3 lightDir = normalize(light.position - input.worldPos);
     float diff = max(dot(normal, lightDir), 0.0);
     //float3 reflectDir = reflect(-lightDir, input.normal);
     float3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+
+    float gloss = specularColor.a * material.gloss;
+    
+    //float shininess = pow(2.0, gloss * 8.0);  //0..1, 2..256
+    float shininess = exp2(10.0 * gloss + 1.0);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
+    // float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     
     float distance = length(light.position - input.worldPos);
     float radius = light.radius;
-    if (distance > radius) return 0.0;
+    //if (distance > radius) return 0.0;
 
     float constantCoeff = 1;
+
+    //too dark, need to adjust intensity
+    //float d2 = distance * distance;
+    //float attenuation = 1.0 / (d2, 0.01);
     
     float attenuation = 1.0 / (constantCoeff + light.linearCoeff * distance + 
   			     light.quadraticCoeff * (distance * distance));   
@@ -128,15 +138,33 @@ float3 calcPoint(float3 diffuseColor, float3 specularColor, float3 normal, float
     //or damping = 1.0 - pow(alpha, 4);
     attenuation = clamp(attenuation * damping, 0, 1);
 
+    //float factor = distance / radius;
+    
+    //float smoothFactor = clamp(1.0 - factor * factor, 0.0, 1.0); //(1 - alpha^2)^2
+    //float damping = smoothFactor * smoothFactor;
+    //attenuation *= damping;
+    //attenuation = clamp(attenuation, 0, 1);
+    
+    //float factor2 = factor * factor;
+    //float factor4 = factor2 * factor2;
+    //float windowing = clamp(1.0 - factor4, 0.0, 1.0);
+    
+    //attenuation = attenuation * (windowing * windowing);
+
     float3 ambient = light.ambient  * diffuseColor * material.albedo.rgb * ao;
-    float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
-    float3 specular = light.specular * spec * specularColor;
+    //float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
+    
+    float energyConservation = (shininess + 2.0) / 8.0; 
+    float3 specular = light.specular * spec * specularColor.rgb * energyConservation * 0.04;
+    //float3 specular = light.specular * spec * specularColor;
+
+    float3 diffuse = light.diffuse  * diff * (1.0 - specular) * diffuseColor * material.albedo.rgb;
 
     //return ambient + (diffuse * attenuation) + (specular * attenuation);
     return (ambient + diffuse + specular) * attenuation;
 }
 
-float3 calcSpot(float3 diffuseColor, float3 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir)
+float3 calcSpot(float3 diffuseColor, float4 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir)
 {
     float3 lightDir = normalize(light.position - input.worldPos);
     float diff = max(dot(normal, lightDir), 0.0);
@@ -167,7 +195,7 @@ float3 calcSpot(float3 diffuseColor, float3 specularColor, float3 normal, float 
     
     float3 ambient = light.ambient * diffuseColor * material.albedo.rgb * ao;
     float3 diffuse = light.diffuse * diff * diffuseColor  * material.albedo.rgb;
-    float3 specular = light.specular * spec * specMask * specularColor;
+    float3 specular = light.specular * spec * specMask * specularColor.rgb;
 
     float combinedFactor = attenuation * intensity;
 
@@ -267,7 +295,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, texUV);
     
     float3 diffuseColor = fullDiffuseColor.rgb;
-    float3 specularColor = specularMap.Sample(specularSampler, texUV).rgb;
+    float4 specularColor = specularMap.Sample(specularSampler, texUV);
 
     for (int li = 0; li < config.lightCount; li++) {
          Light light = config.lights[li];

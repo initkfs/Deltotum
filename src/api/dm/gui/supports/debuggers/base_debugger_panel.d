@@ -18,9 +18,9 @@ class BaseDebuggerPanel : Container
         layout.isAutoResize = true;
     }
 
-    FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1)
+    FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1, float minValue = -float.max, float maxValue = float.max)
     {
-        auto field = new FracSpinner(-float.max, float.max);
+        auto field = new FracSpinner(minValue, maxValue);
         field.incValue = dtValue;
         field.decValue = dtValue;
         setNumericField(field, onFieldValue);

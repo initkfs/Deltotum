@@ -3,6 +3,7 @@ module api.dm.kit.sprites3d.sprite3d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.cameras.camera : Camera;
+import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
 import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4;
 import api.math.quaternion : Quaternion;
@@ -61,6 +62,14 @@ class Sprite3d : Sprite2d
     RGBA albedo = RGBA.gray;
     float albedoIntensity = 1;
 
+    LightingMaterial lightingMaterial;
+    bool isCreateLightingMaterial;
+
+    string diffuseMapPath;
+    string specularMapPath;
+    string normalMapPath;
+    string dispMapPath;
+
     this()
     {
         isManaged = false;
@@ -76,6 +85,33 @@ class Sprite3d : Sprite2d
         orientation = Quaternion(1.0f, Vec3f(0, 0, 0));
 
         calcWorldMatrix;
+
+        if (!lightingMaterial)
+        {
+            if (isCreateLightingMaterial)
+            {
+                import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
+
+                lightingMaterial = new LightingMaterial(diffuseMapPath, specularMapPath, normalMapPath, dispMapPath);
+                addCreate(lightingMaterial);
+            }
+        }
+        else
+        {
+            addCreate(lightingMaterial);
+        }
+    }
+
+    bool hasMaterial() => lightingMaterial !is null;
+
+    void onMaterial(scope void delegate(LightingMaterial) onMaterialIfExists)
+    {
+        if (!lightingMaterial)
+        {
+            return;
+        }
+
+        onMaterialIfExists(lightingMaterial);
     }
 
     override bool isNeedDraw(Sprite2d sprite)

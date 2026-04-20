@@ -2,7 +2,6 @@ module api.dm.kit.sprites3d.shapes.shape3d;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
-import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
 
 import api.math.matrices.matrix : Matrix4x4;
 import api.dm.back.sdl3.externs.csdl3;
@@ -20,16 +19,6 @@ class Shape3d : Sprite3d
 
     SDL_GPUBuffer* vertexBuffer;
     SDL_GPUBuffer* indexBuffer;
-
-    LightingMaterial lightingMaterial;
-    bool isCreateLightingMaterial;
-
-    string diffuseMapPath;
-    string specularMapPath;
-    string normalMapPath;
-    string dispMapPath;
-
-    bool isLamp;
 
     protected
     {
@@ -96,21 +85,6 @@ class Shape3d : Sprite3d
         }
 
         copyToBuffer;
-
-        if (!lightingMaterial)
-        {
-            if (isCreateLightingMaterial)
-            {
-                import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
-
-                lightingMaterial = new LightingMaterial(diffuseMapPath, specularMapPath, normalMapPath, dispMapPath);
-                addCreate(lightingMaterial);
-            }
-        }
-        else
-        {
-            addCreate(lightingMaterial);
-        }
     }
 
     void copyToBuffer()

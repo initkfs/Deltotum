@@ -2,8 +2,8 @@ module api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 
-import api.math.geom3.vec3 : Vec3f;
 import Math = api.math;
 
 /**
@@ -17,11 +17,10 @@ class LightingMaterial : Sprite3d
     TextureGPU normalMap;
     TextureGPU dispMap;
 
-    Vec3f ambient;
-    Vec3f diffuse;
-    Vec3f specular;
-    Vec3f color;
+    RGBA ambient = RGBA.white;
+    RGBA specular = RGBA.white;
     float shininess = 32;
+    float gloss = 0;
 
     bool isBindDiffuseMap = true;
     bool isBindSpecularMap = true;

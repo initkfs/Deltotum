@@ -40,6 +40,10 @@ class SpriteManager : BaseDebuggerPanel
 
     ColorPicker albedo;
 
+    ColorPicker ambient;
+    ColorPicker specular;
+    RegulateTextField glossField;
+
     RegulateTextField albedoIntensity;
 
     dstring initNumField = "0";
@@ -134,6 +138,40 @@ class SpriteManager : BaseDebuggerPanel
         albedoIntensity.scrollDt = 0.1;
         addCreate(albedoIntensity);
 
+        ambient = new ColorPicker;
+        addCreate(ambient);
+
+        ambient.onChangeOldNew ~= (old, newv) {
+            if (_currentSprite)
+            {
+                if (auto sprite3d = cast(Sprite3d) _currentSprite)
+                {
+                    sprite3d.onMaterial((mat) { mat.ambient = newv; });
+                    return;
+                }
+            }
+        };
+
+        specular = new ColorPicker;
+        addCreate(specular);
+
+        specular.onChangeOldNew ~= (old, newv) {
+            if (_currentSprite)
+            {
+                if (auto sprite3d = cast(Sprite3d) _currentSprite)
+                {
+                    sprite3d.onMaterial((mat) { mat.specular = newv; });
+                    return;
+                }
+            }
+        };
+
+        glossField = new RegulateTextField("Gls", 0, 1, (v) {
+            callOn3dSprite((sprite) { sprite.onMaterial((mat) { mat.gloss = v; }); });
+        });
+        glossField.scrollDt = 0.1;
+        addCreate(glossField);
+
         isVisibleField = new Check("Vis:");
         addCreate(isVisibleField);
         isVisibleField.onChangeOldNew ~= (oldv, newv) {
@@ -170,14 +208,14 @@ class SpriteManager : BaseDebuggerPanel
         }
     }
 
-    override FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1)
+    override FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1, float min = -float.max, float max = float.max)
     {
         auto field = super.createNumericField((v) {
             if (_currentSprite)
             {
                 onFieldValue(v);
             }
-        }, dtValue);
+        }, dtValue, min, max);
         return field;
     }
 
@@ -201,6 +239,12 @@ class SpriteManager : BaseDebuggerPanel
             xRotateField.value(sprite3.angleX, false);
             yRotateField.value(sprite3.angleY, false);
             zRotateField.value(sprite3.angle, false);
+
+            sprite3.onMaterial((mat){
+                glossField.value(mat.gloss, false);
+                ambient.color(mat.ambient, false);
+                specular.color(mat.specular, false);
+            });
         }
 
         if (auto lamp = cast(BaseLight) sprite)
