@@ -39,16 +39,12 @@ class SpriteManager : BaseDebuggerPanel
     FracSpinner zRotateField;
 
     ColorPicker albedo;
-
-    ColorPicker ambient;
-    ColorPicker specular;
-    RegulateTextField glossField;
-
     RegulateTextField albedoIntensity;
 
     dstring initNumField = "0";
 
     LightPanel lightPanel;
+    MaterialPanel matPanel;
 
     Check isVisibleField;
 
@@ -138,40 +134,6 @@ class SpriteManager : BaseDebuggerPanel
         albedoIntensity.scrollDt = 0.1;
         addCreate(albedoIntensity);
 
-        ambient = new ColorPicker;
-        addCreate(ambient);
-
-        ambient.onChangeOldNew ~= (old, newv) {
-            if (_currentSprite)
-            {
-                if (auto sprite3d = cast(Sprite3d) _currentSprite)
-                {
-                    sprite3d.onMaterial((mat) { mat.ambient = newv; });
-                    return;
-                }
-            }
-        };
-
-        specular = new ColorPicker;
-        addCreate(specular);
-
-        specular.onChangeOldNew ~= (old, newv) {
-            if (_currentSprite)
-            {
-                if (auto sprite3d = cast(Sprite3d) _currentSprite)
-                {
-                    sprite3d.onMaterial((mat) { mat.specular = newv; });
-                    return;
-                }
-            }
-        };
-
-        glossField = new RegulateTextField("Gls", 0, 1, (v) {
-            callOn3dSprite((sprite) { sprite.onMaterial((mat) { mat.gloss = v; }); });
-        });
-        glossField.scrollDt = 0.1;
-        addCreate(glossField);
-
         isVisibleField = new Check("Vis:");
         addCreate(isVisibleField);
         isVisibleField.onChangeOldNew ~= (oldv, newv) {
@@ -184,12 +146,16 @@ class SpriteManager : BaseDebuggerPanel
         lightPanel = new LightPanel;
         addCreate(lightPanel);
         enablePanel(lightPanel, false);
+
+        matPanel = new MaterialPanel;
+        addCreate(matPanel);
+        enablePanel(matPanel, false);
     }
 
     void enablePanel(Control panel, bool value)
     {
         panel.isVisible = value;
-        panel.isManaged = value;
+        panel.isLayoutManaged = value;
     }
 
     void callOnSprite(void delegate(Sprite2d) onSprite)
@@ -208,7 +174,8 @@ class SpriteManager : BaseDebuggerPanel
         }
     }
 
-    override FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1, float min = -float.max, float max = float.max)
+    override FracSpinner createNumericField(void delegate(float value) onFieldValue, float dtValue = 0.1, float min = -float
+            .max, float max = float.max)
     {
         auto field = super.createNumericField((v) {
             if (_currentSprite)
@@ -239,12 +206,21 @@ class SpriteManager : BaseDebuggerPanel
             xRotateField.value(sprite3.angleX, false);
             yRotateField.value(sprite3.angleY, false);
             zRotateField.value(sprite3.angle, false);
+        }
 
-            sprite3.onMaterial((mat){
-                glossField.value(mat.gloss, false);
-                ambient.color(mat.ambient, false);
-                specular.color(mat.specular, false);
-            });
+        import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
+
+        if (auto mat = cast(LightingMaterial) sprite)
+        {
+            assert(mat);
+            enablePanel(matPanel, true);
+            matPanel.mat = mat;
+            matPanel.fill;
+        }
+        else
+        {
+            enablePanel(matPanel, false);
+            matPanel.mat = null;
         }
 
         if (auto lamp = cast(BaseLight) sprite)
@@ -268,6 +244,64 @@ class SpriteManager : BaseDebuggerPanel
     }
 
     Sprite2d currentSprite() => _currentSprite;
+}
+
+class MaterialPanel : Control
+{
+    ColorPicker ambient;
+    ColorPicker specular;
+    RegulateTextField glossField;
+
+    import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material;
+
+    LightingMaterial mat;
+
+    this()
+    {
+        setVLayout;
+    }
+
+    override void create()
+    {
+        super.create;
+
+        ambient = new ColorPicker;
+        addCreate(ambient);
+
+        ambient.onChangeOldNew ~= (old, newv) {
+            if (mat)
+            {
+                mat.ambient = newv;
+            }
+        };
+
+        specular = new ColorPicker;
+        addCreate(specular);
+
+        specular.onChangeOldNew ~= (old, newv) {
+            if (mat)
+            {
+                mat.specular = newv;
+            }
+        };
+
+        glossField = new RegulateTextField("Gls", 0, 1, (v) {
+            if (mat)
+            {
+                mat.gloss = v;
+            }
+        });
+        glossField.scrollDt = 0.01;
+        addCreate(glossField);
+    }
+
+    void fill()
+    {
+        assert(mat);
+        ambient.color(mat.ambient, false);
+        specular.color(mat.specular, false);
+        glossField.value(mat.gloss, false);
+    }
 }
 
 class LightPanel : Control

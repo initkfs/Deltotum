@@ -295,7 +295,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, texUV);
     
     float3 diffuseColor = fullDiffuseColor.rgb;
-    float4 specularColor = specularMap.Sample(specularSampler, texUV);
+    float4 specularColor = specularMap.Sample(specularSampler, texUV) * config.material.specular;
 
     for (int li = 0; li < config.lightCount; li++) {
          Light light = config.lights[li];
