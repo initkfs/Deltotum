@@ -26,6 +26,17 @@ class GuiScene : Scene3d
         initProcessUDA!ThisType(isInitUDAProcessor);
     }
 
+    alias build = Scene3d.build;
+
+    void build(GuiComponent guiComponent){
+        if (!guiComponent.hasTheme)
+        {
+            assert(theme, "Theme must not be null");
+            guiComponent.theme = theme;
+        }
+        super.build(guiComponent);
+    }
+
     void addCreate(GuiComponent guiComponent)
     {
         if (!guiComponent.hasTheme)

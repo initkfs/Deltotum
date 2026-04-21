@@ -18,7 +18,7 @@ class LightingMaterial : Sprite3d
     TextureGPU dispMap;
 
     RGBA ambient = RGBA.white;
-    RGBA specular = RGBA.white;
+    RGBA specular = RGBA.black;
     float shininess = 32;
     float gloss = 0;
 

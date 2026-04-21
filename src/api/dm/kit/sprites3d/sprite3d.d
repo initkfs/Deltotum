@@ -3,8 +3,10 @@ module api.dm.kit.sprites3d.sprite3d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.cameras.camera : Camera;
+import api.dm.kit.scenes.scene3d : Scene3d;
 import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
 import api.math.geom3.vec3 : Vec3f;
+import api.math.geom2.vec2 : Vec2f;
 import api.math.matrices.matrix : Matrix4x4;
 import api.math.quaternion : Quaternion;
 import Math = api.math;
@@ -38,18 +40,21 @@ class Sprite3d : Sprite2d
         float _angleY = 0;
     }
 
+    bool isManagedTransforms;
+
     bool isCalcInverseWorldMatrix = true;
 
     Vec3f _scale = Vec3f(1, 1, 1);
 
     Vec3f rotatePivot;
-    float rotateRadius = 1;
+    Vec3f rotateLocalOffset;
     bool isRotateAroundPivot;
+    bool isCalcPosFromRotation;
 
     bool isRoundEvenZ;
     bool isRoundEvenChildZ;
 
-    Quaternion orientation;
+    Quaternion orientation = Quaternion.identity;
     bool isPermanentRotationMode;
 
     void delegate(float, float) onChangeZOldNew;
@@ -57,6 +62,9 @@ class Sprite3d : Sprite2d
     float zChangeThreshold = defaultTreshold;
 
     bool isMatrixRecalc;
+
+    bool isIgnoreAngleForChildX;
+    bool isIgnoreAngleForChildY;
 
     //TODO move to materials
     RGBA albedo = RGBA.gray;
@@ -72,9 +80,17 @@ class Sprite3d : Sprite2d
 
     this()
     {
-        isManaged = false;
+        //isManaged = false;
         isLayoutManaged = false;
         id = "Sprite3d";
+
+        enum defaultTreshold = 0;
+
+        xChangeThreshold = defaultTreshold;
+        yChangeThreshold = defaultTreshold;
+        widthChangeThreshold = defaultTreshold;
+        heightChangeThreshold = defaultTreshold;
+        zChangeThreshold = defaultTreshold;
     }
 
     override void create()
@@ -134,49 +150,6 @@ class Sprite3d : Sprite2d
 
     bool isInCameraFrustum() => true;
 
-    override bool add(Sprite2d object, long index = -1)
-    {
-        if (!super.add(object, index))
-        {
-            return false;
-        }
-
-        // if (auto sprite3d = cast(Sprite3d) object)
-        // {
-        //     if (!sprite3d.hasCamera)
-        //     {
-        //         if (!_camera && sprite3d.isNeedCamera && isBuildOnAdd)
-        //         {
-        //             import std.format : format;
-
-        //             throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
-        //         }
-        //         sprite3d.camera = _camera;
-        //     }
-        // }
-
-        return true;
-    }
-
-    override bool addCreate(Sprite2d object, long index = -1)
-    {
-        // if (auto sprite3d = cast(Sprite3d) object)
-        // {
-        //     if (!sprite3d.hasCamera)
-        //     {
-        //         if (!_camera && sprite3d.isNeedCamera && isBuildOnAdd)
-        //         {
-        //             import std.format : format;
-
-        //             throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
-        //         }
-        //         sprite3d.camera = _camera;
-        //     }
-        // }
-
-        return super.addCreate(object, index);
-    }
-
     void calcWorldMatrix()
     {
         _worldMatrix = _worldMatrix.identity;
@@ -188,7 +161,7 @@ class Sprite3d : Sprite2d
 
         if (isRotateAroundPivot)
         {
-            _worldMatrix = _worldMatrix.mul(translateMatrix(rotateRadius, 0, 0));
+            _worldMatrix = _worldMatrix.mul(translateMatrix(rotateLocalOffset));
         }
 
         Quaternion rotation = Quaternion.fromEuler(-angleX, -angleY, angle);
@@ -214,6 +187,21 @@ class Sprite3d : Sprite2d
         else
         {
             _worldMatrix = _worldMatrix.mul(translateMatrix(rotatePivot));
+            if (isCalcPosFromRotation)
+            {
+                auto newPos = posFromTransforms;
+                super.x(newPos.x);
+                super.y(newPos.y);
+                z(newPos.z, false);
+            }
+        }
+
+        if (parent && isManagedTransforms)
+        {
+            if (auto sprite3d = cast(Sprite3d) parent)
+            {
+                _worldMatrix = sprite3d.worldMatrix.mul(_worldMatrix);
+            }
         }
 
         if (isCalcInverseWorldMatrix)
@@ -248,6 +236,14 @@ class Sprite3d : Sprite2d
             {
                 logger.error("Inverse fail on matrix: ", _worldMatrixInverse.toString);
             }
+
+            if (parent && isManagedTransforms)
+            {
+                if (auto sprite3d = cast(Sprite3d) parent)
+                {
+                    _worldMatrixInverse = sprite3d.worldMatrixInverse.mul(_worldMatrixInverse);
+                }
+            }
         }
 
         isMatrixRecalc = false;
@@ -264,7 +260,12 @@ class Sprite3d : Sprite2d
         return _worldMatrix;
     }
 
-    ref Matrix4x4 worldMatrixInverse() => _worldMatrixInverse;
+    ref Matrix4x4 worldMatrixInverse()
+    {
+        return _worldMatrixInverse;
+    }
+
+    Vec3f posFromTransforms() => Vec3f(_worldMatrix[3][0], _worldMatrix[3][1], _worldMatrix[3][2]);
 
     Vec3f translatePos()
     {
@@ -274,10 +275,11 @@ class Sprite3d : Sprite2d
         }
 
         //TODO all axis
-        Vec3f local = Vec3f(rotateRadius, 0, 0);
-        Vec3f rotatedOffset = local.rotateAroundAxis(Vec3f(0, 1, 0), -angle);
-        Vec3f worldPos = rotatePivot.add(rotatedOffset);
-        return worldPos;
+        //Vec3f local = Vec3f(rotateRadius, 0, 0);
+        //Vec3f rotatedOffset = local.rotateAroundAxis(Vec3f(0, 1, 0), -angle);
+        //Vec3f worldPos = rotatePivot.add(rotatedOffset);
+        //return worldPos;
+        return posFromTransforms;
     }
 
     override float x() @safe pure nothrow => super.x;
@@ -307,7 +309,7 @@ class Sprite3d : Sprite2d
 
     float z() @safe pure nothrow => _z;
 
-    bool z(float newZ)
+    bool z(float newZ, bool isCalcMatrix = true)
     {
         if (isRoundEvenZ)
         {
@@ -339,7 +341,11 @@ class Sprite3d : Sprite2d
         }
 
         _z = newZ;
-        isMatrixRecalc = true;
+
+        if (isCalcMatrix)
+        {
+            isMatrixRecalc = true;
+        }
 
         if (!isInvalidationProcess)
         {
@@ -452,6 +458,21 @@ class Sprite3d : Sprite2d
 
         _angleX = v;
         isMatrixRecalc = true;
+
+        if (isAngleForChild)
+        {
+            foreach (ch; children)
+            {
+                if (auto sprite3d = cast(Sprite3d) ch)
+                {
+                    if (!sprite3d.isIgnoreAngleForChildX)
+                    {
+                        sprite3d.angleX = v;
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
@@ -464,23 +485,41 @@ class Sprite3d : Sprite2d
 
         _angleY = v;
         isMatrixRecalc = true;
+
+        if (isAngleForChild)
+        {
+            foreach (ch; children)
+            {
+                if (auto sprite3d = cast(Sprite3d) ch)
+                {
+                    if (!sprite3d.isIgnoreAngleForChildY)
+                    {
+                        sprite3d.angleY = v;
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
     float scaleX() => _scale.x;
-    void scaleX(float v) {
+    void scaleX(float v)
+    {
         _scale.x = v;
         isMatrixRecalc = true;
     }
 
     float scaleY() => _scale.y;
-    void scaleY(float v) {
+    void scaleY(float v)
+    {
         _scale.y = v;
         isMatrixRecalc = true;
     }
 
     float scaleZ() => _scale.z;
-    void scaleZ(float v) {
+    void scaleZ(float v)
+    {
         _scale.z = v;
         isMatrixRecalc = true;
     }
@@ -501,6 +540,7 @@ class Sprite3d : Sprite2d
 
     Vec3f pos3() @safe pure nothrow => Vec3f(_x, _y, _z);
     bool pos3(Vec3f p) => pos(p);
+    bool pos3(float newX, float newY, float newZ) => pos(newX, newY, newZ);
 
     bool pos(Vec3f newPos) => pos(newPos.x, newPos.y, newPos.z);
 
@@ -535,6 +575,42 @@ class Sprite3d : Sprite2d
         Quaternion targetQ = Quaternion.fromEuler(targetX, targetY, targetZ);
         orientation = Quaternion.slerp(orientation, targetQ, smoothness);
         isMatrixRecalc = true;
+    }
+
+    Vec2f projectToScreen(Vec3f localPos = Vec3f.zero)
+    {
+        import api.math.geom3.vec3 : Vec3f;
+
+        auto pm = worldMatrix.mul(scene3d.camera.view).mul(scene3d.camera.projection);
+
+        float lx = localPos.x, ly = localPos.y, lz = localPos.z, lw = 1.0f;
+        float cx = lx * pm[0][0] + ly * pm[1][0] + lz * pm[2][0] + lw * pm[3][0];
+        float cy = lx * pm[0][1] + ly * pm[1][1] + lz * pm[2][1] + lw * pm[3][1];
+        float cz = lx * pm[0][2] + ly * pm[1][2] + lz * pm[2][2] + lw * pm[3][2];
+        float cw = lx * pm[0][3] + ly * pm[1][3] + lz * pm[2][3] + lw * pm[3][3];
+
+        if (cw != 0.0f)
+        {
+            float ndcX = cx / cw;
+            float ndcY = cy / cw;
+
+            float guiX = (ndcX + 1.0f) * 0.5f * window.width;
+            float guiY = (1.0f - ndcY) * 0.5f * window.height;
+
+            return Vec2f(guiX, guiY);
+        }
+
+        return Vec2f.init;
+    }
+
+    Scene3d scene3d()
+    {
+        if (auto sc = cast(Scene3d) scene)
+        {
+            return sc;
+        }
+
+        throw new Exception("Not found 3D scene in sprite");
     }
 
 }

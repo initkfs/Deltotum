@@ -148,7 +148,7 @@ abstract class BaseMonoScroll : BaseScroll
         import std.math.operations : isClose;
         import std.math.traits : isFinite;
 
-        if ((isClose(v, _value) && isUpdateIfEqual) || !isFinite(v))
+        if ((isClose(v, _value) && (!isUpdateIfEqual)) || !isFinite(v))
         {
             return false;
         }

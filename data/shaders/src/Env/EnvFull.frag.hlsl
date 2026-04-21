@@ -210,10 +210,10 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 {
     FragOutputColor result;
 
-    if(config.isLamp == 1){
+    //if(config.isLamp == 1){
         result.color = config.material.albedo;
         return result;
-    }
+    //}
 
     //result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 

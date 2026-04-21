@@ -93,6 +93,7 @@ class Sprite2d : EventKitTarget
     bool isOpacityForChild;
 
     bool isAngleForChild = true;
+    bool isIgnoreAngleForChild;
 
     bool isBuildOnAdd = true;
 
@@ -3034,7 +3035,9 @@ class Sprite2d : EventKitTarget
         {
             foreach (ch; children)
             {
-                ch.angle = angle;
+                if(!ch.isIgnoreAngleForChild){
+                    ch.angle = angle;
+                }
             }
         }
 

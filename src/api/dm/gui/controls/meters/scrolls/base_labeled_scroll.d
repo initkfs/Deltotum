@@ -23,6 +23,8 @@ abstract class BaseLabeledScroll : BaseMonoScroll
     void delegate(Text) onConfiguredLabel;
     void delegate(Text) onCreatedLabel;
 
+    dstring delegate(float) textFormatter;
+
     this(float minValue = 0, float maxValue = 1.0)
     {
         super(minValue, maxValue);
@@ -110,8 +112,9 @@ abstract class BaseLabeledScroll : BaseMonoScroll
         }
 
         import std.format : format;
+        import std.conv: to;
 
-        label.text = format("%.2f", v);
+        label.text = !textFormatter ? format("%.2f", v).to!dstring : textFormatter(v);
     }
 
     alias value = BaseMonoScroll.value;

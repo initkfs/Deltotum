@@ -19,7 +19,7 @@ class Cylinder : Shape3d
     float topRadius = 0;
     float height = 0;
 
-    this(float bottomRadius, float topRadius, float height)
+    this(float bottomRadius = 0.5, float topRadius = 0.5, float height = 0.5)
     {
         this.bottomRadius = bottomRadius;
         this.topRadius = topRadius;
@@ -67,18 +67,18 @@ class Cylinder : Shape3d
                 float v = cast(float) i / stacks;
 
                 vertices[vertexIndex++] = ComVertex(x, y, z, [
-                    nx, ny, nz
-                ], u, v);
+                        nx, ny, nz
+                    ], u, v);
             }
         }
 
         // Generate cap centers (same as before)
         vertices[vertexIndex++] = ComVertex(0, -halfHeight, 0, [
-            0.0f, -1.0f, 0.0f
-        ], 0.5f, 0.5f);
+                0.0f, -1.0f, 0.0f
+            ], 0.5f, 0.5f);
         vertices[vertexIndex++] = ComVertex(0, halfHeight, 0, [
-            0.0f, 1.0f, 0.0f
-        ], 0.5f, 0.5f);
+                0.0f, 1.0f, 0.0f
+            ], 0.5f, 0.5f);
 
         int index = 0;
 
@@ -112,12 +112,13 @@ class Cylinder : Shape3d
         for (int j = 0; j < sectors; ++j)
         {
             int k1 = j; // first stack, current sector
-            int k2 = (j + 1) % (sectors + 1); // first stack, next sector
+            //int k2 = (j + 1) % (sectors + 1); // first stack, next sector
+            int k2 = j + 1;
 
             // Triangle: bottomCenter -> k2 -> k1 (CCW winding)
             indices[index++] = cast(ushort) bottomCenterIndex;
-            indices[index++] = cast(ushort) k2;
             indices[index++] = cast(ushort) k1;
+            indices[index++] = cast(ushort) k2;
         }
 
         // Generate indices for top cap
@@ -125,13 +126,16 @@ class Cylinder : Shape3d
         {
             int k1 = stacks * (sectors + 1) + j; // last stack, current sector
             int k2 = k1 + 1; // last stack, next sector
+            //if (j == sectors - 1)
+            //    k2 = stacks * (sectors + 1); // wrap around
+
             if (j == sectors - 1)
-                k2 = stacks * (sectors + 1); // wrap around
+                k2 = stacks * (sectors + 1);
 
             // Triangle: topCenter -> k1 -> k2 (CCW winding)
             indices[index++] = cast(ushort) topCenterIndex;
-            indices[index++] = cast(ushort) k1;
             indices[index++] = cast(ushort) k2;
+            indices[index++] = cast(ushort) k1;
         }
 
     }

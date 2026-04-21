@@ -26,7 +26,7 @@ class BaseLight : Sprite3d
 
     Sprite3d target;
 
-    float radius = 10;
+    float radius = 15;
     float linearCoeff = 0.09;
     float quadraticCoeff = 0;
 
