@@ -17,9 +17,9 @@ class Sphere : Shape3d
 {
     float radius = 0;
 
-    this(float radius)
+    this(float radius = 0.5)
     {
-        this.initSize(radius / 2, radius / 2);
+        this.initSize(radius, radius);
         this.radius = radius;
     }
 
@@ -62,7 +62,11 @@ class Sphere : Shape3d
                 float u = cast(float) j / sectors; // U: 0.0 to 1.0
                 float v = cast(float) i / stacks; // V: 0.0 to 1.0
 
-                vertices[index] = ComVertex(x, y, z, [nx, ny, nz], u, v);
+                float tx = -Math.sin(sectorAngle);
+                float ty = 0.0f;
+                float tz = Math.cos(sectorAngle);
+
+                vertices[index] = ComVertex(x, y, z, [nx, ny, nz], u, v, tx, ty, tz);
                 index++;
             }
         }
@@ -80,13 +84,13 @@ class Sphere : Shape3d
 
                 // top-left -> bottom-left -> bottom-right
                 indices[index++] = cast(ushort) k1;
-                indices[index++] = cast(ushort) k3;
+                indices[index++] = cast(ushort) k2;
                 indices[index++] = cast(ushort) k4;
 
                 // top-left -> bottom-right -> top-right
                 indices[index++] = cast(ushort) k1;
                 indices[index++] = cast(ushort) k4;
-                indices[index++] = cast(ushort) k2;
+                indices[index++] = cast(ushort) k3;
             }
         }
 

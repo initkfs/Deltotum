@@ -112,7 +112,7 @@ class EnvGroup : PipelineGroup
             : gpu.defaultSpecular;
         auto normalMap = (mat && mat.normalMap && mat.isBindNormalMap) ? mat.normalMap
             : gpu.defaultNormal;
-        auto aoMap = gpu.defaultAO;
+        auto aoMap = (mat && mat.aoMap && mat.isBindAoMap) ? mat.aoMap : gpu.defaultAO;
         auto emissionMap = gpu.defaultEmission;
 
         auto dispMap = (mat && mat.dispMap && mat.isBindDispMap) ? mat.dispMap : gpu.defaultDisp;
@@ -214,18 +214,16 @@ class EnvGroup : PipelineGroup
 
         import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
 
-        if (auto shape = cast(Shape3d) sprite)
+        if (sprite.lightingMaterial)
         {
-            if(shape.lightingMaterial){
-                mat.specular = shape.lightingMaterial.specular.toArrayRGBAf;
-                mat.ambient = shape.lightingMaterial.ambient.toArrayRGBAf;
-                mat.gloss = shape.lightingMaterial.gloss;
-            }
+            mat.specular = sprite.lightingMaterial.specular.toArrayRGBAf;
+            mat.ambient = sprite.lightingMaterial.ambient.toArrayRGBAf;
+            mat.gloss = sprite.lightingMaterial.gloss;
         }
         else
         {
             mat.ambient = RGBA.white.toArrayRGBAf;
-            mat.specular = RGBA.white.toArrayRGBAf;
+            mat.specular = RGBA.black.toArrayRGBAf;
         }
 
         mat.shininess = 32;

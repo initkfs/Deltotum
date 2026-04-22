@@ -66,9 +66,13 @@ class Cylinder : Shape3d
                 float u = cast(float) j / sectors;
                 float v = cast(float) i / stacks;
 
+                float tx = -Math.sin(sectorAngle);
+                float ty = 0.0f;
+                float tz = Math.cos(sectorAngle);
+
                 vertices[vertexIndex++] = ComVertex(x, y, z, [
                         nx, ny, nz
-                    ], u, v);
+                    ], u, v, tx, ty, tz);
             }
         }
 

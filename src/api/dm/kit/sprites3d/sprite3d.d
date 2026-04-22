@@ -72,11 +72,13 @@ class Sprite3d : Sprite2d
 
     LightingMaterial lightingMaterial;
     bool isCreateLightingMaterial;
+    bool isShareMaterial;
 
     string diffuseMapPath;
     string specularMapPath;
     string normalMapPath;
     string dispMapPath;
+    string aoMapPath;
 
     this()
     {
@@ -91,6 +93,9 @@ class Sprite3d : Sprite2d
         widthChangeThreshold = defaultTreshold;
         heightChangeThreshold = defaultTreshold;
         zChangeThreshold = defaultTreshold;
+
+        minWidth = 0;
+        minHeight = 0;
     }
 
     override void create()
@@ -108,7 +113,7 @@ class Sprite3d : Sprite2d
             {
                 import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
 
-                lightingMaterial = new LightingMaterial(diffuseMapPath, specularMapPath, normalMapPath, dispMapPath);
+                lightingMaterial = new LightingMaterial(diffuseMapPath, specularMapPath, normalMapPath, dispMapPath, aoMapPath);
                 addCreate(lightingMaterial);
             }
         }
@@ -611,6 +616,17 @@ class Sprite3d : Sprite2d
         }
 
         throw new Exception("Not found 3D scene in sprite");
+    }
+
+    override void dispose()
+    {
+        if (lightingMaterial && isShareMaterial)
+        {
+            remove(lightingMaterial);
+            lightingMaterial = null;
+        }
+
+        super.dispose;
     }
 
 }

@@ -117,7 +117,8 @@ float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float
     float gloss = specularColor.a * material.gloss;
     
     //float shininess = pow(2.0, gloss * 8.0);  //0..1, 2..256
-    float shininess = exp2(10.0 * gloss + 1.0);
+    //float shininess = exp2(10.0 * gloss + 1.0);
+    float shininess = clamp(pow(2.0, gloss * 8.0), 1.0, 512.0);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
     // float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     
@@ -210,10 +211,10 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 {
     FragOutputColor result;
 
-    //if(config.isLamp == 1){
+    if(config.isLamp == 1){
         result.color = config.material.albedo;
         return result;
-    //}
+    }
 
     //result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 

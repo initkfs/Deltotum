@@ -16,31 +16,32 @@ class LightingMaterial : Sprite3d
     TextureGPU specularMap;
     TextureGPU normalMap;
     TextureGPU dispMap;
+    TextureGPU aoMap;
 
     RGBA ambient = RGBA.white;
     RGBA specular = RGBA.black;
     float shininess = 32;
-    float gloss = 0;
+    float gloss = 0.3;
 
     bool isBindDiffuseMap = true;
     bool isBindSpecularMap = true;
     bool isBindNormalMap = true;
     bool isBindDispMap = true;
+    bool isBindAoMap = true;
 
-    protected
-    {
-        string diffuseMapPath;
-        string specularMapPath;
-        string normalMapPath;
-        string dispMapPath;
-    }
+    string diffuseMapPath;
+    string specularMapPath;
+    string normalMapPath;
+    string dispMapPath;
+    string aoMapPath;
 
-    this(string diffuseMapPath, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null)
+    this(string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null, string aoMapPath = null)
     {
         this.diffuseMapPath = diffuseMapPath;
         this.specularMapPath = specularMapPath;
         this.normalMapPath = normalMapPath;
         this.dispMapPath = dispMapPath;
+        this.aoMapPath = aoMapPath;
 
         id = "LightMaterial";
     }
@@ -107,6 +108,21 @@ class LightingMaterial : Sprite3d
         else
         {
             addCreate(dispMap);
+        }
+
+        if (!aoMap)
+        {
+            if (aoMapPath.length > 0)
+            {
+                aoMap = new TextureGPU;
+                build(aoMap);
+                aoMap.create(aoMapPath);
+                addCreate(aoMap);
+            }
+        }
+        else
+        {
+            addCreate(aoMap);
         }
     }
 }

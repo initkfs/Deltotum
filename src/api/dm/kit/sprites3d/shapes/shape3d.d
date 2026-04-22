@@ -115,6 +115,7 @@ class Shape3d : Sprite3d
     override void bindAll()
     {
         super.bindAll;
+
         gpu.dev.bindVertexBuffer(vertexBuffer);
         gpu.dev.bindIndexBuffer(indexBuffer);
     }
