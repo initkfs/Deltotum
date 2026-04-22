@@ -1317,4 +1317,17 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(lastCmdBuff, "Command buffer not found for mipmaps");
         SDL_GenerateMipmapsForGPUTexture(lastCmdBuff, texture);
     }
+
+    //The window must be claimed before calling this function.
+    bool isSupportComposition(SDL_GPUSwapchainComposition composition, SDL_Window *window){
+        return SDL_WindowSupportsGPUSwapchainComposition(ptr, window, composition);
+    }
+
+    bool isSupportPresentMode(SDL_GPUPresentMode mode, SDL_Window *window){
+        return SDL_WindowSupportsGPUPresentMode(ptr, window, mode);
+    }
+
+    bool setSwapchainParams(SDL_GPUPresentMode presentMode, SDL_GPUSwapchainComposition composition, SDL_Window *window){
+        return SDL_SetGPUSwapchainParameters(ptr, window, composition, presentMode);
+    }
 }

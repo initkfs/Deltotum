@@ -1260,6 +1260,26 @@ class SdlApp : GuiApp
         //TODO move
         if (windowBuilder.platform.cap.isGPU)
         {
+            //TODO config
+            SDL_GPUPresentMode smode = SDL_GPU_PRESENTMODE_MAILBOX;
+            SDL_GPUSwapchainComposition scompos = SDL_GPU_SWAPCHAINCOMPOSITION_SDR;
+
+            bool isMode = windowBuilder.gpu.dev.isSupportPresentMode(smode, sdlWindow.ptr);
+            bool isCompose = windowBuilder.gpu.dev.isSupportComposition(scompos, sdlWindow.ptr);
+
+            uservices.logger.infof("Support swp mode: %s, composition: %s", isMode, isCompose);
+
+            if (isMode && isCompose)
+            {
+                if (!windowBuilder.gpu.dev.setSwapchainParams(smode, scompos, sdlWindow.ptr))
+                {
+                    uservices.logger.error(
+                        "Error set swapchain params: " ~ windowBuilder.gpu.dev.getError);
+                }else {
+                    uservices.logger.trace("Set swapchain params");
+                }
+            }
+
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
             enum defaultMapSize = 1;
