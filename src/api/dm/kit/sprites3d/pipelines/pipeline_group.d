@@ -269,7 +269,7 @@ class PipelineGroup : Sprite3d
     {
         gpu.dev.startCopyPass;
         gpu.dev.downloadBuffer(dataBufferPtr, dataTransferBufferPtr, SimpleDataBuffer.sizeof);
-        gpu.dev.endCopyPass(true);
+        gpu.dev.endCopyPass(true, true);
 
         SimpleDataBuffer dataBuffer;
         auto dataBuffPtr = cast(SimpleDataBuffer*) gpu.dev.mapTransferBuffer(dataTransferBufferPtr);

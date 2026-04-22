@@ -785,7 +785,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return true;
     }
 
-    bool endCopyPass(bool isWaitForFence = false)
+    bool endCopyPass(bool isSubmitBuffer = true, bool isWaitForFence = false)
     {
         if (state != GPUGraphicState.copyStart || !lastCopyPass)
         {
@@ -797,16 +797,18 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_EndGPUCopyPass(lastCopyPass);
 
         bool isSubmit;
-        if (!isWaitForFence)
+        if (isSubmitBuffer)
         {
-            isSubmit = submitCmdBuffer;
+            if (!isWaitForFence)
+            {
+                isSubmit = submitCmdBuffer;
+            }
+            else
+            {
+                isSubmit = submitWaitFence;
+            }
+            resetState;
         }
-        else
-        {
-            isSubmit = submitWaitFence;
-        }
-
-        resetState;
 
         return isSubmit;
     }
@@ -1061,7 +1063,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return desc;
     }
 
-    SDL_GPUSamplerCreateInfo linearRepeat(){
+    SDL_GPUSamplerCreateInfo linearRepeat()
+    {
         SDL_GPUSamplerCreateInfo info;
         info.min_filter = SDL_GPU_FILTER_LINEAR,
         info.mag_filter = SDL_GPU_FILTER_LINEAR,
@@ -1114,6 +1117,30 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     {
         SDL_GPUSamplerCreateInfo info = nearestRepeat;
         return newSampler(&info);
+    }
+
+    SDL_GPUSamplerCreateInfo mipMapSamplerInfo()
+    {
+        SDL_GPUSamplerCreateInfo samplerInfo;
+        samplerInfo.min_filter = SDL_GPU_FILTER_LINEAR;
+        samplerInfo.mag_filter = SDL_GPU_FILTER_LINEAR;
+        samplerInfo.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR;
+        samplerInfo.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+        samplerInfo.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+
+        samplerInfo.enable_anisotropy = true,
+        //4, 8, 16.
+        samplerInfo.max_anisotropy = 8;
+
+        //for more contrasting, but noise
+        //samplerInfo.mip_lod_bias = -0.5f, 
+        return samplerInfo;
+    }
+
+    SDL_GPUSampler* newMipMapSampler()
+    {
+        SDL_GPUSamplerCreateInfo samplerInfo = mipMapSamplerInfo;
+        return newSampler(&samplerInfo);
     }
 
     void removeSampler(SDL_GPUSampler* sampler)
@@ -1285,4 +1312,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_BlitGPUTexture(cmdBuff, &blitInfo);
     }
 
+    void generateMipMaps(SDL_GPUTexture* texture)
+    {
+        assert(lastCmdBuff, "Command buffer not found for mipmaps");
+        SDL_GenerateMipmapsForGPUTexture(lastCmdBuff, texture);
+    }
 }

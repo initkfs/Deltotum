@@ -35,6 +35,9 @@ class LightingMaterial : Sprite3d
     string dispMapPath;
     string aoMapPath;
 
+    //TODO auto mip maps w\h > 16
+    bool isMipMaps = true;
+
     this(string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null, string aoMapPath = null)
     {
         this.diffuseMapPath = diffuseMapPath;
@@ -55,6 +58,7 @@ class LightingMaterial : Sprite3d
             if (diffuseMapPath.length > 0)
             {
                 diffuseMap = new TextureGPU;
+                diffuseMap.isMipMaps = isMipMaps;
                 build(diffuseMap);
                 diffuseMap.create(diffuseMapPath);
                 addCreate(diffuseMap);
@@ -70,6 +74,7 @@ class LightingMaterial : Sprite3d
             if (specularMapPath.length > 0)
             {
                 specularMap = new TextureGPU;
+                specularMap.isMipMaps = isMipMaps;
                 build(specularMap);
                 specularMap.create(specularMapPath);
                 addCreate(specularMap);
@@ -85,6 +90,7 @@ class LightingMaterial : Sprite3d
             if (normalMapPath.length > 0)
             {
                 normalMap = new TextureGPU;
+                normalMap.isMipMaps = isMipMaps;
                 build(normalMap);
                 normalMap.create(normalMapPath);
                 addCreate(normalMap);
@@ -100,6 +106,7 @@ class LightingMaterial : Sprite3d
             if (dispMapPath.length > 0)
             {
                 dispMap = new TextureGPU;
+                dispMap.isMipMaps = isMipMaps;
                 build(dispMap);
                 dispMap.create(dispMapPath);
                 addCreate(dispMap);
@@ -115,6 +122,7 @@ class LightingMaterial : Sprite3d
             if (aoMapPath.length > 0)
             {
                 aoMap = new TextureGPU;
+                aoMap.isMipMaps = isMipMaps;
                 build(aoMap);
                 aoMap.create(aoMapPath);
                 addCreate(aoMap);

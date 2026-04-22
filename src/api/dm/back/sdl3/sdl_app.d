@@ -111,6 +111,7 @@ class SdlApp : GuiApp
         PngLib pngLib;
 
         SDL_GPUSampler* defaultSampler;
+        SDL_GPUSampler* defaultMipMapSampler;
         TextureGPU diffuseMap;
         TextureGPU specularMap;
         TextureGPU normalMap;
@@ -1266,6 +1267,9 @@ class SdlApp : GuiApp
             defaultSampler = gpuDevice.newSampler;
             windowBuilder.gpu.defaultSampler = defaultSampler;
 
+            defaultMipMapSampler = gpuDevice.newMipMapSampler;
+            windowBuilder.gpu.defaultMipMapSampler = defaultMipMapSampler;
+
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
             TextureGPU createDefaultMap(RGBA color)
@@ -1505,6 +1509,11 @@ class SdlApp : GuiApp
         if (defaultSampler)
         {
             gpuDevice.removeSampler(defaultSampler);
+        }
+
+        if (defaultMipMapSampler)
+        {
+            gpuDevice.removeSampler(defaultMipMapSampler);
         }
 
         if (gpuDevice)

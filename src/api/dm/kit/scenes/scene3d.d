@@ -556,10 +556,7 @@ class Scene3d : Scene2d
 
         uploadEnd;
 
-        if (!gpu.dev.endCopyPass)
-        {
-            throw new Exception("Unable to end copy pass");
-        }
+        gpu.dev.endCopyPass(isSubmitBuffer : false);
 
         foreach (sprite; sprites)
         {
@@ -568,6 +565,13 @@ class Scene3d : Scene2d
                 sprite3d.uploadEnd;
             }
         }
+
+        if(!gpu.dev.submitCmdBuffer){
+            throw new Exception("Error submit command buffer");
+            gpu.dev.resetState;
+        }
+
+
     }
 
     override bool checkForDraw(Sprite2d sprite)

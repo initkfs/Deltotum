@@ -35,6 +35,8 @@ class GPUGraphic : ApplicationUnit
     protected
     {
         SDL_GPUSampler* _defaultSampler;
+        SDL_GPUSampler* _defaultMipMapSampler;
+
         TextureGPU _defaultDiffuse;
         TextureGPU _defaultSpecular;
         TextureGPU _defaultNormal;
@@ -219,6 +221,18 @@ class GPUGraphic : ApplicationUnit
     {
         assert(sampler);
         _defaultSampler = sampler;
+    }
+
+    SDL_GPUSampler* defaultMipMapSampler()
+    {
+        assert(_defaultMipMapSampler);
+        return _defaultMipMapSampler;
+    }
+
+    void defaultMipMapSampler(SDL_GPUSampler* sampler)
+    {
+        assert(sampler);
+        _defaultMipMapSampler = sampler;
     }
 
     override void dispose()

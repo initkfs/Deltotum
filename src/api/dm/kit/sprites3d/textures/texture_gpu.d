@@ -14,6 +14,10 @@ class TextureGPU : Sprite3d
 {
     bool isCreateSampler;
 
+    bool isMipMaps;
+    uint mipMapLevels = 5;
+    bool isAutoMipMapLevels = true;
+
     protected
     {
         SDL_GPUTexture* _texture;
@@ -34,11 +38,11 @@ class TextureGPU : Sprite3d
     {
         if (!isCreateSampler)
         {
-            _sampler = gpu.defaultSampler;
+            _sampler = !isMipMaps ? gpu.defaultSampler : gpu.defaultMipMapSampler;
             isDisposeSampler = false;
         }
 
-        SDL_GPUSamplerCreateInfo samplerInfo = gpu.dev.linearRepeat;
+        SDL_GPUSamplerCreateInfo samplerInfo = !isMipMaps ? gpu.dev.linearRepeat : gpu.dev.mipMapSamplerInfo;
         _sampler = gpu.dev.newSampler(&samplerInfo);
         isDisposeSampler = true;
     }
@@ -127,7 +131,18 @@ class TextureGPU : Sprite3d
 
         ubyte[] imagePtr = (cast(ubyte*) rawImagePtr)[0 .. imageLen];
 
-        auto newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, gpu.dev.pipelineTextureFormat, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
+        uint flags = SDL_GPU_TEXTUREUSAGE_SAMPLER;
+        if(isMipMaps){
+            flags |= SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
+        }
+
+        uint levels = 1;
+        if(isMipMaps){
+            //TODO <= 11 for big textures 8k
+            levels = !isAutoMipMapLevels ? mipMapLevels : calcMipMapLevels(w, h);
+        }
+
+        auto newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, gpu.dev.pipelineTextureFormat,flags, 1, levels);
 
         if (!newTexture)
         {
@@ -156,6 +171,17 @@ class TextureGPU : Sprite3d
         }
     }
 
+    uint calcMipMapLevels(float w, float h){
+        import Math = api.math;
+        if(w == 0 || h == 0){
+            throw new Exception("Size for mipmaps must not be zero");
+        }
+
+        import std.math.exponential: log2;
+
+        return cast(uint) Math.floor(log2(Math.max(w, h))) + 1;
+    }
+
     override void create()
     {
         super.create();
@@ -182,6 +208,10 @@ class TextureGPU : Sprite3d
         {
             gpu.dev.deleteTransferBuffer(_transferBuffer);
             _transferBuffer = null;
+        }
+
+        if(isMipMaps){
+            gpu.dev.generateMipMaps(_texture);
         }
     }
 
