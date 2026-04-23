@@ -33,6 +33,15 @@ class Bloom : Sprite3d
         float intensity = 1; // luma 1.0
     }
 
+    struct ShaderFlags
+    {
+        uint isColorTint : 1;
+        uint isColorEffects : 1;
+        uint unused1 : 1;
+        uint isVignette : 1;
+        uint padding : 28;
+    }
+
     struct ComposeUniformData
     {
     align(16):
@@ -43,13 +52,17 @@ class Bloom : Sprite3d
         float bloomIntensity = 1;
         float exposure = 0.9;
         float threshold = 50;
+        
         float contrast = 1;
         float saturation = 1;
         float vignette = 0;
+        ShaderFlags flags;
     }
 
     ComposeUniformData composeUniformData;
     BlurUniformData blurUniformData;
+
+    static assert(ShaderFlags.sizeof == 4);
 
     this()
     {
@@ -155,9 +168,13 @@ class Bloom : Sprite3d
         samplerInfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
         bloomSampler = gpu.dev.newSampler(&samplerInfo);
+
+        composeUniformData.flags.isColorTint  = false;
+        composeUniformData.flags.isColorEffects = false;
+        composeUniformData.flags.isVignette = false;
     }
 
-    void process(SDL_GPUTexture* resultTexture, SDL_GPUTexture* renderTexture, bool isMix2d3dMode, )
+    void process(SDL_GPUTexture* resultTexture, SDL_GPUTexture* renderTexture, bool isMix2d3dMode,)
     {
         uint w = window.widthu;
         uint h = window.heightu;
