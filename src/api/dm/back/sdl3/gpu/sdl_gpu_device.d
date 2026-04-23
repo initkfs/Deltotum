@@ -1146,7 +1146,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return newSampler(&samplerInfo);
     }
 
-    void removeSampler(SDL_GPUSampler* sampler)
+    void deleteSampler(SDL_GPUSampler* sampler)
     {
         SDL_ReleaseGPUSampler(ptr, sampler);
     }

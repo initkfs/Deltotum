@@ -1536,12 +1536,12 @@ class SdlApp : GuiApp
 
         if (defaultSampler)
         {
-            gpuDevice.removeSampler(defaultSampler);
+            gpuDevice.deleteSampler(defaultSampler);
         }
 
         if (defaultMipMapSampler)
         {
-            gpuDevice.removeSampler(defaultMipMapSampler);
+            gpuDevice.deleteSampler(defaultMipMapSampler);
         }
 
         if (gpuDevice)

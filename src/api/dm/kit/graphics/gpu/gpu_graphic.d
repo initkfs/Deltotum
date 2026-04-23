@@ -241,7 +241,7 @@ class GPUGraphic : ApplicationUnit
 
         if (_defaultSampler)
         {
-            dev.removeSampler(_defaultSampler);
+            dev.deleteSampler(_defaultSampler);
         }
     }
 
