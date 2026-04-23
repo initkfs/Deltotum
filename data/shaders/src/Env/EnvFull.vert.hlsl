@@ -2,11 +2,15 @@
 * Author: initkfs
 */
 
-cbuffer UniformBlock : register(b0, space1)
+cbuffer SceneConfig : register(b0, space1)
 {
-    row_major float4x4 model;
     row_major float4x4 view;
     row_major float4x4 projection;
+};
+
+cbuffer SpriteConfig : register(b1, space1)
+{
+    row_major float4x4 model;
     row_major float4x4 normal;
 };
 

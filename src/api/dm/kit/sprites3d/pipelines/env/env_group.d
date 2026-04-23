@@ -3,24 +3,27 @@ module api.dm.kit.sprites3d.pipelines.env.env_group;
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.materials.material_data : LightData, MaterialData;
 import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
-import api.dm.kit.sprites3d.materials.material: Material;
+import api.dm.kit.sprites3d.materials.material : Material;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.math.geom3.vec3 : Vec3f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.math.matrices.matrix : Matrix4x4;
 import api.dm.kit.sprites3d.lightings.lights.base_light : BaseLight;
 import Math = api.math;
 
 import api.dm.back.sdl3.externs.csdl3;
 
+struct SpriteTransforms
+{
+    Matrix4x4 model;
+    Matrix4x4 normal;
+}
+
 struct SceneTransforms
 {
-    Matrix4x4 world;
     Matrix4x4 camera;
     Matrix4x4 projection;
-    Matrix4x4 normal;
 }
 
 struct SceneConfig
@@ -80,7 +83,7 @@ class EnvGroup : PipelineGroup
         super.create;
 
         auto buff = pipeBuffers;
-        buff.numVertexUniformBuffers += 1;
+        buff.numVertexUniformBuffers += 2;
         buff.numFragUniformBuffers += 1;
         buff.numFragSamples += 6;
         createPipeline(buff);
@@ -134,7 +137,7 @@ class EnvGroup : PipelineGroup
 
         auto dispMap = (mat && mat.dispMap && mat.isBindDispMap) ? mat.dispMap : gpu.defaultDisp;
 
-        import api.dm.kit.sprites3d.textures.texture_gpu: TextureGPU;
+        import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
         TextureGPU[6] maps = [
             diffuseMap, specularMap, normalMap, aoMap, emissionMap, dispMap
@@ -146,13 +149,11 @@ class EnvGroup : PipelineGroup
     {
         if (isPushUniformVertexMatrix)
         {
-            SceneTransforms transforms;
-            transforms.world = sprite.worldMatrix;
-            transforms.camera = sprite.camera.view;
-            transforms.projection = sprite.camera.projection;
+            SpriteTransforms transforms;
+            transforms.model = sprite.worldMatrix;
             transforms.normal = sprite.worldMatrixInverse;
 
-            gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+            gpu.dev.pushUniformVertexData(1, &transforms, SpriteTransforms.sizeof);
         }
 
         uint lightCount = cast(uint) lights.length;
@@ -272,6 +273,25 @@ class EnvGroup : PipelineGroup
         config.material = mat;
 
         gpu.dev.pushUniformFragmentData(0, &config, config.sizeof);
+    }
+
+    override bool bindPipeline()
+    {
+        if (!super.bindPipeline)
+        {
+            return false;
+        }
+
+        if (isPushUniformVertexMatrix)
+        {
+            SceneTransforms transforms;
+            transforms.camera = camera.view;
+            transforms.projection = camera.projection;
+
+            gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+        }
+
+        return true;
     }
 
     override bool add(Sprite2d object, long index = -1)

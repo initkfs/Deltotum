@@ -18,15 +18,6 @@ import api.dm.back.sdl3.externs.csdl3;
  * Authors: initkfs
  */
 
-struct SceneTransforms
-{
-    Matrix4x4 world;
-
-    Matrix4x4 camera;
-    Matrix4x4 projection;
-    Matrix4x4 normal;
-}
-
 class Scene3d : Scene2d
 {
     Camera camera;

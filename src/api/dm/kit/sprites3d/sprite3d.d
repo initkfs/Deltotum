@@ -2,7 +2,6 @@ module api.dm.kit.sprites3d.sprite3d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
-import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.scenes.scene3d : Scene3d;
 import api.math.geom3.vec3 : Vec3f;

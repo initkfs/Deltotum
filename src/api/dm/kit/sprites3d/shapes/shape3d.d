@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.shapes.shape3d;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.kit.sprites3d.materials.material_sprite3d: MaterialSprite3d;
+import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.matrices.matrix : Matrix4x4;
@@ -24,6 +24,8 @@ class Shape3d : MaterialSprite3d
     protected
     {
         SDL_GPUTransferBuffer* transferBuffer;
+
+        bool isBindBuffer;
     }
 
     this(ComVertex[] vertices, ushort[] indices = null, string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null)
@@ -117,18 +119,41 @@ class Shape3d : MaterialSprite3d
     {
         super.bindAll;
 
+        if (!vertexBuffer)
+        {
+            throw new Exception("Vertex buffer is null");
+        }
+
+        if (!indexBuffer)
+        {
+            throw new Exception("Index buffer is null");
+        }
+
         gpu.dev.bindVertexBuffer(vertexBuffer);
         gpu.dev.bindIndexBuffer(indexBuffer);
+
+        isBindBuffer = true;
     }
 
     void drawIndexed()
     {
+        if (indices.length == 0)
+        {
+            throw new Exception("Not found index buffer");
+        }
+
+        if (!isBindBuffer)
+        {
+            throw new Exception("Buffers not bind");
+        }
+
         gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);
     }
 
     override void drawContent()
     {
         drawIndexed;
+        isBindBuffer = false;
     }
 
     override void update(float dt)

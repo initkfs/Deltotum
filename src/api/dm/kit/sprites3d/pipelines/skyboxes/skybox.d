@@ -6,7 +6,6 @@ import api.dm.kit.sprites3d.shapes.cube : Cube;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.dm.com.graphics.gpu.com_3d_types;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
-import api.dm.kit.scenes.scene3d : SceneTransforms;
 
 import api.dm.back.sdl3.externs.csdl3;
 
