@@ -1,6 +1,7 @@
 module api.dm.kit.sprites3d.sprite3d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.scenes.scene3d : Scene3d;
@@ -37,7 +38,11 @@ class Sprite3d : Sprite2d
 
         float _angleX = 0;
         float _angleY = 0;
+
+        PipelineGroup _pipeline;
     }
+
+    bool isForPipeLine = true;
 
     bool isManagedTransforms;
 
@@ -368,9 +373,10 @@ class Sprite3d : Sprite2d
         }
     }
 
-    override protected bool trySetParentProps(Sprite2d sprite)
+    override protected void trySetParentProps(Sprite2d sprite)
     {
-        bool isSet = super.trySetParentProps(sprite);
+        super.trySetParentProps(sprite);
+
         if (auto sprite3d = cast(Sprite3d) sprite)
         {
             if (!sprite3d.hasCamera)
@@ -387,12 +393,25 @@ class Sprite3d : Sprite2d
                 else
                 {
                     sprite3d.camera = _camera;
-                    isSet |= true;
+                }
+            }
+
+            if (!sprite3d.hasPipeline && sprite3d.isForPipeLine)
+            {
+                auto pForChild = pipelineForChild;
+                if (!pForChild)
+                {
+                    if (isBuildOnAdd)
+                    {
+                        throw new Exception("Pipeline for child sprite is null");
+                    }
+                }
+                else
+                {
+                    sprite3d.pipeline = pForChild;
                 }
             }
         }
-
-        return isSet;
     }
 
     void camera(Camera newCamera)
@@ -578,5 +597,28 @@ class Sprite3d : Sprite2d
         }
 
         throw new Exception("Not found 3D scene in sprite");
+    }
+
+    bool hasPipeline() => _pipeline !is null;
+
+    PipelineGroup pipeline()
+    {
+        assert(_pipeline, "Pipeline is null");
+        return _pipeline;
+    }
+
+    PipelineGroup pipelineForChild() => pipeline;
+
+    void pipeline(PipelineGroup p)
+    {
+        assert(p, "Pipeline is null");
+        _pipeline = p;
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+
+        _pipeline = null;
     }
 }

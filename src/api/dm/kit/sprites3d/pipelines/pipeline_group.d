@@ -2,6 +2,8 @@ module api.dm.kit.sprites3d.pipelines.pipeline_group;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
+import api.dm.kit.sprites3d.materials.material : Material;
+import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 
@@ -10,6 +12,12 @@ import api.dm.back.sdl3.externs.csdl3;
 struct SimpleDataBuffer
 {
     float[4] value1;
+}
+
+struct SharedMaterials
+{
+    Material material;
+    MaterialSprite3d[] sprites;
 }
 
 /**
@@ -22,11 +30,13 @@ class PipelineGroup : Sprite3d
 
     protected
     {
-        SdlGPUPipeline _pipeline;
+        SdlGPUPipeline _comPipeline;
 
         PipelineGroup[] childPipelines;
 
         bool _hasSprites;
+
+        SharedMaterials[string] sharedMaterials;
     }
 
     bool isPushUniformVertexMatrix;
@@ -44,6 +54,7 @@ class PipelineGroup : Sprite3d
     this()
     {
         isPushUniformVertexMatrix = false;
+        isForPipeLine = false;
     }
 
     override void create()
@@ -57,6 +68,35 @@ class PipelineGroup : Sprite3d
             gpu.dev.setGPUBufferName(dataBufferPtr, "DataBuffer");
             dataTransferBufferPtr = gpu.dev.newTransferDownloadBuffer(SimpleDataBuffer.sizeof);
         }
+
+        // import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+
+        // if (auto sprite3d = cast(MaterialSprite3d) sprite)
+        // {
+        //     if (sprite3d.hasMaterial && sprite3d.material.isSharedMaterial)
+        //     {
+        //     }
+        // }
+    }
+
+    override bool isNeedDraw(Sprite2d sprite)
+    {
+        if (!super.isNeedDraw(sprite))
+        {
+            return false;
+        }
+
+        import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+
+        if (auto sprite3d = cast(MaterialSprite3d) sprite)
+        {
+            if (sprite3d.hasMaterial && sprite3d.material.isSharedMaterial)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     override bool draw(float alpha)
@@ -80,10 +120,49 @@ class PipelineGroup : Sprite3d
             {
                 bindDataBuffer;
             }
+
+            if (sharedMaterials.length > 0)
+            {
+                foreach (ref sm; sharedMaterials)
+                {
+                    if (sm.sprites.length == 0)
+                    {
+                        continue;
+                    }
+
+                    Material m = sm.material;
+                    bindMaterialSafe(m);
+                    foreach (sp; sm.sprites)
+                    {
+                        sp.bindAll;
+                        pushSpriteUniforms(sp);
+                        //TODO check prev flag
+                        sp.isCanDrawSelf = true;
+                        sp.draw(alpha);
+                        sp.isCanDrawSelf = false;
+                    }
+                }
+            }
+
             return super.draw(alpha);
         }
 
         return false;
+    }
+
+    void bindSpriteData(Sprite3d sprite)
+    {
+
+    }
+
+    void bindMaterialSafe(Material mat)
+    {
+
+    }
+
+    void pushSpriteUniforms(Sprite3d sprite)
+    {
+
     }
 
     void bindDataBuffer()
@@ -93,8 +172,8 @@ class PipelineGroup : Sprite3d
 
     bool bindPipeline()
     {
-        //assert(_pipeline);
-        if (!_pipeline)
+        //assert(_comPipeline);
+        if (!_comPipeline)
         {
             return false;
         }
@@ -104,7 +183,7 @@ class PipelineGroup : Sprite3d
             return false;
         }
 
-        gpu.dev.bindPipeline(_pipeline);
+        gpu.dev.bindPipeline(_comPipeline);
 
         //import api.math.geom2.rect2 : Rect2f;
 
@@ -158,7 +237,7 @@ class PipelineGroup : Sprite3d
             ref SDL_GPUGraphicsPipelineCreateInfo) onPipeSettings = null
     )
     {
-        assert(!_pipeline, "Found old pipeline");
+        assert(!_comPipeline, "Found old pipeline");
 
         assert(vertexShaderName.length > 0);
         assert(
@@ -169,7 +248,7 @@ class PipelineGroup : Sprite3d
         auto fragShaderPath = gpu.shaderDefaultPath(
             fragmentShaderName);
 
-        _pipeline = gpu.newPipeline(
+        _comPipeline = gpu.newPipeline(
             vertShaderPath,
             fragShaderPath,
             buffers,
@@ -178,8 +257,8 @@ class PipelineGroup : Sprite3d
             stencilState,
             id,
             onPipeSettings
-            );
-        if (!_pipeline)
+        );
+        if (!_comPipeline)
         {
             throw new Exception("Pipeline is null");
         }
@@ -253,16 +332,16 @@ class PipelineGroup : Sprite3d
         return gpu.dev.rasterizerState(fillMode, cullMode);
     }
 
-    SdlGPUPipeline pipeline()
+    SdlGPUPipeline comPipeline()
     {
-        assert(_pipeline);
-        return _pipeline;
+        assert(_comPipeline);
+        return _comPipeline;
     }
 
-    void pipeline(SdlGPUPipeline npipeline)
+    void comPipeline(SdlGPUPipeline npipeline)
     {
         assert(npipeline, "New pipeline must not be null");
-        _pipeline = npipeline;
+        _comPipeline = npipeline;
     }
 
     SimpleDataBuffer downloadData()
@@ -278,12 +357,92 @@ class PipelineGroup : Sprite3d
         return dataBuffer;
     }
 
+    Material newSharedMaterial(string id = "Material")
+    {
+        auto m = new Material;
+        m.id = id;
+        build(m);
+        m.isSharedMaterial = true;
+
+        auto mId = m.id;
+        foreach (ref sm; sharedMaterials)
+        {
+            if (sm.material.id == mId)
+            {
+                throw new Exception("Shared material already exists with id: " ~ mId);
+            }
+        }
+
+        sharedMaterials[mId] = SharedMaterials(m);
+        return m;
+    }
+
+    void addSharedMaterialSprite(MaterialSprite3d sprite)
+    {
+        if (!sprite.hasMaterial)
+        {
+            throw new Exception("Material is null");
+        }
+
+        foreach (ref sm; sharedMaterials)
+        {
+            if (sm.material.id == sprite.material.id)
+            {
+                foreach (sp; sm.sprites)
+                {
+                    if (sp is sprite)
+                    {
+                        return;
+                    }
+                }
+
+                sm.sprites ~= sprite;
+            }
+        }
+    }
+
+    bool removeSharedMatSprite(MaterialSprite3d sprite)
+    {
+        foreach (ref sm; sharedMaterials)
+        {
+            if (sm.material.id == sprite.material.id)
+            {
+                foreach (sp; sm.sprites)
+                {
+                    if (sp is sprite)
+                    {
+                        import api.core.utils.arrays : drop;
+
+                        return drop(sm.sprites, sp);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    override PipelineGroup pipelineForChild() => this;
+
     override void dispose()
     {
         super.dispose;
-        if (_pipeline)
+
+        _pipeline = null;
+
+        if (sharedMaterials.length > 0)
         {
-            gpu.dev.deletePipeline(_pipeline);
+            foreach (mdata; sharedMaterials)
+            {
+                mdata.material.dispose;
+            }
+
+            sharedMaterials = null;
+        }
+
+        if (_comPipeline)
+        {
+            gpu.dev.deletePipeline(_comPipeline);
         }
 
         if (dataBufferPtr)

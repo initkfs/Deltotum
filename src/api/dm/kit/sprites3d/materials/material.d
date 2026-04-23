@@ -38,6 +38,8 @@ class Material : Sprite3d
     //TODO auto mip maps w\h > 16
     bool isMipMaps = true;
 
+    bool isSharedMaterial;
+
     this(string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null, string aoMapPath = null)
     {
         this.diffuseMapPath = diffuseMapPath;

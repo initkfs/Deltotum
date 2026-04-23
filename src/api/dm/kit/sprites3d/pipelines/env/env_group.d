@@ -1,7 +1,9 @@
 module api.dm.kit.sprites3d.pipelines.env.env_group;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
-import api.dm.kit.sprites3d.materials.material_data : Light, Material;
+import api.dm.kit.sprites3d.materials.material_data : LightData, MaterialData;
+import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+import api.dm.kit.sprites3d.materials.material: Material;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.math.geom3.vec3 : Vec3f;
@@ -32,8 +34,8 @@ align(4):
     float time;
     uint lightCount;
 align(16):
-    Light[4] lights;
-    Material material;
+    LightData[4] lights;
+    MaterialData material;
 }
 
 /**
@@ -50,7 +52,6 @@ class EnvGroup : PipelineGroup
 
     this()
     {
-        super();
         id = "EnvGroup";
         vertexShaderName = "EnvFull.vert";
         fragmentShaderName = "EnvFull.frag";
@@ -60,10 +61,16 @@ class EnvGroup : PipelineGroup
         onBeforeDrawChildDg = (Sprite2d child) {
             if (auto sprite3d = cast(Sprite3d) child)
             {
-                sprite3d.bindAll;
+                if (auto mSprite = cast(MaterialSprite3d) child)
+                {
+                    if (mSprite.hasMaterial && mSprite.material.isSharedMaterial)
+                    {
+                        return;
+                    }
+                }
                 //vertex, index buffers, textures
-                bindAll(sprite3d);
-                pushUniforms(sprite3d);
+                bindSpriteData(sprite3d);
+                pushSpriteUniforms(sprite3d);
             }
         };
     }
@@ -94,18 +101,28 @@ class EnvGroup : PipelineGroup
         }
     }
 
-    void bindAll(Sprite3d sprite)
+    override void bindSpriteData(Sprite3d sprite)
     {
         import api.dm.kit.sprites3d.materials.material : Material;
         import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
-        import api.dm.kit.sprites3d.materials.material_sprite3d: MaterialSprite3d;
+        import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+
+        sprite.bindAll;
 
         Material mat;
         if (auto shape = cast(MaterialSprite3d) sprite)
         {
-            mat = shape.material;
+            if (shape.hasMaterial)
+            {
+                mat = shape.material;
+            }
         }
 
+        bindMaterialSafe(mat);
+    }
+
+    override void bindMaterialSafe(Material mat)
+    {
         auto diffuseMap = (mat && mat.diffuseMap && mat.isBindDiffuseMap) ? mat.diffuseMap
             : gpu.defaultDiffuse;
         auto specularMap = (mat && mat.specularMap && mat.isBindSpecularMap) ? mat.specularMap
@@ -117,13 +134,15 @@ class EnvGroup : PipelineGroup
 
         auto dispMap = (mat && mat.dispMap && mat.isBindDispMap) ? mat.dispMap : gpu.defaultDisp;
 
+        import api.dm.kit.sprites3d.textures.texture_gpu: TextureGPU;
+
         TextureGPU[6] maps = [
             diffuseMap, specularMap, normalMap, aoMap, emissionMap, dispMap
         ];
         gpu.dev.bindFragmentSamplers(maps);
     }
 
-    void pushUniforms(Sprite3d sprite)
+    override void pushSpriteUniforms(Sprite3d sprite)
     {
         if (isPushUniformVertexMatrix)
         {
@@ -166,7 +185,7 @@ class EnvGroup : PipelineGroup
                 continue;
             }
 
-            Light lightData;
+            LightData lightData;
 
             lightData.position = lamp.pos3;
             lightData.lightType = 0;
@@ -209,7 +228,7 @@ class EnvGroup : PipelineGroup
             config.lights[li] = lightData;
         }
 
-        Material mat;
+        MaterialData mat;
         mat.albedo = sprite.albedo.toArrayRGBAf;
         bool isDefaultMaterial;
 
@@ -217,7 +236,7 @@ class EnvGroup : PipelineGroup
 
         if (auto mSprite = cast(MaterialSprite3d) sprite)
         {
-            if (mSprite.material)
+            if (mSprite.hasMaterial)
             {
                 mat.specular = mSprite.material.specular.toArrayRGBAf;
                 mat.ambient = mSprite.material.ambient.toArrayRGBAf;

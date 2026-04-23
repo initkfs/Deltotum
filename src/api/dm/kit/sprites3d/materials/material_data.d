@@ -25,7 +25,7 @@ import api.dm.kit.graphics.colors.rgba : RGBAf;
    Specular A (Gloss): High value (0.9)
  */
 
-struct Material
+struct MaterialData
 {
     float[4] albedo;
     float[4] ambient;
@@ -38,7 +38,7 @@ align(4):
     float reserve2;
 }
 
-struct Light
+struct LightData
 {
     Vec3f position;
     uint lightType;
@@ -54,7 +54,7 @@ struct Light
     float outerCutoff = 0;
 }
 
-static assert(Light.sizeof == 96);
+static assert(LightData.sizeof == 96);
 
 import api.math.geom3 : Vec3f;
 

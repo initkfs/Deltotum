@@ -133,6 +133,7 @@ class Sprite2d : EventKitTarget
 
     bool isDrawable = true;
     bool isDrawByParent = true;
+    bool isCanDrawSelf = true;
     bool isRedraw = true;
     bool isRedrawChildren = true;
     bool isDrawAfterParent = true;
@@ -749,12 +750,16 @@ class Sprite2d : EventKitTarget
                 parent.onBeforeDrawChild(this);
             }
 
-            if (onBeforeDrawChildDg)
+            if (isCanDrawSelf)
             {
-                onBeforeDrawChildDg(this);
+                if (onBeforeDrawChildDg)
+                {
+                    onBeforeDrawChildDg(this);
+                }
+
+                drawContent;
             }
 
-            drawContent;
             redraw = true;
 
             if (parent)
@@ -845,15 +850,13 @@ class Sprite2d : EventKitTarget
         trySetParentProps(sprite);
     }
 
-    protected bool trySetParentProps(Sprite2d sprite)
+    protected void trySetParentProps(Sprite2d sprite)
     {
         assert(sprite);
 
-        bool isSet;
         if (!sprite.parent)
         {
             sprite.parent = this;
-            isSet = true;
         }
 
         if (!sprite.hasScene && hasScene)
@@ -866,7 +869,6 @@ class Sprite2d : EventKitTarget
             // }
 
             sprite.scene = scene;
-            isSet |= true;
         }
 
         if (isLayoutOnInvalidForChild)
@@ -888,8 +890,6 @@ class Sprite2d : EventKitTarget
         {
             sprite.onBeforeDrawChildDg = onBeforeDrawChildDg;
         }
-
-        return isSet;
     }
 
     bool addCreate(Sprite2d[] sprites)
@@ -3035,7 +3035,8 @@ class Sprite2d : EventKitTarget
         {
             foreach (ch; children)
             {
-                if(!ch.isIgnoreAngleForChild){
+                if (!ch.isIgnoreAngleForChild)
+                {
                     ch.angle = angle;
                 }
             }

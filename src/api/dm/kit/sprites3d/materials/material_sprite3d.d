@@ -9,10 +9,13 @@ import api.dm.kit.sprites3d.materials.material : Material;
 
 class MaterialSprite3d : Sprite3d
 {
+    protected
+    {
+        Material _material;
+    }
 
-    Material material;
     bool isCreateMaterial;
-    bool isShareMaterial;
+    bool isDrawWithSharedMaterial;
 
     string diffuseMapPath;
     string specularMapPath;
@@ -24,40 +27,61 @@ class MaterialSprite3d : Sprite3d
     {
         super.create;
 
-        if (!material)
+        if (!_material)
         {
             if (isCreateMaterial)
             {
                 import api.dm.kit.sprites3d.materials.material : Material;
 
-                material = new Material(diffuseMapPath, specularMapPath, normalMapPath, dispMapPath, aoMapPath);
-                addCreate(material);
+                _material = new Material(diffuseMapPath, specularMapPath, normalMapPath, dispMapPath, aoMapPath);
+                addCreate(_material);
             }
         }
         else
         {
-            addCreate(material);
+            addCreate(_material);
         }
     }
 
-    bool hasMaterial() => material !is null;
-
     void onMaterial(scope void delegate(Material) onMaterialIfExists)
     {
-        if (!material)
+        if (!_material)
         {
             return;
         }
 
-        onMaterialIfExists(material);
+        onMaterialIfExists(_material);
+    }
+
+    bool hasMaterial() => _material !is null;
+    Material material()
+    {
+        if (!_material)
+        {
+            throw new Exception("Material is null");
+        }
+        return _material;
+    }
+
+    void material(Material m)
+    {
+        _material = m;
+
+        if (m.isSharedMaterial && !isDrawWithSharedMaterial)
+        {
+            isCanDrawSelf = false;
+            pipeline.addSharedMaterialSprite(this);
+        }
     }
 
     override void dispose()
     {
-        if (material && isShareMaterial)
+        if (_material && _material.isSharedMaterial)
         {
-            remove(material);
-            material = null;
+            pipeline.removeSharedMatSprite(this);
+
+            remove(_material);
+            _material = null;
         }
 
         super.dispose;
