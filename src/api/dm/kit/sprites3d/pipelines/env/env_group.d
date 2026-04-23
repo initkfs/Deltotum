@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.pipelines.env.env_group;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
-import api.dm.kit.sprites3d.lightings.phongs.materials.material_data : Light, Material;
+import api.dm.kit.sprites3d.materials.material_data : Light, Material;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.math.geom3.vec3 : Vec3f;
@@ -96,14 +96,14 @@ class EnvGroup : PipelineGroup
 
     void bindAll(Sprite3d sprite)
     {
-        import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
+        import api.dm.kit.sprites3d.materials.material : Material;
         import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
-        import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+        import api.dm.kit.sprites3d.materials.material_sprite3d: MaterialSprite3d;
 
-        LightingMaterial mat;
-        if (auto shape = cast(Shape3d) sprite)
+        Material mat;
+        if (auto shape = cast(MaterialSprite3d) sprite)
         {
-            mat = shape.lightingMaterial;
+            mat = shape.material;
         }
 
         auto diffuseMap = (mat && mat.diffuseMap && mat.isBindDiffuseMap) ? mat.diffuseMap
@@ -211,22 +211,35 @@ class EnvGroup : PipelineGroup
 
         Material mat;
         mat.albedo = sprite.albedo.toArrayRGBAf;
+        bool isDefaultMaterial;
 
-        import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+        import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
 
-        if (sprite.lightingMaterial)
+        if (auto mSprite = cast(MaterialSprite3d) sprite)
         {
-            mat.specular = sprite.lightingMaterial.specular.toArrayRGBAf;
-            mat.ambient = sprite.lightingMaterial.ambient.toArrayRGBAf;
-            mat.gloss = sprite.lightingMaterial.gloss;
+            if (mSprite.material)
+            {
+                mat.specular = mSprite.material.specular.toArrayRGBAf;
+                mat.ambient = mSprite.material.ambient.toArrayRGBAf;
+                mat.gloss = mSprite.material.gloss;
+                mat.shininess = mSprite.material.shininess;
+            }
+            else
+            {
+                isDefaultMaterial = true;
+            }
         }
         else
+        {
+            isDefaultMaterial = true;
+        }
+
+        if (isDefaultMaterial)
         {
             mat.ambient = RGBA.white.toArrayRGBAf;
             mat.specular = RGBA.black.toArrayRGBAf;
         }
 
-        mat.shininess = 32;
         mat.intensity = sprite.albedoIntensity;
 
         if (mat.intensity != 1)

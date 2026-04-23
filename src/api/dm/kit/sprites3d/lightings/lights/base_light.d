@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.lightings.lights.base_light;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.math.geom3.vec3 : Vec3f;
@@ -12,7 +12,7 @@ import api.math.geom3.vec3 : Vec3f;
 class BaseLight : Sprite3d
 {
     bool isCreateMesh = true;
-    Sprite3d mesh;
+    MaterialSprite3d mesh;
 
     //Vec3f ambient = Vec3f(0.5f, 0.5f, 0.5f);
     //Vec3f diffuse = Vec3f(0.7f, 0.7f, 0.7f);
@@ -47,7 +47,7 @@ class BaseLight : Sprite3d
                 import api.dm.kit.sprites3d.shapes.sphere : Sphere;
 
                 Sphere newMesh = new Sphere(0.5);
-                newMesh.isCreateLightingMaterial = false;
+                newMesh.isCreateMaterial = false;
                 newMesh.id = "LightShape";
                 mesh = newMesh;
                 mesh.scale = Vec3f(0.2, 0.2, 0.2);
@@ -58,10 +58,7 @@ class BaseLight : Sprite3d
         {
             if (!mesh.isCreated)
             {
-                if (auto shape = cast(Shape3d) mesh)
-                {
-                    shape.isCreateLightingMaterial = false;
-                }
+                mesh.isCreateMaterial = false;
             }
         }
 

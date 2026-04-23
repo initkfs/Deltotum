@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material;
+module api.dm.kit.sprites3d.materials.material;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
@@ -10,7 +10,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class LightingMaterial : Sprite3d
+class Material : Sprite3d
 {
     TextureGPU diffuseMap;
     TextureGPU specularMap;

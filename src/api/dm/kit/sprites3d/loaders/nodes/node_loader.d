@@ -159,7 +159,7 @@ class NodeLoader
                 auto textPath = buildPath(baseDir, texturePath);
                 shape.diffuseMapPath = textPath;
 
-                shape.isCreateLightingMaterial = true;
+                shape.isCreateMaterial = true;
             }
 
             aiVector3D pos, scale;

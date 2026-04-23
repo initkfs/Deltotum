@@ -1,6 +1,7 @@
 module api.dm.kit.sprites3d.shapes.shape3d;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
+import api.dm.kit.sprites3d.materials.material_sprite3d: MaterialSprite3d;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.matrices.matrix : Matrix4x4;
@@ -12,7 +13,7 @@ import api.math.geom3.vec3 : Vec3f;
  * Authors: initkfs
  */
 
-class Shape3d : Sprite3d
+class Shape3d : MaterialSprite3d
 {
     ComVertex[] vertices;
     ushort[] indices;
@@ -37,7 +38,7 @@ class Shape3d : Sprite3d
 
         if (diffuseMapPath.length > 0 || specularMapPath.length > 0)
         {
-            isCreateLightingMaterial = true;
+            isCreateMaterial = true;
         }
     }
 

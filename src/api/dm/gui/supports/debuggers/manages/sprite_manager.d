@@ -208,9 +208,9 @@ class SpriteManager : BaseDebuggerPanel
             zRotateField.value(sprite3.angle, false);
         }
 
-        import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material : LightingMaterial;
+        import api.dm.kit.sprites3d.materials.material : Material;
 
-        if (auto mat = cast(LightingMaterial) sprite)
+        if (auto mat = cast(Material) sprite)
         {
             assert(mat);
             enablePanel(matPanel, true);
@@ -252,9 +252,9 @@ class MaterialPanel : Control
     ColorPicker specular;
     RegulateTextField glossField;
 
-    import api.dm.kit.sprites3d.lightings.phongs.materials.lighting_material;
+    import api.dm.kit.sprites3d.materials.material;
 
-    LightingMaterial mat;
+    Material mat;
 
     this()
     {

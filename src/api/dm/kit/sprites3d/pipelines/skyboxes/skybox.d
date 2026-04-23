@@ -89,7 +89,7 @@ class SkyBox : PipelineGroup
             }
         };
         cube.id = "SkyBoxCube";
-        cube.isCreateLightingMaterial = false;
+        cube.isCreateMaterial = false;
 
         addCreate(cube);
 
