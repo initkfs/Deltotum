@@ -93,6 +93,11 @@ class VideoPlayer : Control
         };
 
         engine.onUpdateYV = (yplane, ypitch, uplane, upitch, vplane, vpitch) {
+            
+            if(!texture.isVisible){
+                return;
+            }
+            
             if (!texture.updateTextureUV(yplane, cast(int) ypitch, uplane, cast(int) upitch, vplane, cast(
                     int) vpitch))
             {

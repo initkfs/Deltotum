@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.tweens2;
+module api.dm.kit.sprites2d.tweens;
 /**
  * Authors: initkfs
  */

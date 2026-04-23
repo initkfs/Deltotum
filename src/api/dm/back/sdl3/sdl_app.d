@@ -213,6 +213,12 @@ class SdlApp : GuiApp
                         uservices.logger.trace("Create GPU device: ", gpuName);
                     }
                 }
+
+                if (uservices.config.hasKey(KitConfigKeys.backendGPUIsAnisotropy))
+                {
+                    gpuDevice.isAnisotropy = uservices.config.getBool(
+                        KitConfigKeys.backendGPUIsAnisotropy);
+                }
             }
 
             version (EnableTrace)
@@ -1275,7 +1281,9 @@ class SdlApp : GuiApp
                 {
                     uservices.logger.error(
                         "Error set swapchain params: " ~ windowBuilder.gpu.dev.getError);
-                }else {
+                }
+                else
+                {
                     uservices.logger.trace("Set swapchain params");
                 }
             }

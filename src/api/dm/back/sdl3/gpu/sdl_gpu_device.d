@@ -58,6 +58,10 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     bool isStencil;
     bool isNeedA2C;
     bool isA2C;
+    bool isAnisotropy;
+
+    //4, 8, 16.
+    uint anisotropyMaxLevels = 8;
 
     //better for Reverse-Z, but for stencil SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT
     SDL_GPUTextureFormat depthTextureFormat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
@@ -1073,8 +1077,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         info.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
         info.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
 
-        info.enable_anisotropy = true;
-        info.max_anisotropy = 16;
+        info.enable_anisotropy = isAnisotropy;
+        info.max_anisotropy = anisotropyMaxLevels;
 
         return info;
     }
@@ -1128,9 +1132,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         samplerInfo.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
         samplerInfo.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
 
-        samplerInfo.enable_anisotropy = true,
-        //4, 8, 16.
-        samplerInfo.max_anisotropy = 8;
+        samplerInfo.enable_anisotropy = isAnisotropy,
+        samplerInfo.max_anisotropy = anisotropyMaxLevels;
 
         //for more contrasting, but noise
         //samplerInfo.mip_lod_bias = -0.5f, 

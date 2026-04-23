@@ -17,6 +17,7 @@ string backendIsJoystick = "backendIsJoystick";
 string backendIsGPU = "backendIsGPU";
 string backendGPUShowLines = "backendGPUShowLines";
 string backendGPUDisableCull= "backendGPUDisableCull";
+string backendGPUIsAnisotropy = "backendGPUIsAnisotropy";
 
 string backendJoystickIndex = "backendJoystickIndex";
 string backendJoystickIsClassic = "backendJoystickIsClassic";

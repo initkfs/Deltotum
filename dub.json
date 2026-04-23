@@ -25,18 +25,21 @@
         {
             "name": "app-dist",
             "versions": [
-                "EnableValidation", "EnableTrace"
+                "EnableValidation",
+                "EnableTrace"
             ],
             "targetType": "executable",
             "targetName": "dm-dist",
             "platforms": [
                 "linux"
+            ],
+            "dflags-ldc": [
+                "--O3"
             ]
         },
         {
             "name": "app-trace",
-            "versions": [
-            ],
+            "versions": [],
             "targetType": "executable",
             "targetName": "dm",
             "platforms": [
