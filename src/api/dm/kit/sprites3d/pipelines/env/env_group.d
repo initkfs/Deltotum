@@ -26,19 +26,23 @@ struct SceneTransforms
     Matrix4x4 projection;
 }
 
+struct MaterialConfig
+{
+    MaterialData material;
+}
+
 struct SceneConfig
 {
 align(16):
     Vec3f cameraPos;
 align(4):
-    uint isLamp;
     float nearPlane;
     float farPlane;
     float time;
     uint lightCount;
+    float reserve4;
 align(16):
     LightData[4] lights;
-    MaterialData material;
 }
 
 /**
@@ -84,7 +88,7 @@ class EnvGroup : PipelineGroup
 
         auto buff = pipeBuffers;
         buff.numVertexUniformBuffers += 2;
-        buff.numFragUniformBuffers += 1;
+        buff.numFragUniformBuffers += 2;
         buff.numFragSamples += 6;
         createPipeline(buff);
 
@@ -156,6 +160,69 @@ class EnvGroup : PipelineGroup
             gpu.dev.pushUniformVertexData(1, &transforms, SpriteTransforms.sizeof);
         }
 
+        MaterialConfig matConfig;
+
+        MaterialData mat;
+        mat.albedo = sprite.albedo.toArrayRGBAf;
+        bool isDefaultMaterial = true;
+
+        if (cast(BaseLight) sprite.parent)
+        {
+            mat.isLamp = true;
+        }
+
+        import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+
+        if (auto mSprite = cast(MaterialSprite3d) sprite)
+        {
+            if (mSprite.hasMaterial)
+            {
+                mat.specular = mSprite.material.specular.toArrayRGBAf;
+                mat.ambient = mSprite.material.ambient.toArrayRGBAf;
+                mat.gloss = mSprite.material.gloss;
+                mat.shininess = mSprite.material.shininess;
+
+                isDefaultMaterial = false;
+            }
+        }
+
+        if (isDefaultMaterial)
+        {
+            mat.ambient = RGBA.white.toArrayRGBAf;
+            mat.specular = RGBA.black.toArrayRGBAf;
+        }
+
+        mat.intensity = sprite.albedoIntensity;
+
+        if (mat.intensity != 1)
+        {
+            foreach (ref v; mat.albedo)
+            {
+                v *= mat.intensity;
+            }
+        }
+
+        matConfig.material = mat;
+
+        gpu.dev.pushUniformFragmentData(1, &matConfig, matConfig.sizeof);
+    }
+
+    override bool bindPipeline()
+    {
+        if (!super.bindPipeline)
+        {
+            return false;
+        }
+
+        if (isPushUniformVertexMatrix)
+        {
+            SceneTransforms transforms;
+            transforms.camera = camera.view;
+            transforms.projection = camera.projection;
+
+            gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+        }
+
         uint lightCount = cast(uint) lights.length;
         if (lightCount > maxLights)
         {
@@ -170,11 +237,6 @@ class EnvGroup : PipelineGroup
         //TODO time > 100000 
         config.time = platform.timer.ticksMs / 1000.0;
         config.lightCount = lightCount;
-
-        if (cast(BaseLight) sprite.parent)
-        {
-            config.isLamp = true;
-        }
 
         foreach (li; 0 .. lightCount)
         {
@@ -229,67 +291,7 @@ class EnvGroup : PipelineGroup
             config.lights[li] = lightData;
         }
 
-        MaterialData mat;
-        mat.albedo = sprite.albedo.toArrayRGBAf;
-        bool isDefaultMaterial;
-
-        import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
-
-        if (auto mSprite = cast(MaterialSprite3d) sprite)
-        {
-            if (mSprite.hasMaterial)
-            {
-                mat.specular = mSprite.material.specular.toArrayRGBAf;
-                mat.ambient = mSprite.material.ambient.toArrayRGBAf;
-                mat.gloss = mSprite.material.gloss;
-                mat.shininess = mSprite.material.shininess;
-            }
-            else
-            {
-                isDefaultMaterial = true;
-            }
-        }
-        else
-        {
-            isDefaultMaterial = true;
-        }
-
-        if (isDefaultMaterial)
-        {
-            mat.ambient = RGBA.white.toArrayRGBAf;
-            mat.specular = RGBA.black.toArrayRGBAf;
-        }
-
-        mat.intensity = sprite.albedoIntensity;
-
-        if (mat.intensity != 1)
-        {
-            foreach (ref v; mat.albedo)
-            {
-                v *= mat.intensity;
-            }
-        }
-
-        config.material = mat;
-
         gpu.dev.pushUniformFragmentData(0, &config, config.sizeof);
-    }
-
-    override bool bindPipeline()
-    {
-        if (!super.bindPipeline)
-        {
-            return false;
-        }
-
-        if (isPushUniformVertexMatrix)
-        {
-            SceneTransforms transforms;
-            transforms.camera = camera.view;
-            transforms.projection = camera.projection;
-
-            gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
-        }
 
         return true;
     }

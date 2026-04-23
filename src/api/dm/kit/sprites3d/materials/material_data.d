@@ -35,7 +35,7 @@ align(4):
     float shininess = 32;
     float intensity = 0;
     float gloss = 0.5;
-    float reserve2;
+    uint isLamp;
 }
 
 struct LightData

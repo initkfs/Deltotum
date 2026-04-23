@@ -29,11 +29,6 @@ SamplerState dispMapSampler : register(s5, space2);
 
 // RWStructuredBuffer<SimpleDataBuffer> sdataBuffer : register(u0, space2);
 
-namespace LightType {
-    static const uint Directional = 0;
-    static const uint Point = 1;
-    static const uint Spot = 2;
-};
 
 struct Material
 {
@@ -44,7 +39,13 @@ struct Material
     float shininess;
     float intensity;
     float gloss;
-    float reserve2;
+    uint isLamp;
+};
+
+namespace LightType {
+    static const uint Directional = 0;
+    static const uint Point = 1;
+    static const uint Spot = 2;
 };
 
 struct Light {
@@ -64,19 +65,26 @@ struct Light {
 
 struct SceneConfig {
     float3 cameraPos;
-    uint isLamp;
     float nearPlane;
     float farPlane;
     float time;
     uint lightCount;
+    float reserved4;
     Light lights[4];
-    Material material;
-    //TODO replace with lamp pipeline
 };
 
-cbuffer UBO : register(b0, space3)
+struct MaterialConfig {
+    Material material;
+};
+
+cbuffer SceneUBO : register(b0, space3)
 {
-    SceneConfig config;
+    SceneConfig sceneConfig;
+};
+
+cbuffer MaterialUBO : register(b1, space3)
+{
+    MaterialConfig matConfig;
 };
 
 #include "Com/ComTypes.hlsli"
@@ -211,8 +219,8 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 {
     FragOutputColor result;
 
-    if(config.isLamp == 1){
-        result.color = config.material.albedo;
+    if(matConfig.material.isLamp == 1){
+        result.color = matConfig.material.albedo;
         return result;
     }
 
@@ -257,7 +265,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     //result.color = float4(normal * 0.5 + 0.5, 1.0);
     //return result;
 
-    float3 viewDir = normalize(config.cameraPos - input.worldPos);
+    float3 viewDir = normalize(sceneConfig.cameraPos - input.worldPos);
 
     //Disp map
     float3 viewDirTS = mul(viewDir, TBN); 
@@ -273,7 +281,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     //float diff = abs(dot(N, lightDir)); 
 
     // float3 p = input.localPos; 
-    // float t = config.time * 0.4;
+    // float t = sceneConfig.time * 0.4;
 
     // // // 3D Domain Warping
     // p.x += 0.15 * sin(t + p.y * 4.0);
@@ -296,17 +304,17 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, texUV);
     
     float3 diffuseColor = fullDiffuseColor.rgb;
-    float4 specularColor = specularMap.Sample(specularSampler, texUV) * config.material.specular;
+    float4 specularColor = specularMap.Sample(specularSampler, texUV) * matConfig.material.specular;
 
-    for (int li = 0; li < config.lightCount; li++) {
-         Light light = config.lights[li];
+    for (int li = 0; li < sceneConfig.lightCount; li++) {
+         Light light = sceneConfig.lights[li];
 
          if(light.lightType == LightType::Directional){
-            resultColor += calcDir(diffuseColor, specularColor, normal, ao, light, input, config.material, viewDir);
+            resultColor += calcDir(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
          }else if(light.lightType == LightType::Point){
-            resultColor += calcPoint(diffuseColor, specularColor, normal, ao, light, input, config.material, viewDir);
+            resultColor += calcPoint(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
          }else if(light.lightType == LightType::Spot){
-            resultColor += calcSpot(diffuseColor, specularColor, normal, ao, light, input, config.material, viewDir);
+            resultColor += calcSpot(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
          }
     }
 
