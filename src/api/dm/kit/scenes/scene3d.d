@@ -8,8 +8,9 @@ import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.kit.sprites3d.cameras.orthographic_camera : OrthographicCamera;
 import api.dm.kit.scenes.antialiasings.msaa : MSAA;
+import api.dm.kit.scenes.antialiasings.fxaa: FXAA;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
-import api.dm.kit.scenes.postprocess.bloom.bloom: Bloom;
+import api.dm.kit.scenes.postprocess.bloom.bloom : Bloom;
 import api.math.matrices.matrix;
 
 //TODO remove native api
@@ -19,14 +20,21 @@ import api.dm.back.sdl3.externs.csdl3;
  * Authors: initkfs
  */
 
+enum AntiAliasing {
+    MSAA, FXAA
+}
+
 class Scene3d : Scene2d
 {
     Camera camera;
 
-    bool isAntiAliasing = true;
+    AntiAliasing aaType;
+
+    bool isAntiAliasing;
     bool isStencil;
 
     MSAA msaa;
+    FXAA fxaa;
 
     SDL_GPUTexture* resultTexture;
     SDL_GPUTexture* renderTexture;
@@ -129,6 +137,10 @@ class Scene3d : Scene2d
         postProc = new Bloom;
         build(postProc);
         postProc.create;
+
+        fxaa = new FXAA;
+        build(fxaa);
+        fxaa.create;
     }
 
     protected SDL_GPUColorTargetInfo createTargetInfo()
@@ -233,9 +245,13 @@ class Scene3d : Scene2d
             }
         }
 
-        postProc.process(resultTexture, renderTexture, isMix2d3dMode);
+        postProc.process(resultTexture, fxaa.outTexture, isMix2d3dMode);
 
         gpu.dev.endRenderPass(isSubmit : false);
+
+
+        //FXAA
+        fxaa.process(renderTexture);
 
         gpu.dev.submitCmdBuffer;
         gpu.dev.resetState;
@@ -347,11 +363,11 @@ class Scene3d : Scene2d
             }
         }
 
-        if(!gpu.dev.submitCmdBuffer){
+        if (!gpu.dev.submitCmdBuffer)
+        {
             throw new Exception("Error submit command buffer");
             gpu.dev.resetState;
         }
-
 
     }
 
@@ -391,11 +407,12 @@ class Scene3d : Scene2d
     override void dispose()
     {
         super.dispose;
-        
-        if(postProc){
+
+        if (postProc)
+        {
             postProc.dispose;
         }
-        
+
         if (camera)
         {
             camera.dispose;
