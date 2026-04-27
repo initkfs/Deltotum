@@ -38,16 +38,13 @@ class SceneManager : BaseDebuggerPanel
         {
             sceneTree.width = width;
         }
-        addCreate(sceneTree);
-        if (width != 0)
-        {
-            sceneTree.width = width;
-        }
 
         if (height != 0)
         {
             sceneTree.height = height;
         }
+
+        addCreate(sceneTree);
 
         sceneTree.itemTextProvider = (item) {
             import std.conv : to;

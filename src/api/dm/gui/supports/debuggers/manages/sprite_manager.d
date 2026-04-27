@@ -14,6 +14,7 @@ import api.dm.gui.controls.selects.color_pickers.color_picker : ColorPicker;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 import api.dm.kit.sprites3d.lightings.lights.base_light : BaseLight;
 import api.dm.gui.controls.switches.checks.check : Check;
+import api.dm.gui.controls.switches.buttons.button : Button;
 
 /**
  * Authors: initkfs
@@ -25,6 +26,8 @@ class SpriteManager : BaseDebuggerPanel
     {
         Sprite2d _currentSprite;
     }
+
+    Text spriteIdField;
 
     FracSpinner xField;
     FracSpinner yField;
@@ -38,6 +41,10 @@ class SpriteManager : BaseDebuggerPanel
     FracSpinner yRotateField;
     FracSpinner zRotateField;
 
+    Button xRotateBtn;
+    Button yRotateBtn;
+    Button zRotateBtn;
+
     ColorPicker albedo;
     RegulateTextField albedoIntensity;
 
@@ -48,6 +55,8 @@ class SpriteManager : BaseDebuggerPanel
 
     Check isVisibleField;
 
+    float btnRotateSpeed = 1;
+
     this(GuiScene scene)
     {
         super(scene);
@@ -57,6 +66,9 @@ class SpriteManager : BaseDebuggerPanel
     override void create()
     {
         super.create;
+
+        spriteIdField = new Text;
+        addCreate(spriteIdField);
 
         auto transformBox = new HBox(2);
         addCreate(transformBox);
@@ -111,6 +123,18 @@ class SpriteManager : BaseDebuggerPanel
             new Text("rz"), zRotateField
         ]);
 
+        auto rotBtnBox = new HBox(2);
+        addCreate(rotBtnBox);
+        rotBtnBox.isAlignY = true;
+
+        xRotateBtn = createRotBtn("RX");
+        yRotateBtn = createRotBtn("RY");
+        zRotateBtn = createRotBtn("RZ");
+
+        rotBtnBox.addCreate([
+                xRotateBtn, yRotateBtn, zRotateBtn
+            ]);
+
         albedo = new ColorPicker;
         addCreate(albedo);
 
@@ -152,6 +176,45 @@ class SpriteManager : BaseDebuggerPanel
         enablePanel(matPanel, false);
     }
 
+    override void update(float dt)
+    {
+        super.update(dt);
+
+        if (!_currentSprite)
+        {
+            return;
+        }
+
+        if (auto sprite3d = cast(Sprite3d) _currentSprite)
+        {
+            if (xRotateBtn.isOn)
+            {
+                sprite3d.angleX = sprite3d.angleX + btnRotateSpeed;
+                xRotateField.value(sprite3d.angleX, false);
+            }
+
+            if (yRotateBtn.isOn)
+            {
+                sprite3d.angleY = sprite3d.angleY + btnRotateSpeed;
+                yRotateField.value(sprite3d.angleY, false);
+            }
+
+            if (zRotateBtn.isOn)
+            {
+                sprite3d.angleZ = sprite3d.angleZ + btnRotateSpeed;
+                zRotateField.value(sprite3d.angleZ, false);
+            }
+        }
+    }
+
+    Button createRotBtn(dstring text)
+    {
+        auto btn = new Button(text);
+        btn.isLongPressButton = true;
+
+        return btn;
+    }
+
     void enablePanel(Control panel, bool value)
     {
         panel.isVisible = value;
@@ -189,6 +252,8 @@ class SpriteManager : BaseDebuggerPanel
     void currentSprite(Sprite2d sprite)
     {
         _currentSprite = sprite;
+
+        spriteIdField.text = sprite.id.length > 0 ? sprite.id : "no id";
 
         //TODO reset oldValue
         xField.value(sprite.x, false);

@@ -89,17 +89,17 @@ class MainPanel : BaseDebuggerPanel
             mainBox.width = width;
         }
 
-        mainBox.height = window.height / 2;
-
+        mainBox.height = window.height * 0.6;
+        
         sceneManager = new SceneManager(targetScene);
         auto sceneTab = mainBox.createTab(sceneManager, "Scene");
-        sceneManager.height = window.height / 2;
+        sceneManager.height = mainBox.height;
         buildInitCreate(sceneManager);
 
         envManager = new EnvManager(targetScene);
         buildInitCreate(envManager);
         mainBox.createTab(envManager, "Env");
-        envManager.height = window.height / 2;
+        envManager.height = mainBox.height;;
 
         mainBox.changeTab(sceneTab);
 
@@ -107,7 +107,7 @@ class MainPanel : BaseDebuggerPanel
 
         auto additionalContainer = new VBox;
         additionalContainer.width = width;
-        additionalContainer.height = window.height / 2;
+        additionalContainer.height = window.height - mainBox.height;
         buildInitCreate(additionalContainer);
 
         mainContainer.addContent([mainBox, additionalContainer]);

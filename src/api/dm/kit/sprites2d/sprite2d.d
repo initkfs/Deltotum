@@ -2273,12 +2273,12 @@ class Sprite2d : EventKitTarget
         bool isResized;
         if (width != 0)
         {
-            isResized |= child.width = width;
+            isResized |= (child.width = width);
         }
 
         if (height != 0)
         {
-            isResized |= child.height = height;
+            isResized |= (child.height = height);
         }
 
         return isResized;
