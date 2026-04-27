@@ -174,7 +174,7 @@ class Bloom : Sprite3d
         composeUniformData.flags.isVignette = false;
     }
 
-    void process(SDL_GPUTexture* resultTexture, SDL_GPUTexture* renderTexture, bool isMix2d3dMode,)
+    void process(SDL_GPUTexture* inTexture, SDL_GPUTexture* outTexture, bool isMix2d3dMode)
     {
         uint w = window.widthu;
         uint h = window.heightu;
@@ -197,7 +197,7 @@ class Bloom : Sprite3d
         gpu.dev.beginRenderPass(targets);
         gpu.dev.setViewport(Rect2f(0, 0, bloomW, bloomH), 0, 1);
         gpu.dev.bindPipeline(brightPipeline);
-        gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
+        gpu.dev.bindFragmentSamplers(inTexture, bloomSampler, 0);
 
         gpu.dev.pushUniformFragmentData(0, brightUniformData.ptr, brightUniformData.sizeof);
 
@@ -241,7 +241,7 @@ class Bloom : Sprite3d
         gpu.dev.endRenderPass(isSubmit : false);
 
         SDL_GPUColorTargetInfo composePassTarget;
-        composePassTarget.texture = isMix2d3dMode ? renderTexture : gpu.dev.swapchain;
+        composePassTarget.texture = isMix2d3dMode ? outTexture : gpu.dev.swapchain;
         composePassTarget.load_op = SDL_GPU_LOADOP_DONT_CARE;
         composePassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
         composePassTarget.store_op = SDL_GPU_STOREOP_STORE;
@@ -254,7 +254,7 @@ class Bloom : Sprite3d
 
         gpu.dev.pushUniformFragmentData(0, &composeUniformData, composeUniformData.sizeof);
 
-        gpu.dev.bindFragmentSamplers(resultTexture, bloomSampler, 0);
+        gpu.dev.bindFragmentSamplers(inTexture, bloomSampler, 0);
         gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 1);
         gpu.dev.draw(3, 1, 0, 0);
     }

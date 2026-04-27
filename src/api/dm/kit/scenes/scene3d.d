@@ -7,8 +7,9 @@ import api.dm.kit.sprites3d.textures.depth_texture : DepthTexture;
 import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.kit.sprites3d.cameras.orthographic_camera : OrthographicCamera;
+import api.dm.kit.scenes.antialiasings.antialiaser : AntiAliaser;
 import api.dm.kit.scenes.antialiasings.msaa : MSAA;
-import api.dm.kit.scenes.antialiasings.fxaa: FXAA;
+import api.dm.kit.scenes.antialiasings.fxaa : FXAA;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.dm.kit.scenes.postprocess.bloom.bloom : Bloom;
 import api.math.matrices.matrix;
@@ -20,21 +21,21 @@ import api.dm.back.sdl3.externs.csdl3;
  * Authors: initkfs
  */
 
-enum AntiAliasing {
-    MSAA, FXAA
+enum AntiAliasing
+{
+    msaa,
+    fxaa,
+    none
 }
 
 class Scene3d : Scene2d
 {
     Camera camera;
 
-    AntiAliasing aaType;
+    AntiAliasing aaType = AntiAliasing.msaa;
+    AntiAliaser antiAliaser;
 
-    bool isAntiAliasing;
     bool isStencil;
-
-    MSAA msaa;
-    FXAA fxaa;
 
     SDL_GPUTexture* resultTexture;
     SDL_GPUTexture* renderTexture;
@@ -70,12 +71,38 @@ class Scene3d : Scene2d
         camera = createCamera;
         assert(camera);
 
-        if (isAntiAliasing)
-        {
-            msaa = new MSAA;
-            buildInitCreate(msaa);
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-            gpu.dev.pipelineTextureFormat = msaa.textureFormat;
+        if (config.hasKey(KitConfigKeys.backendAntiAliasing))
+        {
+            import std.conv : to;
+
+            aaType = config.getNotEmptyString(KitConfigKeys.backendAntiAliasing).to!AntiAliasing;
+        }
+
+        version (EnableTrace)
+        {
+            import std.conv : to;
+
+            logger.trace("Antialiasing: " ~ aaType.to!string);
+        }
+
+        final switch (aaType) with (AntiAliasing)
+        {
+            case msaa:
+                antiAliaser = new MSAA;
+                gpu.dev.pipelineTextureFormat = antiAliaser.textureFormat;
+                break;
+            case fxaa:
+                antiAliaser = new FXAA;
+                break;
+            case none:
+                break;
+        }
+
+        if (antiAliaser)
+        {
+            buildInitCreate(antiAliaser);
         }
 
         gpu.dev.isStencil = isStencil;
@@ -114,8 +141,10 @@ class Scene3d : Scene2d
         }
 
         depthTexture = new DepthTexture;
-        if (isAntiAliasing && msaa)
+        if (antiAliaser && aaType == AntiAliasing.msaa)
         {
+            MSAA msaa = cast(MSAA) antiAliaser;
+            assert(msaa);
             depthTexture.sampleCount = msaa.aliasingSampleCount;
             depthTexture.isMultiSampler = true;
         }
@@ -137,22 +166,20 @@ class Scene3d : Scene2d
         postProc = new Bloom;
         build(postProc);
         postProc.create;
-
-        fxaa = new FXAA;
-        build(fxaa);
-        fxaa.create;
     }
 
     protected SDL_GPUColorTargetInfo createTargetInfo()
     {
         SDL_GPUColorTargetInfo colorTargetInfo;
         SDL_FColor clearColor;
-        if (isAntiAliasing)
+        if (antiAliaser && aaType == AntiAliasing.msaa)
         {
-            assert(msaa);
-            colorTargetInfo.texture = msaa.msaaTexture;
+            colorTargetInfo.texture = antiAliaser.texture;
             clearColor = SDL_FColor(0, 0, 0, 0);
             colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+
+            auto msaa = cast(MSAA) antiAliaser;
+            assert(msaa);
 
             if (msaa.aliasingSampleCount == SDL_GPU_SAMPLECOUNT_1)
             {
@@ -195,7 +222,7 @@ class Scene3d : Scene2d
 
         import api.dm.back.sdl3.externs.csdl3;
 
-        if (isAntiAliasing || isMix2d3dMode)
+        if (antiAliaser || isMix2d3dMode)
         {
             SDL_GPUColorTargetInfo[1] targets;
             targets[0] = createTargetInfo;
@@ -228,7 +255,7 @@ class Scene3d : Scene2d
         drawSelfAndChildren(alpha);
         isMixCurrentPass = true;
 
-        if (isAntiAliasing || isMix2d3dMode)
+        if (antiAliaser || isMix2d3dMode)
         {
             if (!gpu.dev.endRenderPass(isSubmit : false))
             {
@@ -245,13 +272,20 @@ class Scene3d : Scene2d
             }
         }
 
-        postProc.process(resultTexture, fxaa.outTexture, isMix2d3dMode);
+        auto outPostTexture = renderTexture;
+        if (antiAliaser && aaType == AntiAliasing.fxaa)
+        {
+            outPostTexture = antiAliaser.texture;
+        }
+
+        postProc.process(resultTexture, outPostTexture, isMix2d3dMode);
 
         gpu.dev.endRenderPass(isSubmit : false);
 
-
-        //FXAA
-        fxaa.process(renderTexture);
+        if (antiAliaser && aaType == AntiAliasing.fxaa)
+        {
+            antiAliaser.process(null, renderTexture, isMix2d3dMode);
+        }
 
         gpu.dev.submitCmdBuffer;
         gpu.dev.resetState;
@@ -433,9 +467,9 @@ class Scene3d : Scene2d
             gpu.dev.deleteTexture(renderTexture);
         }
 
-        if (msaa)
+        if (antiAliaser)
         {
-            msaa.dispose;
+            antiAliaser.dispose;
         }
     }
 }

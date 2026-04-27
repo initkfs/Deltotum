@@ -1,19 +1,15 @@
 module api.dm.kit.scenes.antialiasings.msaa;
 
-import api.dm.kit.components.graphic_component : GraphicComponent;
+import api.dm.kit.scenes.antialiasings.antialiaser : AntiAliaser;
 import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
  */
 
-class MSAA : GraphicComponent
+class MSAA : AntiAliaser
 {
-
     SDL_GPUSampleCount aliasingSampleCount = SDL_GPU_SAMPLECOUNT_4;
-
-    SDL_GPUTexture* msaaTexture;
-    SDL_GPUTextureFormat textureFormat = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
 
     override void create()
     {
@@ -48,20 +44,15 @@ class MSAA : GraphicComponent
             msaTextureInfo.usage |= SDL_GPU_TEXTUREUSAGE_SAMPLER;
         }
 
-        msaaTexture = SDL_CreateGPUTexture(gpu.dev.ptr, &msaTextureInfo);
-        if (!msaaTexture)
+        texture = SDL_CreateGPUTexture(gpu.dev.ptr, &msaTextureInfo);
+        if (!texture)
         {
             throw new Exception("MSAA texture is null");
         }
     }
 
-    override void dispose()
+    override void process(SDL_GPUTexture* inTexture, SDL_GPUTexture* outTexture, bool isMix2d3dMode)
     {
-        super.dispose;
-        if (msaaTexture)
-        {
-            gpu.dev.deleteTexture(msaaTexture);
-        }
-    }
 
+    }
 }

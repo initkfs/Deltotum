@@ -15,6 +15,7 @@ string backendIsAudio = "backendIsAudio";
 string backendIsJoystick = "backendIsJoystick";
 
 string backendIsGPU = "backendIsGPU";
+string backendAntiAliasing = "backendAntiAliasing";
 string backendGPUShowLines = "backendGPUShowLines";
 string backendGPUDisableCull= "backendGPUDisableCull";
 string backendGPUIsAnisotropy = "backendGPUIsAnisotropy";

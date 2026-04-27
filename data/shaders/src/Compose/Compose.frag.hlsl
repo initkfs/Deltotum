@@ -105,9 +105,9 @@ float4 main(Input input) : SV_Target {
 
     //Simple Dithering
     //finalColor += (screenNoise(input.uv) - 0.5) * (1.0 / 255.0);
-    float alpha = dot(mappedColor.rgb, float3(0.299, 0.587, 0.114));
+    //float alpha = dot(mappedColor.rgb, float3(0.299, 0.587, 0.114));
 
-    return float4(mappedColor, alpha);
+    return float4(mappedColor, 1.0);
     //float4(pow(finalColor, 1.0/2.2), 1.0);
 }
 

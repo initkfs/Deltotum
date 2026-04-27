@@ -1,6 +1,6 @@
 module api.dm.kit.scenes.antialiasings.fxaa;
 
-import api.dm.kit.components.graphic_component : GraphicComponent;
+import api.dm.kit.scenes.antialiasings.antialiaser: AntiAliaser;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.dm.back.sdl3.externs.csdl3;
@@ -9,12 +9,10 @@ import api.dm.back.sdl3.externs.csdl3;
  * Authors: initkfs
  */
 
-class FXAA : GraphicComponent
+class FXAA : AntiAliaser
 {
     SdlGPUPipeline fxaa;
-    SDL_GPUTexture* fxaaTexture;
-    SDL_GPUSampler* fxaaSampler;
-    SDL_GPUTexture* outTexture;
+
     float[4] rcpFrame;
 
     override void create()
@@ -35,7 +33,7 @@ class FXAA : GraphicComponent
         targetInfo.num_color_targets = 1;
 
         SDL_GPUColorTargetDescription colorDesc;
-        colorDesc.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
+        colorDesc.format = textureFormat;
         colorDesc.blend_state.enable_blend = false;
         targetInfo.color_target_descriptions = &colorDesc;
 
@@ -67,7 +65,7 @@ class FXAA : GraphicComponent
         samplerInfo.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
         samplerInfo.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
-        fxaaSampler = gpu.dev.newSampler(&samplerInfo);
+        sampler = gpu.dev.newSampler(&samplerInfo);
 
         SDL_GPUTextureCreateInfo outInfo;
         outInfo.type = SDL_GPU_TEXTURETYPE_2D;
@@ -78,18 +76,18 @@ class FXAA : GraphicComponent
         outInfo.format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT;
         outInfo.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
 
-        outTexture = gpu.dev.newTexture(&outInfo);
+        texture = gpu.dev.newTexture(&outInfo);
 
         rcpFrame[0] = 1.0 / window.width;
         rcpFrame[1] = 1.0 / window.height;
 
     }
 
-    void process(SDL_GPUTexture* renderTexture)
+    override void process(SDL_GPUTexture* inTexture, SDL_GPUTexture* outTexture, bool isMix2d3dMode)
     {
         SDL_GPUColorTargetInfo[1] targets;
         SDL_GPUColorTargetInfo fxaaPassTarget;
-        fxaaPassTarget.texture = renderTexture;
+        fxaaPassTarget.texture = outTexture;
         fxaaPassTarget.load_op = SDL_GPU_LOADOP_DONT_CARE;
         fxaaPassTarget.clear_color = SDL_FColor(0, 0, 0, 1);
         fxaaPassTarget.cycle = true;
@@ -98,7 +96,12 @@ class FXAA : GraphicComponent
         targets[0] = fxaaPassTarget;
         gpu.dev.beginRenderPass(targets);
         gpu.dev.bindPipeline(fxaa);
-        gpu.dev.bindFragmentSamplers(outTexture, fxaaSampler, 0);
+        gpu.dev.bindFragmentSamplers(texture, sampler, 0);
+
+        //TODO output bounds?
+        rcpFrame[0] = 1.0 / window.width;
+        rcpFrame[1] = 1.0 / window.height;
+
         gpu.dev.pushUniformFragmentData(0, &rcpFrame, rcpFrame.sizeof);
         gpu.dev.draw(3, 1, 0, 0);
         gpu.dev.endRenderPass(isSubmit : false);
@@ -110,21 +113,6 @@ class FXAA : GraphicComponent
         if (fxaa)
         {
             fxaa.dispose;
-        }
-
-        if (fxaaTexture)
-        {
-            gpu.dev.deleteTexture(fxaaTexture);
-        }
-
-        if (fxaaSampler)
-        {
-            gpu.dev.deleteSampler(fxaaSampler);
-        }
-
-        if (outTexture)
-        {
-            gpu.dev.deleteTexture(outTexture);
         }
     }
 

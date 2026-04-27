@@ -253,7 +253,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             throw new Exception("GPU pipeline is null: " ~ getError);
         }
 
-        return new SdlGPUPipeline(pipePtr);
+        return new SdlGPUPipeline(pipePtr, ptr);
     }
 
     SdlGPUPipeline newPipeline(

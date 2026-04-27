@@ -8,16 +8,24 @@ import api.dm.back.sdl3.externs.csdl3;
 
 class SdlGPUPipeline : SdlObjectWrapper!SDL_GPUGraphicsPipeline
 {
-    this(SDL_GPUGraphicsPipeline* newPtr)
+    protected
+    {
+        SDL_GPUDevice* _dev;
+    }
+
+    this(SDL_GPUGraphicsPipeline* newPtr, SDL_GPUDevice* dev)
     {
         super(newPtr);
+        this._dev = dev;
+        assert(dev);
     }
 
     override protected bool disposePtr() nothrow
     {
         if (ptr)
         {
-            assert(false, "Unable disposing without GPUDevice");
+            SDL_ReleaseGPUGraphicsPipeline(_dev, ptr);
+            return true;
         }
         return false;
     }
