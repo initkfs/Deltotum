@@ -19,11 +19,23 @@ class Cylinder : Shape3d
     float topRadius = 0;
     float height = 0;
 
-    this(float bottomRadius = 0.5, float topRadius = 0.5, float height = 0.5)
+    enum CylinderID = "Cylinder";
+    enum DefaultHeight = 0.5;
+    enum DefaultRadius = 0.5;
+
+    this(float height = DefaultHeight, float radius = DefaultRadius, string id = CylinderID)
+    {
+        this(height, radius, radius, id);
+    }
+
+    this(float height = DefaultHeight, float bottomRadius = DefaultRadius, float topRadius = DefaultRadius, string id = CylinderID)
     {
         this.bottomRadius = bottomRadius;
         this.topRadius = topRadius;
         this.height = height;
+        this.id = id;
+
+        initSize(Math.max(bottomRadius, topRadius), height);
     }
 
     override void createMesh()

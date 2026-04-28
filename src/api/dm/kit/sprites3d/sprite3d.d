@@ -59,6 +59,7 @@ class Sprite3d : Sprite2d
 
     Quaternion orientation = Quaternion.identity;
     bool isPermanentRotationMode;
+    bool isUseOrientForRotation;
 
     void delegate(float, float) onChangeZOldNew;
 
@@ -121,6 +122,18 @@ class Sprite3d : Sprite2d
 
     bool isInCameraFrustum() => true;
 
+    override bool draw(float a)
+    {
+        if (isMatrixRecalc)
+        {
+            calcWorldMatrix;
+            isMatrixRecalc = false;
+        }
+
+        //child after
+        return super.draw(a);
+    }
+
     void calcWorldMatrix()
     {
         _worldMatrix = _worldMatrix.identity;
@@ -135,7 +148,7 @@ class Sprite3d : Sprite2d
             _worldMatrix = _worldMatrix.mul(translateMatrix(rotateLocalOffset));
         }
 
-        Quaternion rotation = Quaternion.fromEuler(-angleX, -angleY, angle);
+        Quaternion rotation = !isUseOrientForRotation ? Quaternion.fromEuler(-angleX, -angleY, angle) : orientation;
 
         if (!isPermanentRotationMode)
         {
