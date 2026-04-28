@@ -45,6 +45,8 @@ struct Vec3f
 
         Vec3f neg() => Vec3f(-x, -y, -z);
 
+        alias normalized = normalize;
+
         Vec3f normalize()
         {
             const float len = length;

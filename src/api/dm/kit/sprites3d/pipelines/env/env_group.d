@@ -103,7 +103,7 @@ class EnvGroup : PipelineGroup
             light.pos3 = Vec3f(0, 1, 3);
             light.direction = (Vec3f(0, 0, 0).sub(light.pos3)).normalize;
             light.scale = Vec3f(0.1, 0.1, 0.1);
-            light.ambient = RGBA.black;
+            light.ambient = RGBA.hex("#333333");
             addCreate(light);
         }
     }
