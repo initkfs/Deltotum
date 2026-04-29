@@ -10,6 +10,7 @@ alias Matrix2x1 = DenseMatrix!(float, 2, 1);
 alias Matrix2x2 = DenseMatrix!(float, 2, 2);
 alias Matrix3x3 = DenseMatrix!(float, 3, 3);
 alias Matrix4x4 = DenseMatrix!(float, 4, 4);
+alias Matrix4x1 = DenseMatrix!(float, 4, 1);
 alias Matrix3x1 = DenseMatrix!(float, 3, 1);
 
 Vec2f toVec2f(ref Matrix2x1 m) => Vec2f(m[0][0], m[1][0]);

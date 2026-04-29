@@ -7,6 +7,7 @@ import api.dm.kit.sprites3d.cameras.frustums.base_frustum3: BaseFrustum3f;
 import Math = api.math;
 import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4;
+import api.math.quaternion: Quaternion;
 import api.math.matrices.affine3;
 
 /**
@@ -54,6 +55,8 @@ class Camera : Sprite2d
 
     bool isAutoRecalcFrustum = true;
 
+    Matrix4x4 rotationPos;
+
     align(16)
     {
         Matrix4x4 view;
@@ -65,6 +68,8 @@ class Camera : Sprite2d
     {
         assert(targetScene);
         this.targetScene = targetScene;
+
+        rotationPos = Matrix4x4.identity;
     }
 
     abstract
@@ -102,11 +107,11 @@ class Camera : Sprite2d
         if (angleX != 0 || angleY != 0 || angle != 0)
         {
             Quaternion q1 = Quaternion.fromEuler(angleX, angleY, angle);
-            Matrix4x4 rotation = q1.toMatrix4x4LH;
+            rotationPos = q1.toMatrix4x4LH;
 
-            cameraFront = rotation.transformDir(localFront).normalize;
-            cameraUp = rotation.transformDir(localUp).normalize;
-            cameraRight = rotation.transformDir(localRight).normalize;
+            cameraFront = rotationPos.transformDir(localFront).normalize;
+            cameraUp = rotationPos.transformDir(localUp).normalize;
+            cameraRight = rotationPos.transformDir(localRight).normalize;
 
             if (isOrbital)
             {

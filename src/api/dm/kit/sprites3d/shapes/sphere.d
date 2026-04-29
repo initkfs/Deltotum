@@ -7,6 +7,7 @@ import api.math.matrices.matrix : Matrix4x4;
 import api.dm.back.sdl3.externs.csdl3;
 
 import api.math.geom3.vec3 : Vec3f;
+import api.math.geom3.sphere3 : Sphere3f;
 import Math = api.math;
 
 /**
@@ -95,6 +96,8 @@ class Sphere : Shape3d
         }
 
     }
+
+    override Sphere3f sphereBounds() => Sphere3f(pos3, radius);
 
     override bool isInCameraFrustum()
     {

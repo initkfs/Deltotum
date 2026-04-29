@@ -162,6 +162,25 @@ struct DenseMatrix(T = float, size_t RowDim = 1, size_t ColDim = 1)
         return result;
     }
 
+    static if (ColDim == 4 && RowDim == 4)
+    {
+        import api.math.geom4.vec4 : Vec4f;
+        import api.math.matrices.matrix: Matrix4x1;
+
+        Vec4f mul(Vec4f vector)
+        {
+            //float[1][4] v = [[vector.x], [vector.y], [vector.z], [vector.w]];
+            Matrix4x1 m;
+            m[0][0] = vector.x;
+            m[1][0] = vector.y;
+            m[2][0] = vector.z;
+            m[3][0] = vector.w;
+            Matrix4x1 res = mul(m);
+
+            return Vec4f(res[0][0], res[1][0], res[2][0], res[3][0]);
+        }
+    }
+
     DenseMatrix!(T, ColDim, RowDim) transpose() const pure @safe
     {
         typeof(return) result;
@@ -275,7 +294,7 @@ struct DenseMatrix(T = float, size_t RowDim = 1, size_t ColDim = 1)
         return t;
     }
 
-    DenseMatrix!(T, RowDim, ColDim) identity() const pure @safe
+    static DenseMatrix!(T, RowDim, ColDim) identity() pure @safe
     {
         typeof(return) newMatrix;
         newMatrix.fillInit;
@@ -576,11 +595,11 @@ unittest
 
     immutable onceM = DenseMatrix!(int, 4, 4).onesDiag;
     assert(onceM.array == [
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1]
-    ]);
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ]);
 
     immutable m0 = DenseMatrix!(float, 1, 1)([[0]]);
     assert(m0.transpose.toArrayCopy == [[0]]);
@@ -608,8 +627,8 @@ unittest
     assert(m1Sub.toArrayCopy == [[0, 0, 0], [0, 0, 0]]);
 
     immutable m2 = DenseMatrix!(float, 3, 3)([
-        [1, 2, 3], [4, 5, 6], [6, 7, 8]
-    ]);
+            [1, 2, 3], [4, 5, 6], [6, 7, 8]
+        ]);
 
     auto m1m2Multiply = m1.mul(m2);
     assert(m1m2Multiply.toArrayCopy == [[27, 33, 39], [60, 75, 90]]);
@@ -624,18 +643,18 @@ unittest
     assert(m3.sideDiagonal == [9, 6, 3]);
 
     immutable m4 = DenseMatrix!(float, 3, 3)([
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-    ]);
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ]);
 
     assert(m4.mainDiagonal == [1, 5, 9]);
     assert(m4.sideDiagonal == [7, 5, 3]);
 
     immutable mat22 = DenseMatrix!(float, 2, 2)([
-        [1, 2],
-        [3, 4],
-    ]);
+            [1, 2],
+            [3, 4],
+        ]);
 
     auto minor00Mat22 = mat22.minor(0, 0);
     assert(minor00Mat22.toArrayCopy == [[4]]);
@@ -665,9 +684,9 @@ unittest
     assert(minor33[2] == [9, 10, 11]);
 
     auto dd1 = DenseMatrix!(float, 2, 2)([
-        [1, 2],
-        [3, 4]
-    ]);
+            [1, 2],
+            [3, 4]
+        ]);
     auto dd1Det = dd1.det;
     assert(dd1Det == -2);
 
@@ -688,9 +707,9 @@ unittest
 
     //Identity
     assert(dd2.identity.toArrayCopy == [
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1]
-    ]);
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ]);
 }

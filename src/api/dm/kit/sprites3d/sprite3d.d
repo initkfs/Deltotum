@@ -8,6 +8,7 @@ import api.math.geom3.vec3 : Vec3f;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.matrices.matrix : Matrix4x4;
 import api.math.quaternion : Quaternion;
+import api.math.geom3.sphere3 : Sphere3f;
 import Math = api.math;
 
 //TODO move to material
@@ -148,7 +149,8 @@ class Sprite3d : Sprite2d
             _worldMatrix = _worldMatrix.mul(translateMatrix(rotateLocalOffset));
         }
 
-        Quaternion rotation = !isUseOrientForRotation ? Quaternion.fromEuler(-angleX, -angleY, angle) : orientation;
+        Quaternion rotation = !isUseOrientForRotation ? Quaternion.fromEuler(-angleX, -angleY, angle)
+            : orientation;
 
         if (!isPermanentRotationMode)
         {
@@ -600,6 +602,70 @@ class Sprite3d : Sprite2d
 
         return Vec2f.init;
     }
+
+    Sprite3d rayToFirst(float eventX, float eventY, Sprite3d[] sprites, bool isCheckClosest = true)
+    {
+        import api.math.matrices.matrix : Matrix4x4;
+        import api.math.geom4.vec4 : Vec4f;
+        import api.math.matrices.matrix : inverse;
+
+        float ndcX = (2.0f * eventX / window.width) - 1.0f;
+        float ndcY = 1.0f - (2.0f * eventY / window.height);
+
+        Vec4f clipCoords = Vec4f(ndcX, ndcY, -1.0f, 1.0f);
+
+        bool isOK;
+        Matrix4x4 invProjection = inverse(camera.projection, isOK);
+        if (!isOK)
+        {
+            return null;
+        }
+
+        Vec4f eyeCoords = invProjection.mul(clipCoords);
+        //eyeCoords = Vec4f(eyeCoords.x, eyeCoords.y, -1.0f, 0.0f);
+
+        float eyeX = eyeCoords.x / eyeCoords.w;
+        float eyeY = eyeCoords.y / eyeCoords.w;
+
+        Vec3f rayStart = camera.cameraPos;
+        Vec3f rayDir = Vec3f(eyeX, eyeY, -1.0f);
+        rayDir = camera.rotationPos.transformDir(rayDir).normalized;
+
+        Sprite3d closest;
+        float minT = float.max;
+
+        foreach (sp; sprites)
+        {
+            const sphere = sp.sphereBounds;
+            const sphereRadius = sphere.radius;
+            const sphereCenter = sphere.center;
+
+            Vec3f oc = rayStart - sphereCenter;
+            float a = rayDir.dot(rayDir);
+            float b = 2.0f * oc.dot(rayDir);
+            float c = oc.dot(oc) - sphereRadius * sphereRadius;
+            float discriminant = b * b - 4 * a * c;
+
+            if (discriminant >= 0)
+            {
+                if (!isCheckClosest)
+                {
+                    return sp;
+                }
+
+                float t = (-b - Math.sqrt(discriminant)) / (2.0f * a);
+                if (t > 0 && t < minT)
+                {
+                    minT = t;
+                    closest = sp;
+                }
+            }
+        }
+
+        return closest;
+    }
+
+    Sphere3f sphereBounds() => Sphere3f(pos3, Math.max(halfWidth, halfHeight));
 
     Scene3d scene3d()
     {
