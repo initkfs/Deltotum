@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.shapes.toroid;
+module api.dm.kit.sprites3d.meshes.toroid;
 
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dHigh;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.geom3.vec3 : Vec3f;
@@ -10,7 +10,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class Toroid : Shape3d
+class Toroid : Mesh3dHigh
 {
     float radius = 0.2f; 
     float tubeRadius = 0.01f;

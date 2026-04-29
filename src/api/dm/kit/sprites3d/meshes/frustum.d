@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.shapes.frustum;
+module api.dm.kit.sprites3d.meshes.frustum;
 
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dLow;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.dm.kit.sprites3d.cameras.frustums.frustum3_persp : Frustum3fPersp;
@@ -13,7 +13,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class Frustum : Shape3d
+class Frustum : Mesh3dLow
 {
     protected
     {

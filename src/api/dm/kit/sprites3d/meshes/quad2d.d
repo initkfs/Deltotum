@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.shapes.quad2d;
+module api.dm.kit.sprites3d.meshes.quad2d;
 
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dLow;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
@@ -8,7 +8,7 @@ import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
  * Authors: initkfs
  */
 
-class Quad2d : Shape3d
+class Quad2d : Mesh3dLow
 {
     this(float width = 0.5, float height = 0.5)
     {

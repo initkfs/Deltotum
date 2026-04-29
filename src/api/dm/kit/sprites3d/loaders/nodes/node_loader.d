@@ -1,6 +1,7 @@
 module api.dm.kit.sprites3d.loaders.nodes.node_loader;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.meshes.mesh3d : Mesh3d;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed: Mesh3dHigh, Mesh3dLow;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 
 import api.math.geom3.vec3 : Vec3f;
@@ -145,7 +146,12 @@ class NodeLoader
             auto material = scene.mMaterials[sceneMesh.mMaterialIndex];
             assert(material);
 
-            auto shape = new Shape3d(vertices, indices);
+            import std.algorithm.searching: maxElement;
+            import std.conv: to;
+
+            const maxIndex = indices.maxElement;
+
+            auto shape = maxIndex > ushort.max ? new Mesh3dHigh(vertices, indices) : new Mesh3dLow(vertices, indices.to!(ushort[]));
 
             aiString path;
             auto ret = aiGetMaterialTexture(material, aiTextureType.aiTextureType_DIFFUSE, 0, &path, null, null, null, null, null, null);

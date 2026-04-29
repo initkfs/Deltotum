@@ -942,13 +942,22 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_BindGPUVertexBuffers(lastPass, firstSlot, bindings.ptr, cast(uint) bindings.length);
     }
 
-    void bindIndexBuffer(SDL_GPUBuffer* indexBuffer, uint offset = 0, SDL_GPUIndexElementSize indexElementSize = SDL_GPU_INDEXELEMENTSIZE_32BIT)
+    void bindIndexBuffer16(SDL_GPUBuffer* indexBuffer, uint offset = 0)
     {
         SDL_GPUBufferBinding indexBinding;
         indexBinding.buffer = indexBuffer;
         indexBinding.offset = offset;
 
-        bindIndexBuffer(&indexBinding, indexElementSize);
+        bindIndexBuffer(&indexBinding, SDL_GPU_INDEXELEMENTSIZE_16BIT);
+    }
+
+    void bindIndexBuffer32(SDL_GPUBuffer* indexBuffer, uint offset = 0)
+    {
+        SDL_GPUBufferBinding indexBinding;
+        indexBinding.buffer = indexBuffer;
+        indexBinding.offset = offset;
+
+        bindIndexBuffer(&indexBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
     }
 
     import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;

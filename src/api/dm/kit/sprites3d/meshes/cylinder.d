@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.shapes.cylinder;
+module api.dm.kit.sprites3d.meshes.cylinder;
 
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed: Mesh3dHigh;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.matrices.matrix : Matrix4x4;
@@ -13,7 +13,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class Cylinder : Shape3d
+class Cylinder : Mesh3dHigh
 {
     float bottomRadius = 0;
     float topRadius = 0;

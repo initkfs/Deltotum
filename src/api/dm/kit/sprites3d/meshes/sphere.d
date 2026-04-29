@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.shapes.sphere;
+module api.dm.kit.sprites3d.meshes.sphere;
 
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dHigh;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.matrices.matrix : Matrix4x4;
@@ -14,7 +14,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class Sphere : Shape3d
+class Sphere : Mesh3dHigh
 {
     float radius = 0;
 

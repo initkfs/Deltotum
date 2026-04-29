@@ -44,7 +44,7 @@ class BaseLight : Sprite3d
         {
             if (isCreateMesh)
             {
-                import api.dm.kit.sprites3d.shapes.sphere : Sphere;
+                import api.dm.kit.sprites3d.meshes.sphere : Sphere;
 
                 Sphere newMesh = new Sphere(0.5);
                 newMesh.isCreateMaterial = false;

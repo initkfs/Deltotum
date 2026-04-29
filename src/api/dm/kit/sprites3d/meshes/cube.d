@@ -1,13 +1,13 @@
-module api.dm.kit.sprites3d.shapes.cube;
+module api.dm.kit.sprites3d.meshes.cube;
 
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed: Mesh3dLow;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 /**
  * Authors: initkfs
  */
 
-class Cube : Shape3d
+class Cube : Mesh3dLow
 {
     float depth = 0;
 

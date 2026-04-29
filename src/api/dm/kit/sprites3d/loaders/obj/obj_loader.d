@@ -28,7 +28,7 @@ struct Coord2f
     float u = 0, v = 0;
 }
 
-struct Mesh
+struct Mesh3d
 {
     string name; // g or o
     string material; // usemtl
@@ -54,9 +54,9 @@ class ObjLoader
     ComVertex[] uniqueVertices;
     ushort[] indices;
 
-    Mesh[] meshes;
+    Mesh3d[] meshes;
     string mtlLib; // mtllib
-    private Mesh currentMesh;
+    private Mesh3d currentMesh;
 
     string groupStart = "g ";
     string objectStart = "o ";
@@ -176,7 +176,7 @@ class ObjLoader
     {
         finalizeCurrentMesh;
 
-        currentMesh = Mesh();
+        currentMesh = Mesh3d();
         if (nameOrMaterial.length > 0)
         {
             currentMesh.name = nameOrMaterial;

@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.shapes.spring;
+module api.dm.kit.sprites3d.meshes.spring;
 
-import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dHigh;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.geom3.vec3 : Vec3f;
@@ -10,7 +10,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class Spring : Shape3d
+class Spring : Mesh3dHigh
 {
     float springRadius = 0;
     float tubeRadius = 0;

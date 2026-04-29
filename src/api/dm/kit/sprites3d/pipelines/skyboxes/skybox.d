@@ -2,7 +2,7 @@ module api.dm.kit.sprites3d.pipelines.skyboxes.skybox;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.kit.sprites3d.shapes.cube : Cube;
+import api.dm.kit.sprites3d.meshes.cube : Cube;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.dm.com.graphics.gpu.com_3d_types;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
@@ -48,7 +48,7 @@ class SkyBox : PipelineGroup
         ComVertex(10, 10, -10)
     ];
 
-    uint[] skyboxIndices = [
+    ushort[] skyboxIndices = [
         0, 1, 2, 0, 2, 3,
         6, 5, 4, 7, 6, 4,
         8, 9, 10, 8, 10, 11,
