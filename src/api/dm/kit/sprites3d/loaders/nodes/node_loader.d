@@ -97,7 +97,7 @@ class NodeLoader
             uint meshIdx = node.mMeshes[i];
             const(aiMesh)* sceneMesh = scene.mMeshes[meshIdx];
 
-            ushort[] indices;
+            uint[] indices;
             indices.length = sceneMesh.mNumFaces * 3;
 
             for (uint ii = 0; ii < sceneMesh.mNumFaces; ii++)
@@ -105,9 +105,9 @@ class NodeLoader
                 const(aiFace) face = sceneMesh.mFaces[ii];
                 if (face.mNumIndices == 3)
                 {
-                    indices[ii * 3 + 0] = cast(ushort) face.mIndices[0];
-                    indices[ii * 3 + 1] = cast(ushort) face.mIndices[1];
-                    indices[ii * 3 + 2] = cast(ushort) face.mIndices[2];
+                    indices[ii * 3 + 0] = face.mIndices[0];
+                    indices[ii * 3 + 1] = face.mIndices[1];
+                    indices[ii * 3 + 2] = face.mIndices[2];
                 }
             }
 

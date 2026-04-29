@@ -48,7 +48,7 @@ class SkyBox : PipelineGroup
         ComVertex(10, 10, -10)
     ];
 
-    ushort[] skyboxIndices = [
+    uint[] skyboxIndices = [
         0, 1, 2, 0, 2, 3,
         6, 5, 4, 7, 6, 4,
         8, 9, 10, 8, 10, 11,

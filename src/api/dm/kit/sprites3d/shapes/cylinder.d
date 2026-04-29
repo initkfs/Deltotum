@@ -47,7 +47,7 @@ class Cylinder : Shape3d
         enum cylinderIndicesCount = sectors * stacks * 6 + sectors * 6; // sides + caps
 
         vertices = new ComVertex[cylinderVerticesCount];
-        indices = new ushort[cylinderIndicesCount];
+        indices = new uint[cylinderIndicesCount];
 
         float halfHeight = height / 2.0f;
         float sectorStep = 2.0f * Math.PI / sectors;
@@ -99,24 +99,24 @@ class Cylinder : Shape3d
         int index = 0;
 
         // Generate indices for sides (quads -> triangles)
-        for (int i = 0; i < stacks; ++i)
+        for (uint i = 0; i < stacks; ++i)
         {
-            for (int j = 0; j < sectors; ++j)
+            for (uint j = 0; j < sectors; ++j)
             {
-                int k1 = i * (sectors + 1) + j; // current stack, current sector
-                int k2 = k1 + 1; // current stack, next sector
-                int k3 = k1 + (sectors + 1); // next stack, current sector
-                int k4 = k3 + 1; // next stack, next sector
+                uint k1 = i * (sectors + 1) + j; // current stack, current sector
+                uint k2 = k1 + 1; // current stack, next sector
+                uint k3 = k1 + (sectors + 1); // next stack, current sector
+                uint k4 = k3 + 1; // next stack, next sector
 
                 // First triangle: k1 -> k3 -> k2
-                indices[index++] = cast(ushort) k1;
-                indices[index++] = cast(ushort) k3;
-                indices[index++] = cast(ushort) k2;
+                indices[index++] = k1;
+                indices[index++] = k3;
+                indices[index++] = k2;
 
                 // Second triangle: k2 -> k3 -> k4
-                indices[index++] = cast(ushort) k2;
-                indices[index++] = cast(ushort) k3;
-                indices[index++] = cast(ushort) k4;
+                indices[index++] = k2;
+                indices[index++] = k3;
+                indices[index++] = k4;
             }
         }
 
@@ -125,23 +125,23 @@ class Cylinder : Shape3d
         int topCenterIndex = bottomCenterIndex + 1;
 
         // Generate indices for bottom cap
-        for (int j = 0; j < sectors; ++j)
+        for (uint j = 0; j < sectors; ++j)
         {
-            int k1 = j; // first stack, current sector
+            uint k1 = j; // first stack, current sector
             //int k2 = (j + 1) % (sectors + 1); // first stack, next sector
-            int k2 = j + 1;
+            uint k2 = j + 1;
 
             // Triangle: bottomCenter -> k2 -> k1 (CCW winding)
-            indices[index++] = cast(ushort) bottomCenterIndex;
-            indices[index++] = cast(ushort) k1;
-            indices[index++] = cast(ushort) k2;
+            indices[index++] = bottomCenterIndex;
+            indices[index++] = k1;
+            indices[index++] = k2;
         }
 
         // Generate indices for top cap
-        for (int j = 0; j < sectors; ++j)
+        for (uint j = 0; j < sectors; ++j)
         {
-            int k1 = stacks * (sectors + 1) + j; // last stack, current sector
-            int k2 = k1 + 1; // last stack, next sector
+            uint k1 = stacks * (sectors + 1) + j; // last stack, current sector
+            uint k2 = k1 + 1; // last stack, next sector
             //if (j == sectors - 1)
             //    k2 = stacks * (sectors + 1); // wrap around
 
@@ -149,9 +149,9 @@ class Cylinder : Shape3d
                 k2 = stacks * (sectors + 1);
 
             // Triangle: topCenter -> k1 -> k2 (CCW winding)
-            indices[index++] = cast(ushort) topCenterIndex;
-            indices[index++] = cast(ushort) k2;
-            indices[index++] = cast(ushort) k1;
+            indices[index++] = topCenterIndex;
+            indices[index++] = k2;
+            indices[index++] = k1;
         }
 
     }

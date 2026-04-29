@@ -33,7 +33,7 @@ class Sphere : Shape3d
         enum trianglesIndicesCount = stacks * sectors * 6;
 
         vertices = new ComVertex[sphereVerticesCount];
-        indices = new ushort[trianglesIndicesCount];
+        indices = new uint[trianglesIndicesCount];
 
         float sectorStep = 2.0f * Math.PI / sectors;
         float stackStep = Math.PI / stacks;
@@ -74,24 +74,24 @@ class Sphere : Shape3d
 
         index = 0;
 
-        for (int i = 0; i < stacks; ++i)
+        for (uint i = 0; i < stacks; ++i)
         {
-            for (int j = 0; j < sectors; ++j)
+            for (uint j = 0; j < sectors; ++j)
             {
-                int k1 = i * (sectors + 1) + j; // top-left
-                int k2 = k1 + 1; // top-right
-                int k3 = k1 + (sectors + 1); // bottom-left
-                int k4 = k3 + 1; // bottom-right
+                uint k1 = i * (sectors + 1) + j; // top-left
+                uint k2 = k1 + 1; // top-right
+                uint k3 = k1 + (sectors + 1); // bottom-left
+                uint k4 = k3 + 1; // bottom-right
 
                 // top-left -> bottom-left -> bottom-right
-                indices[index++] = cast(ushort) k1;
-                indices[index++] = cast(ushort) k2;
-                indices[index++] = cast(ushort) k4;
+                indices[index++] = k1;
+                indices[index++] = k2;
+                indices[index++] = k4;
 
                 // top-left -> bottom-right -> top-right
-                indices[index++] = cast(ushort) k1;
-                indices[index++] = cast(ushort) k4;
-                indices[index++] = cast(ushort) k3;
+                indices[index++] = k1;
+                indices[index++] = k4;
+                indices[index++] = k3;
             }
         }
 

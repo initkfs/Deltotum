@@ -28,7 +28,7 @@ class Toroid : Shape3d
         enum rings = 48;
 
         vertices = new ComVertex[(rings + 1) * (sectors + 1)];
-        indices = new ushort[rings * sectors * 6];
+        indices = new uint[rings * sectors * 6];
 
         size_t vIdx = 0;
         for (int i = 0; i <= rings; i++)
@@ -68,22 +68,22 @@ class Toroid : Shape3d
         }
 
         size_t iIdx = 0;
-        for (int i = 0; i < rings; i++)
+        for (uint i = 0; i < rings; i++)
         {
-            for (int j = 0; j < sectors; j++)
+            for (uint j = 0; j < sectors; j++)
             {
-                int current = i * (sectors + 1) + j;
-                int next = current + 1;
-                int bottom = (i + 1) * (sectors + 1) + j;
-                int bottomNext = bottom + 1;
+                uint current = i * (sectors + 1) + j;
+                uint next = current + 1;
+                uint bottom = (i + 1) * (sectors + 1) + j;
+                uint bottomNext = bottom + 1;
 
-                indices[iIdx++] = cast(ushort) current;
-                indices[iIdx++] = cast(ushort) next;
-                indices[iIdx++] = cast(ushort) bottom;
+                indices[iIdx++] = current;
+                indices[iIdx++] = next;
+                indices[iIdx++] = bottom;
 
-                indices[iIdx++] = cast(ushort) next;
-                indices[iIdx++] = cast(ushort) bottomNext;
-                indices[iIdx++] = cast(ushort) bottom;
+                indices[iIdx++] = next;
+                indices[iIdx++] = bottomNext;
+                indices[iIdx++] = bottom;
             }
         }
 

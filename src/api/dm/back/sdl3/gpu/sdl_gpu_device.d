@@ -942,7 +942,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_BindGPUVertexBuffers(lastPass, firstSlot, bindings.ptr, cast(uint) bindings.length);
     }
 
-    void bindIndexBuffer(SDL_GPUBuffer* indexBuffer, uint offset = 0, SDL_GPUIndexElementSize indexElementSize = SDL_GPU_INDEXELEMENTSIZE_16BIT)
+    void bindIndexBuffer(SDL_GPUBuffer* indexBuffer, uint offset = 0, SDL_GPUIndexElementSize indexElementSize = SDL_GPU_INDEXELEMENTSIZE_32BIT)
     {
         SDL_GPUBufferBinding indexBinding;
         indexBinding.buffer = indexBuffer;

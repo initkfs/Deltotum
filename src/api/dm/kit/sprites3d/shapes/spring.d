@@ -36,7 +36,7 @@ class Spring : Shape3d
         int totalIndices = sectors * totalStacks * 6;
 
         vertices = new ComVertex[totalVertices];
-        indices = new ushort[totalIndices];
+        indices = new uint[totalIndices];
 
         size_t vertexIndex = 0;
         for (int i = 0; i <= totalStacks; i++)
@@ -84,23 +84,23 @@ class Spring : Shape3d
         }
 
         size_t index = 0;
-        foreach (i; 0 .. totalStacks)
+        foreach (uint i; 0 .. totalStacks)
         {
-            foreach (j; 0 .. sectors)
+            foreach (uint j; 0 .. sectors)
             {
-                int k1 = i * (sectors + 1) + j;
-                int k2 = k1 + 1;
-                int k3 = (i + 1) * (sectors + 1) + j;
-                int k4 = k3 + 1;
+                uint k1 = i * (sectors + 1) + j;
+                uint k2 = k1 + 1;
+                uint k3 = (i + 1) * (sectors + 1) + j;
+                uint k4 = k3 + 1;
 
                 // СW or CCW?
-                indices[index++] = cast(ushort) k1;
-                indices[index++] = cast(ushort) k2;
-                indices[index++] = cast(ushort) k3;
+                indices[index++] = k1;
+                indices[index++] = k2;
+                indices[index++] = k3;
 
-                indices[index++] = cast(ushort) k2;
-                indices[index++] = cast(ushort) k4;
-                indices[index++] = cast(ushort) k3;
+                indices[index++] = k2;
+                indices[index++] = k4;
+                indices[index++] = k3;
             }
         }
 

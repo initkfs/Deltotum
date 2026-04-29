@@ -16,7 +16,7 @@ import api.math.geom3.vec3 : Vec3f;
 class Shape3d : MaterialSprite3d
 {
     ComVertex[] vertices;
-    ushort[] indices;
+    uint[] indices;
 
     SDL_GPUBuffer* vertexBuffer;
     SDL_GPUBuffer* indexBuffer;
@@ -28,7 +28,7 @@ class Shape3d : MaterialSprite3d
         bool isBindBuffer;
     }
 
-    this(ComVertex[] vertices, ushort[] indices = null, string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null)
+    this(ComVertex[] vertices, uint[] indices = null, string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null)
     {
         this();
         this.vertices = vertices;
@@ -74,7 +74,7 @@ class Shape3d : MaterialSprite3d
             gpu.dev.setGPUBufferName(vertexBuffer, "ShapeVertexBuffer");
         }
 
-        const indexBuffLen = indexCount * ushort.sizeof;
+        const indexBuffLen = indexCount * uint.sizeof;
 
         if (!indexBuffer)
         {
@@ -103,7 +103,7 @@ class Shape3d : MaterialSprite3d
         assert(vertexBuffer);
         assert(indexBuffer);
         gpu.dev.unmapAndUpload(transferBuffer, vertexBuffer, ComVertex.sizeof * vertices.length, 0, 0, false);
-        gpu.dev.unmapAndUpload(transferBuffer, indexBuffer, ushort.sizeof * indices.length, ComVertex.sizeof * vertices
+        gpu.dev.unmapAndUpload(transferBuffer, indexBuffer, uint.sizeof * indices.length, ComVertex.sizeof * vertices
                 .length, 0, false);
     }
 
