@@ -7,7 +7,7 @@ import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 import api.dm.gui.controls.selects.color_pickers.color_picker : ColorPicker;
-import api.dm.kit.graphics.colors.rgba: RGBA;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
  * Authors: initkfs
@@ -22,6 +22,8 @@ class EnvManager : BaseDebuggerPanel
 
     RegulateTextField blurRadiusField;
     RegulateTextField blurIntensityField;
+
+    RegulateTextField[dstring] appFields;
 
     /*
        float baseIntensity = 2; // 1.5–2.0 Base cube strength
@@ -143,8 +145,9 @@ class EnvManager : BaseDebuggerPanel
         filterColor.onChangeOldNew ~= (old, newv) {
             targetScene.postProc.composeUniformData.colorFilterData[0 .. 3] = newv.toArrayFRGB;
         };
-        
-        filterColor.color(RGBA.fromArrayFRGB(targetScene.postProc.composeUniformData.colorFilterData[0..3]), false);
+
+        filterColor.color(RGBA.fromArrayFRGB(
+                targetScene.postProc.composeUniformData.colorFilterData[0 .. 3]), false);
 
         filterIntensity = new RegulateTextField("Fint", 0, 1, (v) {
             targetScene.postProc.composeUniformData.colorFilterData[3] = v;
@@ -158,7 +161,8 @@ class EnvManager : BaseDebuggerPanel
         flashColor.onChangeOldNew ~= (old, newv) {
             targetScene.postProc.composeUniformData.colorFlashData[0 .. 3] = newv.toArrayFRGB;
         };
-        flashColor.color(RGBA.fromArrayFRGB(targetScene.postProc.composeUniformData.colorFlashData[0..3]), false);
+        flashColor.color(RGBA.fromArrayFRGB(
+                targetScene.postProc.composeUniformData.colorFlashData[0 .. 3]), false);
 
         flashIntensity = new RegulateTextField("FlIn", 0, 1, (v) {
             targetScene.postProc.composeUniformData.colorFlashData[3] = v;
@@ -166,5 +170,28 @@ class EnvManager : BaseDebuggerPanel
         flashIntensity.scrollDt = 0.01;
         addCreate(flashIntensity);
         flashIntensity.value(targetScene.postProc.composeUniformData.colorFlashData[3], false);
+    }
+
+    void setDebugField(void delegate(float) onValue, float startValue = 0, float minValue = 0, float maxValue = 1, float dt = 0.01, dstring name = "Field")
+    {
+        RegulateTextField field;
+        if (auto fieldPtr = name in appFields)
+        {
+            field = *fieldPtr;
+            //TODO correct setters
+            return;
+        }
+
+        field = new RegulateTextField(name, minValue, maxValue, onValue);
+        field.scrollDt = dt;
+        addCreate(field);
+        field.value(startValue, false);
+        appFields[name] = field;
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+        appFields.clear;
     }
 }

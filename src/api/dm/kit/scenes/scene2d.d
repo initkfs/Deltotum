@@ -656,4 +656,8 @@ class Scene2d : EventKitTarget
 
     float timeSec() => platform.timer.ticksMs / 1000.0;
     float timeMs() => platform.timer.ticksMs;
+
+    void setDebugField(void delegate(float) onValue, float startValue = 0, float minValue = 0, float maxValue = 1, float dt = 0.01, dstring name = "Field"){
+
+    }
 }

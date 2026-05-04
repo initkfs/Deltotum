@@ -163,4 +163,13 @@ class GuiScene : Scene3d
 
         }
     }
+
+    override void setDebugField(void delegate(float) onValue, float startValue = 0, float minValue = 0, float maxValue = 1, float dt = 0.01, dstring name = "Field")
+    {
+        if(!debugger){
+            return;
+        }
+
+        debugger.mainPanel.envManager.setDebugField(onValue, startValue, minValue, maxValue, dt, name);
+    }
 }
