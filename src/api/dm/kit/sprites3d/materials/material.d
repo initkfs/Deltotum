@@ -19,9 +19,9 @@ class Material : Sprite3d
     TextureGPU aoMap;
 
     RGBA ambient = RGBA.white;
-    RGBA specular = RGBA.black;
-    float shininess = 32;
-    float gloss = 0.3;
+    RGBA specular = RGBA.white;
+    float shininess = 256;
+    float gloss = 0.45;
 
     bool isBindDiffuseMap = true;
     bool isBindSpecularMap = true;

@@ -1313,7 +1313,7 @@ class SdlApp : GuiApp
             diffuseMap = createDefaultMap(RGBA.white);
             windowBuilder.gpu.defaultDiffuse = diffuseMap;
 
-            specularMap = createDefaultMap(RGBA.hex("#404040"));
+            specularMap = createDefaultMap(RGBA.white);
             windowBuilder.gpu.defaultSpecular = specularMap;
 
             normalMap = createDefaultMap(RGBA.hex("#8080FF"));

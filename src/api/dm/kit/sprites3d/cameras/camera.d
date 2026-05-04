@@ -189,7 +189,7 @@ class Camera : Sprite2d
             moveBack(cameraSpeed);
         }
 
-        auto rotateSpeedDeg = 5;
+        auto rotateSpeedDeg = 1;
 
         if (input.isPressedKey(ComKeyName.key_r))
         {

@@ -172,7 +172,7 @@ struct RGBA
         return RGBA(maxColor - r, maxColor - g, maxColor - b, a);
     }
 
-    RGBA interpolate(RGBA start, RGBA end, float factor = 0.5) pure @safe
+    static RGBA interpolate(RGBA start, RGBA end, float factor = 0.5) pure @safe
     {
         if (factor <= 0)
         {
@@ -184,10 +184,13 @@ struct RGBA
             return end;
         }
 
+        import Math = api.math;
+
         auto rValue = to!ubyte(start.r + (end.r - start.r) * factor);
         auto gValue = to!ubyte(start.g + (end.g - start.g) * factor);
         auto bValue = to!ubyte(start.b + (end.b - start.b) * factor);
-        auto alphaValue = to!ubyte(start.a + (end.a - start.a) * factor);
+        auto alphaValue = start.a + (end.a - start.a) * factor;
+        alphaValue = Math.clamp01(alphaValue);
         return RGBA(rValue, gValue, bValue, alphaValue);
     }
 
@@ -519,6 +522,10 @@ struct RGBA
     
     static RGBA fromArrayFRGB(float[3] array){
         return RGBA(RGBA.fromColorNorm(array[0]), RGBA.fromColorNorm(array[1]), RGBA.fromColorNorm(array[2]), 1);
+    }
+
+    static RGBA fromRGBAf(RGBAf color){
+        return RGBA(RGBA.fromColorNorm(color.r), RGBA.fromColorNorm(color.g), RGBA.fromColorNorm(color.b), color.a);
     }
 
     import api.math.geom3.vec3 : Vec3f;

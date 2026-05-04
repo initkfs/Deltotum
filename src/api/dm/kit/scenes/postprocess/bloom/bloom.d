@@ -33,14 +33,16 @@ class Bloom : Sprite3d
         float intensity = 1; // luma 1.0
     }
 
-    struct ShaderFlags
-    {
-        uint isColorTint : 1;
-        uint isColorEffects : 1;
-        uint unused1 : 1;
-        uint isVignette : 1;
-        uint padding : 28;
-    }
+    // struct ShaderFlags
+    // {
+    //     uint isColorTint : 1;
+    //     uint isColorEffects : 1;
+    //     uint unused1 : 1;
+    //     uint isVignette : 1;
+    //     uint padding : 28;
+    // }
+
+    //static assert(ShaderFlags.sizeof == 4);
 
     struct ComposeUniformData
     {
@@ -52,17 +54,27 @@ class Bloom : Sprite3d
         float bloomIntensity = 1;
         float exposure = 0.9;
         float threshold = 50;
-        
+
         float contrast = 1;
         float saturation = 1;
         float vignette = 0;
-        ShaderFlags flags;
+        uint flags;
     }
+
+    enum ShaderFlag
+    {
+        IsColorTint = 1 << 0,
+        IsColorEffects = 1 << 1,
+        IsVignette = 1 << 2,
+    }
+
+    bool isColorTint;
+    bool isColorEffects;
+    bool isVignette;
 
     ComposeUniformData composeUniformData;
     BlurUniformData blurUniformData;
 
-    static assert(ShaderFlags.sizeof == 4);
 
     this()
     {
@@ -76,8 +88,8 @@ class Bloom : Sprite3d
     {
         super.create;
 
-        bloomW = window.widthu / 16;
-        bloomH = window.heightu / 16;
+        bloomW = window.widthu / 4;
+        bloomH = window.heightu / 4;
 
         SDL_GPUTextureCreateInfo bloomInfo;
         bloomInfo.type = SDL_GPU_TEXTURETYPE_2D;
@@ -168,10 +180,6 @@ class Bloom : Sprite3d
         samplerInfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
 
         bloomSampler = gpu.dev.newSampler(&samplerInfo);
-
-        composeUniformData.flags.isColorTint  = false;
-        composeUniformData.flags.isColorEffects = false;
-        composeUniformData.flags.isVignette = false;
     }
 
     void process(SDL_GPUTexture* inTexture, SDL_GPUTexture* outTexture, bool isMix2d3dMode)
@@ -252,11 +260,25 @@ class Bloom : Sprite3d
         gpu.dev.setViewport(Rect2f(0, 0, window.widthu, window.heightu), 0, 1);
         gpu.dev.bindPipeline(composePipeline);
 
+        composeUniformData.flags = packShaderFlags(isColorTint, isColorEffects, isVignette);
+
         gpu.dev.pushUniformFragmentData(0, &composeUniformData, composeUniformData.sizeof);
 
         gpu.dev.bindFragmentSamplers(inTexture, bloomSampler, 0);
         gpu.dev.bindFragmentSamplers(bloomA, bloomSampler, 1);
         gpu.dev.draw(3, 1, 0, 0);
+    }
+
+    uint packShaderFlags(bool isColorTint, bool isColorEffects, bool isVignette)
+    {
+        uint flags = 0;
+        if (isColorTint)
+            flags |= ShaderFlag.IsColorTint;
+        if (isColorEffects)
+            flags |= ShaderFlag.IsColorEffects;
+        if (isVignette)
+            flags |= ShaderFlag.IsVignette;
+        return flags;
     }
 
     override void dispose()

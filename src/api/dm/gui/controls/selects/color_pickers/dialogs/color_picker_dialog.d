@@ -323,7 +323,7 @@ class ColorPickerDialog : Control
         scroll.addCreate(colorBar, 0);
 
         assert(hslHField.scrollField);
-        hslHField.scrollField.valueStep = 5;
+        hslHField.scrollField.valueStep = 0.25;
 
         hslSField = new RegulateTextField("S", HSLA.minSaturation, HSLA.maxSaturation, (v) {
             updateColorHSL;

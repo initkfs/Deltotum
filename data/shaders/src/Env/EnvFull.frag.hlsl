@@ -163,11 +163,10 @@ float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float
     float3 ambient = light.ambient  * diffuseColor * material.albedo.rgb * ao;
     //float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
     
-    float energyConservation = (shininess + 2.0) / 8.0; 
-    float3 specular = light.specular * spec * specularColor.rgb * energyConservation * 0.04;
+    float3 specular = light.specular * spec * specularColor.rgb;
     //float3 specular = light.specular * spec * specularColor;
 
-    float3 diffuse = light.diffuse  * diff * (1.0 - specular) * diffuseColor * material.albedo.rgb;
+    float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
 
     //return ambient + (diffuse * attenuation) + (specular * attenuation);
     return (ambient + diffuse + specular) * attenuation;
@@ -220,6 +219,11 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     FragOutputColor result;
 
     if(matConfig.material.isLamp == 1){
+        result.color = matConfig.material.albedo;
+        return result;
+    }
+
+    if(matConfig.material.intensity != 1){
         result.color = matConfig.material.albedo;
         return result;
     }

@@ -12,13 +12,16 @@ struct Input
     float2 uv : TEXCOORD0;
 };
 
-struct ShaderFlags {
-    uint isColorTint       : 1;
-    uint isColorEffects        : 1;
-    uint unused1 : 1;
-    uint isVignette     : 1;
-    uint unused         : 28;
-};
+// struct ShaderFlags {
+//     uint isColorTint       : 1;
+//     uint isColorEffects        : 1;
+//     uint isVignette     : 1;
+//     uint unused         : 29;
+// };
+
+static const uint ShaderFlag_IsColorTint    = 1 << 0;
+static const uint ShaderFlag_IsColorEffects = 1 << 1;
+static const uint ShaderFlag_IsVignette     = 1 << 2;
 
 struct Config
 {
@@ -36,7 +39,7 @@ struct Config
     float contrast;  //1
     float saturation; //1, 0 -2
     float vignetteIntensity; //0- 2;
-    ShaderFlags flags;
+    uint flags;
 }; 
 
 cbuffer UBO : register(b0, space3)
@@ -68,14 +71,14 @@ float4 main(Input input) : SV_Target {
     
     float3 mappedColor = acesTonemap(hdrColor * config.exposure); 
 
-    if(config.flags.isColorTint){
+    if(config.flags & ShaderFlag_IsColorTint){
         float3 filter = lerp(float3(1.0f, 1.0f, 1.0f), config.filterColor.rgb, config.filterIntensity);        
         float3 flash = config.flashColor.rgb * config.flashIntensity; 
         mappedColor = mappedColor * filter + flash;
         mappedColor = saturate(mappedColor);
     }
 
-    if(config.flags.isColorEffects){
+    if(config.flags & ShaderFlag_IsColorEffects){
         //S-curve
         // >= 1.0
         float contrast = config.contrast; 
@@ -96,7 +99,7 @@ float4 main(Input input) : SV_Target {
         mappedColor = lerp(mappedColor, float3(1.0, 1.0, 1.0), whiteMask);
     }
 
-    if(config.flags.isVignette){
+    if(config.flags & ShaderFlag_IsVignette){
         //Vignette
         //float pulse = (sin(config.time * 2.0f) * 0.5f + 0.5f) * config.pulseIntensity, config.vignetteIntensity + pulse
         float dist = distance(input.uv, float2(0.5f, 0.5f));

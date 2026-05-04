@@ -32,7 +32,7 @@ struct MaterialData
     float[4] reserve0;
     float[4] specular; //A - gloss, 0 to 1
 align(4):
-    float shininess = 32;
+    float shininess = 64;
     float intensity = 0;
     float gloss = 0.5;
     uint isLamp;
