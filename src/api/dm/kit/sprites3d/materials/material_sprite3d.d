@@ -70,6 +70,10 @@ class MaterialSprite3d : Sprite3d
         if (m.isSharedMaterial && !isDrawWithSharedMaterial)
         {
             isCanDrawSelf = false;
+            if (!hasPipeline)
+            {
+                throw new Exception("Cannot add material to pipeline. May be sprite not built?");
+            }
             pipeline.addSharedMaterialSprite(this);
         }
     }

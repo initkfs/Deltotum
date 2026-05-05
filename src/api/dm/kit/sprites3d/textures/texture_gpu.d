@@ -18,6 +18,8 @@ class TextureGPU : Sprite3d
     uint mipMapLevels = 5;
     bool isAutoMipMapLevels = true;
 
+    string saveFile;
+
     protected
     {
         SDL_GPUTexture* _texture;
@@ -38,13 +40,19 @@ class TextureGPU : Sprite3d
     {
         if (!isCreateSampler)
         {
-            _sampler = !isMipMaps ? gpu.defaultSampler : gpu.defaultMipMapSampler;
+            _sampler = defaultSampler;
             isDisposeSampler = false;
         }
 
-        SDL_GPUSamplerCreateInfo samplerInfo = !isMipMaps ? gpu.dev.linearRepeat : gpu.dev.mipMapSamplerInfo;
+        SDL_GPUSamplerCreateInfo samplerInfo = !isMipMaps ? gpu.dev.linearRepeat
+            : gpu.dev.mipMapSamplerInfo;
         _sampler = gpu.dev.newSampler(&samplerInfo);
         isDisposeSampler = true;
+    }
+
+    SDL_GPUSampler* defaultSampler()
+    {
+        return !isMipMaps ? gpu.defaultSampler : gpu.defaultMipMapSampler;
     }
 
     void create(int width, int height, RGBA color = RGBA.red)
@@ -111,6 +119,14 @@ class TextureGPU : Sprite3d
             }
         }
 
+        if (saveFile.length != 0)
+        {
+            if (const err = image.saveBMP(saveFile))
+            {
+                throw new Exception(err.toString);
+            }
+        }
+
         int w = image.getWidth;
         int h = image.getHeight;
 
@@ -132,17 +148,19 @@ class TextureGPU : Sprite3d
         ubyte[] imagePtr = (cast(ubyte*) rawImagePtr)[0 .. imageLen];
 
         uint flags = SDL_GPU_TEXTUREUSAGE_SAMPLER;
-        if(isMipMaps){
+        if (isMipMaps)
+        {
             flags |= SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
         }
 
         uint levels = 1;
-        if(isMipMaps){
+        if (isMipMaps)
+        {
             //TODO <= 11 for big textures 8k
             levels = !isAutoMipMapLevels ? mipMapLevels : calcMipMapLevels(w, h);
         }
 
-        auto newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, gpu.dev.pipelineTextureFormat,flags, 1, levels);
+        auto newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, gpu.dev.pipelineTextureFormat, flags, 1, levels);
 
         if (!newTexture)
         {
@@ -171,13 +189,16 @@ class TextureGPU : Sprite3d
         }
     }
 
-    uint calcMipMapLevels(float w, float h){
+    uint calcMipMapLevels(float w, float h)
+    {
         import Math = api.math;
-        if(w == 0 || h == 0){
+
+        if (w == 0 || h == 0)
+        {
             throw new Exception("Size for mipmaps must not be zero");
         }
 
-        import std.math.exponential: log2;
+        import std.math.exponential : log2;
 
         return cast(uint) Math.floor(log2(Math.max(w, h))) + 1;
     }
@@ -210,7 +231,8 @@ class TextureGPU : Sprite3d
             _transferBuffer = null;
         }
 
-        if(isMipMaps){
+        if (isMipMaps)
+        {
             gpu.dev.generateMipMaps(_texture);
         }
     }

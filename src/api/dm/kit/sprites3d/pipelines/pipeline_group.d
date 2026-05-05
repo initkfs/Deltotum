@@ -357,23 +357,30 @@ class PipelineGroup : Sprite3d
         return dataBuffer;
     }
 
-    Material newSharedMaterial(string id = "Material")
+    Material newSharedMaterial(string id = "Material", bool isThrowIfExists = false)
     {
+        foreach (ref sm; sharedMaterials)
+        {
+            if (sm.material.id == id)
+            {
+                if (isThrowIfExists)
+                {
+                    throw new Exception("Shared material already exists with id: " ~ id);
+                }
+                else
+                {
+                    return sm.material;
+                }
+
+            }
+        }
+
         auto m = new Material;
         m.id = id;
         build(m);
         m.isSharedMaterial = true;
 
-        auto mId = m.id;
-        foreach (ref sm; sharedMaterials)
-        {
-            if (sm.material.id == mId)
-            {
-                throw new Exception("Shared material already exists with id: " ~ mId);
-            }
-        }
-
-        sharedMaterials[mId] = SharedMaterials(m);
+        sharedMaterials[id] = SharedMaterials(m);
         return m;
     }
 
