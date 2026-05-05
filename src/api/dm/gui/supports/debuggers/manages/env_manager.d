@@ -17,9 +17,6 @@ class EnvManager : BaseDebuggerPanel
 {
     RegulateTextPanel envPanel;
 
-    RegulateTextField brightTresholdField;
-    RegulateTextField brightInsensityField;
-
     RegulateTextField blurRadiusField;
     RegulateTextField blurIntensityField;
 
@@ -31,8 +28,6 @@ class EnvManager : BaseDebuggerPanel
        float exposure = 0.9; // Overall brightness (ACES)
        float threshold = 50.0; // At what brightness the cube begins to whiten
     */
-    RegulateTextField composeBaseIntensityField;
-    RegulateTextField composeBloomIntensityField;
     RegulateTextField composeExposureField;
     RegulateTextField composeThresholdField;
 
@@ -62,95 +57,88 @@ class EnvManager : BaseDebuggerPanel
 
         float step = 0.01;
 
-        brightTresholdField = new RegulateTextField("BTre", -5, 5, (v) {
-            targetScene.postProc.brightUniformData[0] = v;
-        });
-        brightTresholdField.scrollDt = step;
-        envPanel.addCreate(brightTresholdField);
-
-        brightInsensityField = new RegulateTextField("BInt", -5, 5, (v) {
-            targetScene.postProc.brightUniformData[1] = v;
-        });
-        brightTresholdField.scrollDt = step;
-
-        envPanel.addCreate(brightInsensityField);
-
-        brightTresholdField.value(0, false, true);
-        brightInsensityField.value = 0.2;
-
-        blurRadiusField = new RegulateTextField("BlRa", -5, 5, (v) {
+        blurRadiusField = new RegulateTextField("BlRad", 0, 10, (v) {
             targetScene.postProc.blurUniformData.radius = v;
         });
         blurRadiusField.scrollDt = step;
         envPanel.addCreate(blurRadiusField);
 
-        blurIntensityField = new RegulateTextField("BlIn", -5, 5, (v) {
+        blurIntensityField = new RegulateTextField("BlInt", -5, 5, (v) {
             targetScene.postProc.blurUniformData.intensity = v;
         });
         blurIntensityField.scrollDt = step;
 
         envPanel.addCreate(blurIntensityField);
 
-        blurRadiusField.value = 1;
-        blurIntensityField.value = 1;
+        blurRadiusField.value(targetScene.postProc.blurUniformData.radius, false);
+        blurIntensityField.value(targetScene.postProc.blurUniformData.intensity, false);
 
-        composeBaseIntensityField = new RegulateTextField("CoIn", -5, 5, (v) {
-            targetScene.postProc.composeUniformData.baseIntensity = v;
-        });
-        envPanel.addCreate(composeBaseIntensityField);
-
-        composeBloomIntensityField = new RegulateTextField("CoBI", -20, 20, (v) {
-            targetScene.postProc.composeUniformData.bloomIntensity = v;
-        });
-        envPanel.addCreate(composeBloomIntensityField);
-
-        composeExposureField = new RegulateTextField("CoEx", -20, 20, (v) {
+        composeExposureField = new RegulateTextField("CoExp", 0, 50, (v) {
             targetScene.postProc.composeUniformData.exposure = v;
         });
+        composeExposureField.scrollDt = step;
         envPanel.addCreate(composeExposureField);
 
-        composeThresholdField = new RegulateTextField("CoTr", -200, 200, (v) {
+        composeThresholdField = new RegulateTextField("CoTre", 0, 25, (v) {
+            if (!targetScene.postProc.isColorEffects)
+            {
+                targetScene.postProc.isColorEffects = true;
+            }
             targetScene.postProc.composeUniformData.threshold = v;
         });
-        composeThresholdField.scrollDt = 1;
+        composeThresholdField.scrollDt = step;
         envPanel.addCreate(composeThresholdField);
 
-        composeBaseIntensityField.value = targetScene.postProc.composeUniformData.baseIntensity;
-        composeBloomIntensityField.value = targetScene.postProc.composeUniformData.bloomIntensity;
-        composeExposureField.value = targetScene.postProc.composeUniformData.exposure;
-        composeThresholdField.value = targetScene.postProc.composeUniformData.threshold;
+        composeExposureField.value(targetScene.postProc.composeUniformData.exposure, false);
+        composeThresholdField.value(targetScene.postProc.composeUniformData.threshold,false);
 
-        contrastField = new RegulateTextField("Cont", 1, 20, (v) {
+        contrastField = new RegulateTextField("Contr", 0, 10, (v) {
+            if (!targetScene.postProc.isColorEffects)
+            {
+                targetScene.postProc.isColorEffects = true;
+            }
             targetScene.postProc.composeUniformData.contrast = v;
         });
-        composeThresholdField.scrollDt = 0.0001;
+        contrastField.scrollDt = 0.001;
         envPanel.addCreate(contrastField);
-        composeThresholdField.value = targetScene.postProc.composeUniformData.contrast;
+        contrastField.value(targetScene.postProc.composeUniformData.contrast, false);
 
-        saturationField = new RegulateTextField("Satu", 0, 5, (v) {
+        saturationField = new RegulateTextField("Satur", 0, 2, (v) {
+            if (!targetScene.postProc.isColorEffects)
+            {
+                targetScene.postProc.isColorEffects = true;
+            }
             targetScene.postProc.composeUniformData.saturation = v;
         });
         saturationField.scrollDt = 0.01;
         envPanel.addCreate(saturationField);
-        saturationField.value = targetScene.postProc.composeUniformData.saturation;
+        saturationField.value(targetScene.postProc.composeUniformData.saturation, false);
 
-        vignetteField = new RegulateTextField("Vign", 0, 5, (v) {
+        vignetteField = new RegulateTextField("Vignt", 0, 5, (v) {
+            if (!targetScene.postProc.isVignette)
+            {
+                targetScene.postProc.isVignette = true;
+            }
             targetScene.postProc.composeUniformData.vignette = v;
         });
         vignetteField.scrollDt = 0.01;
         envPanel.addCreate(vignetteField);
-        vignetteField.value = targetScene.postProc.composeUniformData.vignette;
+        vignetteField.value(targetScene.postProc.composeUniformData.vignette, false);
 
         gammaField = new RegulateTextField("Gamma", 1, 10, (v) {
             targetScene.postProc.composeUniformData.gamma = v;
         });
         gammaField.scrollDt = 0.01;
         envPanel.addCreate(gammaField);
-        gammaField.value = targetScene.postProc.composeUniformData.gamma;
+        gammaField.value(targetScene.postProc.composeUniformData.gamma, false);
 
         filterColor = new ColorPicker;
         addCreate(filterColor);
         filterColor.onChangeOldNew ~= (old, newv) {
+            if (!targetScene.postProc.isColorTint)
+            {
+                targetScene.postProc.isColorTint = true;
+            }
             targetScene.postProc.composeUniformData.colorFilterData[0 .. 3] = newv.toArrayFRGB;
         };
 
@@ -158,6 +146,10 @@ class EnvManager : BaseDebuggerPanel
                 targetScene.postProc.composeUniformData.colorFilterData[0 .. 3]), false);
 
         filterIntensity = new RegulateTextField("Fint", 0, 1, (v) {
+            if (!targetScene.postProc.isColorTint)
+            {
+                targetScene.postProc.isColorTint = true;
+            }
             targetScene.postProc.composeUniformData.colorFilterData[3] = v;
         });
         filterIntensity.scrollDt = 0.01;
@@ -167,12 +159,20 @@ class EnvManager : BaseDebuggerPanel
         flashColor = new ColorPicker;
         addCreate(flashColor);
         flashColor.onChangeOldNew ~= (old, newv) {
+            if (!targetScene.postProc.isColorTint)
+            {
+                targetScene.postProc.isColorTint = true;
+            }
             targetScene.postProc.composeUniformData.colorFlashData[0 .. 3] = newv.toArrayFRGB;
         };
         flashColor.color(RGBA.fromArrayFRGB(
                 targetScene.postProc.composeUniformData.colorFlashData[0 .. 3]), false);
 
         flashIntensity = new RegulateTextField("FlIn", 0, 1, (v) {
+            if (!targetScene.postProc.isColorTint)
+            {
+                targetScene.postProc.isColorTint = true;
+            }
             targetScene.postProc.composeUniformData.colorFlashData[3] = v;
         });
         flashIntensity.scrollDt = 0.01;

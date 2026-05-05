@@ -35,10 +35,10 @@ struct Config
     float baseIntensity; // 2, 1.5–2.0 Base cube strength
     float bloomIntensity; //1, Halo density
     float exposure; //0.9 Overall brightness (ACES)
-    float threshold; //50 At what brightness the cube begins to whiten
+    float threshold; //0.8 At what brightness the cube begins to whiten
     
     float contrast;  //1
-    float saturation; //1, 0 -2
+    float saturation; //0-1
     float vignetteIntensity; //0- 2;
     uint flags;
     float gamma;

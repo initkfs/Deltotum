@@ -53,7 +53,7 @@ class Bloom : Sprite3d
         float baseIntensity = 2;
         float bloomIntensity = 1;
         float exposure = 0.9;
-        float threshold = 50;
+        float threshold = 0.8;
 
         float contrast = 1;
         float saturation = 1;
@@ -82,7 +82,7 @@ class Bloom : Sprite3d
 
     this()
     {
-        brightUniformData = [1, 0.3, 0, 0];
+        brightUniformData = [1, 0.2, 0, 0];
 
         composeUniformData.colorFilterData = [1, 1, 1, 0];
         composeUniformData.colorFlashData = [0, 0, 0, 0];
