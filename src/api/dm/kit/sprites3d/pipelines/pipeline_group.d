@@ -28,6 +28,9 @@ class PipelineGroup : Sprite3d
 {
     bool isBlend;
 
+    bool isUseDefaultSampling = true;
+    bool isUseVertex = true;
+
     protected
     {
         SdlGPUPipeline _comPipeline;
@@ -167,6 +170,10 @@ class PipelineGroup : Sprite3d
 
     void bindDataBuffer()
     {
+        if (!dataBufferPtr)
+        {
+            throw new Exception("Data buffer is null");
+        }
         gpu.dev.bindFragmentStorageBuffer(dataBufferPtr);
     }
 
@@ -256,7 +263,9 @@ class PipelineGroup : Sprite3d
             rasterState,
             stencilState,
             id,
-            onPipeSettings
+            onPipeSettings,
+            isUseDefaultSampling,
+            isUseVertex
         );
         if (!_comPipeline)
         {

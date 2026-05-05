@@ -1027,6 +1027,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return true;
     }
 
+    bool drawQuad() => draw(6, 1, 0, 0);
+
     bool draw(size_t numVertices = 1, size_t numInstances = 1, size_t firstVertex = 0, size_t firstInstance = 0)
     {
         if (!lastPass)
