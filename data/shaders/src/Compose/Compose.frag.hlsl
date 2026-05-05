@@ -22,6 +22,7 @@ struct Input
 static const uint ShaderFlag_IsColorTint    = 1 << 0;
 static const uint ShaderFlag_IsColorEffects = 1 << 1;
 static const uint ShaderFlag_IsVignette     = 1 << 2;
+static const uint ShaderFlag_IsGamma = 1 << 3;
 
 struct Config
 {
@@ -40,6 +41,7 @@ struct Config
     float saturation; //1, 0 -2
     float vignetteIntensity; //0- 2;
     uint flags;
+    float gamma;
 }; 
 
 cbuffer UBO : register(b0, space3)
@@ -109,6 +111,11 @@ float4 main(Input input) : SV_Target {
     //Simple Dithering
     //finalColor += (screenNoise(input.uv) - 0.5) * (1.0 / 255.0);
     //float alpha = dot(mappedColor.rgb, float3(0.299, 0.587, 0.114));
+
+    if(config.flags & ShaderFlag_IsGamma){
+        //float gamma = 2.2
+        mappedColor = pow(mappedColor, (float3)(1.0/config.gamma));
+    }
 
     return float4(mappedColor, 1.0);
     //float4(pow(finalColor, 1.0/2.2), 1.0);

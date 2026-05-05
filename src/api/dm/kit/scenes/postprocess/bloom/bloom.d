@@ -59,6 +59,7 @@ class Bloom : Sprite3d
         float saturation = 1;
         float vignette = 0;
         uint flags;
+        float gamma;
     }
 
     enum ShaderFlag
@@ -66,15 +67,18 @@ class Bloom : Sprite3d
         IsColorTint = 1 << 0,
         IsColorEffects = 1 << 1,
         IsVignette = 1 << 2,
+        isGamma = 1 << 3,
     }
 
     bool isColorTint;
     bool isColorEffects;
     bool isVignette;
+    bool isGamma = true;
 
     ComposeUniformData composeUniformData;
     BlurUniformData blurUniformData;
 
+    enum defaultGamma = 2.2;
 
     this()
     {
@@ -82,6 +86,7 @@ class Bloom : Sprite3d
 
         composeUniformData.colorFilterData = [1, 1, 1, 0];
         composeUniformData.colorFlashData = [0, 0, 0, 0];
+        composeUniformData.gamma = defaultGamma;
     }
 
     override void create()
@@ -260,7 +265,7 @@ class Bloom : Sprite3d
         gpu.dev.setViewport(Rect2f(0, 0, window.widthu, window.heightu), 0, 1);
         gpu.dev.bindPipeline(composePipeline);
 
-        composeUniformData.flags = packShaderFlags(isColorTint, isColorEffects, isVignette);
+        composeUniformData.flags = packShaderFlags(isColorTint, isColorEffects, isVignette, isGamma);
 
         gpu.dev.pushUniformFragmentData(0, &composeUniformData, composeUniformData.sizeof);
 
@@ -269,7 +274,7 @@ class Bloom : Sprite3d
         gpu.dev.draw(3, 1, 0, 0);
     }
 
-    uint packShaderFlags(bool isColorTint, bool isColorEffects, bool isVignette)
+    uint packShaderFlags(bool isColorTint, bool isColorEffects, bool isVignette, bool isGamma)
     {
         uint flags = 0;
         if (isColorTint)
@@ -278,6 +283,8 @@ class Bloom : Sprite3d
             flags |= ShaderFlag.IsColorEffects;
         if (isVignette)
             flags |= ShaderFlag.IsVignette;
+        if (isGamma)
+            flags |= ShaderFlag.isGamma;
         return flags;
     }
 

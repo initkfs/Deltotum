@@ -141,7 +141,8 @@ float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float
     //float attenuation = 1.0 / (d2, 0.01);
     
     float attenuation = 1.0 / (constantCoeff + light.linearCoeff * distance + 
-  			     light.quadraticCoeff * (distance * distance));   
+  			     light.quadraticCoeff * (distance * distance)); 
+    //float attenuation = 1.0 / distance; for gamma  
     float alpha = distance / radius;
     float damping = 1.0 - (alpha * alpha);  // smooth
     //or damping = 1.0 - pow(alpha, 4);
@@ -306,6 +307,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     float ao = aoMap.Sample(aoSampler, input.texcoord).r;
 
     float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, texUV);
+    fullDiffuseColor.rgb = pow(fullDiffuseColor.rgb, 2.2); 
     
     float3 diffuseColor = fullDiffuseColor.rgb;
     float4 specularColor = specularMap.Sample(specularSampler, texUV) * matConfig.material.specular;

@@ -39,6 +39,7 @@ class EnvManager : BaseDebuggerPanel
     RegulateTextField contrastField;
     RegulateTextField saturationField;
     RegulateTextField vignetteField;
+    RegulateTextField gammaField;
 
     ColorPicker filterColor;
     RegulateTextField filterIntensity;
@@ -136,9 +137,16 @@ class EnvManager : BaseDebuggerPanel
         vignetteField = new RegulateTextField("Vign", 0, 5, (v) {
             targetScene.postProc.composeUniformData.vignette = v;
         });
-        composeThresholdField.scrollDt = 0.01;
+        vignetteField.scrollDt = 0.01;
         envPanel.addCreate(vignetteField);
         vignetteField.value = targetScene.postProc.composeUniformData.vignette;
+
+        gammaField = new RegulateTextField("Gamma", 1, 10, (v) {
+            targetScene.postProc.composeUniformData.gamma = v;
+        });
+        gammaField.scrollDt = 0.01;
+        envPanel.addCreate(gammaField);
+        gammaField.value = targetScene.postProc.composeUniformData.gamma;
 
         filterColor = new ColorPicker;
         addCreate(filterColor);
