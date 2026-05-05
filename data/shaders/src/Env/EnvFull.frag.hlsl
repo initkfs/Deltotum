@@ -89,6 +89,7 @@ cbuffer MaterialUBO : register(b1, space3)
 
 #include "Com/ComTypes.hlsli"
 #include "Com/ComDepth.hlsli"
+#include "Com/ComFunc.hlsli"
 
 float3 palette(float t) {
     float3 a = float3(0.5, 0.5, 0.5);
@@ -123,6 +124,10 @@ float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float
     float3 halfwayDir = normalize(lightDir + viewDir);
 
     float gloss = specularColor.a * material.gloss;
+
+    //float frequency = 500; //10.0 - 1000.0 for goldnoise
+    //float noise = goldNoise(input.texcoord * frequency, 12.9898);
+    //gloss = gloss * (0.8 + noise * 0.4); //20% variation
     
     //float shininess = pow(2.0, gloss * 8.0);  //0..1, 2..256
     //float shininess = exp2(10.0 * gloss + 1.0);
@@ -168,6 +173,10 @@ float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float
     //float3 specular = light.specular * spec * specularColor;
 
     float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
+
+    //float noise = goldNoise(input.texcoord * 800.0, 1.0);
+    //0.97, 1.03
+    //diffuse.rgb *= (1.03 + noise * 0.06); 
 
     //return ambient + (diffuse * attenuation) + (specular * attenuation);
     return (ambient + diffuse + specular) * attenuation;
