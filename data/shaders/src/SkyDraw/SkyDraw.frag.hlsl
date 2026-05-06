@@ -10,11 +10,18 @@ struct VOutput
 
 cbuffer SceneUBO : register(b0, space3)
 {
+   float4 topColor;
+   float4 horizonColor;
+   float4 groundColor;
+   
    float3 camForward;
    float  aspectRatio; // screenWidth / screenHeight
    float3 camRight;
    float  fovTan;      // tan(fov / 2)
    float3 camUp;
+   float topBlend; //1.5
+   
+   float groundBlend; //1.0
 };
 
 float3 reconstructViewDir(float2 uv) {
@@ -26,25 +33,21 @@ float3 reconstructViewDir(float2 uv) {
     return normalize(viewDir);
 }
 
-float3 calculateSky(float3 dir) {
+float4 calculateSky(float3 dir) {
     float y = dir.y;
     
-    float3 skyTop = float3(1, 0, 0);
-    float3 skyHorizon = float3(0.5, 0.7, 0.9);
-    float3 ground = float3(0.1, 0.08, 0.05);
-
     if (y > 0.0) {
-        float blend = pow(y, 1.5); 
-        return lerp(skyHorizon, skyTop, blend);
+        float blend = pow(y, topBlend); 
+        return lerp(horizonColor, topColor, blend);
     } else {
-        float blend = pow(-y, 1.0); 
-        return lerp(skyHorizon, ground, blend);
+        float blend = pow(-y, groundBlend); 
+        return lerp(horizonColor, groundColor, blend);
     }
 }
 
 float4 main(VOutput input) : SV_Target0
 {
     float3 viewDir = reconstructViewDir(input.uv);
-    float3 skyColor = calculateSky(viewDir);
-    return float4(skyColor, 1.0);
+    float4 skyColor = calculateSky(viewDir);
+    return skyColor;
 }

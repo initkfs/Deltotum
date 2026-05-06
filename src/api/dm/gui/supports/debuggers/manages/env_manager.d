@@ -3,6 +3,7 @@ module api.dm.gui.supports.debuggers.manages.env_manager;
 import api.dm.gui.supports.debuggers.base_debugger_panel : BaseDebuggerPanel;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.gui.controls.control: Control;
 import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
@@ -20,7 +21,7 @@ class EnvManager : BaseDebuggerPanel
     RegulateTextField blurRadiusField;
     RegulateTextField blurIntensityField;
 
-    RegulateTextField[dstring] appFields;
+    Control[dstring] appFields;
 
     /*
        float baseIntensity = 2; // 1.5–2.0 Base cube strength
@@ -185,7 +186,8 @@ class EnvManager : BaseDebuggerPanel
         RegulateTextField field;
         if (auto fieldPtr = name in appFields)
         {
-            field = *fieldPtr;
+            auto needField = cast(RegulateTextField) *fieldPtr;
+            assert(needField);
             //TODO correct setters
             return;
         }
@@ -195,6 +197,25 @@ class EnvManager : BaseDebuggerPanel
         addCreate(field);
         field.value(startValue, false);
         appFields[name] = field;
+    }
+
+    void setDebugColor(void delegate(RGBA) onValue, RGBA startValue = RGBA.white, dstring name = "Color")
+    {
+        if (auto fieldPtr = name in appFields)
+        {
+            auto needField = cast(ColorPicker) *fieldPtr;
+            assert(needField);
+            return;
+        }
+
+        auto picker = new ColorPicker;
+        addCreate(picker);
+        picker.onChangeOldNew ~= (old, newv) {
+            onValue(newv);
+        };
+
+        picker.color(startValue, false);
+        appFields[name] = picker;
     }
 
     override void dispose()

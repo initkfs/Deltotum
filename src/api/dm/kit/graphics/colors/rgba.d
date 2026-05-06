@@ -524,6 +524,10 @@ struct RGBA
         return RGBA(RGBA.fromColorNorm(array[0]), RGBA.fromColorNorm(array[1]), RGBA.fromColorNorm(array[2]), 1);
     }
 
+    static RGBA fromArrayFRGBA(float[4] array){
+        return RGBA(RGBA.fromColorNorm(array[0]), RGBA.fromColorNorm(array[1]), RGBA.fromColorNorm(array[2]), array[3]);
+    }
+
     static RGBA fromRGBAf(RGBAf color){
         return RGBA(RGBA.fromColorNorm(color.r), RGBA.fromColorNorm(color.g), RGBA.fromColorNorm(color.b), color.a);
     }

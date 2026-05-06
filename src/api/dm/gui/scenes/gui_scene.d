@@ -7,6 +7,7 @@ import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.gui.components.gui_component : GuiComponent;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
+import api.dm.kit.graphics.colors.rgba: RGBA;
 
 /**
  * Authors: initkfs
@@ -122,6 +123,8 @@ class GuiScene : Scene3d
         addCreate(debugger);
     }
 
+    override bool hasDebugger() => debugger !is null;
+
     override void update(float dt)
     {
         super.update(dt);
@@ -171,5 +174,14 @@ class GuiScene : Scene3d
         }
 
         debugger.mainPanel.envManager.setDebugField(onValue, startValue, minValue, maxValue, dt, name);
+    }
+
+    override void setDebugColor(void delegate(RGBA) onValue, RGBA startValue = RGBA.white, dstring name = "Color")
+    {
+        if(!debugger){
+            return;
+        }
+
+        debugger.mainPanel.envManager.setDebugColor(onValue, startValue, name);
     }
 }

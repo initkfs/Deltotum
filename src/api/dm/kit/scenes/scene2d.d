@@ -657,7 +657,14 @@ class Scene2d : EventKitTarget
     float timeSec() => platform.timer.ticksMs / 1000.0;
     float timeMs() => platform.timer.ticksMs;
 
+    bool hasDebugger() => false;
+
     void setDebugField(void delegate(float) onValue, float startValue = 0, float minValue = 0, float maxValue = 1, float dt = 0.01, dstring name = "Field"){
 
+    }
+
+    void setDebugColor(void delegate(RGBA) onValue, RGBA startValue = RGBA.white, dstring name = "Color")
+    {
+        
     }
 }
