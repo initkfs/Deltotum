@@ -36,15 +36,16 @@ class BaseSynthesizer
 
     void mix(float[] buffer, float freqHz = 0, float amplitude0to1 = 0.9, float phase = 0)
     {
-        onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, frameTime, time) {
+        onBuffer(buffer, sampleRateHz, channels, (i, frameTime, time) {
             //time = time / channels;
             auto sample = sampleProvider ? sampleProvider(frameTime, freqHz, phase) : sampleFunc(frameTime, freqHz, phase);
-            sample *= amplitude0to1;
 
             if (isADSR)
             {
                 sample *= adsr.adsr(time);
             }
+
+            sample *= amplitude0to1;
 
             return sample;
         });

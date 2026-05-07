@@ -673,7 +673,7 @@ abstract class GraphicApp : CliApp
         assets.defaultFontColor = colorText;
         version (EnableTrace)
         {
-            uservices.logger.trace("Set default text color to ", colorText);
+            uservices.logger.tracef("Set default text color to %s", colorText);
         }
 
         if (assets.hasFont)
@@ -681,7 +681,7 @@ abstract class GraphicApp : CliApp
             auto font = assets.font;
             version (EnableTrace)
             {
-                uservices.logger.trace("Found default font for default font bitmap: ", font
+                uservices.logger.tracef("Found default font for default font bitmap: %s", font
                         .getFontPath);
             }
             BitmapFont bitmapFont = generator.generate(createMediumFontAlphabets, font, colorText, colorBackground);

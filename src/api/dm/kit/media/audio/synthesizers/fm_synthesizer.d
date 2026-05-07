@@ -101,13 +101,15 @@ class FMSynthesizer : SoundSynthesizer
                 targetFm = n.fc * targetFm;
             }
 
-            onBuffer(noteBuff.buffer, sampleRateHz, amplitude0to1, channels, (i, frameTime, time) {
-                auto sample = fmodulator(frameTime, 0, n.fc, targetFm, n.index);
-                sample *= amplitude0to1;
+            onBuffer(noteBuff.buffer, sampleRateHz, channels, (i, frameTimeSec, timeNorm) {
+                auto sample = fmodulator(frameTimeSec, 0, n.fc, targetFm, n.index);
                 if (isADSR)
                 {
-                    sample *= adsr.adsr(time);
+                    sample *= adsr.adsr(timeNorm);
                 }
+
+                sample *= amplitude0to1;
+                
                 return sample;
             });
 

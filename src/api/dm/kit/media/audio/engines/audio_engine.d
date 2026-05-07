@@ -41,15 +41,17 @@ class AudioEngine : Thread
     __gshared float[] samples;
 
     shared Mutex mixerMutex;
-    
 
     enum DspWindowSize = 2048;
 
     shared Mutex dspMutex;
     __gshared DspProcessor!(DspWindowSize * 100, 2, DspWindowSize) dspProcessor;
+    __gshared bool isDsp;
 
     __gshared double bufferStartTimeSec = 0;
     __gshared double lastMixTimeMs = 0;
+
+    __gshared bool isMixRealtime;
 
     this(AudioSpec spec)
     {
@@ -110,7 +112,7 @@ class AudioEngine : Thread
 
                 //auto streamTimeSec = buffer.streamTimeSec;
 
-                if (elapsedMs >= MIX_INTERVAL_MS)
+                if (!isMixRealtime || (elapsedMs >= MIX_INTERVAL_MS))
                 {
                     auto mixSize = mixer.mix(samples, 2, true);
                     if (mixSize == 0)
@@ -136,7 +138,7 @@ class AudioEngine : Thread
                         //TODO log
                     }
 
-                    if (dspProcessor)
+                    if (isDsp && dspProcessor)
                     {
                         //auto fftLen = mixSize % 2 != 0 ? Math.prevPowerOfTwo(
                         //    cast(uint) mixSize) : mixSize;
@@ -186,7 +188,7 @@ class AudioEngine : Thread
         return mixer.isPlaying(soundId);
     }
 
-    void play(MixSound[] MixSound)
+    void play(MixSound[] mixSound)
     {
         mixerMutex.lock;
         scope (exit)
@@ -194,7 +196,7 @@ class AudioEngine : Thread
             mixerMutex.unlock;
         }
 
-        foreach (s; MixSound)
+        foreach (s; mixSound)
         {
             mixer.play(s);
         }

@@ -15,7 +15,7 @@ class WavWriter
     void save(T)(string path, T[] buffer, AudioSpec spec)
     {
         //TODO LE\BE?
-        uint dataSize = cast(uint) (buffer.length * T.sizeof);
+        uint dataSize = cast(uint)(buffer.length * T.sizeof);
 
         auto file = File(path, "wb");
 
@@ -33,8 +33,20 @@ class WavWriter
         uint[1] subchunk1Size = [16];
         file.rawWrite(subchunk1Size);
 
-        ushort pcm = 1;
-        ushort[1] audioFormat = [pcm];
+        ushort format;
+        static if (is(T == short) || is(T == ushort))
+        {
+            format = 1;
+        }
+        else static if (is(T == float))
+        {
+            format = 3;
+        }
+        else
+        {
+            static assert("Not supported type: " ~ T.sizeof);
+        }
+        ushort[1] audioFormat = [format];
         file.rawWrite(audioFormat);
 
         ushort numChans = cast(ushort) spec.channels;
@@ -49,7 +61,7 @@ class WavWriter
         uint[1] byteRate = [byteRateCount];
         file.rawWrite(byteRate);
 
-        ushort[1] blockAlign = [cast(ushort) (numChans * 2)];
+        ushort[1] blockAlign = [cast(ushort)(numChans * 2)];
         file.rawWrite(blockAlign);
 
         ushort bitsPerSample;

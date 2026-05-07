@@ -272,7 +272,7 @@ class BaseEditableText : BaseMonoText
                                 {
                                     version (EnableTrace)
                                     {
-                                        logger.trace("Copy text to clipboard: ", text);
+                                        logger.tracef("Copy text to clipboard: %s", text);
                                     }
                                 }
 

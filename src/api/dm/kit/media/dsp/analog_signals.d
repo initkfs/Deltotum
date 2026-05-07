@@ -10,24 +10,23 @@ struct AnalogSignal
     float magn = 0;
 }
 
-void onBuffer(float[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, size_t channels, scope float delegate(
-        size_t, float, float) onIndexFrameTimeNormTime)
+void onBuffer(float[] buffer, float sampleRateHz, size_t channels, scope float delegate(
+        size_t, float frameTimeSec, float frameTimeNorm) onIndexFrameTimeNormTime)
 {
     assert(buffer.length > 0);
 
-    const frameTimeDt = 1.0 / sampleRateHz;
+    const frameTimeDtSec = 1.0 / sampleRateHz;
     const normTimeDt = 1.0 / (buffer.length / channels);
 
     const bool isMultiChans = channels > 1;
     const bool isStereo = channels == 2;
 
-    float frameTime = 0;
+    float frameTimeSec = 0;
     float normTime = 0;
     for (size_t i = 0; i < buffer.length; i += channels)
     {
-        float value = onIndexFrameTimeNormTime(i, frameTime, normTime);
-        value *= amplitude0to1;
-
+        float value = onIndexFrameTimeNormTime(i, frameTimeSec, normTime);
+        
         buffer[i] = value;
 
         if (isStereo)
@@ -51,7 +50,7 @@ void onBuffer(float[] buffer, float sampleRateHz, float amplitude0to1 = 1.0, siz
             }
         }
 
-        frameTime += frameTimeDt;
+        frameTimeSec += frameTimeDtSec;
         normTime += normTimeDt;
     }
 }

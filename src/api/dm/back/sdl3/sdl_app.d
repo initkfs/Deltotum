@@ -859,7 +859,7 @@ class SdlApp : GuiApp
                 loop.onStartFrame = () => sdlLib.delayMs(delayMs);
                 version (EnableTrace)
                 {
-                    uservices.logger.trace("Enable loop start delay: ", delayMs);
+                    uservices.logger.tracef("Enable loop start delay: %s", delayMs);
                 }
             }
         }
@@ -1120,7 +1120,7 @@ class SdlApp : GuiApp
                 {
                     version (EnableTrace)
                     {
-                        uservices.logger.trace("Set VSync interval: ", vsyncInterval);
+                        uservices.logger.tracef("Set VSync interval: %s", vsyncInterval);
                     }
                 }
             }
@@ -1186,7 +1186,7 @@ class SdlApp : GuiApp
         asset.initialize;
         version (EnableTrace)
         {
-            uservices.logger.trace("Build assets for window: ", window.id);
+            uservices.logger.tracef("Build assets for window: %s", window.id);
         }
 
         if (uservices.config.hasKey(KitConfigKeys.fontIconsList))
@@ -1221,7 +1221,7 @@ class SdlApp : GuiApp
         theme.defaultMediumFont = asset.font;
         version (EnableTrace)
         {
-            uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.getFontPath);
+            uservices.logger.trace("Set theme font: " ~ theme.defaultMediumFont.getFontPath);
         }
 
         window.theme = theme;

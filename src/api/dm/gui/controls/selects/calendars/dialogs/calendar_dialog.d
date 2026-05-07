@@ -390,13 +390,13 @@ class CalendarDialog : Control
         {
             version (EnableTrace)
             {
-                logger.trace("Day container already added: ", container);
+                logger.tracef("Day container already added: %s", container);
             }
             return false;
         }
         version (EnableTrace)
         {
-            logger.trace("Add day container to selected: ", container);
+            logger.tracef("Add day container to selected: %s", container);
         }
         startSelected = container;
         selected ~= container;

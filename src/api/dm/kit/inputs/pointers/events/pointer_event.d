@@ -48,6 +48,9 @@ struct PointerEvent
         this.movementY = movementY;
     }
 
+    //TODO from config?
+    bool isNotPrimary() => button != 1;
+
     string toString()
     {
         import std.format : format;

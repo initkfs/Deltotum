@@ -160,6 +160,15 @@ class AudioStream(size_t Size, size_t FramesPerBuffer, size_t Channels)
         atomicStore(_state, AudioStreamState.start);
     }
 
+    double streamCPULoad()
+    {
+        if (_stream)
+        {
+            Pa_GetStreamCpuLoad(_stream);
+        }
+        return 0;
+    }
+
     void stop()
     {
         if (isStop)

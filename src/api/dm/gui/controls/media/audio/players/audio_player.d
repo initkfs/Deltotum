@@ -194,7 +194,7 @@ class AudioEngine : Control
         }
         version (EnableTrace)
         {
-            logger.trace("Play audio, state ", _state, " ", _path);
+            logger.tracef("Play audio, state %s:%s", _state, _path);
         }
     }
 
@@ -214,7 +214,7 @@ class AudioEngine : Control
         }
         version (EnableTrace)
         {
-            logger.trace("Resume audio, state ", _state, " ", _path);
+            logger.tracef("Resume audio, state %s:%s", _state, _path);
         }
     }
 
@@ -245,7 +245,7 @@ class AudioEngine : Control
         }
         version (EnableTrace)
         {
-            logger.trace("Pause playing, state: ", _state);
+            logger.tracef("Pause playing, state: %s", _state);
         }
     }
 
@@ -278,7 +278,7 @@ class AudioEngine : Control
         }
         version (EnableTrace)
         {
-            logger.trace("Stop playing, state: ", _state);
+            logger.tracef("Stop playing, state: %s", _state);
         }
     }
 

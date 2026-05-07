@@ -420,6 +420,28 @@ class Scene2d : EventKitTarget
         }
     }
 
+    float waveSin(float minValue = 0, float maxValue = 1, float periodMs = 3000)
+    {
+        import Math = api.math;
+
+        float periodSec = periodMs / 1000.0f;
+        float currentTime = timeSec();
+        float phase = (currentTime % periodSec) / periodSec;
+        float s = Math.sin(phase * 2.0f * Math.PI);
+        float vNorm = (s + 1.0f) * 0.5f; //to [0, 1]
+        float v = minValue + vNorm * (maxValue - minValue); //to [minValue, maxValue]
+        return v;
+    }
+
+    float waveSinRange(float baseValue, float range, float periodMs = 3000)
+    {
+        import Math = api.math;
+
+        float offset = waveSin(-1.0, 1.0, periodMs);
+        float v = baseValue + (offset * range);
+        return v;
+    }
+
     override void pause()
     {
         super.pause;
@@ -659,12 +681,13 @@ class Scene2d : EventKitTarget
 
     bool hasDebugger() => false;
 
-    void setDebugField(void delegate(float) onValue, float startValue = 0, float minValue = 0, float maxValue = 1, float dt = 0.01, dstring name = "Field"){
+    void setDebugField(void delegate(float) onValue, float startValue = 0, float minValue = 0, float maxValue = 1, float dt = 0.01, dstring name = "Field")
+    {
 
     }
 
     void setDebugColor(void delegate(RGBA) onValue, RGBA startValue = RGBA.white, dstring name = "Color")
     {
-        
+
     }
 }

@@ -18,6 +18,7 @@ import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.scenes.scene2d : Scene2d;
+import api.math.random : Random;
 
 import std.variant : Variant;
 
@@ -1220,6 +1221,13 @@ class Sprite2d : EventKitTarget
         {
             onStopDrag();
         }
+    }
+
+    Random rnd()
+    {
+        import api.math.random : rands;
+
+        return rands;
     }
 
     //TODO remove root from children

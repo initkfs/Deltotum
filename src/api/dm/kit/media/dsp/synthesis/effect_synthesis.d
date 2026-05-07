@@ -9,16 +9,18 @@ import Math = api.math;
  */
 struct ADSR
 {
+    //Attack, Decay, Release - time
+    //Sustain - amplitude
     //sample * adsr(..)
-    float attack = 0.2;
+    float attack = 0.5;
     float decay = 0.2;
-    float sustain = 0.7;
+    float sustain = 0.8;
     float release = 0.2;
 
     float adsr(float time)
     {
         //(Attack + Decay + Release) <= duration
-        const float releaseTime = 1 - release;
+        //const float releaseTime = 1 - release;
 
         //Attack
         if (time < attack)
@@ -27,25 +29,36 @@ struct ADSR
             //return Math.sin((Math.PI / 2.0) * (time / attack));
         }
 
-        //Release
-        if (time > releaseTime)
-        {
-            if (time >= 1)
-                return 0;
-            const ampDt = (1 - ((time - releaseTime) / release));
-            if (ampDt < 0.001)
-                return 0;
-            return sustain * ampDt;
-            //return sustain * (1 - time / releaseTime);
-            //return sustain * (1 - ((time - releaseTime) / release));
-            //return sustain * ((time - (1 - release)) / release);
-        }
-
         //Decay
         if (time < (attack + decay))
         {
             //return 1.0 - (1.0 - sustain) * (attack / decay);
-            return 1.0 - (1.0 - sustain) * Math.pow((time - attack) / decay, 0.5);
+            //return 1.0 - (1.0 - sustain) * Math.pow((time - attack) / decay, 0.5);
+            float decayProgress = (time - attack) / decay;
+            return 1.0f - (1.0f - sustain) * decayProgress;
+        }
+
+        //Release
+        // if (time > releaseTime)
+        // {
+        //     if (time >= 1)
+        //         return 0;
+        //     const ampDt = (1 - ((time - releaseTime) / release));
+        //     if (ampDt < 0.001)
+        //         return 0;
+        //     return sustain * ampDt;
+        //     //return sustain * (1 - time / releaseTime);
+        //     //return sustain * (1 - ((time - releaseTime) / release));
+        //     //return sustain * ((time - (1 - release)) / release);
+        // }
+
+        float releaseStartTime = 1.0f - release;
+        if (time > releaseStartTime)
+        {
+            if (time >= 1.0f)
+                return 0;
+            float releaseProgress = (time - releaseStartTime) / release;
+            return sustain * (1.0f - releaseProgress);
         }
 
         return sustain;
