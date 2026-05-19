@@ -64,6 +64,8 @@ class Scene2d : EventKitTarget
 
         float _width = 0;
         float _height = 0;
+
+        size_t _nextUniqId;
     }
 
     void delegate() udaProcessor;
@@ -689,5 +691,11 @@ class Scene2d : EventKitTarget
     void setDebugColor(void delegate(RGBA) onValue, RGBA startValue = RGBA.white, dstring name = "Color")
     {
 
+    }
+
+    size_t nextUniqId()
+    {
+        _nextUniqId++;
+        return _nextUniqId;
     }
 }

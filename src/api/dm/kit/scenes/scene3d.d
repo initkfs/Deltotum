@@ -17,6 +17,9 @@ import api.math.matrices.matrix;
 //TODO remove native api
 import api.dm.back.sdl3.externs.csdl3;
 
+//TODO heat
+import api.dm.kit.sprites3d.textures.heat_texture_array : HeatTextureArray;
+
 /**
  * Authors: initkfs
  */
@@ -51,6 +54,9 @@ class Scene3d : Scene2d
 
     bool isMix2d3dMode = true;
     bool isMixCurrentPass;
+
+    HeatTextureArray heapMaps1;
+    HeatTextureArray heapMaps2;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
@@ -166,6 +172,14 @@ class Scene3d : Scene2d
         postProc = new Bloom;
         build(postProc);
         postProc.create;
+
+        heapMaps1 = new HeatTextureArray;
+        build(heapMaps1);
+        heapMaps1.create;
+
+        heapMaps2 = new HeatTextureArray;
+        build(heapMaps2);
+        heapMaps2.create;
     }
 
     protected SDL_GPUColorTargetInfo createTargetInfo()
@@ -470,6 +484,16 @@ class Scene3d : Scene2d
         if (antiAliaser)
         {
             antiAliaser.dispose;
+        }
+
+        if (heapMaps1)
+        {
+            heapMaps1.dispose;
+        }
+
+        if (heapMaps2)
+        {
+            heapMaps2.dispose;
         }
     }
 }

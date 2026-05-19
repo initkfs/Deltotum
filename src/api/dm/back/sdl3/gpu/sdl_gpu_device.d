@@ -50,6 +50,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_GPUCommandBuffer* lastCmdBuff;
         SDL_GPURenderPass* lastPass;
         SDL_GPUCopyPass* lastCopyPass;
+        SDL_GPUComputePass* lastComputePass;
         SDL_GPUTexture* lastSwapchain;
 
         GPUGraphicState state;
@@ -1333,15 +1334,185 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     }
 
     //The window must be claimed before calling this function.
-    bool isSupportComposition(SDL_GPUSwapchainComposition composition, SDL_Window *window){
+    bool isSupportComposition(SDL_GPUSwapchainComposition composition, SDL_Window* window)
+    {
         return SDL_WindowSupportsGPUSwapchainComposition(ptr, window, composition);
     }
 
-    bool isSupportPresentMode(SDL_GPUPresentMode mode, SDL_Window *window){
+    bool isSupportPresentMode(SDL_GPUPresentMode mode, SDL_Window* window)
+    {
         return SDL_WindowSupportsGPUPresentMode(ptr, window, mode);
     }
 
-    bool setSwapchainParams(SDL_GPUPresentMode presentMode, SDL_GPUSwapchainComposition composition, SDL_Window *window){
+    bool setSwapchainParams(SDL_GPUPresentMode presentMode, SDL_GPUSwapchainComposition composition, SDL_Window* window)
+    {
         return SDL_SetGPUSwapchainParameters(ptr, window, composition, presentMode);
     }
+
+    void startComputePass(SDL_GPUStorageTextureReadWriteBinding* storageTextureBindings, SDL_GPUStorageBufferReadWriteBinding* storageBufferBindings, uint numTextureBindings = 0, uint numBufferBindings = 0)
+    {
+        //TODO check if render pass
+        if (lastComputePass)
+        {
+            throw new Exception("Compute pass started");
+        }
+
+        if (!lastCmdBuff)
+        {
+            throw new Exception("Not found command buffer");
+        }
+
+        lastComputePass = SDL_BeginGPUComputePass(
+            lastCmdBuff,
+            storageTextureBindings,
+            numTextureBindings,
+            storageBufferBindings,
+            numBufferBindings);
+        if (!lastComputePass)
+        {
+            throw new Exception("Compute pass is null");
+        }
+    }
+
+    void endComputePass()
+    {
+        if (!lastComputePass)
+        {
+            throw new Exception("Not found last compute pass");
+        }
+
+        SDL_EndGPUComputePass(lastComputePass);
+        lastComputePass = null;
+    }
+
+    SDL_GPUComputePipeline* createComputePipeline(SDL_GPUComputePipelineCreateInfo* info)
+    {
+        auto compPipePtr = SDL_CreateGPUComputePipeline(ptr, info);
+        if (!compPipePtr)
+        {
+            throw new Exception("Compute pipeline is null");
+        }
+        return compPipePtr;
+    }
+
+    struct ComputeBuffers
+    {
+        uint numSamplers = 0;
+        uint numRTextures = 0;
+        uint numRBuffers = 0;
+        uint numRWTextures = 0;
+        uint numRWBuffers = 0;
+        uint numUniforms = 0;
+    }
+
+    SDL_GPUComputePipeline* createComputePipelineSPIRV(string path, ComputeBuffers buffers)
+    {
+        ubyte[] code = readShader(path);
+        return createComputePipeline(buffers, code, SDL_GPU_SHADERFORMAT_SPIRV);
+    }
+
+    SDL_GPUComputePipeline* createComputePipeline(ComputeBuffers buffers, ubyte[] code, SDL_GPUShaderFormat format)
+    {
+        SDL_GPUComputePipelineCreateInfo info;
+        info.code_size = code.length;
+        info.code = code.ptr;
+        info.entrypoint = "main";
+        info.format = format;
+        info.num_samplers = buffers.numSamplers;
+        info.num_readonly_storage_textures = buffers.numRTextures;
+        info.num_readonly_storage_buffers = buffers.numRBuffers;
+        info.num_readwrite_storage_textures = buffers.numRWTextures;
+        info.num_readwrite_storage_buffers = buffers.numRWBuffers;
+        info.num_uniform_buffers = buffers.numUniforms;
+
+        //This should match the value in the shader.
+        uint threadCount = 16;
+
+        info.threadcount_x = threadCount;
+        info.threadcount_y = threadCount;
+        info.threadcount_z = threadCount;
+
+        return createComputePipeline(&info);
+    }
+
+    void bindComputeTextures(SDL_GPUTexture** storage, uint slot = 0, uint numBindings = 1)
+    {
+        if (!lastComputePass)
+        {
+            throw new Exception("Not found compute pass");
+        }
+
+        //These textures must have been created with SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ
+        SDL_BindGPUComputeStorageTextures(
+            lastComputePass,
+            slot,
+            storage,
+            numBindings);
+    }
+
+    void bindComputeStorageBuffers(SDL_GPUBuffer** buffers, uint slot = 0, uint numBindings = 1)
+    {
+        if (!lastComputePass)
+        {
+            throw new Exception("Not found compute pass");
+        }
+
+        SDL_BindGPUComputeStorageBuffers(
+            lastComputePass,
+            slot,
+            buffers,
+            numBindings);
+    }
+
+    void bindComputeSamplers(SDL_GPUTextureSamplerBinding* bindings, uint slot = 0, uint numBindings = 1)
+    {
+        if (!lastComputePass)
+        {
+            throw new Exception("Not found compute pass");
+        }
+
+        SDL_BindGPUComputeSamplers(
+            lastComputePass,
+            slot,
+            bindings,
+            numBindings);
+    }
+
+    void bindComputeSamplers(SDL_GPUTexture* texture, SDL_GPUSampler* sampler, uint slot = 0)
+    {
+        SDL_GPUTextureSamplerBinding bindings;
+        bindings.texture = texture;
+        bindings.sampler = sampler;
+        bindComputeSamplers(&bindings, slot, 1);
+    }
+
+    void bindComputePipeline(SDL_GPUComputePipeline* pipeline)
+    {
+        if (!lastComputePass)
+        {
+            throw new Exception("Not found compute pass");
+        }
+
+        SDL_BindGPUComputePipeline(lastComputePass, pipeline);
+    }
+
+    void removeComputePipeline(SDL_GPUComputePipeline* pipeline)
+    {
+        SDL_ReleaseGPUComputePipeline(ptr, pipeline);
+    }
+
+    void pushComputeUniform(const void* data, uint len, uint slot = 0)
+    {
+        if (!lastCmdBuff)
+        {
+            throw new Exception("Not found command buffer");
+        }
+
+        SDL_PushGPUComputeUniformData(
+            lastCmdBuff,
+            slot,
+            data,
+            len);
+    }
+
 }
