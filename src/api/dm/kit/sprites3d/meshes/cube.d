@@ -1,7 +1,9 @@
 module api.dm.kit.sprites3d.meshes.cube;
 
-import api.dm.kit.sprites3d.meshes.mesh3d_indexed: Mesh3dLow;
+import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dLow;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
+import api.math.geom2 : Vec2f;
+import api.math.geom3 : Vec3f;
 
 /**
  * Authors: initkfs
@@ -92,5 +94,41 @@ class Cube : Mesh3dLow
             return true;
         }
         return false;
+    }
+
+    //TODO test
+    Vec2f localToUV(Vec3f position, Vec3f normal) pure nothrow @nogc
+    {
+        import Math = api.math;
+
+        Vec2f uv;
+        Vec3f absN = Vec3f(Math.abs(normal.x), Math.abs(normal.y), Math.abs(normal.z));
+
+        if (absN.x > absN.y && absN.x > absN.z)
+        {
+            uv.x = position.z + 0.5f;
+            uv.y = position.y + 0.5f;
+        }
+        else if (absN.y > absN.x && absN.y > absN.z)
+        {
+            uv.x = position.x + 0.5f;
+            uv.y = position.z + 0.5f;
+        }
+        else
+        {
+            uv.x = position.x + 0.5f;
+            uv.y = position.y + 0.5f;
+        }
+
+        if (uv.x < 0.0f)
+            uv.x = 0.0f;
+        else if (uv.x > 1.0f)
+            uv.x = 1.0f;
+        if (uv.y < 0.0f)
+            uv.y = 0.0f;
+        else if (uv.y > 1.0f)
+            uv.y = 1.0f;
+
+        return uv;
     }
 }

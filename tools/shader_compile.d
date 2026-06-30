@@ -34,7 +34,7 @@ void main(string[] args)
     string shadersDir = buildPath(getcwd, "data", "shaders");
     string shadersSrcDir = buildPath(shadersDir, "src");
     string startShaderCrossArgs = "-s HLSL -t ";
-    static const types = [".frag": "fragment", ".vert": "vertex"];
+    static const types = [".frag": "fragment", ".vert": "vertex", ".comp" : "compute"];
     string sdl3Path = buildPath(getcwd, "libs", "sdl3");
 
     bool isVerbose = !isCompileAll;

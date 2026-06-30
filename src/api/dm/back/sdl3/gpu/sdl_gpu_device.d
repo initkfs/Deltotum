@@ -3,7 +3,7 @@ module api.dm.back.sdl3.gpu.sdl_gpu_device;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_window : ComWindow;
 import api.dm.com.graphics.com_renderer : ComRenderer;
-import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
+import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers, ComComputeBuffers;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
@@ -445,7 +445,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_GPUTransferBuffer* buffPtr = SDL_CreateGPUTransferBuffer(ptr, &info);
         if (!buffPtr)
         {
-            throw new Exception("Transfer buffer is null");
+            throw new Exception("Transfer buffer is null: " ~ getError);
         }
         return buffPtr;
     }
@@ -886,6 +886,15 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         dest.offset = cast(uint) destBuffOffet;
 
         SDL_DownloadFromGPUBuffer(lastCopyPass, &source, &dest);
+    }
+
+    void downloadTexture(SDL_GPUTextureRegion* source, SDL_GPUTextureTransferInfo* dest)
+    {
+        if (!lastCopyPass)
+        {
+            throw new Exception("Copy pass not started");
+        }
+        SDL_DownloadFromGPUTexture(lastCopyPass, source, dest);
     }
 
     bool submitCmdBuffer()
@@ -1349,7 +1358,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return SDL_SetGPUSwapchainParameters(ptr, window, composition, presentMode);
     }
 
-    void startComputePass(SDL_GPUStorageTextureReadWriteBinding* storageTextureBindings, SDL_GPUStorageBufferReadWriteBinding* storageBufferBindings, uint numTextureBindings = 0, uint numBufferBindings = 0)
+    void startComputePass(SDL_GPUStorageTextureReadWriteBinding* storageTextureBindings = null, SDL_GPUStorageBufferReadWriteBinding* storageBufferBindings = null, uint numTextureBindings = 0, uint numBufferBindings = 0)
     {
         //TODO check if render pass
         if (lastComputePass)
@@ -1370,7 +1379,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             numBufferBindings);
         if (!lastComputePass)
         {
-            throw new Exception("Compute pass is null");
+            throw new Exception("Compute pass is null: " ~ getError);
         }
     }
 
@@ -1390,28 +1399,18 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         auto compPipePtr = SDL_CreateGPUComputePipeline(ptr, info);
         if (!compPipePtr)
         {
-            throw new Exception("Compute pipeline is null");
+            throw new Exception("Compute pipeline is null: " ~ getError);
         }
         return compPipePtr;
     }
 
-    struct ComputeBuffers
-    {
-        uint numSamplers = 0;
-        uint numRTextures = 0;
-        uint numRBuffers = 0;
-        uint numRWTextures = 0;
-        uint numRWBuffers = 0;
-        uint numUniforms = 0;
-    }
-
-    SDL_GPUComputePipeline* createComputePipelineSPIRV(string path, ComputeBuffers buffers)
+    SDL_GPUComputePipeline* createComputePipelineSPIRV(string path, ComComputeBuffers buffers)
     {
         ubyte[] code = readShader(path);
         return createComputePipeline(buffers, code, SDL_GPU_SHADERFORMAT_SPIRV);
     }
 
-    SDL_GPUComputePipeline* createComputePipeline(ComputeBuffers buffers, ubyte[] code, SDL_GPUShaderFormat format)
+    SDL_GPUComputePipeline* createComputePipeline(ComComputeBuffers buffers, ubyte[] code, SDL_GPUShaderFormat format)
     {
         SDL_GPUComputePipelineCreateInfo info;
         info.code_size = code.length;
@@ -1430,12 +1429,12 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         info.threadcount_x = threadCount;
         info.threadcount_y = threadCount;
-        info.threadcount_z = threadCount;
+        info.threadcount_z = 1;
 
         return createComputePipeline(&info);
     }
 
-    void bindComputeTextures(SDL_GPUTexture** storage, uint slot = 0, uint numBindings = 1)
+    void bindComputeStorageTextures(SDL_GPUTexture** storage, uint slot = 0, uint numBindings = 1)
     {
         if (!lastComputePass)
         {
@@ -1496,7 +1495,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_BindGPUComputePipeline(lastComputePass, pipeline);
     }
 
-    void removeComputePipeline(SDL_GPUComputePipeline* pipeline)
+    void deleteComputePipeline(SDL_GPUComputePipeline* pipeline)
     {
         SDL_ReleaseGPUComputePipeline(ptr, pipeline);
     }
@@ -1513,6 +1512,19 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             slot,
             data,
             len);
+    }
+
+    void dispatchCompute(uint groupCountX, uint groupCountY, uint groupCountZ)
+    {
+        if (!lastComputePass)
+        {
+            throw new Exception("Not found compute pass");
+        }
+        SDL_DispatchGPUCompute(
+            lastComputePass,
+            groupCountX,
+            groupCountY,
+            groupCountZ);
     }
 
 }

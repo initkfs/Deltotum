@@ -55,8 +55,12 @@ class Scene3d : Scene2d
     bool isMix2d3dMode = true;
     bool isMixCurrentPass;
 
-    HeatTextureArray heapMaps1;
-    HeatTextureArray heapMaps2;
+    HeatTextureArray heatMaps1;
+    HeatTextureArray heatMaps2;
+    bool isReadMap1 = true;
+    bool isHeatMap = true;
+
+    SDL_GPUComputePipeline* heatPipeline;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
@@ -173,13 +177,29 @@ class Scene3d : Scene2d
         build(postProc);
         postProc.create;
 
-        heapMaps1 = new HeatTextureArray;
-        build(heapMaps1);
-        heapMaps1.create;
+        heatMaps1 = new HeatTextureArray;
+        build(heatMaps1);
+        heatMaps1.create;
 
-        heapMaps2 = new HeatTextureArray;
-        build(heapMaps2);
-        heapMaps2.create;
+        heatMaps2 = new HeatTextureArray;
+        build(heatMaps2);
+        heatMaps2.create;
+
+        import std.path : buildPath;
+        import api.dm.com.graphics.gpu.com_pipeline : ComComputeBuffers;
+
+        ComComputeBuffers buffs;
+        buffs.numRTextures = 1;
+        buffs.numRWTextures = 1;
+        buffs.numUniforms = 1;
+
+        // gpu.dev.startCopyPass;
+        // heatMaps1.uploadStart;
+        // heatMaps2.uploadStart;
+        // gpu.dev.endCopyPass;
+
+        auto compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "HeatCompute.comp.spv");
+        heatPipeline = gpu.dev.createComputePipelineSPIRV(compShaderPath, buffs);
     }
 
     protected SDL_GPUColorTargetInfo createTargetInfo()
@@ -236,11 +256,54 @@ class Scene3d : Scene2d
 
         import api.dm.back.sdl3.externs.csdl3;
 
+        if (!gpu.startCmdBuffer(&depthStencilTargetInfo, isNeedSwapchain))
+        {
+            gpu.dev.resetState;
+            throw new Exception("Error starting gpu command buffer");
+        }
+
+        SDL_GPUStorageTextureReadWriteBinding rwBinding;
+        auto outHeatTexture = isReadMap1 ? heatMaps2.texture : heatMaps1.texture;
+        rwBinding.texture = outHeatTexture;
+        rwBinding.mip_level = 0;
+        rwBinding.layer = 0;
+        rwBinding.cycle = true;
+
+        gpu.dev.startComputePass(&rwBinding, null, 1, 0);
+        gpu.dev.bindComputePipeline(heatPipeline);
+
+        struct ThermalParams
+        {
+            float deltaTime = 0; //0.016
+            float conductivity = 1; //1
+            float coolingRate = 1;
+            float ambientTemp = 20;
+        }
+
+        ThermalParams params;
+        params.deltaTime = 1.0 / window.frameRate;
+        gpu.dev.pushComputeUniform(&params, params.sizeof, 0);
+
+        auto inputTexture = isReadMap1 ? heatMaps1 : heatMaps2;
+        auto inputGpu = inputTexture.texture;
+        gpu.dev.bindComputeStorageTextures(&inputGpu);
+
+        isReadMap1 = !isReadMap1;
+
+        size_t numThreads = 16;
+        uint threadsCount = heatMaps1.widthu / numThreads;
+        uint groupCountX = threadsCount;
+        uint groupCountY = threadsCount;
+        uint groupCountZ = 3;
+        gpu.dev.dispatchCompute(groupCountX, groupCountY, groupCountZ);
+        gpu.dev.endComputePass;
+
         if (antiAliaser || isMix2d3dMode)
         {
             SDL_GPUColorTargetInfo[1] targets;
             targets[0] = createTargetInfo;
-            if (!gpu.startRenderPass(targets, &depthStencilTargetInfo, isNeedSwapchain))
+
+            if (!gpu.beginRenderPass(targets, &depthStencilTargetInfo))
             {
                 gpu.dev.resetState;
                 throw new Exception("Error starting gpu rendering with depth");
@@ -248,12 +311,6 @@ class Scene3d : Scene2d
         }
         else
         {
-            if (!gpu.startCmdBuffer(&depthStencilTargetInfo, isNeedSwapchain))
-            {
-                gpu.dev.resetState;
-                throw new Exception("Error starting gpu command buffer");
-            }
-
             auto target = gpu.defaultSwapchainTarget;
 
             if (!gpu.beginRenderPass(target, &depthStencilTargetInfo))
@@ -265,6 +322,8 @@ class Scene3d : Scene2d
 
         //import api.math.geom2.rect2: Rect2f;
         //gpu.dev.setScissorRect(Rect2f(0, 0, window.width, window.height));
+
+        gpu.dev.bindFragmentSamplers(inputTexture, 6);
 
         drawSelfAndChildren(alpha);
         isMixCurrentPass = true;
@@ -317,6 +376,31 @@ class Scene3d : Scene2d
 
             graphic.rendererPresent;
         }
+
+        // gpu.dev.startCopyPass;
+        // uint textureSizeInBytes = 64 * 64 * 256 * float.sizeof;
+        // auto db = gpu.dev.newTransferDownloadBuffer(textureSizeInBytes);
+        // SDL_GPUTextureTransferInfo srcInfo;
+        // srcInfo.transfer_buffer = db;
+        // srcInfo.offset = 0;
+        // SDL_GPUTextureRegion srcRegion;
+        // srcRegion.texture = outHeatTexture;
+        // srcRegion.w = heatMaps2.widthu;
+        // srcRegion.h = heatMaps2.heightu;
+        // srcRegion.d = cast(uint) heatMaps2.count;
+        // gpu.dev.downloadTexture(&srcRegion, &srcInfo);
+        // gpu.dev.endCopyPass(true, true);
+
+        // void* mappedData = gpu.dev.mapTransferBuffer(db, true);
+        // float* rawHalfData = cast(float*) mappedData;
+        // float[] slice = rawHalfData[5.. 20];
+
+        // import std.stdio;
+        // import std.conv: to;
+        // writeln(slice);
+
+        // gpu.dev.unmapTransferBuffer(db);
+        // gpu.dev.deleteTransferBuffer(db);
 
         //TODO flush?
     }
@@ -486,14 +570,19 @@ class Scene3d : Scene2d
             antiAliaser.dispose;
         }
 
-        if (heapMaps1)
+        if (heatMaps1)
         {
-            heapMaps1.dispose;
+            heatMaps1.dispose;
         }
 
-        if (heapMaps2)
+        if (heatMaps2)
         {
-            heapMaps2.dispose;
+            heatMaps2.dispose;
+        }
+
+        if (heatPipeline)
+        {
+            gpu.dev.deleteComputePipeline(heatPipeline);
         }
     }
 }

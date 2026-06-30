@@ -4,7 +4,8 @@ import api.core.utils.buffers.dense_buffer : DenseBuffer;
 
 import core.atomic;
 
-import Math = api.math;
+import Math = api.core.utils.math;
+import std.algorithm.comparison : min, max;
 
 /**
  * Authors: initkfs
@@ -102,7 +103,7 @@ struct RingBuffer(BufferType, size_t RequestBufferSize, bool isStaticArray = fal
             return 0;
         }
 
-        size_t write = Math.min(BufferSize - size, buf.length);
+        size_t write = min(BufferSize - size, buf.length);
 
         size_t currPosToEnd, fromStart;
 
@@ -162,7 +163,7 @@ struct RingBuffer(BufferType, size_t RequestBufferSize, bool isStaticArray = fal
         {
             size_t currToEnd = void, fromStartAround = void;
 
-            size_t read = Math.min(size, buf.length);
+            size_t read = min(size, buf.length);
             size_t countOverflow = (readIdx & BufferSizeBitMask) + read;
             if (countOverflow > BufferSize)
             {

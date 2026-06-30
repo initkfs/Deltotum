@@ -103,11 +103,6 @@ class Sprite3d : Sprite2d
         orientation = Quaternion(1.0f, Vec3f(0, 0, 0));
 
         calcWorldMatrix;
-
-        if (numId == 0)
-        {
-            numId = scene.nextUniqId;
-        }
     }
 
     override bool isNeedDraw(Sprite2d sprite)

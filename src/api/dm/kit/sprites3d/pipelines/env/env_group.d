@@ -29,6 +29,8 @@ struct SceneTransforms
 struct MaterialConfig
 {
     MaterialData material;
+    align(4):
+    uint layerId;
 }
 
 struct SceneConfig
@@ -40,7 +42,7 @@ align(4):
     float farPlane;
     float time;
     uint lightCount;
-    float reserve4;
+    uint reserve4;
 align(16):
     LightData[4] lights;
 }
@@ -90,6 +92,11 @@ class EnvGroup : PipelineGroup
         buff.numVertexUniformBuffers += 2;
         buff.numFragUniformBuffers += 2;
         buff.numFragSamples += 6;
+
+        if(scene3d.isHeatMap){
+            buff.numFragSamples++;
+        }
+        
         createPipeline(buff);
 
         if (isCreateDefaultLight)
@@ -165,6 +172,7 @@ class EnvGroup : PipelineGroup
         MaterialData mat;
         mat.albedo = sprite.albedo.toArrayRGBAf;
         bool isDefaultMaterial = true;
+        matConfig.layerId = cast(uint) sprite.numId;
 
         if (cast(BaseLight) sprite.parent)
         {

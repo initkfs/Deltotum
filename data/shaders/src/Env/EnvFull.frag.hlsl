@@ -19,6 +19,9 @@ SamplerState emissionSampler : register(s4, space2);
 Texture2D<float4> dispMap : register(t5, space2);
 SamplerState dispMapSampler : register(s5, space2);
 
+Texture3D<float>  thermalMap  : register(t6, space2);
+SamplerState thermalMapSampler : register(s6, space2);
+
 //TODO one sampler for all
 //SamplerState mainSampler : register(s0, space2);
 
@@ -75,6 +78,7 @@ struct SceneConfig {
 
 struct MaterialConfig {
     Material material;
+    uint layerId;
 };
 
 cbuffer SceneUBO : register(b0, space3)
@@ -235,6 +239,58 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 
     if(matConfig.material.intensity != 1){
         result.color = matConfig.material.albedo;
+        return result;
+    }
+
+    //TODO remove
+    uint layerId = 0;
+    float itemCount = 256;
+
+    uint twidth, theight, tdepth;
+    thermalMap.GetDimensions(twidth, theight, tdepth);
+
+    float2 pixelCoord = input.texcoord * float2(twidth, theight);
+    int2 iCoord;
+    iCoord.x = (int)clamp(floor(pixelCoord.x), 0.0f, (float)(twidth - 2));
+    iCoord.y = (int)clamp(floor(pixelCoord.y), 0.0f, (float)(theight - 2));
+
+    float2 f = frac(pixelCoord);
+    int layer = (int)layerId;
+    int2 minBoundary = int2(0, 0);
+    int2 maxBoundary = int2((int)twidth - 1, (int)theight - 1);
+    
+    float t00 = thermalMap.Load(int4(iCoord + int2(0,0), layer, 0)).r;
+    float t10 = thermalMap.Load(int4(iCoord + int2(1,0), layer, 0)).r;
+    float t01 = thermalMap.Load(int4(iCoord + int2(0,1), layer, 0)).r;
+    float t11 = thermalMap.Load(int4(iCoord + int2(1,1), layer, 0)).r;
+    
+    float tempTexelX0 = lerp(t00, t10, f.x);
+    float tempTexelX1 = lerp(t01, t11, f.x);
+    float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
+    
+    //float texCoordZ = ((float)layerId + 0.5f) / 256; 
+    //float3 thermalUV = float3(input.texcoord, texCoordZ);
+    //float temperature = thermalMap.Sample(thermalMapSampler, thermalUV).r;
+    if (temperature > 100.0f) 
+    {
+        //result.color = float4(1, 0, 0, 1);
+        //return result;
+        float maxTempRange = 10000.0f - 100.0f;
+        float factor = clamp(sqrt((temperature - 100.0f) / maxTempRange), 0.0f, 1.0f);
+        float3 lowHeatColor  = float3(0.5f, 0.01f, 0.0f); // red
+        float3 midHeatColor  = float3(1.0f, 0.35f, 0.0f); // orange
+        float3 highHeatColor = float3(1.0f, 0.85f, 0.3f); // yellow
+        
+        float3 glowColor;
+        if (factor < 0.5f) {
+            glowColor = lerp(lowHeatColor, midHeatColor, factor * 2.0f);
+        } else {
+            glowColor = lerp(midHeatColor, highHeatColor, (factor - 0.5f) * 2.0f);
+        }
+        
+        //float3 charredAlbedo = matConfig.material.albedo.rgb * (1.0f - factor * 0.85f);
+        //float3 finalColor = charredAlbedo + glowColor;
+        result.color.rgb = matConfig.material.albedo.rgb * glowColor;
         return result;
     }
 

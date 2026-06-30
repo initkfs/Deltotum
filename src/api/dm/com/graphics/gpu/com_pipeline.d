@@ -21,3 +21,13 @@ struct ComPipelineBuffers
         return format("VertexSample:%d, VertexStorage:%d, VertexUniform:%d, VertexStorageTexture:%d, FragSample:%d, FragStorage:%d, FragUniform:%d, FragStorageTexture:%d", numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
     }
 }
+
+struct ComComputeBuffers
+{
+    uint numSamplers = 0;
+    uint numRTextures = 0;
+    uint numRBuffers = 0;
+    uint numRWTextures = 0;
+    uint numRWBuffers = 0;
+    uint numUniforms = 0;
+}

@@ -7,6 +7,7 @@ import api.math.matrices.matrix : Matrix4x4;
 import api.dm.back.sdl3.externs.csdl3;
 
 import api.math.geom3.vec3 : Vec3f;
+import api.math.geom2.vec2: Vec2f;
 import api.math.geom3.sphere3 : Sphere3f;
 import Math = api.math;
 
@@ -106,6 +107,29 @@ class Sphere : Mesh3dHigh
             return true;
         }
         return false;
+    }
+
+    Vec2f localTolUV(Vec3f position) pure nothrow
+    {
+        import Math = api.math;
+        //import std.math : atan2, acos, PI;
+        
+        float length = Math.sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
+
+        if (length == 0.0f){
+            return Vec2f(0.0f, 0.0f);
+        }
+            
+        float nx = position.x / length;
+        float ny = position.y / length;
+        float nz = position.z / length;
+
+        Vec2f uv;
+        // [-PI, PI] to  [0.0, 1.0]
+        uv.x = (Math.atan2(nx, nz) + Math.PI) / (2.0f * Math.PI);
+        uv.y = Math.acos(ny) / Math.PI;
+
+        return uv;
     }
 
     override void create()

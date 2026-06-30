@@ -44,6 +44,11 @@ class Mesh3d : MaterialSprite3d
     {
         super.create;
 
+        if (numId == 0)
+        {
+            numId = scene.nextUniqId;
+        }
+
         createMesh;
 
         if (vertices.length == 0)

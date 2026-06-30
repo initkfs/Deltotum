@@ -695,7 +695,8 @@ class Scene2d : EventKitTarget
 
     size_t nextUniqId()
     {
+        const prevId = _nextUniqId;
         _nextUniqId++;
-        return _nextUniqId;
+        return prevId;
     }
 }
