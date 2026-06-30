@@ -63,7 +63,25 @@ struct Light {
     float3 diffuse;
     float cutoff;
     float3 specular;
-    float outerCutoff;   
+    float outerCutoff;  
+    uint spectrum1; 
+    uint spectrum2; 
+};
+
+struct Spectrum 
+{
+    float4 highEnergy; // chans 0, 1, 2, 3
+    float4 lowEnergy; // chans 4, 5, 6, 7
+
+    float GetGamma()        { return highEnergy.x; }
+    float GetXrays()        { return highEnergy.y; }
+    float GetUltraviolet()  { return highEnergy.z; }
+    float GetVisible()      { return highEnergy.w; }
+
+    float GetInfrared()     { return lowEnergy.x; }
+    float GetTerahertz()    { return lowEnergy.y; }
+    float GetMicrowaves()   { return lowEnergy.z; }
+    float GetRadiowaves()   { return lowEnergy.w; }
 };
 
 struct SceneConfig {
@@ -103,6 +121,25 @@ float3 palette(float t) {
     float3 d = float3(0.5, 0.5, 0.5);
     //float3 d = float3(0.26, 0.41, 0.55);
     return a + b * cos(6.28318 * (c * t + d));
+}
+
+Spectrum UnpackSpectrum(uint p1, uint p2) 
+{
+    Spectrum output;
+
+    const float scale = 0.01; 
+
+    output.highEnergy.x = float(p1 & 0xFF) * scale;
+    output.highEnergy.y = float((p1 >> 8) & 0xFF) * scale;
+    output.highEnergy.z = float((p1 >> 16) & 0xFF) * scale;
+    output.highEnergy.w = float((p1 >> 24) & 0xFF) * scale;
+
+    output.lowEnergy.x = float(p2 & 0xFF) * scale;
+    output.lowEnergy.y = float((p2 >> 8) & 0xFF) * scale;
+    output.lowEnergy.z = float((p2 >> 16) & 0xFF) * scale;
+    output.lowEnergy.w = float((p2 >> 24) & 0xFF) * scale;
+
+    return output;
 }
 
 float3 calcDir(float3 diffuseColor, float4 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir){

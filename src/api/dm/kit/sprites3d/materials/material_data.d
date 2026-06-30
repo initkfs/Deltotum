@@ -38,6 +38,63 @@ align(4):
     uint isLamp;
 }
 
+enum SpectrumType
+{
+    gamma,
+    xrays,
+    ultraviolet,
+    visible,
+    infrared,
+    terahertz,
+    microwaves,
+    radiowaves
+}
+
+struct SpectrumLight
+{
+    ubyte gamma;
+    ubyte xrays;
+    ubyte ultraviolet;
+    ubyte visible;
+    ubyte infrared;
+    ubyte terahertz;
+    ubyte microwaves;
+    ubyte radiowaves;
+
+    static
+    {
+        SpectrumLight lightBulb() => SpectrumLight(visible : 5, infrared:
+            95);
+        SpectrumLight sun() => SpectrumLight(ultraviolet : 3, visible:
+            44, infrared:
+            53);
+        SpectrumLight fire() => SpectrumLight(visible : 1, infrared:
+            99);
+        SpectrumLight led() => SpectrumLight(visible : 95, infrared:
+            5);
+        SpectrumLight fluorescent() => SpectrumLight(ultraviolet : 5, visible:
+            25, infrared:
+            70);
+        SpectrumLight laser() => SpectrumLight(visible : 100);
+    }
+
+    ubyte[8] toUbyte() => [
+        gamma, xrays, ultraviolet, visible, infrared, terahertz, microwaves,
+        radiowaves
+    ];
+
+    uint[2] pack() const
+    {
+        uint[2] packed;
+
+        packed[0] = (cast(uint) gamma) | (cast(uint) xrays << 8) | (cast(uint) ultraviolet << 16) | (cast(uint) visible << 24);
+
+        packed[1] = (cast(uint) infrared) | (cast(uint) terahertz << 8) | (cast(uint) microwaves << 16) | (cast(uint) radiowaves << 24);
+
+        return packed;
+    }
+}
+
 struct LightData
 {
     Vec3f position;
@@ -52,9 +109,11 @@ struct LightData
     float cutoff = 0;
     float[3] specular;
     float outerCutoff = 0;
+    uint spectrum1;
+    uint spectrum2;
 }
 
-static assert(LightData.sizeof == 96);
+static assert(LightData.sizeof == 104);
 
 import api.math.geom3 : Vec3f;
 

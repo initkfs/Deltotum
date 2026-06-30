@@ -29,7 +29,7 @@ struct SceneTransforms
 struct MaterialConfig
 {
     MaterialData material;
-    align(4):
+align(4):
     uint layerId;
 }
 
@@ -93,10 +93,11 @@ class EnvGroup : PipelineGroup
         buff.numFragUniformBuffers += 2;
         buff.numFragSamples += 6;
 
-        if(scene3d.isHeatMap){
+        if (scene3d.isHeatMap)
+        {
             buff.numFragSamples++;
         }
-        
+
         createPipeline(buff);
 
         if (isCreateDefaultLight)
@@ -271,6 +272,10 @@ class EnvGroup : PipelineGroup
             lightData.cutoff = 0;
             lightData.specular = lamp.specular.toArrayFRGB;
             lightData.outerCutoff = 0;
+
+            uint[2] spectrum = lamp.spectrumData;
+            lightData.spectrum1 = spectrum[0];
+            lightData.spectrum2 = spectrum[1];
 
             uint type;
             import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
