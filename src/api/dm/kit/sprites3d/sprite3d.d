@@ -605,7 +605,8 @@ class Sprite3d : Sprite2d
         return Vec2f.init;
     }
 
-    Sprite3d rayToFirst(float eventX, float eventY, Sprite3d[] sprites, bool isCheckClosest = true)
+    Sprite3d rayToFirst(float eventX, float eventY, Sprite3d[] sprites, bool isCheckClosest = true, void delegate(
+            Vec2f) onUV = null)
     {
         import api.math.matrices.matrix : Matrix4x4;
         import api.math.geom4.vec4 : Vec4f;
@@ -650,17 +651,166 @@ class Sprite3d : Sprite2d
 
             if (discriminant >= 0)
             {
-                if (!isCheckClosest)
-                {
-                    return sp;
-                }
-
                 float t = (-b - Math.sqrt(discriminant)) / (2.0f * a);
                 if (t > 0 && t < minT)
                 {
                     minT = t;
                     closest = sp;
                 }
+
+                if (!isCheckClosest)
+                {
+                    break;
+                }
+            }
+        }
+
+        if (closest)
+        {
+            // World Space
+            Vec3f hitWorldPos = rayStart + rayDir * minT;
+
+            const sphereCenter = closest.sphereBounds.center;
+            Vec3f hitLocalPos = hitWorldPos - sphereCenter;
+
+            Vec3f direction = hitLocalPos.normalized;
+
+            //TODO extract helpers
+            Vec2f getSphereUV(Vec3f dir)
+            {
+                import Math = api.math;
+
+                //float v = 0.5f - (Math.asin(dir.y) / Math.PI);
+                float v = 0.5f + (Math.asin(dir.y) / Math.PI);
+                float phi = Math.atan2(dir.z, dir.x);
+
+                if (phi < 0.0f)
+                {
+                    phi += 2.0f * Math.PI;
+                }
+
+                float u = phi / (2.0f * Math.PI);
+                // u = 1.0f - u;
+
+                if (u < 0.0f)
+                    u = 0.0f;
+                else if (u > 1.0f)
+                    u = 1.0f;
+                if (v < 0.0f)
+                    v = 0.0f;
+                else if (v > 1.0f)
+                    v = 1.0f;
+
+                return Vec2f(u, v);
+            }
+
+            void getCubeMapUV(Vec3f dir, out uint faceIndex, out float u, out float v)
+            {
+                import Math = api.math;
+
+                float absX = Math.abs(dir.x);
+                float absY = Math.abs(dir.y);
+                float absZ = Math.abs(dir.z);
+
+                bool isPositive = true;
+                float maxAxis = absX;
+                float uc = 0, vc = 0;
+
+                if (absX >= absY && absX >= absZ)
+                {
+                    maxAxis = absX;
+                    isPositive = (dir.x > 0);
+                    faceIndex = isPositive ? 0 : 1; // 0 = +X (Right), 1 = -X (Left)
+                    uc = isPositive ? -dir.z : dir.z;
+                    vc = dir.y;
+                }
+                else if (absY >= absX && absY >= absZ)
+                {
+                    maxAxis = absY;
+                    isPositive = (dir.y > 0);
+                    faceIndex = isPositive ? 2 : 3; // 2 = +Y (Top), 3 = -Y (Bottom)
+
+                    uc = dir.x;
+                    vc = isPositive ? -dir.z : dir.z;
+                }
+                else
+                {
+                    maxAxis = absZ;
+                    isPositive = (dir.z > 0);
+                    faceIndex = isPositive ? 4 : 5; // 4 = +Z (Front), 5 = -Z (Back)
+
+                    uc = isPositive ? dir.x : -dir.x;
+                    vc = dir.y;
+                }
+
+                if (maxAxis == 0)
+                {
+                    faceIndex = 0;
+                    u = 0.5f;
+                    v = 0.5f;
+                    return;
+                }
+
+                u = 0.5f * (uc / maxAxis + 1.0f);
+                v = 0.5f * (vc / maxAxis + 1.0f);
+                //v = 1.0f - v;
+            }
+
+            if (onUV)
+            {
+                //TODO remove to mesh
+                import api.dm.kit.sprites3d.meshes.sphere : Sphere;
+                import api.dm.kit.sprites3d.meshes.cube : Cube;
+
+                if (auto s = cast(Sphere) closest)
+                {
+                    onUV(getSphereUV(direction));
+                }
+                else if (auto c = cast(Cube) closest)
+                {
+                    float u = 0, v = 0;
+                    uint faceIndex;
+
+                    getCubeMapUV(direction, faceIndex, u, v);
+
+                    uint col, row;
+                    switch (faceIndex)
+                    {
+                        case 0:
+                            col = 2;
+                            row = 1;
+                            break; // +X
+                        case 1:
+                            col = 0;
+                            row = 1;
+                            break; // -X
+                        case 2:
+                            col = 1;
+                            row = 0;
+                            break; // +Y
+                        case 3:
+                            col = 1;
+                            row = 2;
+                            break; // -Y
+                        case 4:
+                            col = 1;
+                            row = 1;
+                            break; // +Z
+                        default:
+                            col = 3;
+                            row = 1;
+                            break; // -Z
+                    }
+
+                    float globalU = (cast(float) col + u) / 4.0f;
+                    float globalV = (cast(float) row + v) / 3.0f;
+
+                    if (onUV)
+                    {
+                        onUV(Vec2f(globalU, globalV));
+                    }
+                }
+
             }
         }
 

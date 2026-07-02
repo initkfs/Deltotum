@@ -14,6 +14,7 @@ cbuffer ThermalParams : register(b0, space2)
     float conductivity;   // (0.0 - 1.0)
     float coolingRate;
     float ambientTemp;    // 20.0)
+    float4 updateXY;
 };
 
 static const float EPSILON = 1e-5f;
@@ -52,6 +53,11 @@ void main(uint3 globalID : SV_DispatchThreadID)
 
     if (texCoord.x >= textureDims.x || texCoord.y >= textureDims.y || texCoord.z >= textureDims.z)
         return;
+
+    if(all(texCoord == updateXY.xyz)){
+        OutputThermalVolume[texCoord] = updateXY.w;
+        return;
+    }
 
     int4 loadCoords = int4((int3)globalID, 0);
 

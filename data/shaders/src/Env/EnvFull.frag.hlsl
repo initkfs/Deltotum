@@ -285,25 +285,48 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 
     uint twidth, theight, tdepth;
     thermalMap.GetDimensions(twidth, theight, tdepth);
-
-    float2 pixelCoord = input.texcoord * float2(twidth, theight);
-    int2 iCoord;
-    iCoord.x = (int)clamp(floor(pixelCoord.x), 0.0f, (float)(twidth - 2));
-    iCoord.y = (int)clamp(floor(pixelCoord.y), 0.0f, (float)(theight - 2));
-
-    float2 f = frac(pixelCoord);
-    int layer = (int)layerId;
-    int2 minBoundary = int2(0, 0);
-    int2 maxBoundary = int2((int)twidth - 1, (int)theight - 1);
     
-    float t00 = thermalMap.Load(int4(iCoord + int2(0,0), layer, 0)).r;
-    float t10 = thermalMap.Load(int4(iCoord + int2(1,0), layer, 0)).r;
-    float t01 = thermalMap.Load(int4(iCoord + int2(0,1), layer, 0)).r;
-    float t11 = thermalMap.Load(int4(iCoord + int2(1,1), layer, 0)).r;
+    // float2 pixelCoord = input.texcoord * float2(twidth, theight);
+    // int2 iCoord;
+    // iCoord.x = (int)clamp(floor(pixelCoord.x), 0.0f, (float)(twidth - 2));
+    // iCoord.y = (int)clamp(floor(pixelCoord.y), 0.0f, (float)(theight - 2));
+    // float2 f = frac(pixelCoord);
+    // int layer = (int)layerId;    
+    // float t00 = thermalMap.Load(int4(iCoord + int2(0,0), layer, 0)).r;
+    // float t10 = thermalMap.Load(int4(iCoord + int2(1,0), layer, 0)).r;
+    // float t01 = thermalMap.Load(int4(iCoord + int2(0,1), layer, 0)).r;
+    // float t11 = thermalMap.Load(int4(iCoord + int2(1,1), layer, 0)).r;
+    // float tempTexelX0 = lerp(t00, t10, f.x);
+    // float tempTexelX1 = lerp(t01, t11, f.x);
+    // float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
+
+    float heatScale = 0.6;
+    //-+0.5 around center
+    float2 heatUV = (input.texcoord - 0.5f) * heatScale + 0.5f;
+
+    float2 pixelCoord = heatUV * float2(twidth, theight) - 0.5f;
+    int2 iCoord = (int2)floor(pixelCoord);
+    float2 f = frac(pixelCoord);
+    //f = f * f * (3.0f - 2.0f * f); 
+    int layer = (int)layerId;
+    int maxX = (int)twidth - 1;
+    int maxY = (int)theight - 1;
+    
+    int2 c00 = clamp(iCoord + int2(0, 0), int2(0, 0), int2(maxX, maxY));
+    int2 c10 = clamp(iCoord + int2(1, 0), int2(0, 0), int2(maxX, maxY));
+    int2 c01 = clamp(iCoord + int2(0, 1), int2(0, 0), int2(maxX, maxY));
+    int2 c11 = clamp(iCoord + int2(1, 1), int2(0, 0), int2(maxX, maxY));
+    
+    float t00 = thermalMap.Load(int4(c00, layer, 0)).r;
+    float t10 = thermalMap.Load(int4(c10, layer, 0)).r;
+    float t01 = thermalMap.Load(int4(c01, layer, 0)).r;
+    float t11 = thermalMap.Load(int4(c11, layer, 0)).r;
     
     float tempTexelX0 = lerp(t00, t10, f.x);
     float tempTexelX1 = lerp(t01, t11, f.x);
     float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
+
+    //float temperature = thermalMap.Sample(thermalMapSampler, float3(input.texcoord, layerId)).r;
     
     //float texCoordZ = ((float)layerId + 0.5f) / 256; 
     //float3 thermalUV = float3(input.texcoord, texCoordZ);
@@ -356,21 +379,30 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     //     normalV = -normalV;
     //     tangentV = -tangentV;
     // }
+    tangentV = normalize(tangentV - dot(tangentV, normalV) * normalV);
 
     //* 2.0 - 1.0 for SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM 
-    float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
-    mapNormal = normalize(mapNormal);
+    //float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
+    //mapNormal = normalize(mapNormal);
 
     //OpenGL-style
-    float3 bitangent = cross(normalV, tangentV);
+    //float3 bitangent = cross(normalV, tangentV);
     //result.color = float4(bitangent * 0.5 + 0.5, 1.0);
     //return result;
     
-    float3x3 TBN = float3x3(tangentV, bitangent, normalV);
+    //float3x3 TBN = float3x3(tangentV, bitangent, normalV);
     //mapNormal.y = -mapNormal.y;
-    float3 normal = normalize(mul(mapNormal, TBN)); 
+    //float3 normal = normalize(mul(mapNormal, TBN)); 
     //result.color = float4(normal * 0.5 + 0.5, 1.0);
     //return result;
+
+    float3 bitangent = cross(normalV, tangentV);    
+    float3x3 TBN = float3x3(tangentV, bitangent, normalV);
+    float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
+    mapNormal = mapNormal * 2.0f - 1.0f; // <--- КРИТИЧЕСКИЙ ФИКС ДЛЯ КАРТ НОРМАЛЕЙ
+    // DirectX
+    // mapNormal.y = -mapNormal.y; 
+    float3 normal = normalize(mul(mapNormal, TBN));
 
     float3 viewDir = normalize(sceneConfig.cameraPos - input.worldPos);
 

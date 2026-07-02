@@ -189,6 +189,16 @@ class TextureGPU : Sprite3d
         }
     }
 
+    void createTransferBuffer(size_t size)
+    {
+        if (_transferBuffer)
+        {
+            //TODO reuse if oldsize == size?
+            gpu.dev.deleteTransferBuffer(_transferBuffer);
+        }
+        _transferBuffer = gpu.dev.newTransferUploadBuffer(cast(uint) size);
+    }
+
     uint calcMipMapLevels(float w, float h)
     {
         import Math = api.math;

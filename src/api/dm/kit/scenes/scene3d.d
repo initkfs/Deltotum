@@ -62,6 +62,17 @@ class Scene3d : Scene2d
 
     SDL_GPUComputePipeline* heatPipeline;
 
+    struct ThermalParams
+    {
+        float deltaTime = 0; //0.016
+        float conductivity = 1; //1
+        float coolingRate = 1;
+        float ambientTemp = 20;
+        float[4] updateXY = 0;
+    }
+
+    ThermalParams params;
+
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
         super(isInitUDAProcessor);
@@ -239,6 +250,8 @@ class Scene3d : Scene2d
         return colorTargetInfo;
     }
 
+    HeatTextureArray heatInputTexture() => isReadMap1 ? heatMaps1 : heatMaps2;
+
     override void drawAll(float alpha)
     {
         if ((!gpu) || (!platform.cap.isGPU))
@@ -272,16 +285,10 @@ class Scene3d : Scene2d
         gpu.dev.startComputePass(&rwBinding, null, 1, 0);
         gpu.dev.bindComputePipeline(heatPipeline);
 
-        struct ThermalParams
-        {
-            float deltaTime = 0; //0.016
-            float conductivity = 1; //1
-            float coolingRate = 1;
-            float ambientTemp = 20;
-        }
-
-        ThermalParams params;
         params.deltaTime = 1.0 / window.frameRate;
+
+        //params.updateXY = [7, 15, 0, 10000];
+
         gpu.dev.pushComputeUniform(&params, params.sizeof, 0);
 
         auto inputTexture = isReadMap1 ? heatMaps1 : heatMaps2;
@@ -453,12 +460,28 @@ class Scene3d : Scene2d
 
     void uploadStart()
     {
+        if (heatMaps1)
+        {
+            heatMaps1.uploadStart;
+        }
 
+        if (heatMaps2)
+        {
+            heatMaps2.uploadStart;
+        }
     }
 
     void uploadEnd()
     {
+        if (heatMaps1)
+        {
+            heatMaps1.uploadEnd;
+        }
 
+        if (heatMaps2)
+        {
+            heatMaps2.uploadEnd;
+        }
     }
 
     void uploadToGPU()

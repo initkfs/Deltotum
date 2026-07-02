@@ -7,17 +7,27 @@ import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
  */
 
 import api.dm.back.sdl3.externs.csdl3;
+import core.stdc.stdlib : malloc, free, realloc;
 
 class HeatTextureArray : TextureGPU
 {
     size_t count;
 
-    this(float w = 16, float h = 16, size_t count = 256)
+    bool isKeepBuffer = true;
+
+    protected
+    {
+        float[] dataBuffer;
+    }
+
+    this(float w = 32, float h = 32, size_t count = 256)
     {
         initSize(w, h);
         id = "HeatTextureArray";
         assert(count > 0);
         this.count = count;
+
+        isMipMaps = false;
     }
 
     override void create()
@@ -56,45 +66,81 @@ class HeatTextureArray : TextureGPU
         isDisposeSampler = true;
     }
 
-    override void uploadStart()
+    size_t dataBufferSize()
     {
-        import core.stdc.stdlib : malloc, free;
-
-        uint width = widthu;
-        uint height = heightu;
         uint depth = cast(uint) count;
+        size_t bufferSize = widthu * heightu * depth;
+        return bufferSize;
+    }
 
-        size_t bufferSize = width * height * depth;
-        size_t bufferSizeBytes = bufferSize * float.sizeof;
-        float* cpuDataPtr = cast(float*) malloc(bufferSizeBytes);
+    size_t dataBufferSizeBytes(size_t bufferSize) => bufferSize * float.sizeof;
+
+    void createDataBuffer()
+    {
+        size_t bufferSize = dataBufferSize;
+        if (bufferSize == 0)
+        {
+            throw new Exception("Buffer size must not be 0");
+        }
+
+        if (dataBuffer.length == bufferSize)
+        {
+            dataBuffer[] = 0;
+            return;
+        }
+
+        size_t bufferSizeBytes = dataBufferSizeBytes(bufferSize);
+
+        float* cpuDataPtr;
+        if (dataBuffer.length == 0)
+        {
+            cpuDataPtr = cast(float*) malloc(bufferSizeBytes);
+        }
+        else
+        {
+            cpuDataPtr = cast(float*) realloc(dataBuffer.ptr, bufferSizeBytes);
+        }
+
         if (!cpuDataPtr)
         {
-            throw new Exception("cpu data is null");
+            throw new Exception("Data buffer allocation fail");
         }
 
-        scope (exit)
+        dataBuffer = cpuDataPtr[0 .. bufferSize];
+    }
+
+    void deleteDataBuffer()
+    {
+        //TODO is null?
+        if (dataBuffer.length == 0)
         {
-            free(cpuDataPtr);
+            return;
         }
 
-        float[] cpuData = cpuDataPtr[0 .. bufferSize];
-        cpuData[] = 20;
+        free(dataBuffer.ptr);
+        dataBuffer = null;
+    }
 
-        uint centerX = widthu / 2;
-        uint centerY = heightu / 2;
-        uint centerZ = 1;
-        size_t pixelIndex = centerX + (centerY * width) + (centerZ * width * height);
-        cpuData[0 .. 10] = 50000.0f;
+    override void uploadStart()
+    {
+        createDataBuffer;
 
-        SDL_GPUTransferBuffer* transferBuffer = gpu.dev.newTransferUploadBuffer(
-            cast(uint) bufferSizeBytes);
-        // scope (exit)
-        // {
-        //     gpu.dev.deleteTransferBuffer(transferBuffer);
-        // }
+        if (!isKeepBuffer)
+        {
+            scope (exit)
+            {
+                deleteDataBuffer;
+            }
+        }
+
+        const bufferSize = dataBufferSize;
+        const buffSizeBytes = dataBufferSizeBytes(bufferSize);
+
+        createTransferBuffer(buffSizeBytes);
+
         auto transBuffMap = gpu.dev.mapTransferBuffer(transferBuffer, false);
         float[] transBuffSlize = (cast(float*) transBuffMap)[0 .. bufferSize];
-        transBuffSlize[0 .. bufferSize] = cpuData[0 .. bufferSize];
+        transBuffSlize[0 .. bufferSize] = dataBuffer[0 .. bufferSize];
 
         gpu.dev.unmapTransferBuffer(transferBuffer);
 
@@ -112,9 +158,70 @@ class HeatTextureArray : TextureGPU
         destRegion.z = 0;
         destRegion.w = widthu;
         destRegion.h = heightu;
-        destRegion.d = depth;
+        destRegion.d = cast(uint) count;
 
         gpu.dev.uploadTexture(&sourceInfo, &destRegion, false);
+        _upload = true;
     }
+
+    // void setIndex(float value = 0, float u0to1 = 0, uint v0to1 = 0, size_t heatZ = 0)
+    // {
+    //     uint heatX = cast(uint)(u0to1 * width);
+    //     uint heatY = cast(uint)(v0to1 * height);
+
+    //     if (heatX >= width)
+    //         heatX = widthi - 1;
+    //     if (heatY >= height)
+    //         heatY = heighti - 1;
+
+    //     size_t pixelIndex = heatX + (heatZ * heatY * widthu);
+    //     if (pixelIndex >= dataBuffer.length)
+    //     {
+    //         import std.format : format;
+
+    //         throw new Exception(format("Data buffer overflow with index %d, but length %d", pixelIndex, dataBuffer
+    //                 .length));
+    //     }
+    //     dataBuffer[pixelIndex] = value;
+    // }
+
+    // SDL_GPUTransferBuffer* updateUV(float value = 0, float u0to1 = 0, uint v0to1 = 0, size_t heatZ = 0)
+    // {
+    //     uint heatX = cast(uint)(u0to1 * width);
+    //     uint heatY = cast(uint)(v0to1 * height);
+
+    //     if (heatX >= width)
+    //         heatX = widthi - 1;
+    //     if (heatY >= height)
+    //         heatY = heighti - 1;
+
+    //     //size_t pixelIndex = heatX + (heatZ * heatY * widthu);
+
+    //     SDL_GPUTransferBuffer* tbuff = gpu.dev.newTransferBuffer(float.sizeof);
+    //     auto transBuffMap = gpu.dev.mapTransferBuffer(tbuff, false);
+    //     *(cast(float*) transBuffMap) = value;      
+    //     gpu.dev.unmapTransferBuffer(transBuffMap);  
+
+    //     SDL_GPUTextureTransferInfo source;
+    //     //Direct3D 12
+    //     //pixels_per_row align 256, offset align 512
+    //     source.transfer_buffer = tbuff;
+    //     source.offset = 0;
+
+    //     SDL_GPUTextureRegion dest;
+    //     dest.texture = _texture;
+    //     dest.mip_level = 0;
+    //     dest.x = heatX;
+    //     dest.y = heatY;
+    //     dest.z = 0;
+    //     dest.w = 1;
+    //     dest.h = 1;
+    //     dest.d = 1;
+    //     dest.layer = heatZ;
+
+    //     gpu.dev.uploadTexture(&source, &dest, true);
+
+    //     return tbuff;
+    // }
 
 }

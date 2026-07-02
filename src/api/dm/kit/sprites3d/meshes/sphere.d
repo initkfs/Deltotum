@@ -68,6 +68,18 @@ class Sphere : Mesh3dHigh
                 float ty = 0.0f;
                 float tz = Math.cos(sectorAngle);
 
+                if (i == 0 || i == stacks)
+                {
+                    x = 0.0f;
+                    z = 0.0f;
+                    nx = 0.0f;
+                    nz = 0.0f;
+                    
+                    tx = 1.0f; 
+                    ty = 0.0f;
+                    tz = 0.0f;
+                }
+
                 vertices[index] = ComVertex(x, y, z, [nx, ny, nz], u, v, tx, ty, tz);
                 index++;
             }
