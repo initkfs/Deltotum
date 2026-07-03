@@ -274,7 +274,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     }
 
     if(matConfig.material.intensity != 1){
-        result.color = matConfig.material.albedo;
+        result.color = matConfig.material.albedo * matConfig.material.intensity;
         return result;
     }
 
