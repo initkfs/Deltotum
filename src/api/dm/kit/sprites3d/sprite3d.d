@@ -673,6 +673,10 @@ class Sprite3d : Sprite2d
             const sphereCenter = closest.sphereBounds.center;
             Vec3f hitLocalPos = hitWorldPos - sphereCenter;
 
+            // hitLocalPos.x /= closest.scaleX;
+            // hitLocalPos.y /= closest.scaleY;
+            // hitLocalPos.z /= closest.scaleZ;
+
             Vec3f direction = hitLocalPos.normalized;
 
             //TODO extract helpers
@@ -764,6 +768,9 @@ class Sprite3d : Sprite2d
 
                 if (auto s = cast(Sphere) closest)
                 {
+                    //auto invQuat = s.orientation.conjugate;
+                    //Vec3f rotatedLocalPos = invQuat.rotate(hitLocalPos).normalized;
+
                     onUV(getSphereUV(direction));
                 }
                 else if (auto c = cast(Cube) closest)
@@ -773,41 +780,42 @@ class Sprite3d : Sprite2d
 
                     getCubeMapUV(direction, faceIndex, u, v);
 
-                    uint col, row;
-                    switch (faceIndex)
-                    {
-                        case 0:
-                            col = 2;
-                            row = 1;
-                            break; // +X
-                        case 1:
-                            col = 0;
-                            row = 1;
-                            break; // -X
-                        case 2:
-                            col = 1;
-                            row = 0;
-                            break; // +Y
-                        case 3:
-                            col = 1;
-                            row = 2;
-                            break; // -Y
-                        case 4:
-                            col = 1;
-                            row = 1;
-                            break; // +Z
-                        default:
-                            col = 3;
-                            row = 1;
-                            break; // -Z
-                    }
+                    // uint col, row;
+                    // switch (faceIndex)
+                    // {
+                    //     case 0:
+                    //         col = 2;
+                    //         row = 1;
+                    //         break; // +X
+                    //     case 1:
+                    //         col = 0;
+                    //         row = 1;
+                    //         break; // -X
+                    //     case 2:
+                    //         col = 1;
+                    //         row = 0;
+                    //         break; // +Y
+                    //     case 3:
+                    //         col = 1;
+                    //         row = 2;
+                    //         break; // -Y
+                    //     case 4:
+                    //         col = 1;
+                    //         row = 1;
+                    //         break; // +Z
+                    //     default:
+                    //         col = 3;
+                    //         row = 1;
+                    //         break; // -Z
+                    // }
 
-                    float globalU = (cast(float) col + u) / 4.0f;
-                    float globalV = (cast(float) row + v) / 3.0f;
+                    //Cube atlas
+                    // float globalU = (cast(float) col + u) / 4.0f;
+                    // float globalV = (cast(float) row + v) / 3.0f;
 
                     if (onUV)
                     {
-                        onUV(Vec2f(globalU, globalV));
+                        onUV(Vec2f(u, v));
                     }
                 }
 

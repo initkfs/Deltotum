@@ -16,6 +16,8 @@ struct Quaternion
     Vec3f v; // Imaginary
 
     static Quaternion identity() => Quaternion(1);
+   
+    Quaternion conjugate() const pure nothrow => Quaternion(this.w, v.neg);
 
     //ax*ax + ay*ay + az*az = 1
     static Quaternion fromAngle(float angleDeg, Vec3f axisNormalized)

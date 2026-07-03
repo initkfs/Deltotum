@@ -13,6 +13,11 @@ class Cube : Mesh3dLow
 {
     float depth = 0;
 
+    this(float size)
+    {
+        this(size, size, size);
+    }
+
     this(float w = 1, float h = 1, float depth = 1)
     {
         this.initSize(w, h);
