@@ -73,15 +73,14 @@ struct Spectrum
     float4 highEnergy; // chans 0, 1, 2, 3
     float4 lowEnergy; // chans 4, 5, 6, 7
 
-    float GetGamma()        { return highEnergy.x; }
-    float GetXrays()        { return highEnergy.y; }
-    float GetUltraviolet()  { return highEnergy.z; }
-    float GetVisible()      { return highEnergy.w; }
-
-    float GetInfrared()     { return lowEnergy.x; }
-    float GetTerahertz()    { return lowEnergy.y; }
-    float GetMicrowaves()   { return lowEnergy.z; }
-    float GetRadiowaves()   { return lowEnergy.w; }
+    float GetGamma() { return highEnergy.x; }
+    float GetXrays() { return highEnergy.y; }
+    float GetUV() { return highEnergy.z; }
+    float GetVisible() { return highEnergy.w; }
+    float GetIR() { return lowEnergy.x; }
+    float GetTerahertz() { return lowEnergy.y; }
+    float GetMicrowaves() { return lowEnergy.z; }
+    float GetRadiowaves() { return lowEnergy.w; }
 };
 
 struct SceneConfig {
@@ -431,6 +430,8 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
             resultColor += calcSpot(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
          }
 
+         float lightDistance = length(light.position - input.worldPos);
+
          Spectrum spectrum = UnpackSpectrum(light.spectrum1, light.spectrum2);
          
          float3 lightDir = normalize(-light.direction);
@@ -438,13 +439,42 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
          float3 V = normalize(viewDir);
          float3 H = normalize(L + V);
          
-         float ikDiffuse  = max(dot(normal, L), 0.0f);
-         float ikSpecular = pow(max(dot(normal, H), 0.0f), 16.0f);
-         float incomingIR = (ikDiffuse + ikSpecular) * spectrum.GetInfrared() * 10;
-         float absorption = 0.5;
-         float tempFromIR = incomingIR * absorption; 
+         float irDiffuse  = max(dot(normal, L), 0.0f);
+         float irSpecular = pow(max(dot(normal, H), 0.0f), 16.0f);
+         float incomingIR = (irDiffuse + irSpecular) * spectrum.GetIR();
+         float absorptionIR = 0.5;
+         float tempFromIR = incomingIR * absorptionIR; 
          
          temperature+=tempFromIR;
+
+         //Gamma
+         float attenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
+         //shadow map
+         float gammaShadow = 1; 
+         float incomingGamma = spectrum.GetGamma() * attenuation * gammaShadow;
+         float gammaAbsorption = 1; 
+         temperature += incomingGamma * gammaAbsorption;
+
+         //https://en.wikipedia.org/wiki/Cherenkov_radiation
+         float3 ionizationGlowColor = float3(0.0f, 0.4f, 1.0f);
+         //matConfig.material.ionizationYield
+         float ionizationIntensity = incomingGamma * 1;
+         resultColor += ionizationGlowColor * ionizationIntensity;
+
+         //UV
+         float uvDiffuse = max(dot(normal, L), 0.0f);
+         float uvSpecular = pow(max(dot(normal, H), 0.0f), 32.0f);
+         float uvValue = spectrum.GetUV();
+         float uvAttenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
+         float incomingUV = (uvDiffuse + uvSpecular) * uvValue * uvAttenuation;
+
+        //  float fakeFactor = 0.05f; 
+        //  float3 scatteredLight = matConfig.material.fluorescenceColor.rgb * (incomingUV * fakeFactor);
+        //  resultColor += scatteredLight;
+         
+         //float3 fluoColor = matConfig.material.fluorescenceColor; 
+         //float fluoYield = matConfig.material.fluorescenceYield; 
+         //float3 visibleFluorescence = fluoColor * (incoming_UV_energy * fluoYield);
     }
 
     //float temperature = thermalMap.Sample(thermalMapSampler, float3(input.texcoord, layerId)).r;
