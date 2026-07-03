@@ -2,7 +2,7 @@ module api.dm.kit.domains.phys.mech;
 
 import api.dm.kit.domains.base_domain : BaseDomain;
 
-import api.sims.phys.rigids2d.phys_shape : PhysShape;
+import api.sims.phys.rigids2d.phys_shape2d : PhysShape2d;
 
 /*
  * Authors: initkfs
@@ -10,7 +10,7 @@ import api.sims.phys.rigids2d.phys_shape : PhysShape;
 
 class Mech : BaseDomain
 {
-    PhysShape physShape;
+    PhysShape2d physShape2d;
 
     float angularVelocity = 0;
     float maxAngularVelocity = 0;
@@ -31,17 +31,17 @@ class Mech : BaseDomain
         float _invMass = 0;
     }
 
-    bool isPhysShapeRect() => physShape == PhysShape.rect;
-    bool isPhysShapeCircle() => physShape == PhysShape.circle;
+    bool isPhysShapeRect() => physShape2d == PhysShape2d.rect;
+    bool isPhysShapeCircle() => physShape2d == PhysShape2d.circle;
 
     void setPhysShapeRect()
     {
-        physShape = PhysShape.rect;
+        physShape2d = PhysShape2d.rect;
     }
 
     void setPhysShapeCircle()
     {
-        physShape = PhysShape.circle;
+        physShape2d = PhysShape2d.circle;
     }
 
     void inertia(float newv)

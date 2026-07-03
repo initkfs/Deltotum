@@ -6,7 +6,7 @@ import api.math.geom2.circle2 : Circle2f;
 
 import api.sims.phys.rigids2d.collisions.contacts;
 import api.sims.phys.rigids2d.collisions.contact_checker;
-import api.sims.phys.rigids2d.phys_shape : calcInertia;
+import api.sims.phys.rigids2d.phys_shape2d : calcInertia;
 
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;

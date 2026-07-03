@@ -1,8 +1,8 @@
-module api.sims.phys.rigids2d.phys_shape;
+module api.sims.phys.rigids2d.phys_shape2d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-enum PhysShape
+enum PhysShape2d
 {
     rect,
     circle,
@@ -26,7 +26,7 @@ void calcInertia(Sprite2d target)
     auto mech = target.domains.mech;
 
     float result = 0;
-    final switch (mech.physShape) with (PhysShape)
+    final switch (mech.physShape2d) with (PhysShape2d)
     {
         case rect:
             result = inertiaRect(target);
