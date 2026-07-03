@@ -279,6 +279,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
         return result;
     }
 
+    //HEAT
     //TODO remove
     uint layerId = 0;
     float itemCount = 256;
@@ -324,35 +325,8 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     
     float tempTexelX0 = lerp(t00, t10, f.x);
     float tempTexelX1 = lerp(t01, t11, f.x);
-    float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
 
-    //float temperature = thermalMap.Sample(thermalMapSampler, float3(input.texcoord, layerId)).r;
-    
-    //float texCoordZ = ((float)layerId + 0.5f) / 256; 
-    //float3 thermalUV = float3(input.texcoord, texCoordZ);
-    //float temperature = thermalMap.Sample(thermalMapSampler, thermalUV).r;
-    if (temperature > 100.0f) 
-    {
-        //result.color = float4(1, 0, 0, 1);
-        //return result;
-        float maxTempRange = 10000.0f - 100.0f;
-        float factor = clamp(sqrt((temperature - 100.0f) / maxTempRange), 0.0f, 1.0f);
-        float3 lowHeatColor  = float3(0.5f, 0.01f, 0.0f); // red
-        float3 midHeatColor  = float3(1.0f, 0.35f, 0.0f); // orange
-        float3 highHeatColor = float3(1.0f, 0.85f, 0.3f); // yellow
-        
-        float3 glowColor;
-        if (factor < 0.5f) {
-            glowColor = lerp(lowHeatColor, midHeatColor, factor * 2.0f);
-        } else {
-            glowColor = lerp(midHeatColor, highHeatColor, (factor - 0.5f) * 2.0f);
-        }
-        
-        //float3 charredAlbedo = matConfig.material.albedo.rgb * (1.0f - factor * 0.85f);
-        //float3 finalColor = charredAlbedo + glowColor;
-        result.color.rgb = matConfig.material.albedo.rgb * glowColor;
-        return result;
-    }
+    float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
 
     //result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 
@@ -456,6 +430,49 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
          }else if(light.lightType == LightType::Spot){
             resultColor += calcSpot(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
          }
+
+         Spectrum spectrum = UnpackSpectrum(light.spectrum1, light.spectrum2);
+         
+         float3 lightDir = normalize(-light.direction);
+         float3 L = normalize(lightDir);
+         float3 V = normalize(viewDir);
+         float3 H = normalize(L + V);
+         
+         float ikDiffuse  = max(dot(normal, L), 0.0f);
+         float ikSpecular = pow(max(dot(normal, H), 0.0f), 16.0f);
+         float incomingIR = (ikDiffuse + ikSpecular) * spectrum.GetInfrared() * 10;
+         float absorption = 0.5;
+         float tempFromIR = incomingIR * absorption; 
+         
+         temperature+=tempFromIR;
+    }
+
+    //float temperature = thermalMap.Sample(thermalMapSampler, float3(input.texcoord, layerId)).r;
+   
+    //float texCoordZ = ((float)layerId + 0.5f) / 256; 
+    //float3 thermalUV = float3(input.texcoord, texCoordZ);
+    //float temperature = thermalMap.Sample(thermalMapSampler, thermalUV).r;
+    if (temperature > 50.0f) 
+    {
+        //result.color = float4(1, 0, 0, 1);
+        //return result;
+        float maxTempRange = 10000.0f - 100.0f;
+        float factor = clamp(sqrt((temperature - 100.0f) / maxTempRange), 0.0f, 1.0f);
+        float3 lowHeatColor  = float3(0.5f, 0.01f, 0.0f); // red
+        float3 midHeatColor  = float3(1.0f, 0.35f, 0.0f); // orange
+        float3 highHeatColor = float3(1.0f, 0.85f, 0.3f); // yellow
+        
+        float3 glowColor;
+        if (factor < 0.5f) {
+            glowColor = lerp(lowHeatColor, midHeatColor, factor * 2.0f);
+        } else {
+            glowColor = lerp(midHeatColor, highHeatColor, (factor - 0.5f) * 2.0f);
+        }
+        
+        //float3 charredAlbedo = matConfig.material.albedo.rgb * (1.0f - factor * 0.85f);
+        //float3 finalColor = charredAlbedo + glowColor;
+        resultColor += matConfig.material.albedo.rgb * glowColor;
+        //return result;
     }
 
     //resultColor = clamp(resultColor, 0.0, 1.0);
