@@ -2,12 +2,11 @@
 * Author: initkfs
 */
 
-cbuffer UniformBlock : register(b0, space1)
+cbuffer SpriteConfig : register(b0, space1)
 {
     row_major float4x4 model;
     row_major float4x4 view;
     row_major float4x4 projection;
-    row_major float4x4 normal;
 };
 
 struct Input

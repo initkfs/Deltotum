@@ -14,6 +14,7 @@ import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.dm.kit.scenes.postprocess.bloom.bloom : Bloom;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 import api.sims.phys.diffusions.diffusion_pass : DiffusionPass;
+import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.math.matrices.matrix;
 
 //TODO remove native api
@@ -53,6 +54,10 @@ class Scene3d : Scene2d
 
     bool isMix2d3dMode = true;
     bool isMixCurrentPass;
+
+    bool isNeedCubeMap = true;
+    TextureGPU cubeMap;
+    TextureGPU cubeMapPlaceholder;
 
     protected
     {
@@ -189,6 +194,14 @@ class Scene3d : Scene2d
             buildInit(_diffusionPlaceholder);
             _diffusionPlaceholder.create(1, 1, RGBA.white);
         }
+
+        import api.dm.kit.graphics.colors.rgba : RGBA;
+
+        cubeMapPlaceholder = new TextureGPU;
+        cubeMapPlaceholder.isNeedCamera = false;
+        cubeMapPlaceholder.isNeedDispose = false;
+        buildInit(cubeMapPlaceholder);
+        cubeMapPlaceholder.create(1, 1, RGBA.white);
     }
 
     protected SDL_GPUColorTargetInfo createTargetInfo()
@@ -284,6 +297,9 @@ class Scene3d : Scene2d
         auto diffusionTexture = _diffusionPass ? _diffusionPass.outputTexture
             : _diffusionPlaceholder;
         gpu.dev.bindFragmentSamplers(diffusionTexture, 6);
+
+        auto cube = cubeMap ? cubeMap : cubeMapPlaceholder;
+        gpu.dev.bindFragmentSamplers(cube, 7);
 
         drawSelfAndChildren(alpha);
         isMixCurrentPass = true;
@@ -549,6 +565,10 @@ class Scene3d : Scene2d
         if (_diffusionPass)
         {
             _diffusionPass.dispose;
+        }
+
+        if(cubeMapPlaceholder){
+            cubeMapPlaceholder.dispose;
         }
     }
 }

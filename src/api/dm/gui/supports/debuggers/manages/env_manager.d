@@ -53,6 +53,10 @@ class EnvManager : BaseDebuggerPanel
     {
         super.create;
 
+        if(!targetScene.postProc){
+            return;
+        }
+
         envPanel = new RegulateTextPanel;
         addCreate(envPanel);
 

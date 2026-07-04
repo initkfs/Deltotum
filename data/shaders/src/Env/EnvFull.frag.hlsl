@@ -22,6 +22,9 @@ SamplerState dispMapSampler : register(s5, space2);
 Texture3D<float>  thermalMap  : register(t6, space2);
 SamplerState thermalMapSampler : register(s6, space2);
 
+TextureCube<float4> skyboxTexture : register(t7, space2);
+SamplerState skyboxSampler : register(s7, space2);
+
 //TODO one sampler for all
 //SamplerState mainSampler : register(s0, space2);
 
@@ -304,7 +307,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
         // float tempTexelX1 = lerp(t01, t11, f.x);
         // float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
 
-        float heatScale = 0.8;
+        float heatScale = 1;
         //-+0.5 around center
         float2 heatUV = (input.texcoord - 0.5f) * heatScale + 0.5f;
 
@@ -381,6 +384,11 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     // DirectX
     // mapNormal.y = -mapNormal.y; 
     float3 normal = normalize(mul(mapNormal, TBN));
+
+    float3 I = normalize(input.worldPos - sceneConfig.cameraPos);
+    float3 R = reflect(I, normal);
+    float reflectionIntensity = 0.2;
+    resultColor += skyboxTexture.Sample(skyboxSampler, R).rgb * reflectionIntensity;
 
     float3 viewDir = normalize(sceneConfig.cameraPos - input.worldPos);
 

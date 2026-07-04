@@ -25,65 +25,102 @@ class Cube : Mesh3dLow
         id = "Cube3d";
     }
 
+    this(ComVertex[] verts, ushort[] idx)
+    {
+        id = "Cube3d";
+        super(verts, idx);
+    }
+
     override void createMesh()
     {
-        const halfWidth = width / 2.0;
-        const halfHeight = height / 2.0;
-        const halfDepth = depth / 2.0;
+        if (vertices.length == 0)
+        {
+            const halfWidth = width / 2.0;
+            const halfHeight = height / 2.0;
+            const halfDepth = depth / 2.0;
 
-        vertices = [
-            // Front face (Z = +halfDepth), normal: (0, 0, 1)
-            ComVertex(-halfWidth, -halfHeight, halfDepth, [0.0f, 0.0f, 1.0f], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 0: left bottom
-            ComVertex(halfWidth, -halfHeight, halfDepth, [0.0f, 0.0f, 1.0f], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 1: bottom right
-            ComVertex(halfWidth, halfHeight, halfDepth, [0.0f, 0.0f, 1.0f], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 2: top right
-            ComVertex(-halfWidth, halfHeight, halfDepth, [0.0f, 0.0f, 1.0f], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 3: top left
+            vertices = [
+                // Front face (Z = +halfDepth), normal: (0, 0, 1)
+                ComVertex(-halfWidth, -halfHeight, halfDepth, [0.0f, 0.0f, 1.0f], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 0: left bottom
+                ComVertex(halfWidth, -halfHeight, halfDepth, [0.0f, 0.0f, 1.0f], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 1: bottom right
+                ComVertex(halfWidth, halfHeight, halfDepth, [0.0f, 0.0f, 1.0f], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 2: top right
+                ComVertex(-halfWidth, halfHeight, halfDepth, [0.0f, 0.0f, 1.0f], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 3: top left
 
-            // Back face (Z = -halfDepth), normal: (0, 0, -1)
-            ComVertex(halfWidth, -halfHeight, -halfDepth, [0.0f, 0.0f, -1.0f], 0.0f, 1.0f, -1.0f, 0.0f, 0.0f), // 4: bottom right
-            ComVertex(-halfWidth, -halfHeight, -halfDepth, [0.0f, 0.0f, -1.0f], 1.0f, 1.0f, -1.0f, 0.0f, 0.0f), // 5: bottom left
-            ComVertex(-halfWidth, halfHeight, -halfDepth, [0.0f, 0.0f, -1.0f], 1.0f, 0.0f, -1.0f, 0.0f, 0.0f), // 6: top left
-            ComVertex(halfWidth, halfHeight, -halfDepth, [0.0f, 0.0f, -1.0f], 0.0f, 0.0f, -1.0f, 0.0f, 0.0f), // 7: top right
+                // Back face (Z = -halfDepth), normal: (0, 0, -1)
+                ComVertex(halfWidth, -halfHeight, -halfDepth, [
+                        0.0f, 0.0f, -1.0f
+                    ], 0.0f, 1.0f, -1.0f, 0.0f, 0.0f), // 4: bottom right
+                ComVertex(-halfWidth, -halfHeight, -halfDepth, [
+                        0.0f, 0.0f, -1.0f
+                    ], 1.0f, 1.0f, -1.0f, 0.0f, 0.0f), // 5: bottom left
+                ComVertex(-halfWidth, halfHeight, -halfDepth, [
+                        0.0f, 0.0f, -1.0f
+                    ], 1.0f, 0.0f, -1.0f, 0.0f, 0.0f), // 6: top left
+                ComVertex(halfWidth, halfHeight, -halfDepth, [
+                        0.0f, 0.0f, -1.0f
+                    ], 0.0f, 0.0f, -1.0f, 0.0f, 0.0f), // 7: top right
 
-            // Left face (X = -halfWidth), normal: (-1, 0, 0)
-            ComVertex(-halfWidth, -halfHeight, -halfDepth, [-1.0f, 0.0f, 0.0f], 0.0f, 1.0f, 0.0f, 0.0f, 1.0f), // 8: bottom back
-            ComVertex(-halfWidth, -halfHeight, halfDepth, [-1.0f, 0.0f, 0.0f], 1.0f, 1.0f, 0.0f, 0.0f, 1.0f), // 9: bottom front
-            ComVertex(-halfWidth, halfHeight, halfDepth, [-1.0f, 0.0f, 0.0f], 1.0f, 0.0f, 0.0f, 0.0f, 1.0f), // 10: top front
-            ComVertex(-halfWidth, halfHeight, -halfDepth, [-1.0f, 0.0f, 0.0f], 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), // 11: top back
+                // Left face (X = -halfWidth), normal: (-1, 0, 0)
+                ComVertex(-halfWidth, -halfHeight, -halfDepth, [
+                        -1.0f, 0.0f, 0.0f
+                    ], 0.0f, 1.0f, 0.0f, 0.0f, 1.0f), // 8: bottom back
+                ComVertex(-halfWidth, -halfHeight, halfDepth, [
+                        -1.0f, 0.0f, 0.0f
+                    ], 1.0f, 1.0f, 0.0f, 0.0f, 1.0f), // 9: bottom front
+                ComVertex(-halfWidth, halfHeight, halfDepth, [
+                        -1.0f, 0.0f, 0.0f
+                    ], 1.0f, 0.0f, 0.0f, 0.0f, 1.0f), // 10: top front
+                ComVertex(-halfWidth, halfHeight, -halfDepth, [
+                        -1.0f, 0.0f, 0.0f
+                    ], 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), // 11: top back
 
-            // Right face (X = halfWidth), normal: (1, 0, 0)
-            ComVertex(halfWidth, -halfHeight, halfDepth, [1.0f, 0.0f, 0.0f], 0.0f, 1.0f, 0.0f, 0.0f, -1.0f), // 12: bottom front
-            ComVertex(halfWidth, -halfHeight, -halfDepth, [1.0f, 0.0f, 0.0f], 1.0f, 1.0f, 0.0f, 0.0f, -1.0f), // 13: bottom back
-            ComVertex(halfWidth, halfHeight, -halfDepth, [1.0f, 0.0f, 0.0f], 1.0f, 0.0f, 0.0f, 0.0f, -1.0f), // 14: top back
-            ComVertex(halfWidth, halfHeight, halfDepth, [1.0f, 0.0f, 0.0f], 0.0f, 0.0f, 0.0f, 0.0f, -1.0f), // 15: top front
+                // Right face (X = halfWidth), normal: (1, 0, 0)
+                ComVertex(halfWidth, -halfHeight, halfDepth, [1.0f, 0.0f, 0.0f], 0.0f, 1.0f, 0.0f, 0.0f, -1.0f), // 12: bottom front
+                ComVertex(halfWidth, -halfHeight, -halfDepth, [1.0f, 0.0f, 0.0f], 1.0f, 1.0f, 0.0f, 0.0f, -1.0f), // 13: bottom back
+                ComVertex(halfWidth, halfHeight, -halfDepth, [1.0f, 0.0f, 0.0f], 1.0f, 0.0f, 0.0f, 0.0f, -1.0f), // 14: top back
+                ComVertex(halfWidth, halfHeight, halfDepth, [1.0f, 0.0f, 0.0f], 0.0f, 0.0f, 0.0f, 0.0f, -1.0f), // 15: top front
 
-            // Top face (Y = halfHeight), normal: (0, 1, 0)
-            ComVertex(-halfWidth, halfHeight, halfDepth, [0.0f, 1.0f, 0.0f], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 16: front left
-            ComVertex(halfWidth, halfHeight, halfDepth, [0.0f, 1.0f, 0.0f], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 17: front right
-            ComVertex(halfWidth, halfHeight, -halfDepth, [0.0f, 1.0f, 0.0f], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 18: back right
-            ComVertex(-halfWidth, halfHeight, -halfDepth, [0.0f, 1.0f, 0.0f], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 19: back left
+                // Top face (Y = halfHeight), normal: (0, 1, 0)
+                ComVertex(-halfWidth, halfHeight, halfDepth, [0.0f, 1.0f, 0.0f], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 16: front left
+                ComVertex(halfWidth, halfHeight, halfDepth, [0.0f, 1.0f, 0.0f], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 17: front right
+                ComVertex(halfWidth, halfHeight, -halfDepth, [0.0f, 1.0f, 0.0f], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 18: back right
+                ComVertex(-halfWidth, halfHeight, -halfDepth, [0.0f, 1.0f, 0.0f], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 19: back left
 
-            // Bottom face (Y = -halfHeight), normal: (0, -1, 0)
-            ComVertex(-halfWidth, -halfHeight, -halfDepth, [0.0f, -1.0f, 0.0f], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 20: back left
-            ComVertex(halfWidth, -halfHeight, -halfDepth, [0.0f, -1.0f, 0.0f], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 21: back right
-            ComVertex(halfWidth, -halfHeight, halfDepth, [0.0f, -1.0f, 0.0f], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 22: front right
-            ComVertex(-halfWidth, -halfHeight, halfDepth, [0.0f, -1.0f, 0.0f], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 23: front left
-        ];
+                // Bottom face (Y = -halfHeight), normal: (0, -1, 0)
+                ComVertex(-halfWidth, -halfHeight, -halfDepth, [
+                        0.0f, -1.0f, 0.0f
+                    ], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 20: back left
+                ComVertex(halfWidth, -halfHeight, -halfDepth, [
+                        0.0f, -1.0f, 0.0f
+                    ], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f), // 21: back right
+                ComVertex(halfWidth, -halfHeight, halfDepth, [
+                        0.0f, -1.0f, 0.0f
+                    ], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 22: front right
+                ComVertex(-halfWidth, -halfHeight, halfDepth, [
+                        0.0f, -1.0f, 0.0f
+                    ], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f), // 23: front left
+            ];
 
-        //ccw
-        indices = [
-            // front face
-            0, 1, 2, 0, 2, 3,
-            // back face
-            4, 5, 6, 4, 6, 7,
-            //left face
-            8, 9, 10, 8, 10, 11,
-            // right face
-            12, 13, 14, 12, 14, 15,
-            //top face
-            16, 17, 18, 16, 18, 19,
-            // bottom face
-            20, 21, 22, 20, 22, 23
-        ];
+        }
+
+        if (indices.length == 0)
+        {
+            //ccw
+            indices = [
+                // front face
+                0, 1, 2, 0, 2, 3,
+                // back face
+                4, 5, 6, 4, 6, 7,
+                //left face
+                8, 9, 10, 8, 10, 11,
+                // right face
+                12, 13, 14, 12, 14, 15,
+                //top face
+                16, 17, 18, 16, 18, 19,
+                // bottom face
+                20, 21, 22, 20, 22, 23
+            ];
+        }
     }
 
     override bool isInCameraFrustum()

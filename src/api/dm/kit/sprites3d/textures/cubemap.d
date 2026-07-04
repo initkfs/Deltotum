@@ -132,8 +132,13 @@ class CubeMap : TextureGPU
 
     override void createSampler()
     {
-        SDL_GPUSamplerCreateInfo samplerInfo = gpu.dev.nearestClampToEdge;
-        _sampler = gpu.dev.newSampler(&samplerInfo);
+        SDL_GPUSamplerCreateInfo info;
+        info.min_filter = SDL_GPU_FILTER_LINEAR,
+        info.mag_filter = SDL_GPU_FILTER_LINEAR,
+        info.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        info.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        info.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
+        _sampler = gpu.dev.newSampler(&info);
         assert(_sampler);
     }
 }

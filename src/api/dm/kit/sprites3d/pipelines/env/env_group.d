@@ -3,6 +3,7 @@ module api.dm.kit.sprites3d.pipelines.env.env_group;
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.materials.material_data : LightData, MaterialData;
 import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.dm.kit.sprites3d.materials.material : Material;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
@@ -92,10 +93,8 @@ class EnvGroup : PipelineGroup
         };
     }
 
-    override void create()
+    ComPipelineBuffers createBuffers()
     {
-        super.create;
-
         auto buff = pipeBuffers;
         buff.numVertexUniformBuffers += 2;
         buff.numFragUniformBuffers += 2;
@@ -105,6 +104,18 @@ class EnvGroup : PipelineGroup
         {
             buff.numFragSamples++;
         }
+
+        if(scene3d.isNeedCubeMap){
+            buff.numFragSamples++;
+        }
+
+        return buff;
+    }
+
+    override void create()
+    {
+        super.create;
+        auto buff = createBuffers;
 
         createPipeline(buff);
 

@@ -211,14 +211,20 @@ class AudioEngine : Thread
         return buffer.writeAudio(samples);
     }
 
-    SoundHandle play(MixSound MixSound)
+    SoundHandle play(MixSound mixSound)
     {
         mixerMutex.lock;
         scope (exit)
         {
             mixerMutex.unlock;
         }
-        const sid = mixer.play(MixSound);
+        const sid = mixer.play(mixSound);
         return sid;
+    }
+
+    SoundHandle play(float[] samples)
+    {
+        MixSound sound = MixSound(samples);
+        return play(sound);
     }
 }

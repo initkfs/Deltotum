@@ -120,7 +120,7 @@ class Mesh3dIndexed(IndexType) : Mesh3d
 
         if (!isBindBuffer)
         {
-            throw new Exception("Buffers not bind");
+            throw new Exception("Buffers not bind, id: " ~ id);
         }
 
         gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);

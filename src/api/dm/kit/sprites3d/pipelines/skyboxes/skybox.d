@@ -2,12 +2,20 @@ module api.dm.kit.sprites3d.pipelines.skyboxes.skybox;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
+import api.dm.kit.sprites2d.sprite2d: Sprite2d;
 import api.dm.kit.sprites3d.meshes.cube : Cube;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.dm.com.graphics.gpu.com_3d_types;
-import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
+import api.math.matrices.matrix : Matrix4x4;
 
 import api.dm.back.sdl3.externs.csdl3;
+
+struct SpriteTransforms
+{
+    Matrix4x4 model;
+    Matrix4x4 camera;
+    Matrix4x4 projection;
+}
 
 /**
  * Authors: initkfs
@@ -63,33 +71,31 @@ class SkyBox : PipelineGroup
     string basepath;
     string ext;
 
-    this(string basepath, string ext = "jpg")
+    this(string basepath, string ext = "png")
     {
         this.basepath = basepath;
         this.ext = ext;
-        isPushUniformVertexMatrix = false;
 
         id = "SkyBox3d";
+        //isDepth = false;
 
         vertexShaderName = "SkyBox.vert";
         fragmentShaderName = "SkyBox.frag";
+
+        onBeforeDrawChildDg = (Sprite2d child) {
+            if (auto sprite3d = cast(Sprite3d) child)
+            {
+                bindSpriteData(sprite3d);
+            }
+        };
     }
 
     override void create()
     {
         super.create;
 
-        cube = new class Cube
-        {
-            override void createMesh()
-            {
-                vertices = skyboxVertices;
-                indices = skyboxIndices;
-            }
-        };
+        cube = new Cube(skyboxVertices, skyboxIndices);
         cube.id = "SkyBoxCube";
-        cube.isCreateMaterial = false;
-
         addCreate(cube);
 
         cubeMap = new CubeMap(basepath, ext);
@@ -100,6 +106,22 @@ class SkyBox : PipelineGroup
         buff.numVertexUniformBuffers = 1;
         buff.numFragSamples = 1;
         createPipeline(buff);
+    }
+
+    override void bindSpriteData(Sprite3d sprite)
+    {
+        sprite.bindAll;
+
+        SpriteTransforms transforms;
+        transforms.model = sprite.worldMatrix;
+
+        //TODO remove movings
+        //glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));  
+        transforms.camera = camera.view;
+        
+        transforms.projection = camera.projection;
+
+        gpu.dev.pushUniformVertexData(0, &transforms, SpriteTransforms.sizeof);
     }
 
     override SDL_GPURasterizerState createRasterizerState()
