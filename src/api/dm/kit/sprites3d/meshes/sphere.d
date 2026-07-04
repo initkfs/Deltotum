@@ -7,7 +7,7 @@ import api.math.matrices.matrix : Matrix4x4;
 import api.dm.back.sdl3.externs.csdl3;
 
 import api.math.geom3.vec3 : Vec3f;
-import api.math.geom2.vec2: Vec2f;
+import api.math.geom2.vec2 : Vec2f;
 import api.math.geom3.sphere3 : Sphere3f;
 import Math = api.math;
 
@@ -18,20 +18,32 @@ import Math = api.math;
 class Sphere : Mesh3dHigh
 {
     float radius = 0;
+    uint sectors;
+    uint stacks;
 
-    this(float radius = 0.5)
+    this(float radius = 0.5, uint sectors = 32, uint stacks = 16)
     {
         this.initSize(radius, radius);
         this.radius = radius;
+        this.sectors = sectors;
+        this.stacks = stacks;
     }
 
     override void createMesh()
     {
-        enum sectors = 32;
-        enum stacks = 16;
-        enum sphereVerticesCount = (stacks + 1) * (
-                sectors + 1);
-        enum trianglesIndicesCount = stacks * sectors * 6;
+        if (sectors == 0)
+        {
+            throw new Exception("Sectors value must not be 0");
+        }
+
+        if (stacks == 0)
+        {
+            throw new Exception("Stacks value must not be 0");
+        }
+
+        const sphereVerticesCount = (stacks + 1) * (
+            sectors + 1);
+        const trianglesIndicesCount = stacks * sectors * 6;
 
         vertices = new ComVertex[sphereVerticesCount];
         indices = new uint[trianglesIndicesCount];
@@ -74,8 +86,8 @@ class Sphere : Mesh3dHigh
                     z = 0.0f;
                     nx = 0.0f;
                     nz = 0.0f;
-                    
-                    tx = 1.0f; 
+
+                    tx = 1.0f;
                     ty = 0.0f;
                     tz = 0.0f;
                 }
@@ -124,14 +136,17 @@ class Sphere : Mesh3dHigh
     Vec2f localTolUV(Vec3f position) pure nothrow
     {
         import Math = api.math;
-        //import std.math : atan2, acos, PI;
-        
-        float length = Math.sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
 
-        if (length == 0.0f){
+        //import std.math : atan2, acos, PI;
+
+        float length = Math.sqrt(
+            position.x * position.x + position.y * position.y + position.z * position.z);
+
+        if (length == 0.0f)
+        {
             return Vec2f(0.0f, 0.0f);
         }
-            
+
         float nx = position.x / length;
         float ny = position.y / length;
         float nz = position.z / length;
