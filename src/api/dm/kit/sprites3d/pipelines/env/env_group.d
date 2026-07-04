@@ -42,9 +42,15 @@ align(4):
     float farPlane;
     float time;
     uint lightCount;
-    uint reserve4;
+    uint flags;
 align(16):
     LightData[4] lights;
+}
+
+enum SceneConfigFlag
+{
+    IsUseDiffusion = 1 << 0,
+    IsUseTemp = 1 << 1,
 }
 
 /**
@@ -58,6 +64,8 @@ class EnvGroup : PipelineGroup
     enum maxLights = 4;
 
     BaseLight[] lights;
+
+    bool isUseTemp = true;
 
     this()
     {
@@ -93,7 +101,7 @@ class EnvGroup : PipelineGroup
         buff.numFragUniformBuffers += 2;
         buff.numFragSamples += 6;
 
-        if (scene3d.isHeatMap)
+        if (scene3d.isNeedDiffusionTexture)
         {
             buff.numFragSamples++;
         }
@@ -246,6 +254,7 @@ class EnvGroup : PipelineGroup
         //TODO time > 100000 
         config.time = platform.timer.ticksMs / 1000.0;
         config.lightCount = lightCount;
+        config.flags = packSceneFlags;
 
         foreach (li; 0 .. lightCount)
         {
@@ -346,5 +355,16 @@ class EnvGroup : PipelineGroup
         }
 
         return lights[lampIndex];
+    }
+
+    uint packSceneFlags()
+    {
+        uint flags = 0;
+        if (scene3d.hasDiffusionPass)
+            flags |= SceneConfigFlag.IsUseDiffusion;
+        if (isUseTemp)
+            flags |= SceneConfigFlag.IsUseTemp;
+
+        return flags;
     }
 }

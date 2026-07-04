@@ -44,7 +44,7 @@ class Sprite3d : Sprite2d
         PipelineGroup _pipeline;
     }
 
-    bool isForPipeLine = true;
+    bool isForGraphicsPipeLine = true;
 
     bool isManagedTransforms;
 
@@ -412,7 +412,7 @@ class Sprite3d : Sprite2d
                 }
             }
 
-            if (!sprite3d.hasPipeline && sprite3d.isForPipeLine)
+            if (!sprite3d.hasPipeline && sprite3d.isForGraphicsPipeLine)
             {
                 auto pForChild = pipelineForChild;
                 if (!pForChild)

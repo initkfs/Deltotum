@@ -89,9 +89,12 @@ struct SceneConfig {
     float farPlane;
     float time;
     uint lightCount;
-    float reserved4;
+    uint flags;
     Light lights[4];
 };
+
+static const uint SceneFlagIsUseDiffusion = 1 << 0;
+static const uint SceneFlagIsUseTemp = 1 << 1;
 
 struct MaterialConfig {
     Material material;
@@ -279,54 +282,56 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     }
 
     //HEAT
-    //TODO remove
-    uint layerId = 0;
-    float itemCount = 256;
-
-    uint twidth, theight, tdepth;
-    thermalMap.GetDimensions(twidth, theight, tdepth);
+    //TODO from config?
+    float temperature = 0;
+    if(sceneConfig.flags & SceneFlagIsUseTemp && sceneConfig.flags & SceneFlagIsUseDiffusion){
+        uint layerId = 0;
+        float itemCount = 256;
+        uint twidth, theight, tdepth;
+        thermalMap.GetDimensions(twidth, theight, tdepth);
     
-    // float2 pixelCoord = input.texcoord * float2(twidth, theight);
-    // int2 iCoord;
-    // iCoord.x = (int)clamp(floor(pixelCoord.x), 0.0f, (float)(twidth - 2));
-    // iCoord.y = (int)clamp(floor(pixelCoord.y), 0.0f, (float)(theight - 2));
-    // float2 f = frac(pixelCoord);
-    // int layer = (int)layerId;    
-    // float t00 = thermalMap.Load(int4(iCoord + int2(0,0), layer, 0)).r;
-    // float t10 = thermalMap.Load(int4(iCoord + int2(1,0), layer, 0)).r;
-    // float t01 = thermalMap.Load(int4(iCoord + int2(0,1), layer, 0)).r;
-    // float t11 = thermalMap.Load(int4(iCoord + int2(1,1), layer, 0)).r;
-    // float tempTexelX0 = lerp(t00, t10, f.x);
-    // float tempTexelX1 = lerp(t01, t11, f.x);
-    // float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
+        // float2 pixelCoord = input.texcoord * float2(twidth, theight);
+        // int2 iCoord;
+        // iCoord.x = (int)clamp(floor(pixelCoord.x), 0.0f, (float)(twidth - 2));
+        // iCoord.y = (int)clamp(floor(pixelCoord.y), 0.0f, (float)(theight - 2));
+        // float2 f = frac(pixelCoord);
+        // int layer = (int)layerId;    
+        // float t00 = thermalMap.Load(int4(iCoord + int2(0,0), layer, 0)).r;
+        // float t10 = thermalMap.Load(int4(iCoord + int2(1,0), layer, 0)).r;
+        // float t01 = thermalMap.Load(int4(iCoord + int2(0,1), layer, 0)).r;
+        // float t11 = thermalMap.Load(int4(iCoord + int2(1,1), layer, 0)).r;
+        // float tempTexelX0 = lerp(t00, t10, f.x);
+        // float tempTexelX1 = lerp(t01, t11, f.x);
+        // float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
 
-    float heatScale = 0.6;
-    //-+0.5 around center
-    float2 heatUV = (input.texcoord - 0.5f) * heatScale + 0.5f;
+        float heatScale = 0.8;
+        //-+0.5 around center
+        float2 heatUV = (input.texcoord - 0.5f) * heatScale + 0.5f;
 
-    float2 pixelCoord = heatUV * float2(twidth, theight) - 0.5f;
-    int2 iCoord = (int2)floor(pixelCoord);
-    float2 f = frac(pixelCoord);
-    //f = f * f * (3.0f - 2.0f * f); 
-    int layer = (int)layerId;
-    int maxX = (int)twidth - 1;
-    int maxY = (int)theight - 1;
+        float2 pixelCoord = heatUV * float2(twidth, theight) - 0.5f;
+        int2 iCoord = (int2)floor(pixelCoord);
+        float2 f = frac(pixelCoord);
+        //f = f * f * (3.0f - 2.0f * f); 
+        int layer = (int)layerId;
+        int maxX = (int)twidth - 1;
+        int maxY = (int)theight - 1;
+        
+        int2 c00 = clamp(iCoord + int2(0, 0), int2(0, 0), int2(maxX, maxY));
+        int2 c10 = clamp(iCoord + int2(1, 0), int2(0, 0), int2(maxX, maxY));
+        int2 c01 = clamp(iCoord + int2(0, 1), int2(0, 0), int2(maxX, maxY));
+        int2 c11 = clamp(iCoord + int2(1, 1), int2(0, 0), int2(maxX, maxY));
+        
+        float t00 = thermalMap.Load(int4(c00, layer, 0)).r;
+        float t10 = thermalMap.Load(int4(c10, layer, 0)).r;
+        float t01 = thermalMap.Load(int4(c01, layer, 0)).r;
+        float t11 = thermalMap.Load(int4(c11, layer, 0)).r;
+        
+        float tempTexelX0 = lerp(t00, t10, f.x);
+        float tempTexelX1 = lerp(t01, t11, f.x);
+
+        temperature = lerp(tempTexelX0, tempTexelX1, f.y);
+    }
     
-    int2 c00 = clamp(iCoord + int2(0, 0), int2(0, 0), int2(maxX, maxY));
-    int2 c10 = clamp(iCoord + int2(1, 0), int2(0, 0), int2(maxX, maxY));
-    int2 c01 = clamp(iCoord + int2(0, 1), int2(0, 0), int2(maxX, maxY));
-    int2 c11 = clamp(iCoord + int2(1, 1), int2(0, 0), int2(maxX, maxY));
-    
-    float t00 = thermalMap.Load(int4(c00, layer, 0)).r;
-    float t10 = thermalMap.Load(int4(c10, layer, 0)).r;
-    float t01 = thermalMap.Load(int4(c01, layer, 0)).r;
-    float t11 = thermalMap.Load(int4(c11, layer, 0)).r;
-    
-    float tempTexelX0 = lerp(t00, t10, f.x);
-    float tempTexelX1 = lerp(t01, t11, f.x);
-
-    float temperature = lerp(tempTexelX0, tempTexelX1, f.y);
-
     //result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 
     //SimpleDataBuffer dbuff;
@@ -438,43 +443,50 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
          float3 L = normalize(lightDir);
          float3 V = normalize(viewDir);
          float3 H = normalize(L + V);
-         
-         float irDiffuse  = max(dot(normal, L), 0.0f);
-         float irSpecular = pow(max(dot(normal, H), 0.0f), 16.0f);
-         float incomingIR = (irDiffuse + irSpecular) * spectrum.GetIR();
-         float absorptionIR = 0.5;
-         float tempFromIR = incomingIR * absorptionIR; 
-         
-         temperature+=tempFromIR;
 
-         //Gamma
-         float attenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
-         //shadow map
-         float gammaShadow = 1; 
-         float incomingGamma = spectrum.GetGamma() * attenuation * gammaShadow;
-         float gammaAbsorption = 1; 
-         temperature += incomingGamma * gammaAbsorption;
+         float irValue = spectrum.GetIR();
+         if(irValue != 0){
+            float irDiffuse  = max(dot(normal, L), 0.0f);
+            float irSpecular = pow(max(dot(normal, H), 0.0f), 16.0f);
+            float incomingIR = (irDiffuse + irSpecular) * irValue;
+            float absorptionIR = 0.5;
+            float tempFromIR = incomingIR * absorptionIR; 
+            temperature+=tempFromIR;
+         }
 
-         //https://en.wikipedia.org/wiki/Cherenkov_radiation
-         float3 ionizationGlowColor = float3(0.0f, 0.4f, 1.0f);
-         //matConfig.material.ionizationYield
-         float ionizationIntensity = incomingGamma * 1;
-         resultColor += ionizationGlowColor * ionizationIntensity;
+         float gammaValue = spectrum.GetGamma();
+         if(gammaValue != 0){
+            //Gamma
+            float attenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
+            //shadow map
+            float gammaShadow = 1; 
+            float incomingGamma = gammaValue * attenuation * gammaShadow;
+            float gammaAbsorption = 1; 
+            temperature += incomingGamma * gammaAbsorption;
 
-         //UV
-         float uvDiffuse = max(dot(normal, L), 0.0f);
-         float uvSpecular = pow(max(dot(normal, H), 0.0f), 32.0f);
+            //https://en.wikipedia.org/wiki/Cherenkov_radiation
+            float3 ionizationGlowColor = float3(0.0f, 0.4f, 1.0f);
+            //matConfig.material.ionizationYield
+            float ionizationIntensity = incomingGamma * 1;
+            resultColor += ionizationGlowColor * ionizationIntensity;
+         }
+
          float uvValue = spectrum.GetUV();
-         float uvAttenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
-         float incomingUV = (uvDiffuse + uvSpecular) * uvValue * uvAttenuation;
+         if(uvValue != 0){
+            //UV
+            float uvDiffuse = max(dot(normal, L), 0.0f);
+            float uvSpecular = pow(max(dot(normal, H), 0.0f), 32.0f);
+            float uvAttenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
+            float incomingUV = (uvDiffuse + uvSpecular) * uvValue * uvAttenuation;
 
-        //  float fakeFactor = 0.05f; 
-        //  float3 scatteredLight = matConfig.material.fluorescenceColor.rgb * (incomingUV * fakeFactor);
-        //  resultColor += scatteredLight;
-         
-         //float3 fluoColor = matConfig.material.fluorescenceColor; 
-         //float fluoYield = matConfig.material.fluorescenceYield; 
-         //float3 visibleFluorescence = fluoColor * (incoming_UV_energy * fluoYield);
+            //  float fakeFactor = 0.05f; 
+            //  float3 scatteredLight = matConfig.material.fluorescenceColor.rgb * (incomingUV * fakeFactor);
+            //  resultColor += scatteredLight;
+            
+            //float3 fluoColor = matConfig.material.fluorescenceColor; 
+            //float fluoYield = matConfig.material.fluorescenceYield; 
+            //float3 visibleFluorescence = fluoColor * (incoming_UV_energy * fluoYield);
+         }
     }
 
     //float temperature = thermalMap.Sample(thermalMapSampler, float3(input.texcoord, layerId)).r;
@@ -482,7 +494,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     //float texCoordZ = ((float)layerId + 0.5f) / 256; 
     //float3 thermalUV = float3(input.texcoord, texCoordZ);
     //float temperature = thermalMap.Sample(thermalMapSampler, thermalUV).r;
-    if (temperature > 50.0f) 
+    if ((sceneConfig.flags & SceneFlagIsUseTemp) && temperature > 50.0f) 
     {
         //result.color = float4(1, 0, 0, 1);
         //return result;

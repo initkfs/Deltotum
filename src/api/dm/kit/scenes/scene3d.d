@@ -12,13 +12,12 @@ import api.dm.kit.scenes.antialiasings.msaa : MSAA;
 import api.dm.kit.scenes.antialiasings.fxaa : FXAA;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.dm.kit.scenes.postprocess.bloom.bloom : Bloom;
+import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.sims.phys.diffusions.diffusion_pass : DiffusionPass;
 import api.math.matrices.matrix;
 
 //TODO remove native api
 import api.dm.back.sdl3.externs.csdl3;
-
-//TODO heat
-import api.dm.kit.sprites3d.textures.heat_texture_array : HeatTextureArray;
 
 /**
  * Authors: initkfs
@@ -55,23 +54,12 @@ class Scene3d : Scene2d
     bool isMix2d3dMode = true;
     bool isMixCurrentPass;
 
-    HeatTextureArray heatMaps1;
-    HeatTextureArray heatMaps2;
-    bool isReadMap1 = true;
-    bool isHeatMap = true;
-
-    SDL_GPUComputePipeline* heatPipeline;
-
-    struct ThermalParams
+    protected
     {
-        float deltaTime = 0; //0.016
-        float conductivity = 1; //1
-        float coolingRate = 1;
-        float ambientTemp = 20;
-        float[4] updateXY = 0;
+        DiffusionPass _diffusionPass;
+        TextureGPU _diffusionPlaceholder;
     }
-
-    ThermalParams params;
+    bool isNeedDiffusionTexture = true;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
@@ -188,29 +176,19 @@ class Scene3d : Scene2d
         build(postProc);
         postProc.create;
 
-        heatMaps1 = new HeatTextureArray;
-        build(heatMaps1);
-        heatMaps1.create;
+        _diffusionPass = new DiffusionPass;
+        buildInitCreate(_diffusionPass);
 
-        heatMaps2 = new HeatTextureArray;
-        build(heatMaps2);
-        heatMaps2.create;
+        if (!_diffusionPass)
+        {
+            import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        import std.path : buildPath;
-        import api.dm.com.graphics.gpu.com_pipeline : ComComputeBuffers;
-
-        ComComputeBuffers buffs;
-        buffs.numRTextures = 1;
-        buffs.numRWTextures = 1;
-        buffs.numUniforms = 1;
-
-        // gpu.dev.startCopyPass;
-        // heatMaps1.uploadStart;
-        // heatMaps2.uploadStart;
-        // gpu.dev.endCopyPass;
-
-        auto compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "HeatCompute.comp.spv");
-        heatPipeline = gpu.dev.createComputePipelineSPIRV(compShaderPath, buffs);
+            _diffusionPlaceholder = new TextureGPU;
+            _diffusionPlaceholder.isNeedCamera = false;
+            _diffusionPlaceholder.isNeedDispose = false;
+            buildInit(_diffusionPlaceholder);
+            _diffusionPlaceholder.create(1, 1, RGBA.white);
+        }
     }
 
     protected SDL_GPUColorTargetInfo createTargetInfo()
@@ -250,8 +228,6 @@ class Scene3d : Scene2d
         return colorTargetInfo;
     }
 
-    HeatTextureArray heatInputTexture() => isReadMap1 ? heatMaps1 : heatMaps2;
-
     override void drawAll(float alpha)
     {
         if ((!gpu) || (!platform.cap.isGPU))
@@ -275,35 +251,10 @@ class Scene3d : Scene2d
             throw new Exception("Error starting gpu command buffer");
         }
 
-        SDL_GPUStorageTextureReadWriteBinding rwBinding;
-        auto outHeatTexture = isReadMap1 ? heatMaps2.texture : heatMaps1.texture;
-        rwBinding.texture = outHeatTexture;
-        rwBinding.mip_level = 0;
-        rwBinding.layer = 0;
-        rwBinding.cycle = true;
-
-        gpu.dev.startComputePass(&rwBinding, null, 1, 0);
-        gpu.dev.bindComputePipeline(heatPipeline);
-
-        params.deltaTime = 1.0 / window.frameRate;
-
-        //params.updateXY = [7, 15, 0, 10000];
-
-        gpu.dev.pushComputeUniform(&params, params.sizeof, 0);
-
-        auto inputTexture = isReadMap1 ? heatMaps1 : heatMaps2;
-        auto inputGpu = inputTexture.texture;
-        gpu.dev.bindComputeStorageTextures(&inputGpu);
-
-        isReadMap1 = !isReadMap1;
-
-        size_t numThreads = 16;
-        uint threadsCount = heatMaps1.widthu / numThreads;
-        uint groupCountX = threadsCount;
-        uint groupCountY = threadsCount;
-        uint groupCountZ = 3;
-        gpu.dev.dispatchCompute(groupCountX, groupCountY, groupCountZ);
-        gpu.dev.endComputePass;
+        if (_diffusionPass)
+        {
+            _diffusionPass.draw(alpha);
+        }
 
         if (antiAliaser || isMix2d3dMode)
         {
@@ -330,7 +281,9 @@ class Scene3d : Scene2d
         //import api.math.geom2.rect2: Rect2f;
         //gpu.dev.setScissorRect(Rect2f(0, 0, window.width, window.height));
 
-        gpu.dev.bindFragmentSamplers(inputTexture, 6);
+        auto diffusionTexture = _diffusionPass ? _diffusionPass.outputTexture
+            : _diffusionPlaceholder;
+        gpu.dev.bindFragmentSamplers(diffusionTexture, 6);
 
         drawSelfAndChildren(alpha);
         isMixCurrentPass = true;
@@ -392,9 +345,9 @@ class Scene3d : Scene2d
         // srcInfo.offset = 0;
         // SDL_GPUTextureRegion srcRegion;
         // srcRegion.texture = outHeatTexture;
-        // srcRegion.w = heatMaps2.widthu;
-        // srcRegion.h = heatMaps2.heightu;
-        // srcRegion.d = cast(uint) heatMaps2.count;
+        // srcRegion.w = diffusionMaps2.widthu;
+        // srcRegion.h = diffusionMaps2.heightu;
+        // srcRegion.d = cast(uint) diffusionMaps2.count;
         // gpu.dev.downloadTexture(&srcRegion, &srcInfo);
         // gpu.dev.endCopyPass(true, true);
 
@@ -458,32 +411,6 @@ class Scene3d : Scene2d
         return true;
     }
 
-    void uploadStart()
-    {
-        if (heatMaps1)
-        {
-            heatMaps1.uploadStart;
-        }
-
-        if (heatMaps2)
-        {
-            heatMaps2.uploadStart;
-        }
-    }
-
-    void uploadEnd()
-    {
-        if (heatMaps1)
-        {
-            heatMaps1.uploadEnd;
-        }
-
-        if (heatMaps2)
-        {
-            heatMaps2.uploadEnd;
-        }
-    }
-
     void uploadToGPU()
     {
         if (!platform.cap.isGPU)
@@ -526,6 +453,16 @@ class Scene3d : Scene2d
 
     }
 
+    void uploadStart()
+    {
+
+    }
+
+    void uploadEnd()
+    {
+
+    }
+
     override bool checkForDraw(Sprite2d sprite)
     {
         if (!super.checkForDraw(sprite))
@@ -557,6 +494,17 @@ class Scene3d : Scene2d
         {
             camera.update(dt);
         }
+    }
+
+    bool hasDiffusionPass() => _diffusionPass !is null;
+
+    DiffusionPass diffusionPass()
+    {
+        if (!_diffusionPass)
+        {
+            throw new Exception("Diffusion pass is null");
+        }
+        return _diffusionPass;
     }
 
     override void dispose()
@@ -593,19 +541,14 @@ class Scene3d : Scene2d
             antiAliaser.dispose;
         }
 
-        if (heatMaps1)
+        if (_diffusionPlaceholder)
         {
-            heatMaps1.dispose;
+            _diffusionPlaceholder.dispose;
         }
 
-        if (heatMaps2)
+        if (_diffusionPass)
         {
-            heatMaps2.dispose;
-        }
-
-        if (heatPipeline)
-        {
-            gpu.dev.deleteComputePipeline(heatPipeline);
+            _diffusionPass.dispose;
         }
     }
 }

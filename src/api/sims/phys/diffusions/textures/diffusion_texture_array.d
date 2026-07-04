@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.textures.heat_texture_array;
+module api.sims.phys.diffusions.textures.diffusion_texture_array;
 
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
@@ -9,7 +9,7 @@ import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 import api.dm.back.sdl3.externs.csdl3;
 import core.stdc.stdlib : malloc, free, realloc;
 
-class HeatTextureArray : TextureGPU
+class DiffusionTextureArray : TextureGPU
 {
     size_t count;
 
@@ -23,7 +23,7 @@ class HeatTextureArray : TextureGPU
     this(float w = 32, float h = 32, size_t count = 256)
     {
         initSize(w, h);
-        id = "HeatTextureArray";
+        id = "DiffusionTextureArray";
         assert(count > 0);
         this.count = count;
 

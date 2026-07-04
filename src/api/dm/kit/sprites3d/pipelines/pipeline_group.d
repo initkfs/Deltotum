@@ -57,7 +57,7 @@ class PipelineGroup : Sprite3d
     this()
     {
         isPushUniformVertexMatrix = false;
-        isForPipeLine = false;
+        isForGraphicsPipeLine = false;
     }
 
     override void create()
