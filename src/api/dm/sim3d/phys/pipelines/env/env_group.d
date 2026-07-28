@@ -1,0 +1,393 @@
+module api.dm.sim3d.phys.pipelines.env.env_group;
+
+import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
+import api.dm.sim3d.phys.materials.material_data : LightData, MaterialData;
+import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
+import api.dm.sim3d.phys.materials.material : Material;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites3d.sprite3d : Sprite3d;
+import api.math.geom3.vec3 : Vec3f;
+import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.math.matrices.matrix : Matrix4x4;
+import api.dm.sim3d.phys.lightings.lights.base_light : BaseLight;
+import Math = api.math;
+
+import api.dm.back.sdl3.externs.csdl3;
+
+struct SpriteTransforms
+{
+    Matrix4x4 model;
+    Matrix4x4 normal;
+}
+
+struct SceneTransforms
+{
+    Matrix4x4 camera;
+    Matrix4x4 projection;
+}
+
+struct MaterialConfig
+{
+    MaterialData material;
+align(4):
+    uint layerId;
+}
+
+struct SceneConfig
+{
+align(16):
+    Vec3f cameraPos;
+align(4):
+    float nearPlane;
+    float farPlane;
+    float time;
+    uint lightCount;
+    uint flags;
+align(16):
+    LightData[4] lights;
+}
+
+enum SceneConfigFlag
+{
+    IsUseDiffusion = 1 << 0,
+    IsUseTemp = 1 << 1,
+}
+
+/**
+ * Authors: initkfs
+ */
+
+class EnvGroup : PipelineGroup
+{
+    bool isCreateDefaultLight = true;
+
+    enum maxLights = 4;
+
+    BaseLight[] lights;
+
+    bool isUseTemp = true;
+
+    this()
+    {
+        id = "EnvGroup";
+        vertexShaderName = "EnvFull.vert";
+        fragmentShaderName = "EnvFull.frag";
+
+        isPushUniformVertexMatrix = true;
+
+        onBeforeDrawChildDg = (Sprite2d child) {
+            if (auto sprite3d = cast(Sprite3d) child)
+            {
+                if (auto mSprite = cast(MaterialSprite3d) child)
+                {
+                    if (mSprite.hasMaterial && mSprite.material.isSharedMaterial)
+                    {
+                        return;
+                    }
+                }
+                //vertex, index buffers, textures
+                bindSpriteData(sprite3d);
+                pushSpriteUniforms(sprite3d);
+            }
+        };
+    }
+
+    ComPipelineBuffers createBuffers()
+    {
+        auto buff = pipeBuffers;
+        buff.numVertexUniformBuffers += 2;
+        buff.numFragUniformBuffers += 2;
+        buff.numFragSamples += 6;
+
+        import api.dm.sim3d.scenes.sim_scene : SimScene;
+
+        if (auto simScene = cast(SimScene) scene3d)
+        {
+            if (simScene.isNeedDiffusionTexture)
+            {
+                buff.numFragSamples++;
+            }
+
+            if (simScene.isNeedCubeMap)
+            {
+                buff.numFragSamples++;
+            }
+        }
+
+        return buff;
+    }
+
+    override void create()
+    {
+        super.create;
+        auto buff = createBuffers;
+
+        createPipeline(buff);
+
+        if (isCreateDefaultLight)
+        {
+            import api.dm.sim3d.phys.lightings.lights.point_light : PointLight;
+            import api.dm.sim3d.phys.lightings.lights.dir_light : DirLight;
+            import api.dm.kit.graphics.colors.hsla : HSLA;
+            import api.dm.kit.graphics.colors.rgba : RGBA;
+
+            auto light = new PointLight;
+            light.pos3 = Vec3f(0, 1, 3);
+            light.direction = (Vec3f(0, 0, 0).sub(light.pos3)).normalize;
+            light.scale = Vec3f(0.1, 0.1, 0.1);
+            light.ambient = RGBA.hex("#333333");
+            addCreate(light);
+        }
+    }
+
+    override void bindSpriteData(Sprite3d sprite)
+    {
+        import api.dm.sim3d.phys.materials.material : Material;
+        import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+        import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+
+        sprite.bindAll;
+
+        Material mat;
+        if (auto shape = cast(MaterialSprite3d) sprite)
+        {
+            if (shape.hasMaterial)
+            {
+                mat = shape.material;
+            }
+        }
+
+        bindMaterialSafe(mat);
+    }
+
+    override void bindMaterialSafe(Material mat)
+    {
+        auto diffuseMap = (mat && mat.diffuseMap && mat.isBindDiffuseMap) ? mat.diffuseMap
+            : gpu.defaultDiffuse;
+        auto specularMap = (mat && mat.specularMap && mat.isBindSpecularMap) ? mat.specularMap
+            : gpu.defaultSpecular;
+        auto normalMap = (mat && mat.normalMap && mat.isBindNormalMap) ? mat.normalMap
+            : gpu.defaultNormal;
+        auto aoMap = (mat && mat.aoMap && mat.isBindAoMap) ? mat.aoMap : gpu.defaultAO;
+        auto emissionMap = gpu.defaultEmission;
+
+        auto dispMap = (mat && mat.dispMap && mat.isBindDispMap) ? mat.dispMap : gpu.defaultDisp;
+
+        import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+
+        TextureGPU[6] maps = [
+            diffuseMap, specularMap, normalMap, aoMap, emissionMap, dispMap
+        ];
+        gpu.dev.bindFragmentSamplers(maps);
+    }
+
+    override void pushSpriteUniforms(Sprite3d sprite)
+    {
+        if (isPushUniformVertexMatrix)
+        {
+            SpriteTransforms transforms;
+            transforms.model = sprite.worldMatrix;
+            transforms.normal = sprite.worldMatrixInverse;
+
+            gpu.dev.pushUniformVertexData(1, &transforms, SpriteTransforms.sizeof);
+        }
+
+        MaterialConfig matConfig;
+
+        MaterialData mat;
+        mat.albedo = sprite.albedo.toArrayRGBAf;
+        bool isDefaultMaterial = true;
+        matConfig.layerId = cast(uint) sprite.numId;
+
+        if (cast(BaseLight) sprite.parent)
+        {
+            mat.isLamp = true;
+        }
+
+        import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+
+        if (auto mSprite = cast(MaterialSprite3d) sprite)
+        {
+            if (mSprite.hasMaterial)
+            {
+                mat.specular = mSprite.material.specular.toArrayRGBAf;
+                mat.ambient = mSprite.material.ambient.toArrayRGBAf;
+                mat.gloss = mSprite.material.gloss;
+                mat.shininess = mSprite.material.shininess;
+
+                isDefaultMaterial = false;
+            }
+        }
+
+        if (isDefaultMaterial)
+        {
+            mat.ambient = RGBA.white.toArrayRGBAf;
+            mat.specular = RGBA.black.toArrayRGBAf;
+        }
+
+        mat.intensity = sprite.albedoIntensity;
+
+        if (mat.intensity != 1)
+        {
+            foreach (ref v; mat.albedo)
+            {
+                v *= mat.intensity;
+            }
+        }
+
+        matConfig.material = mat;
+
+        gpu.dev.pushUniformFragmentData(1, &matConfig, matConfig.sizeof);
+    }
+
+    override bool bindPipeline()
+    {
+        if (!super.bindPipeline)
+        {
+            return false;
+        }
+
+        if (isPushUniformVertexMatrix)
+        {
+            SceneTransforms transforms;
+            transforms.camera = camera.view;
+            transforms.projection = camera.projection;
+
+            gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+        }
+
+        uint lightCount = cast(uint) lights.length;
+        if (lightCount > maxLights)
+        {
+            logger.errorf("Max lights: %d, but in scene: %d", maxLights, lightCount);
+            lightCount = maxLights;
+        }
+
+        SceneConfig config;
+        config.cameraPos = camera.cameraPos;
+        config.nearPlane = camera.nearPlane;
+        config.farPlane = camera.farPlane;
+        //TODO time > 100000 
+        config.time = platform.timer.ticksMs / 1000.0;
+        config.lightCount = lightCount;
+        config.flags = packSceneFlags;
+
+        foreach (li; 0 .. lightCount)
+        {
+            auto lamp = lights[li];
+
+            if (!lamp.isVisible && config.lightCount >= 0)
+            {
+                config.lightCount--;
+                continue;
+            }
+
+            LightData lightData;
+
+            lightData.position = lamp.pos3;
+            lightData.lightType = 0;
+            //lightData.direction = camera.cameraFront;
+            lightData.direction = lamp.direction;
+            lightData.linearCoeff = lamp.linearCoeff;
+            lightData.radius = lamp.radius;
+            //lightData.lightDirection;
+            lightData.ambient = lamp.ambient.toArrayFRGB;
+            lightData.quadraticCoeff = lamp.quadraticCoeff;
+            lightData.diffuse = lamp.diffuse.toArrayFRGB;
+            lightData.cutoff = 0;
+            lightData.specular = lamp.specular.toArrayFRGB;
+            lightData.outerCutoff = 0;
+
+            uint[2] spectrum = lamp.spectrumData;
+            lightData.spectrum1 = spectrum[0];
+            lightData.spectrum2 = spectrum[1];
+
+            uint type;
+            import api.dm.sim3d.phys.lightings.lights.dir_light : DirLight;
+            import api.dm.sim3d.phys.lightings.lights.spot_light : SpotLight;
+            import api.dm.sim3d.phys.lightings.lights.point_light : PointLight;
+
+            if (cast(DirLight) lamp)
+            {
+                type = 0;
+            }
+            else if (auto spotLamp = cast(SpotLight) lamp)
+            {
+                lightData.direction = lamp.direction;
+                type = 2;
+
+                lightData.cutoff = spotLamp.cutoff;
+                lightData.outerCutoff = spotLamp.outerCutoff;
+            }
+            else if (cast(PointLight) lamp)
+            {
+                type = 1;
+            }
+
+            lightData.lightType = type;
+
+            config.lights[li] = lightData;
+        }
+
+        gpu.dev.pushUniformFragmentData(0, &config, config.sizeof);
+
+        return true;
+    }
+
+    override bool add(Sprite2d object, long index = -1)
+    {
+        if (!super.add(object, index))
+        {
+            return false;
+        }
+
+        if (auto light = cast(BaseLight) object)
+        {
+            foreach (oldLight; lights)
+            {
+                if (oldLight is light)
+                {
+                    //TODO remove from parent
+                    return true;
+                }
+            }
+
+            lights ~= light;
+        }
+
+        return true;
+    }
+
+    BaseLight lamp(size_t lampIndex = 0)
+    {
+        if (lights.length == 0)
+        {
+            throw new Exception("Not found any lamp");
+        }
+
+        if (lampIndex >= lights.length)
+        {
+            throw new Exception("Out of bounds lamp index");
+        }
+
+        return lights[lampIndex];
+    }
+
+    uint packSceneFlags()
+    {
+        uint flags = 0;
+        import api.dm.sim3d.scenes.sim_scene : SimScene;
+
+        if (auto simScene = cast(SimScene) scene3d)
+        {
+            if (simScene.hasDiffusionPass)
+                flags |= SceneConfigFlag.IsUseDiffusion;
+        }
+
+        if (isUseTemp)
+                flags |= SceneConfigFlag.IsUseTemp;
+
+        return flags;
+    }
+}
