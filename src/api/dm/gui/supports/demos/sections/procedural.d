@@ -74,7 +74,7 @@ class Procedural : Control
 
     private void createTiling(Control root)
     {
-        import api.dm.sim3d.procedural.tessellations.textures.penrose_tiling : PenroseTiling;
+        import api.dm.kit.procedural.tessellations.textures.penrose_tiling : PenroseTiling;
 
         static size_t[8] modes = [0, 1, 2, 6, 7, 8, 10, 11];
         static size_t currIndex;
@@ -122,7 +122,7 @@ class Procedural : Control
 
     void createCellulars(Control root)
     {
-        import api.dm.sim3d.procedural.cellulars.elementary_cellular : ElementaryCellular;
+        import api.dm.kit.procedural.cellulars.elementary_cellular : ElementaryCellular;
 
         auto ca = new ElementaryCellular(90);
         ca.initializeState;
@@ -133,7 +133,7 @@ class Procedural : Control
 
     void createMaze(Control mazeRoot)
     {
-        import api.dm.sim3d.procedural.mazes.shapes.binary_tree : BinaryTree;
+        import api.dm.kit.procedural.mazes.shapes.binary_tree : BinaryTree;
 
         enum mazeWidth = 150;
         enum mazeHeight = 150;
@@ -142,13 +142,13 @@ class Procedural : Control
         binTree1.cellStyle = GraphicStyle(4, RGBA.lightpink);
         mazeRoot.addCreate(createInfo("Binary tree", binTree1));
 
-        import api.dm.sim3d.procedural.mazes.shapes.sidewinder : Sidewinder;
+        import api.dm.kit.procedural.mazes.shapes.sidewinder : Sidewinder;
 
         auto sidew1 = new Sidewinder(mazeWidth, mazeHeight, 10, 10);
         sidew1.cellStyle = GraphicStyle(4, RGBA.lightskyblue);
         mazeRoot.addCreate(createInfo("Sidewinder", sidew1));
 
-        import api.dm.sim3d.procedural.mazes.shapes.aldous_broder : AldousBroder;
+        import api.dm.kit.procedural.mazes.shapes.aldous_broder : AldousBroder;
 
         auto aldBrod1 = new AldousBroder(mazeWidth, mazeHeight, 10, 10);
         aldBrod1.cellStyle = GraphicStyle(4, RGBA.lightgreen);
@@ -161,13 +161,13 @@ class Procedural : Control
         enum h = 100;
         enum hue = 110;
 
-        import api.dm.sim3d.procedural.noises.textures.fractal_noise : FractalNoise;
-        import api.dm.sim3d.procedural.noises.voronoi : Voronoi;
-        import api.dm.sim3d.procedural.noises.value : Value;
-        import api.dm.sim3d.procedural.noises.worley : Worley;
-        import api.dm.sim3d.procedural.noises.simplex : Simplex;
-        import api.dm.sim3d.procedural.noises.perlin : SPerlin = Perlin;
-        import api.dm.sim3d.procedural.noises.textures.open_simplex : OpenSimplex;
+        import api.dm.kit.procedural.noises.textures.fractal_noise : FractalNoise;
+        import api.dm.kit.procedural.noises.voronoi : Voronoi;
+        import api.dm.kit.procedural.noises.value : Value;
+        import api.dm.kit.procedural.noises.worley : Worley;
+        import api.dm.kit.procedural.noises.simplex : Simplex;
+        import api.dm.kit.procedural.noises.perlin : SPerlin = Perlin;
+        import api.dm.kit.procedural.noises.textures.open_simplex : OpenSimplex;
 
         uint seed = 0;
 
@@ -200,12 +200,12 @@ class Procedural : Control
         auto noiseRoot2 = new HBox(5);
         noiseRoot.addCreate(noiseRoot2);
 
-        import api.dm.sim3d.procedural.noises.textures.perlin : Perlin;
+        import api.dm.kit.procedural.noises.textures.perlin : Perlin;
 
         auto p2 = new Perlin;
         noiseRoot.addCreate(createInfo("Perlin 2", p2));
 
-        import api.dm.sim3d.procedural.noises.textures.open_simplex : OpenSimplex;
+        import api.dm.kit.procedural.noises.textures.open_simplex : OpenSimplex;
 
         auto op2 = new OpenSimplex;
         noiseRoot.addCreate(createInfo("Simplex 2", op2));

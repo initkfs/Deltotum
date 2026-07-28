@@ -3,7 +3,7 @@ module api.dm.kit.sprites3d.textures.noise_texture;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.sim3d.procedural.noises.sample_noise : SampleNoise;
+import api.dm.kit.procedural.noises.sample_noise : SampleNoise;
 
 import Math = api.math;
 
@@ -23,7 +23,7 @@ class NoiseTexture : TextureGPU
 
         if (!this.noise)
         {
-            import api.dm.sim3d.procedural.noises.perlin : Perlin;
+            import api.dm.kit.procedural.noises.perlin : Perlin;
 
             this.noise = new Perlin;
         }
