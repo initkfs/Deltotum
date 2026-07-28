@@ -652,7 +652,7 @@ class CliApp : SimpleUnit
         import std.conv : to;
 
         immutable mustBeIsDisableCrash = environment.get(
-            CoreEnvKeys.appCrashFileDisable);
+            CoreEnvKeys.appCrashNoFile);
         if (!mustBeIsDisableCrash)
         {
             return true;
