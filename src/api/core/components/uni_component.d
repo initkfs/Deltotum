@@ -12,8 +12,6 @@ import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.validations.validation : Validation;
 import api.core.contexts.locators.locator_context : LocatorContext;
-import api.core.mems.memory : Memory;
-import api.core.mems.allocs.allocator : Allocator;
 
 import api.core.loggers.builtins.logger : Logger;
 
@@ -31,7 +29,6 @@ class UniComponent : SimpleUnit
         @Service Cli _cli;
 
         @Service Validation _validation;
-        @Service Memory _memory;
     }
     
     bool delegate(UniComponent component, UniComponent) onPreBuildWithParentIsContinue;
@@ -260,24 +257,6 @@ class UniComponent : SimpleUnit
             throw new Exception("Configuration must not be null");
         }
         _configs = newConfigs;
-    }
-
-    bool hasMemory() const nothrow pure @safe => _memory !is null;
-    inout(Allocator*) alloc() inout nothrow pure @safe => memory.alloc;
-
-    inout(Memory) memory() inout nothrow pure @safe
-    out (_memory; _memory !is null)
-    {
-        return _memory;
-    }
-
-    void memory(Memory newMemory) pure @safe
-    {
-        if (!newMemory)
-        {
-            throw new Exception("Service memory must not be null");
-        }
-        _memory = newMemory;
     }
 
     bool hasCli() const nothrow pure @safe => _cli !is null;

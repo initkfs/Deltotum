@@ -15,10 +15,6 @@ import api.core.validations.validation : Validation;
 import api.core.validations.validators.validator : Validator;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.contexts.locators.locator_context : LocatorContext;
-import api.core.mems.memory : Memory;
-import api.core.mems.allocs.allocator : Allocator;
-import api.core.mems.allocs.mallocator : Mallocator;
-import api.core.mems.allocs.arena_allocator : ArenaAllocator;
 import api.core.validations.errors.err_status : ErrStatus;
 
 import CoreEnvKeys = api.core.core_env_keys;
@@ -131,10 +127,6 @@ class CliApp : SimpleUnit
         services.validation = createValidation(services.logging, services.config, services
                 .context);
         assert(services.hasValidation);
-
-        services.memory = createMemory(services.logging, services.config, services
-                .context);
-        assert(services.hasMemory);
 
         services.isBuilt = true;
     }
@@ -596,40 +588,6 @@ class CliApp : SimpleUnit
     {
         auto validation = new Validation(logger, errStatus);
         return validation;
-    }
-
-    Mallocator* newMallocator() => new Mallocator(Allocator.init);
-
-    Allocator* createAllocator(Logging logging, Config config, Context context)
-    {
-        return cast(Allocator*) newMallocator;
-    }
-
-    ArenaAllocator* newArenaAllocator()
-    {
-        import api.core.mems.allocs.mallocator : initMallocator;
-
-        Allocator alloc;
-        initMallocator(&alloc);
-
-        return new ArenaAllocator(alloc);
-    }
-
-    ArenaAllocator* createArenaAllocator(Logging logging, Config config, Context context)
-    {
-        return newArenaAllocator;
-    }
-
-    Memory newMemory(Allocator* allocator, ArenaAllocator* arena)
-    {
-        return new Memory(allocator, arena);
-    }
-
-    Memory createMemory(Logging logging, Config config, Context context)
-    {
-        auto alloc = createAllocator(logging, config, context);
-        auto arena = createArenaAllocator(logging, config, context);
-        return newMemory(alloc, arena);
     }
 
     protected Cli createCli(string[] args)

@@ -4,7 +4,6 @@ module api.core.utils;
  */
 public:
 
-import api.core.mems.allocs;
 import api.core.utils.buffers.dense_buffer;
 import api.core.contexts.libs.dynamics.dynamic_loader;
 import api.core.contexts.libs.dynamics.dynamic_loader;

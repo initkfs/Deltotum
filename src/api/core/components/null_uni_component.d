@@ -6,7 +6,6 @@ import api.core.contexts.null_context : NullContext;
 import api.core.configs.null_configuration: NullConfiguration;
 import api.core.clis.null_cli : NullCli;
 import  api.core.validations.null_validation: NullValidation;;
-import api.core.mems.null_memory: NullMemory;
 
 /**
  * Authors: initkfs
@@ -19,7 +18,6 @@ class NullUniComponent : UniComponent
         _context = new NullContext;
         _logging = new NullLogging;
         _configs = new NullConfiguration;
-        _memory = new NullMemory;
         _cli = new NullCli;
         _validation = new NullValidation;
         isBuilt = true;
