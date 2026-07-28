@@ -35,8 +35,6 @@ class CliApp : SimpleUnit
     string appver = "0.1";
     string appid = "app.app";
 
-    bool isStopMainController = true;
-
     string defaultDataDir = "data";
     string defaultConfigsDir = "configs";
     string defaultUserDataDir = "userdata";
@@ -49,12 +47,17 @@ class CliApp : SimpleUnit
     {
         UniComponent _uniServices;
 
-        bool isSilentMode;
-        bool isDebugMode;
         string cliDataDir;
         string cliConfigDir;
         size_t cliStartupDelayMs;
+
+        bool isSilentMode;
+        bool isDebugMode;
     }
+
+    bool isStopMainController = true;
+    bool isNoEnvConfig;
+    bool isNoFileConfig;
 
     bool initialize(string[] args)
     {
@@ -367,7 +370,42 @@ class CliApp : SimpleUnit
         return new ConfigAggregator(forConfigs);
     }
 
-    Config newAAConstConfig()
+    protected Config createConfig(Context context)
+    {
+        Config[] configs;
+
+        if (!isNoEnvConfig)
+        {
+            auto envConfig = createEnvConfig;
+            uservices.cli.printer.printIfNotSilent("Create config from environment");
+            configs ~= envConfig;
+        }
+
+        if (!isNoFileConfig)
+        {
+            auto fileConfig = createFileConfigs(context);
+            configs ~= fileConfig;
+        }
+
+        auto config = newConfigAggregator(configs);
+        immutable bool isLoad = config.load;
+
+        if (isLoad)
+        {
+            import std.format : format;
+
+            uservices.cli.printer.printIfNotSilent(format("Load %s configs", configs
+                    .length));
+        }
+        else
+        {
+            uservices.cli.printer.printIfNotSilent("Configs were not loaded");
+        }
+
+        return config;
+    }
+
+    Config createEnvConfig()
     {
         import api.core.configs.keyvalues.aa_const_config : AAConstConfig;
         import std.process : environment;
@@ -380,14 +418,13 @@ class CliApp : SimpleUnit
         catch (Exception e)
         {
             uservices.logger.error(e.toString);
-            return new AAConstConfig(new string[string]);
+            return new AAConstConfig(null);
         }
     }
 
-    protected Config createConfig(Context context)
+    protected Config[] createFileConfigs(Context context)
     {
-        assert(uservices.cli);
-        assert(context);
+        Config[] configs;
 
         import std.path : buildPath, isAbsolute;
         import std.file : isDir, exists;
@@ -426,17 +463,11 @@ class CliApp : SimpleUnit
                 uservices.cli.printer.printIfNotSilent(
                     "Default config path cannot be built: data directory not found");
             }
-
         }
-
-        auto envConfig = newAAConstConfig;
-        uservices.cli.printer.printIfNotSilent("Create config from environment");
-
-        Config[] configs = [envConfig]; //TODO is hidden
 
         if (configDir.length != 0)
         {
-            configs ~= createConfigsFromDir(configDir);
+            configs ~= configsFromDir(configDir);
         }
         else
         {
@@ -447,30 +478,18 @@ class CliApp : SimpleUnit
         auto userConfigDir = buildPath(context.app.userDir, defaultConfigsDir);
         if (userConfigDir.exists && userConfigDir.isDir)
         {
-            configs ~= createConfigsFromDir(userConfigDir);
-        }else {
-            uservices.cli.printer.printIfNotSilent(
-                    "Check user config, not found: userConfigDir");
-        }
-
-        auto config = newConfigAggregator(configs);
-        immutable bool isLoad = config.load;
-        import std.format : format;
-
-        if (isLoad)
-        {
-            uservices.cli.printer.printIfNotSilent(format("Load %s configs", configs
-                    .length));
+            configs ~= configsFromDir(userConfigDir);
         }
         else
         {
-            uservices.cli.printer.printIfNotSilent("Configs were not loaded");
+            uservices.cli.printer.printIfNotSilent(
+                "Check user config, not found: userConfigDir");
         }
 
-        return config;
+        return configs;
     }
 
-    protected Config[] createConfigsFromDir(string configDir)
+    protected Config[] configsFromDir(string configDir)
     {
         import std.file : isDir, exists;
 
@@ -507,10 +526,7 @@ class CliApp : SimpleUnit
         return newConfiguration(config);
     }
 
-    protected Configuration newConfiguration(Config config)
-    {
-        return new Configuration(config);
-    }
+    protected Configuration newConfiguration(Config config) => new Configuration(config);
 
     protected Logger createLogger()
     {
@@ -558,10 +574,7 @@ class CliApp : SimpleUnit
         return newLogging(logger);
     }
 
-    protected Logging newLogging(Logger logger)
-    {
-        return new Logging(logger);
-    }
+    protected Logging newLogging(Logger logger) => new Logging(logger);
 
     protected Validation createValidation(Logging logging, Config config, Context context)
     {
@@ -620,20 +633,11 @@ class CliApp : SimpleUnit
         return cli;
     }
 
-    CliPrinter newCliPrinter()
-    {
-        return new CliPrinter;
-    }
+    CliPrinter newCliPrinter() => new CliPrinter;
 
-    CliParser newCliParser(string[] args)
-    {
-        return new CliParser(args);
-    }
+    CliParser newCliParser(string[] args) => new CliParser(args);
 
-    Cli newCli(CliParser parser, CliPrinter printer)
-    {
-        return new Cli(parser, printer);
-    }
+    Cli newCli(CliParser parser, CliPrinter printer) => new Cli(parser, printer);
 
     bool isWriteCrashFile()
     {
