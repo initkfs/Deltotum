@@ -9,7 +9,7 @@ import Math = api.math;
 
 //TODO mutable texture
 import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
-import api.math.angle;
+import api.math.geom2.plane_angle;
 
 struct PieData
 {

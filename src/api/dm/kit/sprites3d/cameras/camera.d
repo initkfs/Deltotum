@@ -7,7 +7,7 @@ import api.dm.kit.sprites3d.cameras.frustums.base_frustum3: BaseFrustum3f;
 import Math = api.math;
 import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4;
-import api.math.quaternion: Quaternion;
+import api.math.geom3.quat3: Quaternion;
 import api.math.matrices.affine3;
 
 /**
@@ -98,7 +98,7 @@ class Camera : Sprite2d
 
     void recalcView()
     {
-        import api.math.quaternion : Quaternion;
+        import api.math.geom3.quat3 : Quaternion;
 
         Vec3f localFront = Vec3f(0.0f, 0.0f, -1.0f);
         Vec3f localUp = Vec3f(0.0f, 1.0f, 0.0f);

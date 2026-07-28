@@ -1,4 +1,4 @@
-module api.math.angle;
+module api.math.geom2.plane_angle;
 
 import math = std.math.trigonometry;
 import mathConst = std.math.constants;

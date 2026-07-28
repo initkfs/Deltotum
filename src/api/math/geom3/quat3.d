@@ -1,4 +1,4 @@
-module api.math.quaternion;
+module api.math.geom3.quat3;
 
 import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4;

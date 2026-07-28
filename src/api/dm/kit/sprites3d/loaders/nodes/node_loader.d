@@ -179,7 +179,7 @@ class NodeLoader
 
             shape.scale = Vec3f(scale.x, scale.y, scale.z);
 
-            import api.math.quaternion : Quaternion;
+            import api.math.geom3.quat3 : Quaternion;
 
             Quaternion quat = Quaternion(rot.w, Vec3f(rot.x, rot.y, rot.z));
             auto angles = quat.toEuler;

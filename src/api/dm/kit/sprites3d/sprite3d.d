@@ -7,7 +7,7 @@ import api.dm.kit.scenes.scene3d : Scene3d;
 import api.math.geom3.vec3 : Vec3f;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.matrices.matrix : Matrix4x4;
-import api.math.quaternion : Quaternion;
+import api.math.geom3.quat3 : Quaternion;
 import api.math.geom3.sphere3 : Sphere3f;
 import Math = api.math;
 
@@ -570,7 +570,7 @@ class Sprite3d : Sprite2d
 
     void rotateTowards(float targetX, float targetY, float targetZ, float smoothness = 0.1f)
     {
-        import api.math.quaternion : Quaternion;
+        import api.math.geom3.quat3 : Quaternion;
 
         //auto deltaQ = Quaternion.fromAngle(angularVelocity.length * dt, angularVelocity.normalize);
         //orientation = orientation.mul(deltaQ).normalize;
