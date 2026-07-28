@@ -12,7 +12,7 @@ import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.gui.controls.meters.spinners.spinner : Spinner, FracSpinner;
 import api.dm.gui.controls.selects.color_pickers.color_picker : ColorPicker;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
-import api.dm.kit.sprites3d.lightings.lights.base_light : BaseLight;
+import api.dm.sims.phys.lightings.lights.base_light : BaseLight;
 import api.dm.gui.controls.switches.checks.check : Check;
 import api.dm.gui.controls.switches.buttons.button : Button;
 
@@ -273,7 +273,7 @@ class SpriteManager : BaseDebuggerPanel
             zRotateField.value(sprite3.angle, false);
         }
 
-        import api.dm.kit.sprites3d.materials.material : Material;
+        import api.dm.sims.phys.materials.material : Material;
 
         if (auto mat = cast(Material) sprite)
         {
@@ -317,7 +317,7 @@ class MaterialPanel : Control
     ColorPicker specular;
     RegulateTextField glossField;
 
-    import api.dm.kit.sprites3d.materials.material;
+    import api.dm.sims.phys.materials.material;
 
     Material mat;
 

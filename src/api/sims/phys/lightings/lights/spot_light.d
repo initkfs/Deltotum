@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.lightings.lights.spot_light;
+module api.dm.sims.phys.lightings.lights.spot_light;
 
-import api.dm.kit.sprites3d.lightings.lights.base_light : BaseLight;
+import api.dm.sims.phys.lightings.lights.base_light : BaseLight;
 
 import Math = api.math;
 

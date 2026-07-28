@@ -3,7 +3,7 @@ module api.dm.kit.sprites3d.pipelines.skyboxes.skybox;
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites2d.sprite2d: Sprite2d;
-import api.dm.kit.sprites3d.meshes.cube : Cube;
+import api.dm.sims.phys.meshes.cube : Cube;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.dm.com.graphics.gpu.com_3d_types;
 import api.math.matrices.matrix : Matrix4x4;

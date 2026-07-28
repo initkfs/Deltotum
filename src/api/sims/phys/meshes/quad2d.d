@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.meshes.quad2d;
+module api.dm.sims.phys.meshes.quad2d;
 
-import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dLow;
+import api.dm.sims.phys.meshes.mesh3d_indexed : Mesh3dLow;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 

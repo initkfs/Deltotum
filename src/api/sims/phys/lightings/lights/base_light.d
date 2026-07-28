@@ -1,8 +1,8 @@
-module api.dm.kit.sprites3d.lightings.lights.base_light;
+module api.dm.sims.phys.lightings.lights.base_light;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
-import api.dm.kit.sprites3d.materials.material_data: SpectrumLight;
+import api.dm.sims.phys.materials.material_sprite3d : MaterialSprite3d;
+import api.dm.sims.phys.materials.material_data: SpectrumLight;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.math.geom3.vec3 : Vec3f;
@@ -52,7 +52,7 @@ class BaseLight : Sprite3d
         {
             if (isCreateMesh)
             {
-                import api.dm.kit.sprites3d.meshes.sphere : Sphere;
+                import api.dm.sims.phys.meshes.sphere : Sphere;
 
                 Sphere newMesh = new Sphere(0.5);
                 newMesh.isCreateMaterial = false;

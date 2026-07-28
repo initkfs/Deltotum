@@ -1,16 +1,16 @@
-module api.dm.kit.sprites3d.pipelines.env.env_group;
+module api.dm.sims.phys.pipelines.env.env_group;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
-import api.dm.kit.sprites3d.materials.material_data : LightData, MaterialData;
-import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+import api.dm.sims.phys.materials.material_data : LightData, MaterialData;
+import api.dm.sims.phys.materials.material_sprite3d : MaterialSprite3d;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
-import api.dm.kit.sprites3d.materials.material : Material;
+import api.dm.sims.phys.materials.material : Material;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.math.geom3.vec3 : Vec3f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.matrices.matrix : Matrix4x4;
-import api.dm.kit.sprites3d.lightings.lights.base_light : BaseLight;
+import api.dm.sims.phys.lightings.lights.base_light : BaseLight;
 import Math = api.math;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -100,13 +100,19 @@ class EnvGroup : PipelineGroup
         buff.numFragUniformBuffers += 2;
         buff.numFragSamples += 6;
 
-        if (scene3d.isNeedDiffusionTexture)
-        {
-            buff.numFragSamples++;
-        }
+        import api.sims.scenes.sim_scene : SimScene;
 
-        if(scene3d.isNeedCubeMap){
-            buff.numFragSamples++;
+        if (auto simScene = cast(SimScene) scene3d)
+        {
+            if (simScene.isNeedDiffusionTexture)
+            {
+                buff.numFragSamples++;
+            }
+
+            if (simScene.isNeedCubeMap)
+            {
+                buff.numFragSamples++;
+            }
         }
 
         return buff;
@@ -121,8 +127,8 @@ class EnvGroup : PipelineGroup
 
         if (isCreateDefaultLight)
         {
-            import api.dm.kit.sprites3d.lightings.lights.point_light : PointLight;
-            import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
+            import api.dm.sims.phys.lightings.lights.point_light : PointLight;
+            import api.dm.sims.phys.lightings.lights.dir_light : DirLight;
             import api.dm.kit.graphics.colors.hsla : HSLA;
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -137,9 +143,9 @@ class EnvGroup : PipelineGroup
 
     override void bindSpriteData(Sprite3d sprite)
     {
-        import api.dm.kit.sprites3d.materials.material : Material;
+        import api.dm.sims.phys.materials.material : Material;
         import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
-        import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+        import api.dm.sims.phys.materials.material_sprite3d : MaterialSprite3d;
 
         sprite.bindAll;
 
@@ -199,7 +205,7 @@ class EnvGroup : PipelineGroup
             mat.isLamp = true;
         }
 
-        import api.dm.kit.sprites3d.materials.material_sprite3d : MaterialSprite3d;
+        import api.dm.sims.phys.materials.material_sprite3d : MaterialSprite3d;
 
         if (auto mSprite = cast(MaterialSprite3d) sprite)
         {
@@ -298,9 +304,9 @@ class EnvGroup : PipelineGroup
             lightData.spectrum2 = spectrum[1];
 
             uint type;
-            import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
-            import api.dm.kit.sprites3d.lightings.lights.spot_light : SpotLight;
-            import api.dm.kit.sprites3d.lightings.lights.point_light : PointLight;
+            import api.dm.sims.phys.lightings.lights.dir_light : DirLight;
+            import api.dm.sims.phys.lightings.lights.spot_light : SpotLight;
+            import api.dm.sims.phys.lightings.lights.point_light : PointLight;
 
             if (cast(DirLight) lamp)
             {
@@ -371,10 +377,16 @@ class EnvGroup : PipelineGroup
     uint packSceneFlags()
     {
         uint flags = 0;
-        if (scene3d.hasDiffusionPass)
-            flags |= SceneConfigFlag.IsUseDiffusion;
+        import api.sims.scenes.sim_scene : SimScene;
+
+        if (auto simScene = cast(SimScene) scene3d)
+        {
+            if (simScene.hasDiffusionPass)
+                flags |= SceneConfigFlag.IsUseDiffusion;
+        }
+
         if (isUseTemp)
-            flags |= SceneConfigFlag.IsUseTemp;
+                flags |= SceneConfigFlag.IsUseTemp;
 
         return flags;
     }

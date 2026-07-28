@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.meshes.sphere;
+module api.dm.sims.phys.meshes.sphere;
 
-import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dHigh;
+import api.dm.sims.phys.meshes.mesh3d_indexed : Mesh3dHigh;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.matrices.matrix : Matrix4x4;

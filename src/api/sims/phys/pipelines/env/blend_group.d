@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.pipelines.env.blend_group;
+module api.dm.sims.phys.pipelines.env.blend_group;
 
-import api.dm.kit.sprites3d.pipelines.env.env_group : EnvGroup;
+import api.dm.sims.phys.pipelines.env.env_group : EnvGroup;
 import api.dm.kit.sprites2d.sprite2d: Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 

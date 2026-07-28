@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.meshes.cube;
+module api.dm.sims.phys.meshes.cube;
 
-import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dLow;
+import api.dm.sims.phys.meshes.mesh3d_indexed : Mesh3dLow;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 import api.math.geom2 : Vec2f;
 import api.math.geom3 : Vec3f;

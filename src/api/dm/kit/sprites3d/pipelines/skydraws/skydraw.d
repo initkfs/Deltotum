@@ -6,7 +6,7 @@ module api.dm.kit.sprites3d.pipelines.skydraws.skydraw;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.kit.sprites3d.meshes.cube : Cube;
+import api.dm.sims.phys.meshes.cube : Cube;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.dm.com.graphics.gpu.com_3d_types;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;

@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.loaders.nodes.node_loader;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
-import api.dm.kit.sprites3d.meshes.mesh3d : Mesh3d;
-import api.dm.kit.sprites3d.meshes.mesh3d_indexed: Mesh3dHigh, Mesh3dLow;
+import api.dm.sims.phys.meshes.mesh3d : Mesh3d;
+import api.dm.sims.phys.meshes.mesh3d_indexed: Mesh3dHigh, Mesh3dLow;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 
 import api.math.geom3.vec3 : Vec3f;

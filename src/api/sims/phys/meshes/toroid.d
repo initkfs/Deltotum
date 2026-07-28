@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.meshes.toroid;
+module api.dm.sims.phys.meshes.toroid;
 
-import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dHigh;
+import api.dm.sims.phys.meshes.mesh3d_indexed : Mesh3dHigh;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.geom3.vec3 : Vec3f;

@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.meshes.frustum;
+module api.dm.sims.phys.meshes.frustum;
 
-import api.dm.kit.sprites3d.meshes.mesh3d_indexed : Mesh3dLow;
+import api.dm.sims.phys.meshes.mesh3d_indexed : Mesh3dLow;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.dm.kit.sprites3d.cameras.frustums.frustum3_persp : Frustum3fPersp;

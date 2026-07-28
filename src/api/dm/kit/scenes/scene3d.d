@@ -13,7 +13,6 @@ import api.dm.kit.scenes.antialiasings.fxaa : FXAA;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.dm.kit.scenes.postprocess.bloom.bloom : Bloom;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
-import api.sims.phys.diffusions.diffusion_pass : DiffusionPass;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.math.matrices.matrix;
 
@@ -58,13 +57,6 @@ class Scene3d : Scene2d
     bool isNeedCubeMap = true;
     TextureGPU cubeMap;
     TextureGPU cubeMapPlaceholder;
-
-    protected
-    {
-        DiffusionPass _diffusionPass;
-        TextureGPU _diffusionPlaceholder;
-    }
-    bool isNeedDiffusionTexture = true;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
@@ -181,20 +173,6 @@ class Scene3d : Scene2d
         build(postProc);
         postProc.create;
 
-        _diffusionPass = new DiffusionPass;
-        buildInitCreate(_diffusionPass);
-
-        if (!_diffusionPass)
-        {
-            import api.dm.kit.graphics.colors.rgba : RGBA;
-
-            _diffusionPlaceholder = new TextureGPU;
-            _diffusionPlaceholder.isNeedCamera = false;
-            _diffusionPlaceholder.isNeedDispose = false;
-            buildInit(_diffusionPlaceholder);
-            _diffusionPlaceholder.create(1, 1, RGBA.white);
-        }
-
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         cubeMapPlaceholder = new TextureGPU;
@@ -241,6 +219,14 @@ class Scene3d : Scene2d
         return colorTargetInfo;
     }
 
+    void onStartCmdBuffer(float alpha){
+
+    }
+
+    void onStartRenderPass(float alpha){
+
+    }
+
     override void drawAll(float alpha)
     {
         if ((!gpu) || (!platform.cap.isGPU))
@@ -264,10 +250,7 @@ class Scene3d : Scene2d
             throw new Exception("Error starting gpu command buffer");
         }
 
-        if (_diffusionPass)
-        {
-            _diffusionPass.draw(alpha);
-        }
+        onStartCmdBuffer(alpha);
 
         if (antiAliaser || isMix2d3dMode)
         {
@@ -294,9 +277,7 @@ class Scene3d : Scene2d
         //import api.math.geom2.rect2: Rect2f;
         //gpu.dev.setScissorRect(Rect2f(0, 0, window.width, window.height));
 
-        auto diffusionTexture = _diffusionPass ? _diffusionPass.outputTexture
-            : _diffusionPlaceholder;
-        gpu.dev.bindFragmentSamplers(diffusionTexture, 6);
+        onStartRenderPass(alpha);
 
         auto cube = cubeMap ? cubeMap : cubeMapPlaceholder;
         gpu.dev.bindFragmentSamplers(cube, 7);
@@ -512,17 +493,6 @@ class Scene3d : Scene2d
         }
     }
 
-    bool hasDiffusionPass() => _diffusionPass !is null;
-
-    DiffusionPass diffusionPass()
-    {
-        if (!_diffusionPass)
-        {
-            throw new Exception("Diffusion pass is null");
-        }
-        return _diffusionPass;
-    }
-
     override void dispose()
     {
         super.dispose;
@@ -555,16 +525,6 @@ class Scene3d : Scene2d
         if (antiAliaser)
         {
             antiAliaser.dispose;
-        }
-
-        if (_diffusionPlaceholder)
-        {
-            _diffusionPlaceholder.dispose;
-        }
-
-        if (_diffusionPass)
-        {
-            _diffusionPass.dispose;
         }
 
         if(cubeMapPlaceholder){

@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.materials.material_data;
+module api.dm.sims.phys.materials.material_data;
 
 import api.math.geom3.vec3 : Vec3f;
 import api.math.geom4.vec4 : Vec4f;
