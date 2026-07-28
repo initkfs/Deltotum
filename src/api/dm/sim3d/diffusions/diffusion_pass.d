@@ -1,7 +1,7 @@
-module api.dm.sim3d.phys.diffusions.diffusion_pass;
+module api.dm.sim3d.diffusions.diffusion_pass;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.sim3d.phys.diffusions.textures.diffusion_texture_array : DiffusionTextureArray;
+import api.dm.sim3d.diffusions.textures.diffusion_texture_array : DiffusionTextureArray;
 
 //TODO remove native api
 import api.dm.back.sdl3.externs.csdl3;

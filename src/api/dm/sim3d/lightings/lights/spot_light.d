@@ -1,6 +1,6 @@
-module api.dm.sim3d.phys.lightings.lights.spot_light;
+module api.dm.sim3d.lightings.lights.spot_light;
 
-import api.dm.sim3d.phys.lightings.lights.base_light : BaseLight;
+import api.dm.sim3d.lightings.lights.base_light : BaseLight;
 
 import Math = api.math;
 

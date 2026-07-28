@@ -1,4 +1,4 @@
-module api.dm.sim3d.phys.materials.material;
+module api.dm.sim3d.materials.material;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;

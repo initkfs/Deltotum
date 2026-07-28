@@ -2,7 +2,7 @@ module api.dm.sim3d.scenes.sim_scene;
 
 import api.dm.gui.scenes.gui_scene: GuiScene;
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
-import api.dm.sim3d.phys.diffusions.diffusion_pass : DiffusionPass;
+import api.dm.sim3d.diffusions.diffusion_pass : DiffusionPass;
 import api.math.matrices.matrix;
 
 //TODO remove native api

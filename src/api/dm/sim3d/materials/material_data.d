@@ -1,4 +1,4 @@
-module api.dm.sim3d.phys.materials.material_data;
+module api.dm.sim3d.materials.material_data;
 
 import api.math.geom3.vec3 : Vec3f;
 import api.math.geom4.vec4 : Vec4f;

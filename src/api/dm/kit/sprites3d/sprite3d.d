@@ -763,8 +763,8 @@ class Sprite3d : Sprite2d
             if (onUV)
             {
                 //TODO remove to mesh
-                import api.dm.sim3d.phys.meshes.sphere : Sphere;
-                import api.dm.sim3d.phys.meshes.cube : Cube;
+                import api.dm.sim3d.meshes.sphere : Sphere;
+                import api.dm.sim3d.meshes.cube : Cube;
 
                 if (auto s = cast(Sphere) closest)
                 {

@@ -1,7 +1,7 @@
-module api.dm.sim3d.phys.materials.material_sprite3d;
+module api.dm.sim3d.materials.material_sprite3d;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.sim3d.phys.materials.material : Material;
+import api.dm.sim3d.materials.material : Material;
 
 /**
  * Authors: initkfs
@@ -31,7 +31,7 @@ class MaterialSprite3d : Sprite3d
         {
             if (isCreateMaterial)
             {
-                import api.dm.sim3d.phys.materials.material : Material;
+                import api.dm.sim3d.materials.material : Material;
 
                 _material = new Material(diffuseMapPath, specularMapPath, normalMapPath, dispMapPath, aoMapPath);
                 addCreate(_material);

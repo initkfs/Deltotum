@@ -2,8 +2,8 @@ module api.dm.kit.sprites3d.pipelines.pipeline_group;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.sim3d.phys.materials.material : Material;
-import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+import api.dm.sim3d.materials.material : Material;
+import api.dm.sim3d.materials.material_sprite3d : MaterialSprite3d;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 
@@ -72,7 +72,7 @@ class PipelineGroup : Sprite3d
             dataTransferBufferPtr = gpu.dev.newTransferDownloadBuffer(SimpleDataBuffer.sizeof);
         }
 
-        // import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+        // import api.dm.sim3d.materials.material_sprite3d : MaterialSprite3d;
 
         // if (auto sprite3d = cast(MaterialSprite3d) sprite)
         // {
@@ -89,7 +89,7 @@ class PipelineGroup : Sprite3d
             return false;
         }
 
-        import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+        import api.dm.sim3d.materials.material_sprite3d : MaterialSprite3d;
 
         if (auto sprite3d = cast(MaterialSprite3d) sprite)
         {

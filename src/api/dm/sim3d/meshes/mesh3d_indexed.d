@@ -1,7 +1,7 @@
-module api.dm.sim3d.phys.meshes.mesh3d_indexed;
+module api.dm.sim3d.meshes.mesh3d_indexed;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.sim3d.phys.meshes.mesh3d : Mesh3d;
+import api.dm.sim3d.meshes.mesh3d : Mesh3d;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.matrices.matrix : Matrix4x4;

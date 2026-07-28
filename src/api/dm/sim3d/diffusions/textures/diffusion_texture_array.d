@@ -1,4 +1,4 @@
-module api.dm.sim3d.phys.diffusions.textures.diffusion_texture_array;
+module api.dm.sim3d.diffusions.textures.diffusion_texture_array;
 
 import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 

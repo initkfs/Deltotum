@@ -1,16 +1,16 @@
-module api.dm.sim3d.phys.pipelines.env.env_group;
+module api.dm.sim3d.pipelines.env.env_group;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
-import api.dm.sim3d.phys.materials.material_data : LightData, MaterialData;
-import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+import api.dm.sim3d.materials.material_data : LightData, MaterialData;
+import api.dm.sim3d.materials.material_sprite3d : MaterialSprite3d;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
-import api.dm.sim3d.phys.materials.material : Material;
+import api.dm.sim3d.materials.material : Material;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.math.geom3.vec3 : Vec3f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.matrices.matrix : Matrix4x4;
-import api.dm.sim3d.phys.lightings.lights.base_light : BaseLight;
+import api.dm.sim3d.lightings.lights.base_light : BaseLight;
 import Math = api.math;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -127,8 +127,8 @@ class EnvGroup : PipelineGroup
 
         if (isCreateDefaultLight)
         {
-            import api.dm.sim3d.phys.lightings.lights.point_light : PointLight;
-            import api.dm.sim3d.phys.lightings.lights.dir_light : DirLight;
+            import api.dm.sim3d.lightings.lights.point_light : PointLight;
+            import api.dm.sim3d.lightings.lights.dir_light : DirLight;
             import api.dm.kit.graphics.colors.hsla : HSLA;
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -143,9 +143,9 @@ class EnvGroup : PipelineGroup
 
     override void bindSpriteData(Sprite3d sprite)
     {
-        import api.dm.sim3d.phys.materials.material : Material;
+        import api.dm.sim3d.materials.material : Material;
         import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
-        import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+        import api.dm.sim3d.materials.material_sprite3d : MaterialSprite3d;
 
         sprite.bindAll;
 
@@ -205,7 +205,7 @@ class EnvGroup : PipelineGroup
             mat.isLamp = true;
         }
 
-        import api.dm.sim3d.phys.materials.material_sprite3d : MaterialSprite3d;
+        import api.dm.sim3d.materials.material_sprite3d : MaterialSprite3d;
 
         if (auto mSprite = cast(MaterialSprite3d) sprite)
         {
@@ -304,9 +304,9 @@ class EnvGroup : PipelineGroup
             lightData.spectrum2 = spectrum[1];
 
             uint type;
-            import api.dm.sim3d.phys.lightings.lights.dir_light : DirLight;
-            import api.dm.sim3d.phys.lightings.lights.spot_light : SpotLight;
-            import api.dm.sim3d.phys.lightings.lights.point_light : PointLight;
+            import api.dm.sim3d.lightings.lights.dir_light : DirLight;
+            import api.dm.sim3d.lightings.lights.spot_light : SpotLight;
+            import api.dm.sim3d.lightings.lights.point_light : PointLight;
 
             if (cast(DirLight) lamp)
             {

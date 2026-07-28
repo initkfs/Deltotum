@@ -1,6 +1,6 @@
-module api.dm.sim3d.phys.meshes.cylinder;
+module api.dm.sim3d.meshes.cylinder;
 
-import api.dm.sim3d.phys.meshes.mesh3d_indexed: Mesh3dHigh;
+import api.dm.sim3d.meshes.mesh3d_indexed: Mesh3dHigh;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.matrices.matrix : Matrix4x4;
