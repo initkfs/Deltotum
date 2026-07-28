@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.tweens.targets.motions.linear_motion;
+module api.dm.kit.sprites2d.tweens.targets.motions2.linear_motion;
 
 import api.dm.kit.sprites2d.tweens.targets.target_tween : TargetTween;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

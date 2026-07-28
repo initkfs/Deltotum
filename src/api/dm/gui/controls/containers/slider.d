@@ -5,7 +5,7 @@ import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion : LinearMotion;
+import api.dm.kit.sprites2d.tweens.targets.motions2.linear_motion : LinearMotion;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;

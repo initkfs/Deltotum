@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.tweens.targets.motions.circular_motion;
+module api.dm.kit.sprites2d.tweens.targets.motions2.circular_motion;
 
 import api.dm.kit.sprites2d.tweens.targets.value_tween : ValueTween;
 import api.dm.kit.sprites2d.tweens.curves.interpolator : Interpolator;

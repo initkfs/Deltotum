@@ -9,7 +9,7 @@ import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
-import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion : LinearMotion;
+import api.dm.kit.sprites2d.tweens.targets.motions2.linear_motion : LinearMotion;
 import api.dm.kit.sprites2d.tweens.targets.value_tween : ValueTween;
 import api.dm.kit.sprites2d.tweens.targets.props.angle_tween : AngleTween;
 

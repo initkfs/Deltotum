@@ -186,7 +186,7 @@ class BaseToggle : BaseBiswitch
 
     MinMaxTween!Vec2f newThumbEffectAnimation()
     {
-        import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion : LinearMotion;
+        import api.dm.kit.sprites2d.tweens.targets.motions2.linear_motion : LinearMotion;
         import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto uniInterp = new UniInterpolator;
