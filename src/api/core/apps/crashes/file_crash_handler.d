@@ -26,11 +26,13 @@ class FileCrashHandler : TimeCrashHandler
 
     string createCrashFileName(string crashName) inout @safe
     {
-        assert(crashName.length > 0);
+        if (crashName.length == 0)
+        {
+            crashName = "CrashName";
+        }
 
         auto fileName = crashName;
-        assert(fileName.length > 0);
-
+        
         enum extSep = '.';
 
         fileName ~= (fileExtension.length > 0 && fileExtension[0] != extSep) ? (
