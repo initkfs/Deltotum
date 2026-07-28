@@ -101,25 +101,7 @@ class CliApp : SimpleUnit
                 cli.printer.printIfNotSilent("Debug mode active");
             }
 
-            uservices.context = createContext;
-            assert(uservices.hasContext);
-
-            uservices.configs = createConfiguration(uservices.context);
-            assert(uservices.hasConfigs);
-
-            uservices.logging = createLogging;
-            assert(uservices.hasLogging);
-
-            assert(uservices.logging.logger);
-            uservices.validation = createValidation(uservices.logging, uservices.config, uservices
-                    .context);
-            assert(uservices.hasValidation);
-
-            uservices.memory = createMemory(uservices.logging, uservices.config, uservices
-                    .context);
-            assert(uservices.hasMemory);
-
-            uservices.isBuilt = true;
+            buildCreateServices;
         }
         catch (Exception e)
         {
@@ -129,10 +111,35 @@ class CliApp : SimpleUnit
         return true;
     }
 
-    Validator[] createValidators()
+    void buildCreateServices()
     {
-        return null;
+        buildCreateServices(uservices);
     }
+
+    void buildCreateServices(UniComponent services)
+    {
+        services.context = createContext;
+        assert(services.hasContext);
+
+        services.configs = createConfiguration(services.context);
+        assert(services.hasConfigs);
+
+        services.logging = createLogging;
+        assert(services.hasLogging);
+
+        assert(services.logging.logger);
+        services.validation = createValidation(services.logging, services.config, services
+                .context);
+        assert(services.hasValidation);
+
+        services.memory = createMemory(services.logging, services.config, services
+                .context);
+        assert(services.hasMemory);
+
+        services.isBuilt = true;
+    }
+
+    Validator[] createValidators() => null;
 
     Validator createConfigValidator(Config config, string[] configKeys)
     {
