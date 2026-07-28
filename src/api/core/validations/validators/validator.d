@@ -144,7 +144,7 @@ abstract class Validator
         _errors = null;
     }
 
-    string allMessages()
+    string messages()
     {
         if (isValid && (!isError) && (!isFail))
         {
@@ -213,7 +213,7 @@ abstract class Validator
     {
         import std.format : format;
 
-        const toStringMessage = format("%s; valid %s: %s", this.classinfo.name, isValid, allMessages);
+        const toStringMessage = format("%s; valid %s: %s", this.classinfo.name, isValid, messages);
         return toStringMessage;
     }
 

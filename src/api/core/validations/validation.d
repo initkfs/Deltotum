@@ -47,7 +47,7 @@ class Validation
         return true;
     }
 
-    string allMessages()
+    string messages()
     {
         import std.array : appender;
 
@@ -60,7 +60,7 @@ class Validation
                 continue;
             }
 
-            result.put(v.allMessages);
+            result.put(v.messages);
         }
 
         return result.data;

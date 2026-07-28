@@ -170,7 +170,7 @@ class CliApp : SimpleUnit
         if (!validation.isValid)
         {
             enum failMessage = "VALIDATION FAIL";
-            string message = validation.allMessages;
+            string message = validation.messages;
             if (uservices.hasLogging && uservices.logging.logger)
             {
                 uservices.logging.logger.error(failMessage);
