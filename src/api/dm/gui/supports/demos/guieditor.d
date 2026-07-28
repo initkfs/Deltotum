@@ -62,12 +62,6 @@ class GuiViewer : GuiScene
         animTab.content = new Animations;
         root.addCreate(animTab);
 
-        import api.dm.gui.supports.demos.sections.physics : Physics;
-
-        auto physTab = new Tab("Physics");
-        physTab.content = new Physics;
-        root.addCreate(physTab);
-
         import api.dm.gui.supports.demos.sections.images : Images;
 
         auto imagesTab = new Tab("Images");

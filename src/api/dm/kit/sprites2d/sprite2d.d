@@ -98,29 +98,6 @@ class Sprite2d : EventKitTarget
 
     bool isBuildOnAdd = true;
 
-    bool isPhysics;
-    bool isPhysInterpolateLastXY;
-
-    Vec2f velocity;
-    Vec2f maxVelocity;
-    Vec2f acceleration;
-
-    float damping = 0;
-    bool isStopOnSmallVelocity;
-    float smallVelocityAbs = 0.5;
-    size_t physicsIters = 1;
-
-    bool delegate(Sprite2d, Sprite2d) onCollision;
-
-    import api.dm.kit.domains.domain_set : DomainSet;
-
-    protected
-    {
-        DomainSet _domains;
-    }
-
-    bool isDomainsForChildren;
-
     //TODO extract
     //+1, -1, 0
     float charge = 0;
@@ -257,6 +234,8 @@ class Sprite2d : EventKitTarget
     float heightChangeThreshold = defaultTreshold;
 
     bool isNeedDispose = true;
+
+    bool isInterpolateLastXY;
 
     //pragma(msg, __traits(classInstanceSize, Sprite2d));
 
@@ -694,7 +673,7 @@ class Sprite2d : EventKitTarget
 
     bool draw(float alpha)
     {
-        updateDrawPhys(alpha);
+        //updateDrawPhys(alpha);
 
         if (!isNeedDraw(this))
         {
@@ -880,11 +859,6 @@ class Sprite2d : EventKitTarget
         if (layout && isLayoutForChild)
         {
             sprite.layout = layout;
-        }
-
-        if (isDomainsForChildren && _domains && !sprite.hasDomains)
-        {
-            sprite.domains = domains;
         }
 
         if (!sprite.onBeforeDrawChildDg && onBeforeDrawChildDg)
@@ -1402,176 +1376,15 @@ class Sprite2d : EventKitTarget
     Vec2f pxSecToPxFrame(Vec2f pxPerSec) => pxPerSec.scale(platform.loopFixedDtSec);
     Vec2f pxFrameToPxSec(Vec2f pxPerFrame) => pxPerFrame.div(platform.loopFixedDtSec);
 
-    void updateDrawPhys(float alpha)
-    {
-        if (!isPhysics || !isPhysInterpolateLastXY)
-        {
-            return;
-        }
-
-        if (isPhysInterpolateLastXY)
-        {
-            if (_prevX != 0)
-            {
-                //previous * alpha + current * (1.0f - alpha)
-                _x = _prevX + (_x - _prevX) * alpha;
-            }
-
-            if (_prevY != 0)
-            {
-                _y = _prevY + (_y - _prevY) * alpha;
-            }
-        }
-
-    }
-
-    Vec2f terminalVelocity(float dt)
-    {
-        //acceleration * dt = velocity * damping * dt
-        //acceleration = velocity * damping
-        if (damping == 0)
-        {
-            return velocity;
-        }
-
-        return (acceleration * (1 - damping * dt)).div(damping);
-    }
-
-    void updatePhys(out float dx, out float dy, float delta)
-    {
-        if (isDrag && isNoDragWhenPhysics)
-        {
-            return;
-        }
-
-        float invMass = 1;
-        if (hasDomains && domains.hasMech)
-        {
-            invMass = domains.mech.invMass;
-        }
-
-        //TODO check velocity is 0 || acceleration is 0
-        float accelerationDx = acceleration.x * invMass * delta;
-        float accelerationDy = acceleration.y * invMass * delta;
-
-        velocity.x += accelerationDx;
-        velocity.y += accelerationDy;
-
-        if (_domains && _domains.hasMech && _domains.mech.gravity != 0)
-        {
-            velocity.y += _domains.mech.gravity * delta;
-        }
-
-        if (damping != 0)
-        {
-            //dynamic damping
-            //float speed = sqrt(velocity.x*velocity.x + velocity.y*velocity.y);
-            //float dynamicFriction = 1.0f - (speed * 0.01f);
-            //or velocity += (acceleration - damping * velocity) * dt
-            const fdt = (1.0 - damping * delta);
-            velocity.x *= fdt;
-            velocity.y *= fdt;
-        }
-
-        if (_domains && _domains.hasMech)
-        {
-            import api.dm.kit.domains.phys.mech : Mech;
-
-            Mech physBody = _domains.mech;
-
-            if (physBody.angularAngle != 0)
-            {
-                import Math = api.math;
-
-                float accelX = Math.cosDeg(physBody.angularAngle) * physBody.linearAcceleration;
-                float accelY = Math.sinDeg(physBody.angularAngle) * physBody.linearAcceleration;
-
-                velocity.x += accelX * delta;
-                velocity.y += accelY * delta;
-            }
-
-            physBody.angularVelocity += physBody.angularAcceleration * delta;
-
-            if (physBody.angularDamping != 0)
-            {
-                float angularSpeed = Math.abs(physBody.angularVelocity);
-                float frictionFactor = physBody.angularDamping * (1.0f + angularSpeed * 0.1f);
-
-                physBody.angularVelocity *= (1.0f - frictionFactor * delta);
-            }
-
-            if (physBody.maxAngularVelocity != 0 && Math.abs(
-                    physBody.angularVelocity) > physBody.maxAngularVelocity)
-            {
-                physBody.angularVelocity = physBody.maxAngularVelocity * Math.sign(
-                    physBody.angularVelocity);
-            }
-
-            if (Math.abs(physBody.angularVelocity) < 0.5f)
-                physBody.angularVelocity = 0.0f;
-
-            angle = angle + physBody.angularVelocity * delta;
-        }
-
-        if (!maxVelocity.isZero)
-        {
-            if (Math.abs(velocity.x) > maxVelocity.x)
-            {
-                velocity.x = maxVelocity.x * Math.sign(velocity.x);
-            }
-
-            if (Math.abs(velocity.y) > maxVelocity.y)
-            {
-                velocity.y = maxVelocity.y * Math.sign(velocity.y);
-            }
-        }
-
-        if (isStopOnSmallVelocity)
-        {
-            if (Math.abs(velocity.x) <= smallVelocityAbs)
-                velocity.x = 0;
-            if (Math.abs(velocity.y) <= smallVelocityAbs)
-                velocity.y = 0;
-        }
-
-        dx = velocity.x;
-        dy = velocity.y;
-
-        dx *= delta;
-        dy *= delta;
-
-        if (isPhysInterpolateLastXY)
-        {
-            _prevX = _x;
-            _prevY = _y;
-        }
-
-        //TODO sprite.predictedPos = sprite.pos + sprite.velocity * dt;
-        if (physicsIters == 1)
-        {
-            checkCollisions(delta);
-        }
-        else
-        {
-            foreach (iter; 0 .. physicsIters)
-            {
-                checkCollisions(delta);
-            }
-        }
-
-        _x += dx;
-        _y += dy;
-    }
-
     void update(float delta)
     {
         float dx = 0;
         float dy = 0;
 
-        if (isPhysics)
-        {
-            updatePhys(dx, dy, delta);
-        }
+        // if (isPhysics)
+        // {
+        //     updatePhys(dx, dy, delta);
+        // }
 
         foreach (Sprite2d child; children)
         {
@@ -1623,35 +1436,6 @@ class Sprite2d : EventKitTarget
     bool intersect(Sprite2d other)
     {
         return intersectBounds(other);
-    }
-
-    void checkCollisions(float dt)
-    {
-        foreach (i, firstSprite; children)
-        {
-            if (!firstSprite.isPhysics)
-            {
-                continue;
-            }
-            foreach (secondSprite; children[i + 1 .. $])
-            {
-                if (!secondSprite.isPhysics)
-                {
-                    continue;
-                }
-
-                if (onCollision)
-                {
-                    onCollision(firstSprite, secondSprite);
-                }
-                else
-                {
-                    import api.sims.phys.rigids2d.collisions.impulse_resolver;
-
-                    resolve(firstSprite, secondSprite, dt, false);
-                }
-            }
-        }
     }
 
     Rect2f boundsRect() => Rect2f(x, y, _width, _height);
@@ -1886,7 +1670,7 @@ class Sprite2d : EventKitTarget
             }
         }
 
-        if (isPhysInterpolateLastXY && _prevX != 0)
+        if (isInterpolateLastXY && _prevX != 0)
         {
             _prevX = 0;
         }
@@ -1940,7 +1724,7 @@ class Sprite2d : EventKitTarget
             }
         }
 
-        if (isPhysInterpolateLastXY && _prevY != 0)
+        if (isInterpolateLastXY && _prevY != 0)
         {
             _prevY = 0;
         }
@@ -3141,24 +2925,6 @@ class Sprite2d : EventKitTarget
         import api.core.utils.arrays : drop;
 
         return drop(invalidateListeners, dg);
-    }
-
-    bool hasDomains() => _domains !is null;
-    DomainSet domains()
-    {
-        assert(_domains);
-        return _domains;
-    }
-
-    void domains(DomainSet w)
-    {
-        assert(w);
-        _domains = w;
-    }
-
-    void enableNewDomains()
-    {
-        _domains = new DomainSet;
     }
 
     void scene(Scene2d newScene)
