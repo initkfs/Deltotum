@@ -12,6 +12,5 @@ import api.core.utils.queues.ring_buffer_spsc;
 
 import api.core.utils.arrays;
 import api.core.utils.mem;
-import api.core.utils.sync;
 import api.core.utils.text;
 import api.core.utils.types;
