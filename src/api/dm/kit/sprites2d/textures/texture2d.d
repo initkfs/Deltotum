@@ -730,9 +730,9 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         void* ptr;
-        if (!texture.getPixelsRGBA(ptr))
+        if (const err = texture.getPixelsRGBA(ptr))
         {
-            throw new Exception(texture.lastError);
+            throw new Exception(err.toString);
         }
         assert(ptr);
         return ptr;
