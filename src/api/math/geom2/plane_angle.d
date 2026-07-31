@@ -9,7 +9,7 @@ import api.math.geom2.vec2 : Vec2f;
 /**
  * Authors: initkfs
  */
-struct Angle
+struct PlaneAngle
 {
     const
     {
@@ -39,7 +39,7 @@ struct Angle
         this.isNegative = isNegative;
     }
 
-    static Angle fromDecimal(double value) pure @safe
+    static PlaneAngle fromDecimal(double value) pure @safe
     {
         import Math = api.dm.math;
         import std.math.operations : cmp;
@@ -52,7 +52,7 @@ struct Angle
         int min = cast(int) minPart;
         double sec = ((minPart - min) * 60);
 
-        Angle angle = Angle(degs, min, sec, isNeg);
+        PlaneAngle angle = PlaneAngle(degs, min, sec, isNeg);
         return angle;
     }
 
@@ -100,7 +100,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    auto angle1 = Angle(10, 20, 30);
+    auto angle1 = PlaneAngle(10, 20, 30);
     assert(!angle1.isNegative);
     assert(angle1.deg == 10);
     assert(angle1.minutes == 20);
@@ -108,19 +108,19 @@ unittest
 
     assert(isClose(angle1.toDecimal, 10.341666666));
 
-    auto angle2 = Angle.fromDecimal(10.341666666);
+    auto angle2 = PlaneAngle.fromDecimal(10.341666666);
     assert(!angle2.isNegative);
     assert(angle2.deg == 10);
     assert(angle2.minutes == 20);
     assert(isClose(angle2.seconds, 30, 1e6));
 
-    auto emptyAngle = Angle.fromDecimal(0);
+    auto emptyAngle = PlaneAngle.fromDecimal(0);
     assert(!emptyAngle.isNegative);
     assert(emptyAngle.deg == 0);
     assert(emptyAngle.minutes == 0);
     assert(isClose(emptyAngle.seconds, 0.0, 0.0, 1e6));
     assert(isClose(emptyAngle.toDecimal, 0.0, 0.0, 1e6));
 
-    auto negAngle = Angle.fromDecimal(-10);
+    auto negAngle = PlaneAngle.fromDecimal(-10);
     assert(negAngle.isNegative);
 }
