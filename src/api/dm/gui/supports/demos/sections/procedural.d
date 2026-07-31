@@ -58,18 +58,14 @@ class Procedural : Control
 
         rnd = rands;
 
-        auto mazeRoot = new HBox;
-        mazeRoot.isAlignY = true;
-        addCreate(mazeRoot);
-        createMaze(mazeRoot);
-
-        createNoise(mazeRoot);
+        auto root = new HBox;
+        addCreate(root);
+        root.isAlignY = true;
+        createNoise(root);
 
         auto tilingRoot = new HBox;
         addCreate(tilingRoot);
         createTiling(tilingRoot);
-
-        createCellulars(tilingRoot);
     }
 
     private void createTiling(Control root)
@@ -118,41 +114,6 @@ class Procedural : Control
             }
             tween.run;
         };
-    }
-
-    void createCellulars(Control root)
-    {
-        import api.dm.kit.procedural.cellulars.elementary_cellular : ElementaryCellular;
-
-        auto ca = new ElementaryCellular(90);
-        ca.initializeState;
-
-        auto cellsRoot = createInfo("Rule 90", ca);
-        root.addCreate(cellsRoot);
-    }
-
-    void createMaze(Control mazeRoot)
-    {
-        import api.dm.kit.procedural.mazes.shapes.binary_tree : BinaryTree;
-
-        enum mazeWidth = 150;
-        enum mazeHeight = 150;
-
-        auto binTree1 = new BinaryTree(mazeWidth, mazeHeight, 10, 10);
-        binTree1.cellStyle = GraphicStyle(4, RGBA.lightpink);
-        mazeRoot.addCreate(createInfo("Binary tree", binTree1));
-
-        import api.dm.kit.procedural.mazes.shapes.sidewinder : Sidewinder;
-
-        auto sidew1 = new Sidewinder(mazeWidth, mazeHeight, 10, 10);
-        sidew1.cellStyle = GraphicStyle(4, RGBA.lightskyblue);
-        mazeRoot.addCreate(createInfo("Sidewinder", sidew1));
-
-        import api.dm.kit.procedural.mazes.shapes.aldous_broder : AldousBroder;
-
-        auto aldBrod1 = new AldousBroder(mazeWidth, mazeHeight, 10, 10);
-        aldBrod1.cellStyle = GraphicStyle(4, RGBA.lightgreen);
-        mazeRoot.addCreate(createInfo("Aldous-Broder", aldBrod1));
     }
 
     void createNoise(Control noiseRoot)
