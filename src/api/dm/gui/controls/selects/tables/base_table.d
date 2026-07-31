@@ -11,6 +11,8 @@ import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 
 import api.dm.gui.controls.containers.splits.hsplit_box : HSplitBox;
+import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
+import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
@@ -324,6 +326,42 @@ class BaseTable(T, TCol:
                 onCreatedRowContainer(rowContainer);
             }
         }
+    }
+
+    VScroll newVScroll()
+    {
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+        return new class VScroll
+        {
+            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
+            }
+
+            override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(h, w, angle, style);
+            }
+        };
+    }
+
+    HScroll newHScroll()
+    {
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+        return new class HScroll
+        {
+            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
+            }
+
+            override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
+            }
+        };
     }
 
     bool clear()

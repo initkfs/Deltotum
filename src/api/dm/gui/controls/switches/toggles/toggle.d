@@ -3,7 +3,6 @@ module api.dm.gui.controls.switches.toggles.toggle;
 import api.dm.gui.controls.switches.toggles.base_orient_toggle: BaseOrientToggle;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.pos2.orientation : Orientation;
-import api.math.geom2.points2;
 
 /**
  * Authors: initkfs

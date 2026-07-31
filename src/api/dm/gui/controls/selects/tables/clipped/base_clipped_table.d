@@ -58,7 +58,22 @@ abstract class BaseClippedTable(T, TCol:
 
     override Container newRowContainer()
     {
-        auto container = new ScrollBox(width, height);
+        import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
+        import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
+
+        float scrollW = width, scrollH = height;
+
+        auto container = new class ScrollBox
+        {
+            this()
+            {
+                super(scrollW, scrollH);
+            }
+
+            override VScroll newVScroll() => this.outer.newVScroll;
+            override HScroll newHScroll() => this.outer.newHScroll;
+        };
+
         container.isBorder = false;
         return container;
     }

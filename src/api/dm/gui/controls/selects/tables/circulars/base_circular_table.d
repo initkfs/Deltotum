@@ -231,19 +231,6 @@ abstract class BaseCircularTable(T, TCol:
         T rowItem(size_t rowIndex, size_t colIndex);
     }
 
-    VScroll newVScroll()
-    {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-        return new class VScroll
-        {
-            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
-            {
-                return theme.rectShape(w, h, angle, style);
-            }
-        };
-    }
-
     protected void moveVisibleRowsY(float dy)
     {
         foreach (vrow; visibleRows)
