@@ -154,13 +154,13 @@ class Curves : Control
         resetBuffer;
 
         CurveCalc.heart1(onBuffer, 1);
-        auto heat1 = createCurveInfo("Heat", pointsBuffer, true, false);
+        auto heart1 = createCurveInfo("Heart", pointsBuffer, true, false);
         resetBuffer;
 
         planeShapeContainer.addCreate([
             spirs1, spirs2, spirs3, bicorn1, card1, lem1, agnesi1, tractrix1,
             stroph1,
-            decart1, cube1, heat1
+            decart1, cube1, heart1
         ]);
 
         auto planeShapeContainer2 = newHContainer;
