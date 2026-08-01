@@ -1022,10 +1022,10 @@ class Control : GuiComponent
         return createShape(w, h, angle, createBackgroundStyle);
     }
 
-    protected Sprite2d createShape(float w, float h)
-    {
-        return createShape(w, h, angle, createStyle);
-    }
+    // protected Sprite2d createShape(float w, float h)
+    // {
+    //     return createShape(w, h, angle, createStyle);
+    // }
 
     protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
     {

@@ -46,4 +46,12 @@ class Badge : Label
     }
 
     override protected GraphicStyle createBackgroundStyle() => createSelectStyle;
+
+    override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+    {
+        import Math = api.math;
+
+        const size = Math.max(w, h);
+        return theme.circleShape(size, createStyle);
+    }
 }
