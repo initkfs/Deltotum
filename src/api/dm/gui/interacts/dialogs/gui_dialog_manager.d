@@ -44,7 +44,7 @@ class GuiDialogManager : Container, DialogManager
                 hideDialog;
                 if (isDisableScenePause)
                 {
-                    window.currentScene.isPause = false;
+                    window.currentScene.isFreeze = false;
                 }
             };
         }
@@ -100,7 +100,7 @@ class GuiDialogManager : Container, DialogManager
 
         if (isEnableScenePause)
         {
-            window.currentScene.isPause = true;
+            window.currentScene.isFreeze = true;
         }
     }
 

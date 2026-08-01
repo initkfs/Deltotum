@@ -2537,7 +2537,10 @@ class Sprite2d : EventKitTarget
             pause;
         }
 
-        onAllChildren((child) { child.onScenePause; }, false);
+        foreach (ch; children)
+        {
+            ch.onScenePause;
+        }
     }
 
     void onSceneResume()
@@ -2547,7 +2550,10 @@ class Sprite2d : EventKitTarget
             run;
         }
 
-        onAllChildren((child) { child.onSceneResume; }, false);
+        foreach (ch; children)
+        {
+            ch.onSceneResume;
+        }
     }
 
     void setUserData(T)(string key, T data)

@@ -262,7 +262,7 @@ class Controls : Control
 
         auto btnError = new Button("Error", (ref e) {
             import std.conv: to;
-            interact.dialog.showError((new Exception("Exception")).toString.to!dstring);
+            interact.dialog.showError("Error!");
         });
         btnError.isEnablePadding = false;
         root1.addCreate(btnError);

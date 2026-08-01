@@ -85,19 +85,19 @@ class GuiScene : Scene3d
                     import api.dm.com.inputs.com_keyboard : ComKeyName;
 
                     //TODO toggle pause?
-                    if (e.keyName != ComKeyName.key_f12 || isPause)
+                    if (e.keyName != ComKeyName.key_f12 || isFreeze)
                     {
                         return;
                     }
 
-                    if (!isPause)
+                    if (!isFreeze)
                     {
-                        isPause = true;
-                        dialogManager.showInfo("Pause!", "Info", () {
-                            isPause = false;
-                            eternalSprites = null;
-                        });
+                        isFreeze = true;
                         eternalSprites ~= dialogManager;
+                        dialogManager.showInfo("Pause!", "Info", () {
+                            isFreeze = false;
+                            //eternalSprites = null;
+                        });
                     }
                 };
             }

@@ -36,7 +36,7 @@ class Scene2d : EventKitTarget
     bool isProcessUDA = true;
     bool isClearScreen = true;
 
-    bool isPause;
+    protected bool _freeze;
     Sprite2d[] eternalSprites;
 
     bool isDrawAfterAllSprites;
@@ -399,7 +399,7 @@ class Scene2d : EventKitTarget
 
         invalidNodesCount = 0;
 
-        Sprite2d[] roots = isPause ? eternalSprites : sprites;
+        Sprite2d[] roots = _freeze ? eternalSprites : sprites;
 
         foreach (root; roots)
         {
@@ -409,7 +409,7 @@ class Scene2d : EventKitTarget
             //root.unvalidate;
         }
 
-        if (!isPause)
+        if (!_freeze)
         {
             if (controlledSprites.length > 0)
             {
@@ -447,6 +447,11 @@ class Scene2d : EventKitTarget
     override void pause()
     {
         super.pause;
+        pauseSprites;
+    }
+
+    void pauseSprites()
+    {
         if (sprites.length > 0)
         {
             foreach (obj; sprites)
@@ -456,17 +461,22 @@ class Scene2d : EventKitTarget
         }
     }
 
+    void resumeSprites()
+    {
+        if (sprites.length > 0)
+        {
+            foreach (obj; sprites)
+            {
+                obj.onSceneResume;
+            }
+        }
+    }
+
     override void run()
     {
         if (isPausing)
         {
-            if (sprites.length > 0)
-            {
-                foreach (obj; sprites)
-                {
-                    obj.onSceneResume;
-                }
-            }
+            resumeSprites;
         }
 
         super.run;
@@ -581,7 +591,7 @@ class Scene2d : EventKitTarget
 
     Sprite2d[] activeSprites()
     {
-        if (!isPause || eternalSprites.length == 0)
+        if (!_freeze || eternalSprites.length == 0)
         {
             return sprites;
         }
@@ -698,5 +708,29 @@ class Scene2d : EventKitTarget
         const prevId = _nextUniqId;
         _nextUniqId++;
         return prevId;
+    }
+
+    bool isFreeze() => _freeze;
+
+    void isFreeze(bool v)
+    {
+        if (_freeze == v)
+        {
+            return;
+        }
+
+        if (v)
+        {
+            pauseSprites;
+        }
+        else
+        {
+            if (_freeze)
+            {
+                resumeSprites;
+            }
+        }
+
+        _freeze = v;
     }
 }
