@@ -183,6 +183,11 @@ class ScrollBox : Container
             {
                 return theme.rectShape(w, h, angle, style);
             }
+
+            override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
+            }
         };
     }
 
@@ -195,6 +200,11 @@ class ScrollBox : Container
             override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
+            }
+
+            override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+            {
+                return theme.rectShape(h, w, angle, style);
             }
         };
     }
