@@ -122,13 +122,13 @@ class Procedural : Control
         enum h = 100;
         enum hue = 110;
 
-        import api.dm.kit.procedural.noises.textures.fractal_noise : FractalNoise;
+        import api.dm.kit.procedural.noises.textures2d.fractal_noise : FractalNoise;
         import api.dm.kit.procedural.noises.voronoi : Voronoi;
         import api.dm.kit.procedural.noises.value : Value;
         import api.dm.kit.procedural.noises.worley : Worley;
         import api.dm.kit.procedural.noises.simplex : Simplex;
         import api.dm.kit.procedural.noises.perlin : SPerlin = Perlin;
-        import api.dm.kit.procedural.noises.textures.open_simplex : OpenSimplex;
+        import api.dm.kit.procedural.noises.textures2d.open_simplex : OpenSimplex;
 
         uint seed = 0;
 
@@ -161,12 +161,12 @@ class Procedural : Control
         auto noiseRoot2 = new HBox(5);
         noiseRoot.addCreate(noiseRoot2);
 
-        import api.dm.kit.procedural.noises.textures.perlin : Perlin;
+        import api.dm.kit.procedural.noises.textures2d.perlin : Perlin;
 
         auto p2 = new Perlin;
         noiseRoot.addCreate(createInfo("Perlin 2", p2));
 
-        import api.dm.kit.procedural.noises.textures.open_simplex : OpenSimplex;
+        import api.dm.kit.procedural.noises.textures2d.open_simplex : OpenSimplex;
 
         auto op2 = new OpenSimplex;
         noiseRoot.addCreate(createInfo("Simplex 2", op2));

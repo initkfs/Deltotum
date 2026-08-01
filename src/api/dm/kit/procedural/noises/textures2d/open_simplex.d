@@ -1,6 +1,6 @@
-module api.dm.kit.procedural.noises.textures.open_simplex;
+module api.dm.kit.procedural.noises.textures2d.open_simplex;
 
-import api.dm.kit.procedural.noises.textures.noise : Noise;
+import api.dm.kit.procedural.noises.textures2d.noise : Noise;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.colors.rgba : RGBA;

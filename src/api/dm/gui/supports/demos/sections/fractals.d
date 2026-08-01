@@ -11,7 +11,7 @@ import api.math.random : Random, rands;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 
-import api.dm.kit.procedural.lsystems.textures.lshape : LShape;
+import api.dm.kit.procedural.lsystems.textures2d.lshape : LShape;
 import api.dm.kit.procedural.lsystems.lsystem : LSystemData;
 import LFractals = api.dm.kit.procedural.fractals.lfractals;
 

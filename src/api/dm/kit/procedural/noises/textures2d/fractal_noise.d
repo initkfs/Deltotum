@@ -1,7 +1,7 @@
-module api.dm.kit.procedural.noises.textures.fractal_noise;
+module api.dm.kit.procedural.noises.textures2d.fractal_noise;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.procedural.noises.textures.noise : Noise;
+import api.dm.kit.procedural.noises.textures2d.noise : Noise;
 import api.dm.kit.procedural.noises.sample_noise : SampleNoise;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;

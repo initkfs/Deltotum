@@ -1,4 +1,4 @@
-module api.dm.kit.procedural.lsystems.textures.lshape;
+module api.dm.kit.procedural.lsystems.textures2d.lshape;
 
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
