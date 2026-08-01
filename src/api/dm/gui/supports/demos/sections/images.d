@@ -85,7 +85,7 @@ class Images : Control
         addCreate(container);
         container.enablePadding;
 
-        import api.dm.kit.procedural.fractals.images.julia : Phoenix;
+        import api.dm.kit.procedural.fractals.images.phoenix : Phoenix;
 
         auto original = new Phoenix(imageSize, imageSize);
 
