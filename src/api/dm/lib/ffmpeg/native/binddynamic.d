@@ -14,6 +14,16 @@ double av_q2d(AVRational a)
     return a.num / cast(double) a.den;
 }
 
+string ffmpegErrorText(int code)
+{
+    char[256] buff = 0;
+    av_strerror(code, buff.ptr, buff.length);
+
+    import std.string : fromStringz;
+
+    return buff.ptr.fromStringz.idup;
+}
+
 __gshared extern (C) nothrow
 {
     //libavutil
@@ -41,7 +51,7 @@ __gshared extern (C) nothrow
     int function(uint8_t** audio_data, int* linesize, int nb_channels,
         int nb_samples, AVSampleFormat sample_fmt, int _align) av_samples_alloc;
     int function(const AVChannelLayout* channel_layout, char* buf, size_t buf_size) av_channel_layout_describe;
-    void function(AVChannelLayout * ch_layout, int 	nb_channels) av_channel_layout_default;	
+    void function(AVChannelLayout* ch_layout, int nb_channels) av_channel_layout_default;
 
     void function(int arg) av_log_set_flags;
     void function(int level) av_log_set_level;
@@ -119,7 +129,7 @@ __gshared extern (C) nothrow
     //     const uint8_t* _in, int in_count) swr_convert;
     int function(SwrContext* s, const uint8_t** _out, int out_count,
         uint8_t** _in, int in_count) swr_convert;
-    int function(SwrContext * s, int 	in_samples) swr_get_out_samples;	
+    int function(SwrContext* s, int in_samples) swr_get_out_samples;
 
 }
 

@@ -84,6 +84,11 @@ class VideoPlayer : Control
         addCreate(panel);
         panel.onPlay = () {
 
+            if (!media.audio.isRunning)
+            {
+                media.audio.start;
+            }
+
             if (onStart)
             {
                 onStart();
@@ -93,11 +98,12 @@ class VideoPlayer : Control
         };
 
         engine.onUpdateYV = (yplane, ypitch, uplane, upitch, vplane, vpitch) {
-            
-            if(!texture.isVisible){
+
+            if (!texture.isVisible)
+            {
                 return;
             }
-            
+
             if (!texture.updateTextureUV(yplane, cast(int) ypitch, uplane, cast(int) upitch, vplane, cast(
                     int) vpitch))
             {

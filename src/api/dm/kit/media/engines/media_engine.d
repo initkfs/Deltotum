@@ -93,9 +93,10 @@ class MediaEngine(
         pFormatCtx = avformat_alloc_context();
         contextMutex = new shared Mutex;
 
-        if (avformat_open_input(&pFormatCtx, file, null, null) != 0)
+        const openCode = avformat_open_input(&pFormatCtx, file, null, null);
+        if (openCode != 0)
         {
-            logger.error("Error ffmpeg file");
+            logger.error("Error ffmpeg file: " ~ ffmpegErrorText(openCode));
             return;
         }
 

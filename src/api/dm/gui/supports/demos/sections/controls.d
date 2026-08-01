@@ -105,6 +105,7 @@ class Controls : Control
         auto vContainer2 = new VBox;
         vContainer2.isAlignX = true;
         largeContainer.addCreate(vContainer2);
+        vContainer2.enablePadding;
 
         import api.dm.gui.controls.media.video.video_player : VideoPlayer;
 

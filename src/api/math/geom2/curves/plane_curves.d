@@ -164,3 +164,20 @@ void rose(scope bool delegate(Vec2f) onPointIsContinue, float roseSize, float n,
         return onPointIsContinue(Vec2f.fromPolarRad(angle, r));
     });
 }
+
+//x = 16 * sin(t) ^^ 3
+//y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
+void heart1(scope bool delegate(Vec2f) onPointIsContinue, float scaleX = 1, float scaleY = 1, float step = 0.01)
+{
+    for (float i = 0; i < Math.PI2; i += step)
+    {
+        auto x = scaleX * 16 * (Math.sin(i) ^^ 3);
+        auto y = -scaleY * (13 * Math.cos(i) - 5 * Math.cos(
+                2 * i) - 2 * Math.cos(
+                3 * i) - Math.cos(4 * i));
+        if (!onPointIsContinue(Vec2f(x, y)))
+        {
+            break;
+        }
+    }
+}

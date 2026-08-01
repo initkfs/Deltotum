@@ -34,7 +34,7 @@ class Curves : Control
 
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
-        layout = new VLayout;
+        layout = new VLayout(20);
         layout.isAutoResize = true;
     }
 
@@ -89,7 +89,7 @@ class Curves : Control
 
     protected Container newHContainer()
     {
-        auto container = new HBox(10);
+        auto container = new HBox(15);
         return container;
     }
 
@@ -149,14 +149,18 @@ class Curves : Control
         auto decart1 = createCurveInfo("Descart\nfolium", pointsBuffer);
         resetBuffer;
 
-        CurveCalc.trisectrixMaclaurin(onBuffer, 20);
+        CurveCalc.trisectrixMaclaurin(onBuffer, 15);
         auto cube1 = createCurveInfo("Trisectrix of\nMaclaurin", pointsBuffer, true, false);
+        resetBuffer;
+
+        CurveCalc.heart1(onBuffer, 1);
+        auto heat1 = createCurveInfo("Heat", pointsBuffer, true, false);
         resetBuffer;
 
         planeShapeContainer.addCreate([
             spirs1, spirs2, spirs3, bicorn1, card1, lem1, agnesi1, tractrix1,
             stroph1,
-            decart1, cube1
+            decart1, cube1, heat1
         ]);
 
         auto planeShapeContainer2 = newHContainer;
@@ -255,7 +259,7 @@ class Curves : Control
         resetBuffer;
 
         CurveCalc.superformula(onBuffer, 1, 1, 16, 0.5, 0.5, 16, 20);
-        auto sup1 = createCurveInfo("Superformula\n16, 0.5, 0.5, 16", pointsBuffer);
+        auto sup1 = createCurveInfo("Superformula\n16, .5, .5, 16", pointsBuffer);
         resetBuffer;
 
         CurveCalc.superformula(onBuffer, 1, 1, 12, 15, 20, 3, 20);
@@ -263,7 +267,7 @@ class Curves : Control
         resetBuffer;
 
         CurveCalc.superformula(onBuffer, 1, 1, 4, 0.5, 0.5, 4, 20);
-        auto sup3 = createCurveInfo("Superformula\n4, 0.5, 0.5, 4", pointsBuffer);
+        auto sup3 = createCurveInfo("Superformula\n4, .5, .5, 4", pointsBuffer);
         resetBuffer;
 
         CurveCalc.superformula(onBuffer, 1, 1, 5, 2, 6, 6, 10);
