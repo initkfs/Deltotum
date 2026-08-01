@@ -20,12 +20,18 @@ class GuiDialogManager : Container, DialogManager
 
     bool isDialogLazyCreate;
 
+    bool isEnableScenePause = true;
+    bool isDisableScenePause = true;
+
     void delegate(GuiDialog) onDialogCreate;
 
     this(GuiDialog dialog = null)
     {
         mainDialog = !dialog ? new GuiDialog : dialog;
         mainDialog.isLayoutManaged = false;
+
+        isDrawByParent = false;
+        isLayoutManaged = false;
     }
 
     override void initialize()
@@ -34,7 +40,13 @@ class GuiDialogManager : Container, DialogManager
 
         if (!mainDialog.onExit)
         {
-            mainDialog.onExit = () { hideDialog; };
+            mainDialog.onExit = () {
+                hideDialog;
+                if (isDisableScenePause)
+                {
+                    window.currentScene.isPause = false;
+                }
+            };
         }
     }
 
@@ -50,11 +62,21 @@ class GuiDialogManager : Container, DialogManager
                 mainDialog.isVisible = false;
             }
         }
+
+        if (isEnableScenePause || isDisableScenePause)
+        {
+            assert(window);
+            window.showingTasks ~= (float dt) {
+                window.currentScene.controlledSprites ~= this;
+                window.currentScene.eternalSprites ~= this;
+            };
+        }
     }
 
     protected void createDialog(GuiDialog dialog)
     {
         addCreate(dialog);
+
         if (onDialogCreate)
         {
             onDialogCreate(mainDialog);
@@ -75,6 +97,11 @@ class GuiDialogManager : Container, DialogManager
         mainDialog.y = sceneBounds.middleY - mainDialog.boundsRect.halfHeight;
 
         mainDialog.isVisible = true;
+
+        if (isEnableScenePause)
+        {
+            window.currentScene.isPause = true;
+        }
     }
 
     void hideDialog()

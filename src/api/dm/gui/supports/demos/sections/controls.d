@@ -75,6 +75,7 @@ class Controls : Control
         createSimpleTexts(switchRoot);
         createPickers(switchRoot);
         createProgress(switchRoot);
+        createDialogs(switchRoot);
 
         rootContainer.addCreate(new HSeparator);
 
@@ -248,48 +249,39 @@ class Controls : Control
 
     void createDialogs(Container root)
     {
-        import api.dm.gui.controls.containers.frame : Frame;
         import api.dm.gui.controls.containers.vbox : VBox;
 
-        auto frame = new Frame("Dialogs");
-        frame.isVGrow = true;
-        root.addCreate(frame);
-
-        auto root1 = new VBox(5);
-        frame.addCreate(root1);
-        auto root2 = new HBox(5);
-        root1.addCreate(root2);
-        auto root3 = new HBox(5);
-        root1.addCreate(root3);
+        auto root1 = new VBox;
+        root.addCreate(root1);
 
         auto btnInfo = new Button("Info", (ref e) {
             interact.dialog.showInfo("Info!");
         });
-        root2.addCreate(btnInfo);
+        btnInfo.isEnablePadding = false;
+        root1.addCreate(btnInfo);
 
         auto btnError = new Button("Error", (ref e) {
-            interact.dialog.showError("Error!");
+            import std.conv: to;
+            interact.dialog.showError((new Exception("Exception")).toString.to!dstring);
         });
-        root2.addCreate(btnError);
+        btnError.isEnablePadding = false;
+        root1.addCreate(btnError);
 
-        auto btnQuestion = new Button("Question", (ref e) {
-            interact.dialog.showQuestion("Question");
-        });
-        root2.addCreate(btnQuestion);
+        // auto btnQuestion = new Button("Question", (ref e) {
+        //     interact.dialog.showQuestion("Question");
+        // });
+        // btnQuestion.isEnablePadding = false;
+        // root1.addCreate(btnQuestion);
+
+        auto root2 = new VBox;
+        root.addCreate(root2);
 
         auto popBtn = new Button("Popup", (ref e) {
             import std.conv : to;
 
-            interact.popup.notify("Popup");
+            interact.popup.urgent("Popup");
         });
-        root3.addCreate(popBtn);
-
-        auto popUrgBtn = new Button("Urgent", (ref e) {
-            import std.conv : to;
-
-            interact.popup.urgent("Popup urgent");
-        });
-        root3.addCreate(popUrgBtn);
+        root2.addCreate(popBtn);
     }
 
     void createSelects(Container root)
@@ -423,8 +415,8 @@ class Controls : Control
             import api.math.geom2.vec2 : Vec2f;
 
             Sprite2d[] shapes;
-            foreach_reverse (ii; 2 .. 8)(i)
-            {
+            foreach_reverse (ii; 2 .. 8)
+                (i) {
                 auto shape = new class VectorTexture
                 {
                     this()
