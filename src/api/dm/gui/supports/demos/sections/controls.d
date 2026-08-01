@@ -116,7 +116,7 @@ class Controls : Control
 
         import api.dm.gui.controls.viewers.webs.web_browser : WebBrowser;
 
-        auto webBrowser = new WebBrowser;
+        auto webBrowser = new WebBrowser(250, 300);
         vContainer2.addCreate(webBrowser);
     }
 

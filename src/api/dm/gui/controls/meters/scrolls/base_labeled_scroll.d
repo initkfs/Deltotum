@@ -60,19 +60,16 @@ abstract class BaseLabeledScroll : BaseMonoScroll
             }
         }
 
-        invalidateListeners ~= () {
-
-            if (!isCreated || !thumb || !label)
-            {
-                return;
-            }
-
-            updateLabelPos;
-        };
+        updateLabelPos;
     }
 
     void updateLabelPos()
     {
+        if ((!thumb) || (!label))
+        {
+            return;
+        }
+
         import api.math.geom2.vec2 : Vec2f;
 
         Vec2f newPos;
@@ -111,8 +108,10 @@ abstract class BaseLabeledScroll : BaseMonoScroll
             return;
         }
 
+        updateLabelPos;
+
         import std.format : format;
-        import std.conv: to;
+        import std.conv : to;
 
         label.text = !textFormatter ? format("%.2f", v).to!dstring : textFormatter(v);
     }
