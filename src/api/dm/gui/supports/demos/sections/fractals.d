@@ -221,6 +221,11 @@ class Fractals : Control
 
         auto newton = new Newton(shapeSize, shapeSize);
         container3.addCreate(createFractalInfo("Newton", newton));
+
+        import api.dm.kit.procedural.fractals.images.phoenix : Phoenix;
+
+        auto ph = new Phoenix(shapeSize, shapeSize);
+        container3.addCreate(createFractalInfo("Phoenix", ph));
     }
 
 }

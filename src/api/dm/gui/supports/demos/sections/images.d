@@ -85,9 +85,9 @@ class Images : Control
         addCreate(container);
         container.enablePadding;
 
-        import api.dm.kit.procedural.fractals.images.newton : Newton;
+        import api.dm.kit.procedural.fractals.images.julia : Phoenix;
 
-        auto original = new Newton(imageSize, imageSize);
+        auto original = new Phoenix(imageSize, imageSize);
 
         static RGBA[][] colorBuff = new RGBA[][](imageSize, imageSize);
         original.onColor = (x, y, color) {

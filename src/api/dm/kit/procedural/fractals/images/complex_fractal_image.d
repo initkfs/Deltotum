@@ -11,19 +11,19 @@ import std.complex;
  */
 abstract class ComplexFractalImage : Texture2d
 {
-    size_t iterations = 500;
-    float scaleFactor = 1.0;
+    size_t iterations = 1;
+    float scaleFactor = 1;
+    float scaleCorrect = 0.5;
 
-    this(float width = 100, float height = 100)
+    this(float width = 100, float height = 100, float scaleFactor = 1, size_t iterations = 200)
     {
         this.width = width;
         this.height = height;
+        this.iterations = iterations;
+        this.scaleFactor = scaleFactor;
     }
 
-    RGBA calcColor(float x, float y)
-    {
-        return RGBA.white;
-    }
+    RGBA calcColor(float x, float y) => RGBA.white;
 
     void createContent()
     {
@@ -39,6 +39,11 @@ abstract class ComplexFractalImage : Texture2d
         const size_t w = cast(size_t) width;
         const size_t h = cast(size_t) height;
 
+        drawInCoords(centerX, centerY, w, h);
+    }
+
+    void drawInCoords(float centerX, float centerY, size_t w, size_t h)
+    {
         foreach (yi; 0 .. h)
         {
             float y = (centerY - yi) * scaleFactor;
@@ -59,6 +64,21 @@ abstract class ComplexFractalImage : Texture2d
                 changeColor(uxi, uyi, color);
             }
         }
+    }
+
+    void changeImageColor(float x, float y, size_t xi, size_t yi)
+    {
+        RGBA color = calcColor(x, y);
+
+        const uint uxi = cast(uint) xi;
+        const uint uyi = cast(uint) yi;
+
+        if (onColor)
+        {
+            onColor(uxi, uyi, color);
+        }
+
+        changeColor(uxi, uyi, color);
     }
 
     override void create()

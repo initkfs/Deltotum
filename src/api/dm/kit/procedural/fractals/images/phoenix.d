@@ -1,4 +1,4 @@
-module api.dm.kit.procedural.fractals.images.julia;
+module api.dm.kit.procedural.fractals.images.phoenix;
 
 import api.dm.kit.procedural.fractals.images.complex_fractal_image : ComplexFractalImage;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -10,11 +10,17 @@ import std.complex;
 /**
  * Authors: initkfs
  */
-class Julia : ComplexFractalImage
+class Phoenix : ComplexFractalImage
 {
-    Complex!float coeffC = Complex!float(-0.7, 0.27015);
+    alias ComplexF = Complex!float;
 
-    this(float width = 100, float height = 100, float scaleFactor = 2.0, size_t iterations = 200)
+    private
+    {
+        ComplexF coeffC = ComplexF(0.5667, 0.0);
+        ComplexF coeffP = ComplexF(-0.5, 0.0);
+    }
+
+    this(float width = 100, float height = 100, float scaleFactor = 2.0, size_t iterations = 100)
     {
         super(width, height, scaleFactor, iterations);
     }
@@ -34,22 +40,27 @@ class Julia : ComplexFractalImage
 
     override RGBA calcColor(float x, float y)
     {
-        Complex!float z = Complex!float(x, y);
+        import api.dm.kit.graphics.colors.hsva : HSVA;
+
+        ComplexF z = ComplexF(x, y);
+        ComplexF zPrev = ComplexF(0, 0);
+
         size_t i;
         for (i = 0; i < iterations; i++)
         {
-            z = z * z + coeffC;
+            ComplexF zNext = z * z + coeffC + coeffP * zPrev;
+
+            zPrev = z;
+            z = zNext;
+
             if (z.abs >= 4)
             {
-                break;
+                RGBA color = HSVA((i * 2) % HSVA.maxHue, HSVA.maxSaturation, HSVA.maxValue * ((i < iterations) ? 1
+                        : 0)).toRGBA;
+                return color;
             }
         }
 
-        import api.dm.kit.graphics.colors.hsva : HSVA;
-
-        //or iter step? iter/max
-        RGBA color = HSVA((i * 2) % HSVA.maxHue, HSVA.maxSaturation, HSVA.maxValue * ((i < iterations) ? 1
-                : 0)).toRGBA;
-        return color;
+        return RGBA.black;
     }
 }
