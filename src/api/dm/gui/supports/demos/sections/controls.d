@@ -13,6 +13,8 @@ import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.controls.selects.carousels.carousel;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_item;
 
+import Icons = api.dm.gui.themes.icons.pack_bootstrap;
+
 /**
  * Authors: initkfs
  */
@@ -181,7 +183,6 @@ class Controls : Control
         import api.dm.gui.controls.switches.switch_group : SwitchGroup;
         import api.dm.gui.controls.switches.checks.check : Check;
         import api.dm.gui.controls.selects.choices.choice : Choice;
-        import Icons = api.dm.gui.themes.icons.pack_bootstrap;
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
         import api.dm.gui.controls.switches.buttons.triangle_button : TriangleButton;
@@ -237,16 +238,6 @@ class Controls : Control
 
         import api.dm.gui.controls.switches.toggles.toggle : Toggle;
         import api.math.pos2.orientation : Orientation;
-
-        auto switch1 = new Toggle(null, Icons.badge_hd_fill);
-        switch1.isSwitchIcon = true;
-        toggleContainer.addCreate(switch1);
-        switch1.isOn = true;
-
-        auto switch2 = new Toggle(null, Icons.bell_fill);
-        switch2.isBorder = true;
-        switch2.isSwitchIcon = true;
-        toggleContainer.addCreate(switch2);
 
         auto switch1h = new Toggle(null, Icons.brightness_high_fill, Orientation.vertical);
         switch1h.isBorder = true;
@@ -908,7 +899,6 @@ class Controls : Control
         import api.dm.gui.controls.indicators.leds.led : Led;
         import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
         import api.dm.gui.controls.indicators.leds.led_icon : LedIcon;
-        import IconNames = api.dm.gui.themes.icons.pack_bootstrap;
 
         auto ledContainer1 = new VBox;
         ledContainer1.isAlignX = true;
@@ -918,7 +908,7 @@ class Controls : Control
         auto led1 = new Led(RGBA.red);
         ledContainer1.addCreate(led1);
 
-        auto ledIcon1 = new LedIcon(IconNames.clock_fill, RGBA.red);
+        auto ledIcon1 = new LedIcon(Icons.clock_fill, RGBA.red);
         ledContainer1.addCreate(ledIcon1);
 
         auto ledContainer2 = new VBox;
@@ -929,7 +919,7 @@ class Controls : Control
         auto led2 = new Led(RGBA.yellow);
         ledContainer2.addCreate(led2);
 
-        auto ledIcon2 = new LedIcon(IconNames.battery_full, RGBA.yellow);
+        auto ledIcon2 = new LedIcon(Icons.battery_full, RGBA.yellow);
         ledContainer2.addCreate(ledIcon2);
 
         auto ledContainer3 = new VBox;
@@ -940,7 +930,7 @@ class Controls : Control
         auto led3 = new Led(RGBA.green);
         ledContainer3.addCreate(led3);
 
-        auto ledIcon3 = new LedIcon(IconNames.thermometer_high, RGBA.green);
+        auto ledIcon3 = new LedIcon(Icons.thermometer_high, RGBA.green);
         ledContainer3.addCreate(ledIcon3);
 
         import api.dm.gui.controls.viewers.magnifiers.window_magnifier : WindowMagnifier;
@@ -954,6 +944,14 @@ class Controls : Control
         auto labelRoot = new VBox;
         labelRoot.isAlignX = true;
         root.addCreate(labelRoot);
+
+        import api.dm.gui.controls.switches.toggles.toggle : Toggle;
+        import api.math.pos2.orientation : Orientation;
+
+        auto switch1 = new Toggle(null, Icons.badge_hd_fill);
+        switch1.isSwitchIcon = true;
+        switch1.isOn = true;
+        labelRoot.addCreate(switch1);
 
         import api.dm.gui.controls.labels.label : Label;
         import api.dm.gui.controls.labels.badges.badge : Badge;
