@@ -254,13 +254,7 @@ class Controls : Control
         auto root1 = new VBox;
         root.addCreate(root1);
 
-        auto btnInfo = new Button("Info", (ref e) {
-            interact.dialog.showInfo("Info!");
-        });
-        btnInfo.isEnablePadding = false;
-        root1.addCreate(btnInfo);
-
-        auto btnError = new Button("Error", (ref e) {
+        auto btnError = new Button("Error!", (ref e) {
             import std.conv : to;
 
             interact.dialog.showError("Error!");
@@ -282,6 +276,7 @@ class Controls : Control
 
             interact.popup.urgent("Popup");
         });
+        popBtn.isEnablePadding = false;
         root2.addCreate(popBtn);
 
         import api.dm.gui.interacts.dialogs.io.file_dialog : FileDialog;
@@ -290,11 +285,14 @@ class Controls : Control
         addCreate(dialog);
         auto dialogBtn = new Button("File", (ref e) {
             dialog.openFile((paths) {
-                import std;
+                import std.conv : to;
+                import std.stdio : writeln;
 
-                writeln("FILE paths: ", paths);
+                writeln("Dialog: ", paths);
+                interact.popup.urgent("File path: " ~ paths.to!dstring);
             });
         });
+        dialogBtn.isEnablePadding = false;
         root2.addCreate(dialogBtn);
 
     }

@@ -226,6 +226,10 @@ class SDLDialog : SdlObject, ComDialog
             {
                 ctx.onAction(ctx.paths);
             }
+
+            import Mem = api.core.utils.mem;
+
+            Mem.removeRootSafe(ctx);
         }
     }
 
