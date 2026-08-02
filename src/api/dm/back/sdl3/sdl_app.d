@@ -13,6 +13,7 @@ import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.back.sdl3.sdl_event_processor : SdlEventProcessor;
 import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.gui.interacts.interact : Interact;
+import api.dm.back.sdl3.sdl_dialog: SDLDialog;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.asset : Asset;
 import api.dm.back.sdl3.sdl_screen : SDLScreen;
@@ -1226,6 +1227,8 @@ class SdlApp : GuiApp
 
         window.theme = theme;
         window.interact = interact;
+
+        interact.comDialogProvider = () => new SDLDialog;
 
         import api.dm.kit.graphics.graphic : Graphic;
 

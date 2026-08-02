@@ -21,19 +21,19 @@ abstract class BaseLogger
         LogLevel _level = LogLevel.all;
     }
 
-    bool isForLevel(LogLevel mustBeLevel)
+    bool isForLevel(LogLevel mustBeLevel) pure nothrow @nogc @safe
     {
         return mustBeLevel <= _level;
     }
 
-    LogLevel level() => _level;
-    void level(LogLevel newLavel)
+    LogLevel level() pure nothrow @nogc @safe => _level;
+    void level(LogLevel newLavel) nothrow @nogc @safe
     {
         _level = newLavel;
     }
 }
 
-string levelToStr(LogLevel v)
+string levelToStr(LogLevel v) pure nothrow @nogc @safe
 {
     final switch (v) with (LogLevel)
     {

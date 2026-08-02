@@ -261,7 +261,8 @@ class Controls : Control
         root1.addCreate(btnInfo);
 
         auto btnError = new Button("Error", (ref e) {
-            import std.conv: to;
+            import std.conv : to;
+
             interact.dialog.showError("Error!");
         });
         btnError.isEnablePadding = false;
@@ -282,6 +283,20 @@ class Controls : Control
             interact.popup.urgent("Popup");
         });
         root2.addCreate(popBtn);
+
+        import api.dm.gui.interacts.dialogs.io.file_dialog : FileDialog;
+
+        auto dialog = new FileDialog;
+        addCreate(dialog);
+        auto dialogBtn = new Button("File", (ref e) {
+            dialog.openFile((paths) {
+                import std;
+
+                writeln("FILE paths: ", paths);
+            });
+        });
+        root2.addCreate(dialogBtn);
+
     }
 
     void createSelects(Container root)

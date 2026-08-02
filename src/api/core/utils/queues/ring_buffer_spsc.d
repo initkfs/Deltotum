@@ -64,12 +64,17 @@ struct RingBuffer(BufferType, size_t RequestBufferSize, bool isStaticArray = fal
         }
     }
 
+    //in producer only
     bool isEmpty() => size == 0;
     bool isFull() => size == RequestBufferSize;
 
     static if (isLockFree)
     {
-        size_t size() => size(_readIndex.atomicLoad, _writeIndex.atomicLoad);
+        //size_t size() => size(_readIndex.atomicLoad, _writeIndex.atomicLoad);
+        size_t size() => size(
+            _readIndex.atomicLoad!(MemoryOrder.acq),
+            _writeIndex.atomicLoad!(MemoryOrder.acq)
+        );
     }
     else
     {
