@@ -110,6 +110,7 @@ class Sprite2d : EventKitTarget
     bool isOutClipForwardEvents;
 
     bool isDrawable = true;
+    bool isDrawOnlyConrolled;
     bool isDrawByParent = true;
     bool isCanDrawSelf = true;
     bool isRedraw = true;

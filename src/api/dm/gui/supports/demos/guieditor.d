@@ -16,6 +16,10 @@ class GuiViewer : GuiScene
     override void create()
     {
         super.create;
+
+        //must be first
+        createDebugger;
+
         import api.dm.gui.controls.containers.tabs.tab : Tab;
         import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 
@@ -87,8 +91,6 @@ class GuiViewer : GuiScene
         root.addCreate(fractalsTab);
 
         root.changeTab(controlsTab);
-
-        createDebugger;
     }
 
 }

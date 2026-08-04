@@ -113,7 +113,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
 
     bool set() nothrow
     {
-        if (!ptr)
+        if (!hasPtr)
         {
             return false;
         }
@@ -166,7 +166,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
 
     override protected bool disposePtr() nothrow
     {
-        if (ptr)
+        if (hasPtr)
         {
             SDL_DestroyCursor(ptr);
             return true;

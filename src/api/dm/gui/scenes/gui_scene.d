@@ -120,6 +120,8 @@ class GuiScene : Scene3d
     void createDebugger()
     {
         debugger = new SceneView(this);
+        controlledSprites ~= debugger;
+        debugger.isDrawOnlyConrolled = true;
         addCreate(debugger);
     }
 

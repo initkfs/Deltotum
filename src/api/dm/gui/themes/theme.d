@@ -25,29 +25,29 @@ class Theme
     }
 
     @ConfigKey
-    RGBA colorPrimary = RGBA.black;
+    RGBA colorPrimary = RGBA(110, 43, 232);
     @ConfigKey
-    RGBA colorSecondary = RGBA.green;
+    RGBA colorSecondary = RGBA(238, 239, 239);
     @ConfigKey
-    RGBA colorAccent = RGBA.white;
+    RGBA colorAccent = RGBA(102, 40, 224);
 
     @ConfigKey
-    RGBA colorFocus = RGBA.red;
+    RGBA colorFocus = RGBA(255, 228, 132);
     @ConfigKey
-    RGBA colorText = RGBA.white;
+    RGBA colorText = RGBA.black;
     @ConfigKey
-    RGBA colorBackground = RGBA.black;
+    RGBA colorBackground = RGBA(248, 249, 250);
     @ConfigKey
     RGBA colorHover = RGBA.white;
     @ConfigKey
-    RGBA colorSelect = RGBA.green;
+    RGBA colorSelect = RGBA(13, 110, 253);
 
     @ConfigKey
-    RGBA colorSuccess = RGBA(72, 199, 116);
+    RGBA colorSuccess = RGBA(40, 167, 69);
     @ConfigKey
-    RGBA colorDanger = RGBA(255, 56, 96);
+    RGBA colorDanger = RGBA(220, 53, 69);
     @ConfigKey
-    RGBA colorWarning = RGBA(255, 221, 87);
+    RGBA colorWarning = RGBA(255, 193, 7);
 
     @ConfigKey
     RGBA colorControlBackground = RGBA.black;
@@ -64,84 +64,84 @@ class Theme
     float opacityHover = 1;
 
     @ConfigKey
-    size_t iconSize = 24;
+    size_t iconSize = 26;
 
     @ConfigKey
-    int lineThickness = 3;
+    float layoutIndent = 5;
+
+    @ConfigKey
+    int lineThickness = 1;
 
     Insets controlPadding = Insets(5, 5, 5, 5);
-    float controlSpacing = 5;
-    float controlCornersBevel = 8;
+    float controlSpacing = 2;
+    float controlCornersBevel = 0;
     GraphicStyle controlStyle = GraphicStyle.simple;
 
     @ConfigKey
-    float controlDefaultWidth = 100;
+    float controlDefaultWidth = 80;
     @ConfigKey
-    float controlDefaultHeight = 80;
+    float controlDefaultHeight = 35;
     @ConfigKey
-    float controlGraphicsGap = 5;
+    float controlGraphicsGap = 2;
 
     @ConfigKey
-    float layoutIndent = 0;
-
+    float buttonWidth = 50;
     @ConfigKey
-    float buttonWidth = 80;
+    float buttonHeight = 35;
     @ConfigKey
-    float buttonHeight = 30;
+    float roundShapeDiameter = 45;
     @ConfigKey
-    float roundShapeDiameter = 20;
+    float regularPolyDiameter = 50;
     @ConfigKey
-    float regularPolyDiameter = 80;
+    size_t regularPolySides = 6;
     @ConfigKey
-    size_t regularPolySides = 8;
-    @ConfigKey
-    float parallelogramShapeAngleDeg = 15;
+    float parallelogramShapeAngleDeg = 75;
 
     bool isUseVectorGraphics;
 
     @ConfigKey
-    size_t actionEffectAnimationDelayMs;
+    size_t actionEffectAnimationDelayMs = 80;
     @ConfigKey
-    size_t hoverAnimationDelayMs;
+    size_t hoverAnimationDelayMs = 80;
     @ConfigKey
-    size_t popupDelayMs;
+    size_t popupDelayMs = 500;
 
     @ConfigKey
-    float checkMarkerWidth = 30;
+    float checkMarkerWidth = 20;
     @ConfigKey
-    float checkMarkerHeight = 30;
+    float checkMarkerHeight = 20;
 
     @ConfigKey
-    float toggleSwitchMarkerWidth = 30;
+    float toggleSwitchMarkerWidth = 20;
     @ConfigKey
-    float toggleSwitchMarkerHeight = 30;
+    float toggleSwitchMarkerHeight = 20;
 
     @ConfigKey
-    float separatorHeight = 5;
+    float separatorHeight = 2;
 
     @ConfigKey
     float meterThumbWidth = 30;
     @ConfigKey
-    float meterThumbHeight = 30;
+    float meterThumbHeight = 15;
     @ConfigKey
     float meterThumbDiameter = 60;
 
     @ConfigKey
     float meterTickMinorWidth = 2;
     @ConfigKey
-    float meterTickMinorHeight = 3;
+    float meterTickMinorHeight = 6;
     @ConfigKey
     float meterTickMajorWidth = 2;
     @ConfigKey
-    float meterTickMajorHeight = 5;
+    float meterTickMajorHeight = 12;
     @ConfigKey
-    float meterHandWidth = 5;
+    float meterHandWidth = 4;
 
     @ConfigKey
     float loaderSize = 50;
 
     @ConfigKey
-    float dividerSize = 2;
+    float dividerSize = 5;
 
     void defaultMediumFont(ComFont font)
     {

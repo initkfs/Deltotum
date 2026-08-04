@@ -9,7 +9,7 @@ class BasePopup : Control
 {
     void delegate()[] onShow;
 
-    float showPadding = 10;
+    float showPadding = 0;
 
     this(bool isCreateLayout = true)
     {

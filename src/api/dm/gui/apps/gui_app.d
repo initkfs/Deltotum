@@ -11,6 +11,8 @@ import api.core.validations.validators.validator : Validator;
 
 abstract class GuiApp : LoopApp
 {
+    string themeDir = "themes";
+
     protected
     {
         Theme theme;
@@ -37,17 +39,79 @@ abstract class GuiApp : LoopApp
 
     Theme createTheme(Logging logging, Config config, Context context)
     {
-        import api.dm.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
+        import std.path : buildPath, isAbsolute;
+        import std.file : isDir, exists, isFile;
 
-        auto themeLoader = new ThemeFromConfigFactory(logging, config, context);
+        string mustBeThemeDir = themeDir;
+        if (mustBeThemeDir.length > 0 && !mustBeThemeDir.isAbsolute)
+        {
+            const mustBeDataDir = context.app.dataDir;
+            mustBeThemeDir = buildPath(mustBeDataDir, mustBeThemeDir);
+            // logging.logger.trace(
+            //     "Set theme directory path to " ~ mustBeThemeDir);
+        }
 
-        auto theme = themeLoader.createTheme;
-        assert(theme);
+        if (mustBeThemeDir.length == 0 || (!mustBeThemeDir.exists) || (!mustBeThemeDir.isDir))
+        {
+            logging.logger.trace("Not found theme dir: " ~ mustBeThemeDir);
+            return newDefaultTheme;
+        }
 
+        import GuiConfigKeys = api.dm.gui.gui_config_keys;
+
+        string currentTheme;
+        if (config.hasKey(GuiConfigKeys.guiTheme))
+        {
+            currentTheme = config.getNotEmptyString(GuiConfigKeys.guiTheme);
+        }
+
+        if (currentTheme.length == 0)
+        {
+            logging.logger.trace("Current theme name is null");
+            return newDefaultTheme;
+        }
+
+        auto themeFile = buildPath(mustBeThemeDir, currentTheme ~ ".config");
+        if (!themeFile.exists || !themeFile.isFile)
+        {
+            logging.logger.trace("Not found theme file: " ~ themeFile);
+            return newDefaultTheme;
+        }
+
+        try
+        {
+            import api.core.configs.keyvalues.properties.property_config : PropertyConfig;
+            import api.dm.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
+
+            Config themeConfig = new PropertyConfig(themeFile);
+            themeConfig.load;
+
+            auto themeLoader = new ThemeFromConfigFactory(logging, themeConfig, context);
+            auto theme = themeLoader.createTheme;
+            if (!theme)
+            {
+                throw new Exception("Theme from loader is null");
+            }
+            theme.iconPack = newIconPack;
+            logging.logger.trace("Load theme: " ~ themeFile);
+            return theme;
+        }
+        catch (Exception e)
+        {
+            logging.logger.error(e.toString);
+        }
+
+        return newDefaultTheme;
+    }
+
+    Theme newDefaultTheme()
+    {
+        auto theme = newTheme;
         theme.iconPack = newIconPack;
-
         return theme;
     }
+
+    Theme newTheme() => new Theme;
 
     version (EnableValidation)
     {

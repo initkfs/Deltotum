@@ -22,7 +22,7 @@ class SdlGPUPipeline : SdlObjectWrapper!SDL_GPUGraphicsPipeline
 
     override protected bool disposePtr() nothrow
     {
-        if (ptr)
+        if (hasPtr)
         {
             SDL_ReleaseGPUGraphicsPipeline(_dev, ptr);
             return true;

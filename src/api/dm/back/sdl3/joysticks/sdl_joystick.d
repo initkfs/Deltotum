@@ -91,7 +91,7 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick, ComJoystick
 
     override protected bool disposePtr() nothrow
     {
-        if (ptr)
+        if (hasPtr)
         {
             SDL_CloseJoystick(ptr);
             return true;

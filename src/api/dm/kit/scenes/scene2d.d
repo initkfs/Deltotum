@@ -322,7 +322,7 @@ class Scene2d : EventKitTarget
 
         foreach (obj; sprites)
         {
-            if (!checkForDraw(obj))
+            if (!checkForDraw(obj) || obj.isDrawOnlyConrolled)
             {
                 continue;
             }
