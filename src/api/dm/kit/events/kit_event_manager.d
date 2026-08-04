@@ -59,16 +59,16 @@ class KitEventManager
             return;
         }
 
-        if (targetScene.controlledSprites.length > 0)
+        if (targetScene.takenSprites.length > 0)
         {
-            foreach (Sprite2d cs; targetScene.controlledSprites)
+            foreach (Sprite2d cs; targetScene.takenSprites)
             {
                 cs.dispatchEvent(e);
                 cs.isReceiveEvents = false;
 
                 if (e.isConsumed)
                 {
-                    resetSpriteEvent(targetScene.controlledSprites);
+                    resetSpriteEvent(targetScene.takenSprites);
                     return;
                 }
             }
@@ -79,12 +79,12 @@ class KitEventManager
             target.dispatchEvent(e);
             if (e.isConsumed)
             {
-                resetSpriteEvent(targetScene.controlledSprites);
+                resetSpriteEvent(targetScene.takenSprites);
                 return;
             }
         }
 
-        resetSpriteEvent(targetScene.controlledSprites);
+        resetSpriteEvent(targetScene.takenSprites);
     }
 
     protected void resetSpriteEvent(Sprite2d[] sprites)

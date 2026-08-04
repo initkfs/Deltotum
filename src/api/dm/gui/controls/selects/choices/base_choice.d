@@ -156,7 +156,7 @@ class BaseChoice(T) : BaseSelector!T
                 setSelected(newItem);
             };
 
-            scene.controlledSprites ~= menu;
+            scene.addTaken(menu);
 
             if (onCreatedPopupMenu)
             {

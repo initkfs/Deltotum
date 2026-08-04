@@ -54,7 +54,7 @@ class Scene2d : EventKitTarget
     Sprite2d[] sprites;
     //}
 
-    Sprite2d[] controlledSprites;
+    Sprite2d[] takenSprites;
 
     bool isAutoSizeToWindow;
 
@@ -233,6 +233,20 @@ class Scene2d : EventKitTarget
         }
     }
 
+    bool addTaken(Sprite2d sprite, bool isDrawByParent = false)
+    {
+        //TODO check exists
+        if (takenSprites.length == 0)
+        {
+            takenSprites ~= sprite;
+        }
+
+        import std.array : insertInPlace;
+        sprite.isDrawByParent = isDrawByParent;
+        takenSprites.insertInPlace(0, sprite);
+        return true;
+    }
+
     string udaPath(string path)
     {
         import std.path : isAbsolute;
@@ -341,10 +355,10 @@ class Scene2d : EventKitTarget
             obj.unvalidate;
         }
 
-        if (controlledSprites.length > 0)
+        if (takenSprites.length > 0)
         {
             //TODO unvalidate?
-            foreach (cs; controlledSprites)
+            foreach_reverse (cs; takenSprites)
             {
                 if (!checkForDraw(cs))
                 {
@@ -411,9 +425,9 @@ class Scene2d : EventKitTarget
 
         if (!_freeze)
         {
-            if (controlledSprites.length > 0)
+            if (takenSprites.length > 0)
             {
-                foreach (cs; controlledSprites)
+                foreach (cs; takenSprites)
                 {
                     cs.update(delta);
                     cs.validate;
@@ -602,7 +616,7 @@ class Scene2d : EventKitTarget
 
     bool removeControlled(Sprite2d sprite)
     {
-        return drop(controlledSprites, sprite);
+        return drop(takenSprites, sprite);
     }
 
     final bool hasFactory() @safe pure nothrow

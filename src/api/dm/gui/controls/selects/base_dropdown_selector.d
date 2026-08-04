@@ -93,7 +93,7 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
 
         popup.layout.isAutoResize = true;
 
-        scene.controlledSprites ~= popup;
+        scene.addTaken(popup, 0);
 
         popup.onFocusExit ~= (ref e) {
             if (popup.isVisible)

@@ -1162,7 +1162,7 @@ class Control : GuiComponent
 
         if (hasScene)
         {
-            scene.controlledSprites ~= tooltip;
+            scene.addTaken(tooltip);
         }
         else
         {
