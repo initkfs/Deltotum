@@ -13,7 +13,7 @@ import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.back.sdl3.sdl_event_processor : SdlEventProcessor;
 import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.gui.interacts.interact : Interact;
-import api.dm.back.sdl3.sdl_dialog: SDLDialog;
+import api.dm.back.sdl3.sdl_dialog : SDLDialog;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.asset : Asset;
 import api.dm.back.sdl3.sdl_screen : SDLScreen;
@@ -1190,31 +1190,24 @@ class SdlApp : GuiApp
             uservices.logger.tracef("Build assets for window: %s", window.id);
         }
 
-        if (uservices.config.hasKey(KitConfigKeys.fontIconsList))
+        import std.array : split;
+
+        uint fontIconSize = theme.fontIconsSize;
+        auto fontListPaths = theme.fontIconsList.split(";");
+        foreach (fontListPath; fontListPaths)
         {
-            uint fontIconSize = 12;
-            if (uservices.config.hasKey(KitConfigKeys.fontIconsSize))
-            {
-                fontIconSize = cast(uint) uservices.config.getPositiveInt(
-                    KitConfigKeys.fontIconsSize);
-            }
+            auto font = asset.newFont(fontListPath, fontIconSize);
+            //TODO check exists
+            theme.iconPack.iconFonts ~= font;
 
-            auto fontListPaths = uservices.config.getList(KitConfigKeys.fontIconsList);
-            foreach (fontListPath; fontListPaths)
+            if (!gservices.platform.cap.isIconPack)
             {
-                auto font = asset.newFont(fontListPath, fontIconSize);
-                //TODO check exists
-                theme.iconPack.iconFonts ~= font;
-
-                if (!gservices.platform.cap.isIconPack)
-                {
-                    gservices.platform.cap.isIconPack = true;
-                }
-                //version (EnableTrace)
-                //{
-                uservices.logger.tracef("Load icon font, size:%d: %s", fontIconSize, fontListPath);
-                //}
+                gservices.platform.cap.isIconPack = true;
             }
+            //version (EnableTrace)
+            //{
+            uservices.logger.tracef("Load icon font, size:%d: %s", fontIconSize, fontListPath);
+            //}
         }
 
         windowBuilder.asset = asset;
@@ -1365,19 +1358,25 @@ class SdlApp : GuiApp
             auto fontGenerator = newFontGenerator;
             windowBuilder.build(fontGenerator);
 
-            if (uservices.config.hasKey(KitConfigKeys.fontAlphaGamma))
-            {
-                float gamma = uservices.config.getFloat(KitConfigKeys.fontAlphaGamma);
-                fontGenerator.alphaGamma = gamma;
-            }
+            fontGenerator.alphaGamma = theme.fontAlphaGamma;
 
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
             const colorText = theme.colorText;
             //RGBA black for LCD
-            const colorBackground = theme.colorBackground;
+            auto colorBackground = theme.colorBackground;
 
-            createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorBackground, (
+            import std.conv: to;
+            import api.dm.com.graphics.com_font: ComFontRenderMode;
+            
+            auto fontMode = theme.fontRenderMode.to!ComFontRenderMode;
+
+            //TODO fixme, alpha premult with #000000?
+            if(fontMode == ComFontRenderMode.lcd){
+                colorBackground = RGBA.black;
+            }
+
+            createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorBackground, fontMode, (
                     bitmap) {
                 // windowBuilder.build(bitmap);
                 // bitmap.initialize;

@@ -269,6 +269,7 @@ class Controls : Control
         // root1.addCreate(btnQuestion);
 
         auto root2 = new VBox;
+        root2.isAlignX = true;
         root.addCreate(root2);
 
         auto popBtn = new Button("Popup", (ref e) {

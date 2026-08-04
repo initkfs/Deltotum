@@ -72,8 +72,13 @@ class Theme
     @ConfigKey
     int lineThickness = 1;
 
+    @ConfigKey
     Insets controlPadding = Insets(5, 5, 5, 5);
+    
+    @ConfigKey
     float controlSpacing = 2;
+    
+    @ConfigKey
     float controlCornersBevel = 0;
     GraphicStyle controlStyle = GraphicStyle.simple;
 
@@ -142,6 +147,41 @@ class Theme
 
     @ConfigKey
     float dividerSize = 5;
+
+    @ConfigKey
+    bool fontIsCreateSmall = true;
+    @ConfigKey
+    bool fontIsCreateLarge = true;
+    @ConfigKey
+    uint fontSizeMedium = 15;
+    @ConfigKey
+    uint fontSizeSmall = 12;
+    @ConfigKey
+    uint fontSizeLarge = 34;
+
+    version (linux)
+    {
+        ///usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf
+        ///usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+        string fontTTFFile = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+    }
+    else version (Windows)
+    {
+        string fontTTFFile = "C:\\Windows\\Fonts\\arial.ttf";
+    }
+    else version (OSX)
+    {
+        string fontTTFFile = "/Library/Fonts/Arial.ttf";
+    }
+
+    string fontIconsList = "bootstrap-icons.woff";
+
+    @ConfigKey
+    uint fontIconsSize = 20;
+    @ConfigKey
+    float fontAlphaGamma = 1;
+    @ConfigKey
+    string fontRenderMode = "normal";
 
     void defaultMediumFont(ComFont font)
     {

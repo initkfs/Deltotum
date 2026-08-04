@@ -59,11 +59,23 @@ class ThemeFromConfigFactory : ApplicationUnit
                     {
                         auto value = config.getNotEmptyString(themeConfigKey);
                     }
+                    else static if (is(fieldType == bool))
+                    {
+                        auto value = config.getBool(themeConfigKey);
+                    }
+                    else static if (is(fieldType == uint))
+                    {
+                        auto value = cast(uint) config.getPositiveInt(themeConfigKey);
+                    }
+                    else static if (is(fieldType == Insets))
+                    {
+                        auto value = Insets(config.getPositiveInt(themeConfigKey));
+                    }
                     else
                     {
                         import std.conv : text;
 
-                        static assert(false, text("Not found type ", fieldType.stringof, " in theme with config key", themeConfigKey));
+                        static assert(false, text("Not found type ", fieldType.stringof, " in theme with config key: ", themeConfigKey));
                     }
 
                     static if (is(fieldType : RGBA))

@@ -1229,11 +1229,7 @@ class Control : GuiComponent
 
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        auto iconSize = 12;
-        if (config.hasKey(KitConfigKeys.fontIconsSize))
-        {
-            iconSize = config.getPositiveInt(KitConfigKeys.fontIconsSize);
-        }
+        auto iconSize = theme.fontIconsSize;
 
         auto placeholder = new Rectangle(iconSize, iconSize, GraphicStyle(1, RGBA.red, true, RGBA
                 .red));

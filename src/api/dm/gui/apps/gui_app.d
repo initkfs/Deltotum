@@ -9,6 +9,9 @@ import api.dm.gui.interacts.interact : Interact;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.core.validations.validators.validator : Validator;
 
+import api.dm.com.graphics.com_font : ComFont;
+import api.dm.kit.assets.asset : Asset;
+
 abstract class GuiApp : LoopApp
 {
     string themeDir = "themes";
@@ -147,5 +150,64 @@ abstract class GuiApp : LoopApp
     Interact createInteract(Logging logging, Config config, Context context)
     {
         return new Interact;
+    }
+
+    override Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider)
+    {
+        import api.dm.kit.assets.fonts.font_size : FontSize;
+
+        Asset asset = super.createAsset(logging, config, context, comFontProvider);
+
+        if (!theme)
+        {
+            throw new Exception("No theme found");
+        }
+
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        import std.file : getcwd, exists, isDir, isFile;
+        import std.path : buildPath, dirName;
+
+        import api.dm.com.graphics.com_font : ComFont;
+
+        string fontFilePath = asset.fontPath(theme.fontTTFFile);
+
+        //TODO Fontconfig
+        if (!fontFilePath.exists || !fontFilePath.isFile)
+        {
+            throw new Exception("Font path does not exist or not a file: " ~ fontFilePath);
+        }
+
+        auto defaultSize = theme.fontSizeMedium;
+        ComFont defaultFont = asset.newFont(fontFilePath, defaultSize);
+        asset.addFont(defaultFont);
+        version (EnableTrace)
+        {
+            logging.logger.tracef("Create medium font with size %s from %s", defaultSize, fontFilePath);
+        }
+
+        if (theme.fontIsCreateSmall)
+        {
+            uint size = theme.fontSizeSmall;
+            ComFont fontSmall = asset.newFont(fontFilePath, size);
+            asset.addFontSmall(fontSmall);
+            version (EnableTrace)
+            {
+                logging.logger.tracef("Create small font with size %s from file %s", size, fontFilePath);
+            }
+        }
+
+        if (theme.fontIsCreateLarge)
+        {
+            uint size = theme.fontSizeLarge;
+            ComFont fontLarge = asset.newFont(fontFilePath, size);
+            asset.addFontLarge(fontLarge);
+            version (EnableTrace)
+            {
+                logging.logger.tracef("Create large font with size %s from file %s", size, fontFilePath);
+            }
+        }
+
+        return asset;
     }
 }

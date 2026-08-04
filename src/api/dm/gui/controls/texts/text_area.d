@@ -53,16 +53,16 @@ class TextArea : HBox
         isBackground = true;
     }
 
-    override Sprite2d newBackground()
-    {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-        import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
+    // override Sprite2d newBackground()
+    // {
+    //     import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+    //     import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
-        GraphicStyle backgroundStyle = GraphicStyle(1, theme.colorAccent, isBackground, theme
-                .colorPrimary);
-        auto background = super.newBackground(width, height, angle, backgroundStyle);
-        return background;
-    }
+    //     GraphicStyle backgroundStyle = GraphicStyle(1, theme.colorAccent, isBackground, theme
+    //             .colorPrimary);
+    //     auto background = super.newBackground(width, height, angle, backgroundStyle);
+    //     return background;
+    // }
 
     override void create()
     {
