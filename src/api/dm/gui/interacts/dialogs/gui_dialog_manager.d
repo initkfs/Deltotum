@@ -68,7 +68,7 @@ class GuiDialogManager : Container, DialogManager
             assert(window);
             window.showingTasks ~= (float dt) {
                 window.currentScene.addTaken(this);
-                window.currentScene.eternalSprites ~= this;
+                window.currentScene.externalSprites ~= this;
             };
         }
     }

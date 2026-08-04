@@ -37,12 +37,10 @@ class Scene2d : EventKitTarget
     bool isClearScreen = true;
 
     protected bool _freeze;
-    Sprite2d[] eternalSprites;
+    Sprite2d[] externalSprites;
 
     bool isDrawAfterAllSprites;
     Sprite2d drawBeforeSprite;
-
-    void delegate(float dt)[] eternalTasks;
 
     Random* rnd;
     bool isCreateRandom = true;
@@ -403,17 +401,9 @@ class Scene2d : EventKitTarget
 
         worldTicks++;
 
-        if (eternalTasks.length > 0)
-        {
-            foreach (task; eternalTasks)
-            {
-                task(delta);
-            }
-        }
-
         invalidNodesCount = 0;
 
-        Sprite2d[] roots = _freeze ? eternalSprites : sprites;
+        Sprite2d[] roots = _freeze ? externalSprites : sprites;
 
         foreach (root; roots)
         {
@@ -605,11 +595,11 @@ class Scene2d : EventKitTarget
 
     Sprite2d[] activeSprites()
     {
-        if (!_freeze || eternalSprites.length == 0)
+        if (!_freeze || externalSprites.length == 0)
         {
             return sprites;
         }
-        return eternalSprites;
+        return externalSprites;
     }
 
     import api.core.utils.arrays : drop;

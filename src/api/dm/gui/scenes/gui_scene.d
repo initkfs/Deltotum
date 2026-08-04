@@ -93,10 +93,10 @@ class GuiScene : Scene3d
                     if (!isFreeze)
                     {
                         isFreeze = true;
-                        eternalSprites ~= dialogManager;
+                        externalSprites ~= dialogManager;
                         dialogManager.showInfo("Pause!", "Info", () {
                             isFreeze = false;
-                            //eternalSprites = null;
+                            //externalSprites = null;
                         });
                     }
                 };
