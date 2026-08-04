@@ -6,7 +6,7 @@ import api.core.utils.types : ProviderFactory;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
-import api.dm.com.graphics.com_font : ComFont;
+import api.dm.com.graphics.com_font : ComFont, ComFontRenderMode;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.geom2.vec2 : Vec2f;
 
@@ -19,10 +19,11 @@ class IconBitmapGenerator : BaseBitmapFontFactory
     BitmapFont generate(
         const(dchar[]) text,
         ComFont font,
+        ComFontRenderMode mode,
         RGBA foregroundColor = RGBA.white,
         RGBA backgroundColor = RGBA.black,
         int fontTextureWidth = defaultFontTextureWidth * 3,
-        int fontTextureHeight = defaultFontTextureWidth * 2
+        int fontTextureHeight = defaultFontTextureWidth * 2,
     )
     {
         assert(fontTextureWidth > 0);
@@ -32,7 +33,7 @@ class IconBitmapGenerator : BaseBitmapFontFactory
         ComSurface fontMapSurface = newFontSurface(font, fontTextureWidth, fontTextureHeight);
 
         Rect2f glyphPosition;
-        generateToSurface(text, fontMapSurface, font, (ref glyph, ref pos) {}, foregroundColor, backgroundColor, glyphPosition);
+        generateToSurface(text, fontMapSurface, font, mode, (ref glyph, ref pos) {}, foregroundColor, backgroundColor, glyphPosition);
 
         bitmapFont.create(fontMapSurface);
         fontMapSurface.dispose;

@@ -3,7 +3,7 @@ module api.dm.kit.assets.fonts.bitmaps.alphabet_font_factory;
 import api.dm.kit.assets.fonts.bitmaps.base_bitmap_font_factory : BaseBitmapFontFactory;
 
 import api.dm.kit.components.graphic_component : GraphicComponent;
-import api.dm.com.graphics.com_font : ComFont;
+import api.dm.com.graphics.com_font : ComFont, ComFontRenderMode;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 
@@ -30,10 +30,11 @@ class AlphabetFontFactory : BaseBitmapFontFactory
     BitmapFont generate(
         Alphabet[] alphabets,
         ComFont font,
+        ComFontRenderMode mode,
         RGBA foregroundColor = RGBA.white,
         RGBA backgroundColor = RGBA.black,
         int fontTextureWidth = defaultFontTextureWidth,
-        int fontTextureHeight = defaultFontTextureWidth
+        int fontTextureHeight = defaultFontTextureWidth,
     )
     {
         assert(fontTextureWidth > 0);
@@ -50,7 +51,7 @@ class AlphabetFontFactory : BaseBitmapFontFactory
         {
             dstring allLetters = alphabet.allLetters;
             //TODO byGrapheme?
-            generateToSurface(allLetters, fontMapSurface, font, (ref glyph, ref pos) {
+            generateToSurface(allLetters, fontMapSurface, font, mode, (ref glyph, ref pos) {
 
                 //TODO special?
                 import std.uni : isWhite;

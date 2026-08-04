@@ -50,9 +50,9 @@ class Theme
     RGBA colorWarning = RGBA(255, 193, 7);
 
     @ConfigKey
-    RGBA colorControlBackground = RGBA.black;
+    RGBA colorControlBackground = RGBA(248, 249, 250);
     @ConfigKey
-    RGBA colorContainerBackground = RGBA.black;
+    RGBA colorContainerBackground = RGBA(248, 249, 250);
 
     @ConfigKey
     float opacityContainers = 1;

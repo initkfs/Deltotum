@@ -1195,6 +1195,7 @@ class Control : GuiComponent
         assert(isCreated, "Sprite2d not created");
 
         import api.dm.kit.sprites2d.images.image : Image;
+        import api.dm.com.graphics.com_font: ComFontRenderMode;
 
         RGBA fgColor = createFillStyle.fillColor;
 
@@ -1202,7 +1203,7 @@ class Control : GuiComponent
         try
         {
             graphic.comSurfaceProvider.getNewScoped((surface) {
-                const err = theme.iconPack.render(iconCode, surface, fgColor);
+                const err = theme.iconPack.render(iconCode, surface, fgColor, RGBA.transparent);
                 if (!err)
                 {
                     icon = new Image;
@@ -1271,7 +1272,7 @@ class Control : GuiComponent
         try
         {
             graphic.comSurfaceProvider.getNewScoped((surface) {
-                const err = theme.iconPack.render(iconCode, surface, color);
+                const err = theme.iconPack.render(iconCode, surface, color, RGBA.transparent);
                 if (!err)
                 {
                     auto buffX = surface.getWidth;

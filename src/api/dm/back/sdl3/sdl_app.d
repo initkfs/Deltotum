@@ -1373,11 +1373,9 @@ class SdlApp : GuiApp
 
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
-            const isColorless = isFontTextureIsColorless(uservices.config, uservices.context);
-
-            const colorText = isColorless ? RGBA.white : theme.colorText;
+            const colorText = theme.colorText;
             //RGBA black for LCD
-            const colorBackground = isColorless ? RGBA.black : theme.colorBackground;
+            const colorBackground = theme.colorBackground;
 
             createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorBackground, (
                     bitmap) {

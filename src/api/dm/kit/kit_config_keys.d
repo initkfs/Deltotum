@@ -32,7 +32,6 @@ string graphicsIsImage = "graphicsIsImage";
 
 string fontTTFFile = "fontTTFFile";
 string fontIsOverwriteFontFile = "fontIsOverwriteFontFile";
-string fontDefaultTextureIsColorless = "fontDefaultTextureIsColorless";
 string fontIsCreateSmall = "fontIsCreateSmall";
 string fontIsCreateLarge = "fontIsCreateLarge";
 string fontSizeMedium = "fontSizeMedium";
@@ -41,6 +40,7 @@ string fontSizeSmall = "fontSizeSmall";
 string fontIconsList = "fontIconsList";
 string fontIconsSize = "fontIconsSize";
 string fontAlphaGamma = "fontAlphaGamma";
+string fontRenderMode = "fontRenderMode";
 
 string engineIsVsync="engineIsVsync";
 string engineVsyncInterval="engineVsyncInterval";

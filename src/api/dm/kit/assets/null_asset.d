@@ -3,7 +3,7 @@ module api.dm.kit.assets.null_asset;
 import api.dm.kit.assets.asset : Asset;
 import api.core.loggers.null_logging : NullLogging;
 
-import api.dm.com.graphics.com_font : ComFont;
+import api.dm.com.graphics.com_font : ComFont, ComFontRenderMode;
 
 /**
  * Authors: initkfs
@@ -44,7 +44,7 @@ class NullAsset : Asset
                 ComSurface targetSurface,
                 const(dchar[]) text,
                 ubyte fr, ubyte fg, ubyte fb, ubyte fa,
-                ubyte br, ubyte bg, ubyte bb, ubyte ba, float gamma) => ComResult.success;
+                ubyte br, ubyte bg, ubyte bb, ubyte ba, float gamma, ComFontRenderMode mode) => ComResult.success;
 
             ComResult create(string path, uint size) => ComResult.success;
             string getFontPath() => null;

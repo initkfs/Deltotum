@@ -8,6 +8,13 @@ import api.dm.com.graphics.com_surface : ComSurface;
  * Authors: initkfs
  */
 
+enum ComFontRenderMode {
+    normal,
+    light,
+    lcd,
+    sdf
+}
+
 interface ComFont : ComDisposable
 {
 
@@ -19,7 +26,7 @@ nothrow:
         ComSurface targetSurface,
         const(dchar[]) text,
         ubyte fr, ubyte fg, ubyte fb, ubyte fa,
-        ubyte br, ubyte bg, ubyte bb, ubyte ba, float gamma);
+        ubyte br, ubyte bg, ubyte bb, ubyte ba, float gamma, ComFontRenderMode mode);
 
     ComResult create(string path, uint size);
 

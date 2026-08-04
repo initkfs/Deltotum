@@ -1,7 +1,7 @@
 module api.dm.kit.assets.fonts.bitmaps.base_bitmap_font_factory;
 
 import api.dm.kit.components.graphic_component : GraphicComponent;
-import api.dm.com.graphics.com_font : ComFont;
+import api.dm.com.graphics.com_font : ComFont, ComFontRenderMode;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 
@@ -28,6 +28,7 @@ class BaseBitmapFontFactory : GraphicComponent
         const(dchar)[] allLetters,
         ComSurface fontMapSurface,
         ComFont font,
+        ComFontRenderMode mode,
         scope void delegate(ref Glyph, ref Rect2f pos) onGlyphPos,
         RGBA foregroundColor = RGBA.white,
         RGBA backgroundColor = RGBA.black,
@@ -42,8 +43,7 @@ class BaseBitmapFontFactory : GraphicComponent
 
                 const isErr = font.render(glyphRepresentation, letters[], foregroundColor.r, foregroundColor.g, foregroundColor
                     .b, foregroundColor
-                    .aByte, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor
-                    .aByte, alphaGamma);
+                    .aByte, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.aByte, alphaGamma, mode);
 
                 if (isErr)
                 {

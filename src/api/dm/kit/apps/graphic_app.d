@@ -41,6 +41,7 @@ import api.dm.gui.interacts.interact : Interact;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.windows.windowing : Windowing;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import KitConfigKeys = api.dm.kit.kit_config_keys;
 
 import api.core.validations.validators.validator : Validator;
 
@@ -115,8 +116,6 @@ abstract class GraphicApp : CliApp
 
     void loadSettings()
     {
-        import KitConfigKeys = api.dm.kit.kit_config_keys;
-
         if (uservices.config.hasKey(KitConfigKeys.backendIsAudio))
         {
             _graphicServices.platform.cap.isAudio = uservices.config.getBool(
@@ -299,7 +298,7 @@ abstract class GraphicApp : CliApp
     protected LangMessages[] createLangMessagesFromDir(Logging logging, Config config, string langDir, string lang)
     {
         import std.path : isAbsolute, buildPath;
-        import std.file: exists, isDir, dirEntries, SpanMode;
+        import std.file : exists, isDir, dirEntries, SpanMode;
         import std.algorithm.iteration : filter;
 
         LangMessages[] messages;
@@ -653,18 +652,6 @@ abstract class GraphicApp : CliApp
         return alphabets;
     }
 
-    bool isFontTextureIsColorless(Config config, Context context)
-    {
-        import KitConfigKeys = api.dm.kit.kit_config_keys;
-
-        if (config.hasKey(KitConfigKeys.fontDefaultTextureIsColorless))
-        {
-            return config.getBool(KitConfigKeys.fontDefaultTextureIsColorless);
-        }
-
-        return false;
-    }
-
     //TODO split function
     void createFontBitmaps(AlphabetFontFactory generator, Asset assets, RGBA colorText, RGBA colorBackground, scope void delegate(
             BitmapFont) onBitmap)
@@ -676,20 +663,33 @@ abstract class GraphicApp : CliApp
             uservices.logger.tracef("Set default text color to %s", colorText);
         }
 
+        import api.dm.com.graphics.com_font : ComFontRenderMode;
+
+        ComFontRenderMode mode;
+        if (uservices.config.hasKey(KitConfigKeys.fontRenderMode))
+        {
+            import std.conv : to;
+
+            mode = uservices.config.getNotEmptyString(KitConfigKeys.fontRenderMode)
+                .to!ComFontRenderMode;
+        }
+
         if (assets.hasFont)
         {
             auto font = assets.font;
+
             version (EnableTrace)
             {
-                uservices.logger.tracef("Found default font for default font bitmap: %s", font
-                        .getFontPath);
+                uservices.logger.tracef("Found default font for default font bitmap: %s, mode: %s", font
+                        .getFontPath, mode);
             }
-            BitmapFont bitmapFont = generator.generate(createMediumFontAlphabets, font, colorText, colorBackground);
+
+            BitmapFont bitmapFont = generator.generate(createMediumFontAlphabets, font, mode, colorText);
             onBitmap(bitmapFont);
             assets.setFontBitmap(bitmapFont);
             version (EnableTrace)
             {
-                uservices.logger.tracef("Create font bitmap with foreground %s and background %s", colorText, colorBackground);
+                uservices.logger.tracef("Create font bitmap with foreground %s, mode: %s", colorText, mode);
             }
         }
 
@@ -700,12 +700,12 @@ abstract class GraphicApp : CliApp
             {
                 uservices.logger.trace("Found small font for bitmap: ", font.getFontPath);
             }
-            BitmapFont bitmap = generator.generate(createSmallFontAlphabets, font, colorText, colorBackground);
+            BitmapFont bitmap = generator.generate(createSmallFontAlphabets, font, mode, colorText);
             onBitmap(bitmap);
             assets.setFontBitmapSmall(bitmap);
             version (EnableTrace)
             {
-                uservices.logger.tracef("Create small font bitmap with foreground %s and background %s", colorText, colorBackground);
+                uservices.logger.tracef("Create small font bitmap with foreground %s,  mode: %s", colorText, mode);
             }
         }
 
@@ -716,12 +716,12 @@ abstract class GraphicApp : CliApp
             {
                 uservices.logger.trace("Found large font for bitmap: ", font.getFontPath);
             }
-            BitmapFont bitmap = generator.generate(createLargeFontAlphabets, font, colorText, colorBackground);
+            BitmapFont bitmap = generator.generate(createLargeFontAlphabets, font, mode, colorText);
             onBitmap(bitmap);
             assets.setFontBitmapLarge(bitmap);
             version (EnableTrace)
             {
-                uservices.logger.tracef("Create large font bitmap with foreground %s and background %s", colorText, colorBackground);
+                uservices.logger.tracef("Create large font bitmap with foreground %s, mode: %s", colorText, mode);
             }
         }
     }
