@@ -36,6 +36,7 @@ abstract class BaseCircularTable(T, TCol:
     float maxRowHeight = 0;
 
     VScroll vScroll;
+    bool isNoHoverWithoutPointer = true;
 
     this(size_t columnCount)
     {
@@ -223,6 +224,18 @@ abstract class BaseCircularTable(T, TCol:
             }
         };
 
+        if (isNoHoverWithoutPointer)
+        {
+            onPointerExit ~= (ref e) {
+                foreach (row; visibleRows)
+                {
+                    if (row.isHover)
+                    {
+                        row.endHover;
+                    }
+                }
+            };
+        }
     }
 
     abstract

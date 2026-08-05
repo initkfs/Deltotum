@@ -17,6 +17,7 @@ abstract class BaseClippedFlatTable(T, TCol:
 {
 
     TRow[] rows;
+    bool isNoHoverWithoutPointer = true;
 
     this(size_t columnCount)
     {
@@ -27,6 +28,25 @@ abstract class BaseClippedFlatTable(T, TCol:
     {
         size_t rowItems();
         T rowItem(size_t rowIndex, size_t colIndex);
+    }
+
+    override void create()
+    {
+        super.create;
+
+        if (isNoHoverWithoutPointer)
+        {
+            onPointerExit ~= (ref e) {
+                //TODO viewport only
+                foreach (row; rows)
+                {
+                    if (row.isHover)
+                    {
+                        row.endHover;
+                    }
+                }
+            };
+        }
     }
 
     void createRows()

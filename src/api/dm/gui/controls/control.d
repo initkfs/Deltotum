@@ -635,6 +635,8 @@ class Control : GuiComponent
         }
     }
 
+    bool isHover() => isProcessHover;
+
     void endHover()
     {
         isProcessHover = false;
@@ -1195,7 +1197,7 @@ class Control : GuiComponent
         assert(isCreated, "Sprite2d not created");
 
         import api.dm.kit.sprites2d.images.image : Image;
-        import api.dm.com.graphics.com_font: ComFontRenderMode;
+        import api.dm.com.graphics.com_font : ComFontRenderMode;
 
         RGBA fgColor = createFillStyle.fillColor;
 

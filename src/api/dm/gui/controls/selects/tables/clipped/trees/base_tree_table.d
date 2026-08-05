@@ -19,6 +19,7 @@ class BaseTreeTable(T, TCol:
 {
 
     TRow[] rows;
+    bool isNoHoverWithoutPointer = true;
 
     protected
     {
@@ -32,21 +33,39 @@ class BaseTreeTable(T, TCol:
         super(columnCount);
     }
 
+    override void create()
+    {
+        super.create;
+
+        if (isNoHoverWithoutPointer)
+        {
+            onPointerExit ~= (ref e) {
+                foreach (row; rows)
+                {
+                    if (row.isHover)
+                    {
+                        row.endHover;
+                    }
+                }
+            };
+        }
+    }
+
     protected void buildTree(
         Sprite2d root,
         TreeItem!T item,
         TreeRow!T parent = null,
-        size_t treeLevel = 0, 
+        size_t treeLevel = 0,
         size_t rowIndex,
         size_t rowLastIndex,
-        )
+    )
     {
         const canExpand = item.childrenItems.length > 0;
         auto row = new TRow(item, canExpand, treeLevel, dividerSize);
-        
+
         row.isResizedByParent = false;
         row.itemTextProvider = itemTextProvider;
-        
+
         assert(rowContainer);
         if (auto scrollBox = cast(ScrollBox) rowContainer)
         {
@@ -94,7 +113,8 @@ class BaseTreeTable(T, TCol:
             row.setItem;
         }
 
-        if(rowIndex == rowLastIndex){
+        if (rowIndex == rowLastIndex)
+        {
             row.isLastLevel = true;
         }
 
