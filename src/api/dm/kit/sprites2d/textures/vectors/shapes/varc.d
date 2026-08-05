@@ -33,7 +33,9 @@ class VArc : VShape
 
         ctx.translate(_width / 2, _height / 2);
 
-        ctx.arc(xCenter, yCenter, radius - style.lineWidth / 2, fromAngleRad, toAngleRad);
+        const arcRadius = radius - style.lineWidth / 2 - 1;
+
+        ctx.arc(xCenter, yCenter, arcRadius, fromAngleRad, toAngleRad);
 
         if (style.isFill)
         {
