@@ -42,7 +42,12 @@ abstract class BaseClippedTable(T, TCol:
         //itemContainer.isDrawBounds = true;
         //itemContainer.isHGrow = true;
         //itemContainer.layout.isDecreaseRootHeight = true;
+
+        //TODO fixme container width > this.width, -= vslider, hslider
         resizeToParentSafe(itemContainer);
+        invalidateListeners ~= (){
+            resizeToParentSafe(itemContainer);
+        };
 
         auto root = rowContainer ? rowContainer : this;
 

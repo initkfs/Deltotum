@@ -24,8 +24,8 @@ enum ScrollBarPolicy
  */
 class ScrollBox : Container
 {
-    protected
-    {
+    //protected
+    //{
         VScroll vslider;
         HScroll hslider;
         Container content;
@@ -37,7 +37,7 @@ class ScrollBox : Container
             idVscroll = "scb_scroll_v",
             idHscroll = "scb_scroll_h"
         }
-    }
+    //}
 
     ScrollBarPolicy vScrollPolicy = ScrollBarPolicy.ifneed;
     ScrollBarPolicy hScrollPolicy = ScrollBarPolicy.ifneed;
