@@ -198,7 +198,7 @@ class Expander : Control
 
         auto style = createFillStyle;
 
-        const size = theme.iconSize / 1.5;
+        const size = theme.iconSize / 2;
 
         return new VTriangle(size, size, style);
     }
