@@ -207,7 +207,21 @@ class AnalogClockFace : BaseRadialGauge
             progressStyle.lineWidth = scale.tickMinorHeight;
         }
 
-        progressBar = new RadialSegmentBar(diameter, 0, 360);
+        const barDiam = diameter;
+        progressBar = new class RadialSegmentBar
+        {
+            this()
+            {
+                super(barDiam, 0, 360);
+            }
+
+            override protected RGBA segmentColorOff(RGBA color)
+            {
+                auto newColor = color.toHSLA;
+                newColor.l /= 5;
+                return newColor.toRGBA;
+            }
+        };
         //TODO correct offset
         progressBar.isUseMiddleAngleOffset = true;
         progressBar.segmentsCount = 60;
