@@ -30,6 +30,24 @@ struct Insets
         this(topAndBottom, leftAndRight, topAndBottom, leftAndRight);
     }
 
+    void set(float v)
+    {
+        this = Insets(v);
+    }
+
+    bool div(float v)
+    {
+        if (v == 0)
+        {
+            return false;
+        }
+        this.top /= v;
+        this.right /= v;
+        this.bottom /= v;
+        this.left /= v;
+        return true;
+    }
+
     float width()
     {
         return left + right;
