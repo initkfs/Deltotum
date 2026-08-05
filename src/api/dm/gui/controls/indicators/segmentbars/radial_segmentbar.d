@@ -57,16 +57,17 @@ class RadialSegmentBar : Control
         if (segmentStyleOn == GraphicStyle.init)
         {
             segmentStyleOn = createFillStyle;
-            if(!segmentStyleOn.isPreset){
+            if (!segmentStyleOn.isPreset)
+            {
                 segmentStyleOn.isFill = false;
                 segmentStyleOn.lineColor = segmentStyleOn.fillColor;
+                enum minLineWidth = 3;
+                if (segmentStyleOn.lineWidth < minLineWidth)
+                {
+                    segmentStyleOn.lineWidth = minLineWidth;
+                }
             }
         }
-    }
-
-    override void create()
-    {
-        super.create;
 
         segmentStyleOff = segmentStyleOn;
         if (!segmentStyleOff.isPreset)
@@ -75,6 +76,11 @@ class RadialSegmentBar : Control
             segmentStyleOff.isFill = false;
             segmentStyleOff.fillColor = segmentStyleOff.lineColor;
         }
+    }
+
+    override void create()
+    {
+        super.create;
 
         _segmentsOn.reserve(segmentsCount);
 
@@ -107,18 +113,20 @@ class RadialSegmentBar : Control
                     auto arcRadius = radius - style.lineWidth / 2;
 
                     drawSegment((i, startAngleDeg, endAngleDeg, angleOffset) {
-                        if(style.isFill){
+                        if (style.isFill)
+                        {
                             ctx.beginPath;
                         }
-                        
+
                         ctx.arc(center.x, center.y, arcRadius, Math.degToRad(startAngleDeg), Math.degToRad(
                             endAngleDeg));
-                        
-                        if(style.isFill){
+
+                        if (style.isFill)
+                        {
                             ctx.closePath;
                             ctx.fillPreserve;
                         }
-                        
+
                         ctx.strokePreserve;
                         return true;
                     });
@@ -182,7 +190,7 @@ class RadialSegmentBar : Control
     protected RGBA segmentColorOff(RGBA color)
     {
         auto newColor = color.toHSLA;
-        newColor.l /= 5;
+        newColor.a = 0.1;
         return newColor.toRGBA;
     }
 
