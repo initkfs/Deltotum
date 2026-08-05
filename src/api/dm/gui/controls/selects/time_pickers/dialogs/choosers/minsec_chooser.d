@@ -3,7 +3,8 @@ module api.dm.gui.controls.selects.time_pickers.dialogs.choosers.minsec_chooser;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.gui.controls.selects.time_pickers.dialogs.choosers.base_circular_time_chooser : BaseCircularTimeChooser;
+import api.dm.gui.controls.selects.time_pickers.dialogs.choosers
+    .base_circular_time_chooser : BaseCircularTimeChooser;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.containers.circle_box : CircleBox;
 import api.math.geom2.vec2 : Vec2f;
@@ -44,6 +45,11 @@ class MinSecChooser : BaseCircularTimeChooser
         if (labelSize == 0)
         {
             labelSize = theme.meterTickMinorWidth * 3;
+            const minDiam = createStyle.lineWidth * 2 + 1;
+            if (labelSize < minDiam)
+            {
+                labelSize = minDiam;
+            }
         }
 
         if (startAngleDeg == 0)
