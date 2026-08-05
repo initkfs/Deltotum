@@ -294,7 +294,9 @@ class TimePicker : BaseDropDownSelector!(TimePickerDialog, TimeOfDay)
             };
         });
 
-        reset;
+        window.showingTasks ~= (float dt){
+            reset;
+        };
     }
 
     void setHourValue(int value)
