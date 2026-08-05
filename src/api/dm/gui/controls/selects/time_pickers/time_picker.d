@@ -101,8 +101,23 @@ class TimePicker : BaseDropDownSelector!(TimePickerDialog, TimeOfDay)
     protected Text newTimeLabel(dstring text = null)
     {
         auto newText = text.length > 0 ? text : "00"d;
-        auto label = new Text(newText);
-        label.isBackground = true;
+        auto label = new class Text
+        {
+            this()
+            {
+                super(newText);
+            }
+
+            import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
+
+            override Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
+            {
+                style.isFill = false;
+                style.lineColor = theme.colorAccent;
+                return theme.rectShape(w, h, angle, style);
+            }
+        };
+        label.isBorder = true;
         return label;
     }
 
@@ -271,9 +286,7 @@ class TimePicker : BaseDropDownSelector!(TimePickerDialog, TimeOfDay)
 
             dialog.onSecValue = (value) { setSecValue(value); };
 
-            onShowPopup = (){
-                reloadDialogTime;
-            };
+            onShowPopup = () { reloadDialogTime; };
 
             window.showingTasks ~= (dt) {
                 dialog.showOnlyHours;
@@ -426,15 +439,20 @@ class TimePicker : BaseDropDownSelector!(TimePickerDialog, TimeOfDay)
     void reset()
     {
         hoursLabel.text = zeroTimeValueStr;
+        unselectTextLabel(hoursLabel);
         minutesLabel.text = zeroTimeValueStr;
+        unselectTextLabel(minutesLabel);
         secsLabel.text = zeroTimeValueStr;
+        unselectTextLabel(secsLabel);
     }
 
-    protected void reloadTime(){
+    protected void reloadTime()
+    {
         setTime(current);
     }
 
-    protected void reloadDialogTime(){
+    protected void reloadDialogTime()
+    {
         setDialogTime(current);
     }
 
