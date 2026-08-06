@@ -95,9 +95,9 @@ class DropDownMenu : BasePopup
 
     void addSep()
     {
-        import api.dm.gui.controls.separators.hseparator : HSeparator;
+        import api.dm.gui.controls.separators.hsep : HSep;
 
-        auto sep = new HSeparator;
+        auto sep = new HSep;
         addCreate(sep);
     }
 

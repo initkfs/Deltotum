@@ -74,8 +74,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
 
         colorHexField = newColorHexField;
 
-        colorHexField.isReduceWidthHeight = false;
-
+        colorHexField.isReduceWidthHeight = true;
         colorValueContainer.addCreate(colorHexField);
 
         auto colorHexWidth = colorHexField.calcTextWidth("#") * 7;

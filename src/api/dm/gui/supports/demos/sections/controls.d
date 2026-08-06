@@ -61,14 +61,14 @@ class Controls : Control
 
         createSwitches(switchRoot);
 
-        import api.dm.gui.controls.separators.vseparator : VSeparator;
-        import api.dm.gui.controls.separators.hseparator : HSeparator;
+        import api.dm.gui.controls.separators.vsep : VSep;
+        import api.dm.gui.controls.separators.hsep : HSep;
 
-        switchRoot.addCreate(new VSeparator);
+        switchRoot.addCreate(new VSep);
 
         createLabels(switchRoot);
 
-        auto sep = new VSeparator;
+        auto sep = new VSep;
         //TODO PosLayout in badges
         sep.marginLeft = 5;
         switchRoot.addCreate(sep);
@@ -78,7 +78,7 @@ class Controls : Control
         createProgress(switchRoot);
         createDialogs(switchRoot);
 
-        rootContainer.addCreate(new HSeparator);
+        rootContainer.addCreate(new HSep);
 
         auto largeContainer = new HBox;
         rootContainer.addCreate(largeContainer);
@@ -773,9 +773,9 @@ class Controls : Control
 
     void createSeparators(Container root)
     {
-        import api.dm.gui.controls.separators.vseparator : VSeparator;
+        import api.dm.gui.controls.separators.vsep : VSep;
 
-        auto vsep = new VSeparator;
+        auto vsep = new VSep;
         vsep.height = 100;
         root.addCreate(vsep);
 
@@ -792,9 +792,9 @@ class Controls : Control
         auto rScroll = new RScroll;
         root.addCreate(rScroll);
 
-        import api.dm.gui.controls.separators.hseparator : HSeparator;
+        import api.dm.gui.controls.separators.hsep : HSep;
 
-        auto hSep = new HSeparator;
+        auto hSep = new HSep;
         hSep.width = 100;
         root.addCreate(hSep);
     }

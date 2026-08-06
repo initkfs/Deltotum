@@ -1,15 +1,15 @@
-module api.dm.gui.controls.separators.hseparator;
+module api.dm.gui.controls.separators.vsep;
 
 import api.dm.gui.controls.separators.base_separator : BaseSeparator;
 
 /**
  * Authors: initkfs
  */
-class HSeparator : BaseSeparator
+class VSep : BaseSeparator
 {
     this()
     {
-        isHGrow = true;
+        isVGrow = true;
         isResizedByParent = true;
     }
 
@@ -17,14 +17,14 @@ class HSeparator : BaseSeparator
     {
         super.loadTheme;
 
-        if (height == 0)
-        {
-            initHeight = theme.separatorHeight;
-        }
-
         if (width == 0)
         {
-            initWidth = 1.0;
+            initWidth = theme.separatorHeight;
+        }
+
+        if (height == 0)
+        {
+            initHeight = 1.0;
         }
     }
 

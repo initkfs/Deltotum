@@ -254,9 +254,9 @@ class ColorPickerDialog : Control
 
                 scroll.thumb.layout = new CenterLayout;
 
-                import api.dm.gui.controls.separators.vseparator : VSeparator;
+                import api.dm.gui.controls.separators.vsep : VSep;
 
-                auto pointer = new VSeparator;
+                auto pointer = new VSep;
                 pointer.width = 2;
                 pointer.height = scroll.thumb.height;
                 pointer.isVGrow = true;
