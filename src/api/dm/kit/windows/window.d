@@ -72,10 +72,12 @@ class Window : GraphicComponent
 
     void delegate(float)[] drawingSceneTasks;
 
-    //Some delegates can be called by the event manager
-    void delegate()[] onCreate;
     void delegate()[] onShow;
     void delegate()[] onHide;
+
+    //Some delegates can be called by the event manager
+    void delegate()[] onCreate;
+    void delegate()[] onDisappear;
     void delegate()[] onMinimize;
     void delegate()[] onMaximize;
     void delegate()[] onClose;
@@ -476,7 +478,7 @@ class Window : GraphicComponent
         //TODO all fields
         // onCreate = null;
         // onShow = null;
-        // onHide = null;
+        // onDisappear = null;
         // onClose = null;
         // onMinimize = null;
         // onMaximize = null;
@@ -875,7 +877,7 @@ class Window : GraphicComponent
         return id;
     }
 
-    void updateEndFrame(float startMs, float deltaMs, size_t physUpdateCount)
+    void updateFrameStat(float startMs, float deltaMs, size_t physUpdateCount)
     {
         updateCounter.update(deltaMs);
         fixedCounter.update(deltaMs, physUpdateCount);

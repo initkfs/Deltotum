@@ -44,3 +44,4 @@ string engineFrameRate = "engineFrameRate";
 
 string engineIsLogFpsToFile = "engineIsLogFpsToFile";
 
+string engineUpdateWindowOnHide = "engineUpdateWindowOnHide";

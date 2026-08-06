@@ -258,7 +258,7 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
                 type = WindowEvent.Event.show;
                 break;
             case SDL_EVENT_WINDOW_HIDDEN:
-                type = WindowEvent.Event.hide;
+                type = WindowEvent.Event.disappear;
                 break;
             case SDL_EVENT_WINDOW_EXPOSED:
                 type = WindowEvent.Event.expose;

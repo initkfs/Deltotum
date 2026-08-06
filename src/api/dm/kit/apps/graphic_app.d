@@ -54,6 +54,8 @@ abstract class GraphicApp : CliApp
 
     bool isQuitOnCloseAllWindows = true;
 
+    bool isUpdateWindowOnHide;
+
     string defaultLangDir = "langs";
 
     protected
@@ -68,7 +70,7 @@ abstract class GraphicApp : CliApp
         KitEventManager eventManager;
     }
 
-    private
+    protected
     {
         GraphicComponent _graphicServices;
     }
@@ -162,6 +164,48 @@ abstract class GraphicApp : CliApp
         {
             _graphicServices.platform.cap.isIconPack = uservices.config.getBool(
                 KitConfigKeys.graphicsIsIconPack);
+        }
+
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        if (uservices.config.hasKey(KitConfigKeys.engineUpdateWindowOnHide))
+        {
+            isUpdateWindowOnHide = uservices.config.getBool(
+                KitConfigKeys.engineUpdateWindowOnHide);
+        }
+    }
+
+    void showWindow(Window win)
+    {
+        win.isShowing = true;
+        if (win.onShow.length > 0)
+        {
+            foreach (dg; win.onShow)
+            {
+                dg();
+            }
+        }
+        if (win.isStopping || win.isPausing)
+        {
+            win.run;
+        }
+    }
+
+    void hideWindow(Window win)
+    {
+        win.isShowing = false;
+
+        if (win.onHide.length > 0)
+        {
+            foreach (dg; win.onHide)
+            {
+                dg();
+            }
+        }
+
+        if (!isUpdateWindowOnHide && win.isRunning)
+        {
+            win.pause;
         }
     }
 

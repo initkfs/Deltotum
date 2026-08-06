@@ -13,7 +13,7 @@ struct WindowEvent
     {
         none,
         show,
-        hide,
+        disappear,
         enter,
         expose,
         close,

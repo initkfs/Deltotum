@@ -527,19 +527,8 @@ class SdlApp : GuiApp
                         break;
                     case show:
                         windowing.onWindowsById(e.ownerId, (win) {
-                            win.isShowing = true;
                             e.isConsumed = true;
-                            if (win.onShow.length > 0)
-                            {
-                                foreach (dg; win.onShow)
-                                {
-                                    dg();
-                                }
-                            }
-                            if (win.isStopping || win.isPausing)
-                            {
-                                win.run;
-                            }
+                            showWindow(win);
                             version (EnableTrace)
                             {
                                 uservices.logger.tracef("Show window '%s' with id %d, state: %s", win.title, win.id, win
@@ -548,23 +537,22 @@ class SdlApp : GuiApp
                             return true;
                         });
                         break;
-                    case hide:
+                    case disappear:
                         windowing.onWindowsById(e.ownerId, (win) {
-                            win.isShowing = false;
-                            if (win.onHide.length > 0)
+
+                            hideWindow(win);
+                            
+                            if (win.onDisappear.length > 0)
                             {
-                                foreach (dg; win.onHide)
+                                foreach (dg; win.onDisappear)
                                 {
                                     dg();
                                 }
                             }
-                            if (win.isRunning)
-                            {
-                                win.pause;
-                            }
+
                             version (EnableTrace)
                             {
-                                uservices.logger.tracef("Hide window '%s' with id %d, state: %s", win.title, win.id, win
+                                uservices.logger.tracef("Disappear window '%s' with id %d, state: %s", win.title, win.id, win
                                     .state);
                             }
                             return true;
@@ -579,6 +567,8 @@ class SdlApp : GuiApp
                         break;
                     case minimize:
                         windowing.onWindowsById(e.ownerId, (win) {
+                            hideWindow(win);
+
                             if (win.onMinimize.length > 0)
                             {
                                 foreach (dg; win.onMinimize)
@@ -586,10 +576,23 @@ class SdlApp : GuiApp
                                     dg();
                                 }
                             }
+
                             version (EnableTrace)
                             {
                                 uservices.logger.tracef("Minimize window '%s' with id %d", win.title, win
                                     .id);
+                            }
+                            return true;
+                        });
+                        break;
+                    case restore:
+                        windowing.onWindowsById(e.ownerId, (win) {
+                            e.isConsumed = true;
+                            showWindow(win);
+                            version (EnableTrace)
+                            {
+                                uservices.logger.tracef("Restore window '%s' with id %d, state: %s", win.title, win.id, win
+                                    .state);
                             }
                             return true;
                         });
@@ -901,7 +904,7 @@ class SdlApp : GuiApp
             {
                 updateEvents;
                 updateRender(accumRest);
-                updateEndFrame(startMs, deltaTimeMs, fixedUpdatesCount);
+                updateFrameStat(startMs, deltaTimeMs, fixedUpdatesCount);
             }
             catch (Throwable e)
             {
@@ -1366,13 +1369,14 @@ class SdlApp : GuiApp
             //RGBA black for LCD
             auto colorBackground = theme.colorBackground;
 
-            import std.conv: to;
-            import api.dm.com.graphics.com_font: ComFontRenderMode;
-            
+            import std.conv : to;
+            import api.dm.com.graphics.com_font : ComFontRenderMode;
+
             auto fontMode = theme.fontRenderMode.to!ComFontRenderMode;
 
             //TODO fixme, alpha premult with #000000?
-            if(fontMode == ComFontRenderMode.lcd){
+            if (fontMode == ComFontRenderMode.lcd)
+            {
                 colorBackground = RGBA.black;
             }
 
@@ -1615,10 +1619,11 @@ class SdlApp : GuiApp
         const startStateTime = SDL_GetTicks();
         windowing.onWindows((window) {
             //focus may not be on the window
-            if (window.isShowing)
+            if (!isUpdateWindowOnHide && !window.isShowing)
             {
-                window.update(startMs, deltaTimeMs, fixedDtSec);
+                return true;
             }
+            window.update(startMs, deltaTimeMs, fixedDtSec);
             return true;
         });
 
@@ -1646,7 +1651,7 @@ class SdlApp : GuiApp
         //const endStateTime = SDL_GetTicks();
     }
 
-    void updateEndFrame(float startMs, float deltaMs, size_t fixedUpdateCount)
+    void updateFrameStat(float startMs, float deltaMs, size_t fixedUpdateCount)
     {
 
         auto currWindow = windowing.findCurrent;
@@ -1656,7 +1661,7 @@ class SdlApp : GuiApp
             return;
         }
 
-        currWindow.updateEndFrame(startMs, deltaMs, fixedUpdateCount);
+        currWindow.updateFrameStat(startMs, deltaMs, fixedUpdateCount);
     }
 
     void handleEvent(SDL_Event* event)
