@@ -64,8 +64,11 @@ class TableHeader : HSplitBox
 
     override Sprite2d newDividerShape(float w, float h, float angle, GraphicStyle style)
     {
-        auto newW = w * 5;
-        auto shape = theme.convexPolyShape(newW, h, angle, newW / 2, style);
+        import Math = api.math;
+        auto newW = Math.roundEven(w * 5);
+        style.lineWidth = 1;
+        const corner = newW / 2;
+        auto shape = theme.convexPolyShape(newW, h, angle, corner, style);
         return shape;
     }
 
