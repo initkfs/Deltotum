@@ -6,6 +6,7 @@ import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.interacts.interact : Interact;
 import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.kit.events.kit_event_manager: KitEventManager;
 
 /**
  * Authors: initkfs
@@ -16,9 +17,9 @@ class GuiWindow : Window
     Theme theme;
     Interact interact;
 
-    this(ComWindow window)
+    this(ComWindow window, KitEventManager eventManager)
     {
-        super(window);
+        super(window, eventManager);
     }
 
     alias build = Window.build;

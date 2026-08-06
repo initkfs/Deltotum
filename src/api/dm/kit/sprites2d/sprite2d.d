@@ -17,6 +17,7 @@ import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
+import api.dm.kit.events.dnd.dnd_event : DNDEvent;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.math.random : Random;
 
@@ -225,7 +226,10 @@ class Sprite2d : EventKitTarget
     uint maxClickTimeMs = 300;
 
     bool isDrag;
-    bool isNoDragWhenPhysics;
+    bool isDND;
+    bool isDNDStart;
+    EventKitTarget[] dndTargets;
+    bool isDNDWait;
 
     enum float defaultTreshold = 0.01;
 
@@ -295,12 +299,30 @@ class Sprite2d : EventKitTarget
             {
                 if (isDrag)
                 {
-                    auto x = e.x + offsetX;
-                    auto y = e.y + offsetY;
-                    if (onDragXY is null || onDragXY(x, y))
+                    if (isDND)
                     {
-                        this.x = x;
-                        this.y = y;
+                        offsetX = e.x;
+                        offsetY = e.y;
+
+                        const dragOffset = 5;
+                        if (!isDNDStart && (offsetX > dragOffset || offsetY > dragOffset))
+                        {
+                            isDNDStart = true;
+                            auto event = DNDEvent(DNDEvent.Event.start, offsetX, offsetY, e.ownerId);
+                            event.source = this;
+                            window.fireForAll(event);
+                        }
+                    }
+                    else
+                    {
+                        if (onDragXY is null || onDragXY(x, y))
+                        {
+                            auto x = e.x + offsetX;
+                            auto y = e.y + offsetY;
+
+                            this.x = x;
+                            this.y = y;
+                        }
                     }
                 }
             }
@@ -311,6 +333,25 @@ class Sprite2d : EventKitTarget
                     stopDrag;
                 }
 
+                if (isDNDWait)
+                {
+                    if (boundsRect.contains(e.x, e.y))
+                    {
+                        import api.dm.kit.events.dnd.dnd_event : DNDEvent;
+
+                        auto dndEvent = DNDEvent(DNDEvent.Event.drop, e.x, e.y, e.ownerId);
+                        fireEvent(dndEvent);
+                    }
+                    else
+                    {
+                        isDNDWait = false;
+
+                        auto dndEvent = DNDEvent(DNDEvent.Event.cancel, e.x, e.y, e.ownerId);
+                        fireEvent(dndEvent);
+                    }
+
+                }
+
                 foreach (Sprite2d child; children)
                 {
                     if (child.isDraggable && child.isDrag)
@@ -318,6 +359,31 @@ class Sprite2d : EventKitTarget
                         child.stopDrag;
                     }
                 }
+            }
+        };
+
+        eventDNDHandlers ~= (ref e) {
+            if (e.event == DNDEvent.Event.start)
+            {
+                if (e.source !is this)
+                {
+                    if (!isDNDWait && dndTargets.length > 0)
+                    {
+                        foreach (target; dndTargets)
+                        {
+                            if (target is e.source)
+                            {
+                                isDNDWait = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    runListeners(e);
+                }
+
             }
         };
     }
@@ -404,6 +470,14 @@ class Sprite2d : EventKitTarget
                                     .button, e.movementX, e.movementY);
                             enterEvent.isSynthetic = true;
                             fireEvent(enterEvent);
+
+                            if (isDNDWait)
+                            {
+                                import api.dm.kit.events.dnd.dnd_event : DNDEvent;
+
+                                auto dndEvent = DNDEvent(DNDEvent.Event.wait, e.x, e.y, e.ownerId);
+                                fireEvent(dndEvent);
+                            }
                         }
 
                     }
@@ -480,6 +554,14 @@ class Sprite2d : EventKitTarget
                                 .button, e.movementX, e.movementY);
                         exitEvent.isSynthetic = true;
                         fireEvent(exitEvent);
+
+                        if (isDNDWait)
+                        {
+                            import api.dm.kit.events.dnd.dnd_event : DNDEvent;
+
+                            auto dndEvent = DNDEvent(DNDEvent.Event.cancel, e.x, e.y, e.ownerId);
+                            fireEvent(dndEvent);
+                        }
                     }
                     else
                     {
@@ -553,6 +635,11 @@ class Sprite2d : EventKitTarget
             {
                 runEventHandlers(e);
             }
+        }
+
+        static if (is(Event : DNDEvent))
+        {
+            runEventHandlers(e);
         }
 
         if (!isEventsFirstProcessChild)
@@ -1078,6 +1165,15 @@ class Sprite2d : EventKitTarget
         }
     }
 
+    bool removeFromParent()
+    {
+        if (!parent)
+        {
+            return false;
+        }
+        return parent.remove(this, false);
+    }
+
     bool removeAll(bool isDestroy = true)
     {
         if (children.length == 0)
@@ -1191,6 +1287,7 @@ class Sprite2d : EventKitTarget
         offsetX = 0;
         offsetY = 0;
         this.isDrag = false;
+        this.isDNDStart = false;
 
         if (onStopDrag)
         {

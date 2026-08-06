@@ -10,12 +10,13 @@ import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.kit.windows.events.window_event : WindowEvent;
+import api.dm.kit.events.dnd.dnd_event : DNDEvent;
 
 import api.core.utils.arrays : drop;
 
 import std.meta : AliasSeq;
 
-alias AllAppEvents = AliasSeq!(AppEvent, FocusEvent, KeyEvent, PointerEvent, TextInputEvent, JoystickEvent, WindowEvent);
+alias AllAppEvents = AliasSeq!(AppEvent, FocusEvent, KeyEvent, PointerEvent, TextInputEvent, JoystickEvent, WindowEvent, DNDEvent);
 
 enum EventKitPhase
 {
@@ -36,6 +37,7 @@ mixin template EventPhaseProcesor()
     import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
     import api.dm.kit.windows.events.window_event : WindowEvent;
     import api.dm.kit.events.event_kit_target : AllAppEvents, EventKitPhase;
+    import api.dm.kit.events.dnd.dnd_event : DNDEvent;
     import std.conv : text;
 
     static foreach (e; AllAppEvents)
@@ -87,6 +89,12 @@ class EventKitTarget : GraphicComponent, EventTarget
 
     void delegate(ref WindowEvent)[] eventWindowHandlers;
 
+    void delegate(ref DNDEvent)[] eventDNDHandlers;
+    void delegate(ref DNDEvent)[] onDNDStart;
+    void delegate(ref DNDEvent)[] onDNDWait;
+    void delegate(ref DNDEvent)[] onDNDCancel;
+    void delegate(ref DNDEvent)[] onDNDDrop;
+
     bool isCreateApplicationHandler = true;
     bool isCreatePointerHandler = true;
     bool isCreateKeyHandler = true;
@@ -94,6 +102,7 @@ class EventKitTarget : GraphicComponent, EventTarget
     bool isCreateFocusHandler = true;
     bool isCreateJoystickHandler = true;
     bool isCreateWindowHandler = true;
+    bool isCreateDNDHandler = true;
 
     bool isMouseOver;
 
@@ -133,6 +142,11 @@ class EventKitTarget : GraphicComponent, EventTarget
         if (isCreateTextInputHandler)
         {
             createHandler(eventTextInputHandlers);
+        }
+
+        if (isCreateDNDHandler)
+        {
+            createHandler(eventDNDHandlers);
         }
     }
 
@@ -180,6 +194,10 @@ class EventKitTarget : GraphicComponent, EventTarget
         else static if (is(E : WindowEvent))
         {
             runDelegates(e, eventWindowHandlers);
+        }
+        else static if (is(E : DNDEvent))
+        {
+            runDelegates(e, eventDNDHandlers);
         }
     }
 
@@ -294,6 +312,26 @@ class EventKitTarget : GraphicComponent, EventTarget
     void runListeners(ref WindowEvent)
     {
         //TODO window events?
+    }
+
+    void runListeners(ref DNDEvent event)
+    {
+        final switch (event.event) with (
+            DNDEvent.Event)
+        {
+            case start:
+                runDelegates(event, onDNDStart);
+                break;
+            case wait:
+                runDelegates(event, onDNDWait);
+                break;
+            case cancel:
+                runDelegates(event, onDNDCancel);
+                break;
+            case drop:
+                runDelegates(event, onDNDDrop);
+                break;
+        }
     }
 
     void fireEvent(E)(ref E e)
@@ -450,6 +488,8 @@ class EventKitTarget : GraphicComponent, EventTarget
         onJoystickButtonRelease = null;
 
         eventWindowHandlers = null;
+
+        eventDNDHandlers = null;
     }
 
 }

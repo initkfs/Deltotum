@@ -13,6 +13,8 @@ import api.dm.kit.apps.loops.counters.fps_update_counter : FpsUpdateCounter;
 import api.dm.kit.apps.loops.counters.fps_update_counter : FpsUpdateCounter;
 import api.dm.kit.apps.loops.counters.fps_fixed_counter : FpsFixedCounter;
 
+import api.dm.kit.events.kit_event_manager : KitEventManager;
+
 //TODO extract COM interfaces
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
 
@@ -51,6 +53,8 @@ class Window : GraphicComponent
 
         size_t lastShowingTick = 0;
     }
+
+    KitEventManager events;
 
     FpsUpdateCounter updateCounter;
     FpsFixedCounter fixedCounter;
@@ -96,13 +100,19 @@ class Window : GraphicComponent
     //TODO remove
     File* fpsLog;
 
-    this(ComWindow window)
+    this(ComWindow window, KitEventManager eventManager)
     {
         if (!window)
         {
             throw new Exception("Window must not be null");
         }
         this._comWindow = window;
+
+        if (!eventManager)
+        {
+            throw new Exception("Event manager must not be null");
+        }
+        this.events = eventManager;
 
         //TODO di
         updateCounter = new FpsUpdateCounter;
@@ -153,6 +163,11 @@ class Window : GraphicComponent
                 dg();
             }
         }
+    }
+
+    void fireForAll(E)(ref E e)
+    {
+        events.dispatchEvent(e);
     }
 
     Scene2d currentScene() @safe pure nothrow

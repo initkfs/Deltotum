@@ -14,7 +14,7 @@ import api.dm.gui.controls.selects.carousels.carousel;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_item;
 
 import Icons = api.dm.gui.themes.icons.pack_bootstrap;
-import std.conv: to;
+import std.conv : to;
 
 /**
  * Authors: initkfs
@@ -142,6 +142,13 @@ class Controls : Control
 
         auto btn2 = new ParallelogramButton("Btn");
         btn2.isBackground = true;
+        btn2.isDND = true;
+        btn2.isDraggable = true;
+        btn2.onDNDStart ~= (ref e) {
+            btn2.isDrawBounds = true;
+        };
+        btn2.onStopDrag = () { btn2.isDrawBounds = false; 
+        };
         btnRoot2.addCreate(btn2);
 
         auto btnRoot3 = new HBox;
@@ -155,6 +162,14 @@ class Controls : Control
         auto circleBtn = new RoundButton("Btn");
         circleBtn.isLongPressButton = true;
         roundRoot.addCreate(circleBtn);
+
+        circleBtn.dndTargets ~= btn2;
+        circleBtn.onDNDWait ~= (ref e) { circleBtn.isDrawBounds = true; };
+        circleBtn.onDNDCancel ~= (ref e) { circleBtn.isDrawBounds = false; };
+        circleBtn.onDNDDrop ~= (ref e) {
+            btn2.removeFromParent;
+            circleBtn.add(btn2);
+        };
 
         import api.dm.gui.controls.switches.buttons.poly_button : PolyButton;
 
@@ -393,27 +408,25 @@ class Controls : Control
         choiceVRoot1.addCreate(choice1);
         choice1.fill(choiceItems);
 
-        import api.dm.gui.controls.selects.menus.buttons.menu_button: MenuButton;
+        import api.dm.gui.controls.selects.menus.buttons.menu_button : MenuButton;
 
         auto mb = new MenuButton;
         choiceVRoot1.addCreate(mb);
-        
+
         auto subMenu = mb.addSubMenu("Submenu");
-        subMenu.addButton("SubItem1", (){
+        subMenu.addButton("SubItem1", () {
             interact.popup.urgent("Click submenu item 1");
         });
 
-        mb.addButton("Item1", (){
-            interact.popup.urgent("Click item 1");
-        });
+        mb.addButton("Item1", () { interact.popup.urgent("Click item 1"); });
 
         mb.addSep;
-        
-        mb.addCheckItem("Check1", (old, newv){
+
+        mb.addCheckItem("Check1", (old, newv) {
             interact.popup.urgent("Check menu 1: " ~ newv.to!dstring);
         });
 
-        mb.addCheckItem("Check2", (old, newv){
+        mb.addCheckItem("Check2", (old, newv) {
             interact.popup.urgent("Check menu 2: " ~ newv.to!dstring);
         });
 

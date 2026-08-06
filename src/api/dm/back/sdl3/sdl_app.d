@@ -1016,7 +1016,7 @@ class SdlApp : GuiApp
         auto windowBuilder = newWindowServices;
         buildPartially(windowBuilder);
 
-        auto window = new GuiWindow(sdlWindow);
+        auto window = new GuiWindow(sdlWindow, eventManager);
         assert(windowBuilder.windowing);
         windowBuilder.windowing.main = window;
 
