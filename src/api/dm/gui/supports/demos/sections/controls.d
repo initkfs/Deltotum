@@ -14,6 +14,7 @@ import api.dm.gui.controls.selects.carousels.carousel;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_item;
 
 import Icons = api.dm.gui.themes.icons.pack_bootstrap;
+import std.conv: to;
 
 /**
  * Authors: initkfs
@@ -378,19 +379,52 @@ class Controls : Control
             choiceItems ~= "label" ~ ci.to!dstring;
         }
 
-        auto choiceRoot1 = new VBox;
-        choiceRoot1.isAlignX = true;
-        choiceRoot1.layout.isDecreaseRootHeight = true;
-        root.addCreate(choiceRoot1);
+        auto choiceHRoot = new HBox;
+        //choiceHRoot.isAlignY = true;
+        root.addCreate(choiceHRoot);
+        choiceHRoot.enablePadding;
+
+        auto choiceVRoot1 = new VBox;
+        choiceVRoot1.isAlignX = true;
+        choiceVRoot1.layout.isDecreaseRootHeight = true;
+        choiceHRoot.addCreate(choiceVRoot1);
+
+        auto choice1 = new Choice!dstring;
+        choiceVRoot1.addCreate(choice1);
+        choice1.fill(choiceItems);
+
+        import api.dm.gui.controls.selects.menus.buttons.menu_button: MenuButton;
+
+        auto mb = new MenuButton;
+        choiceVRoot1.addCreate(mb);
+        
+        auto subMenu = mb.addSubMenu("Submenu");
+        subMenu.addButton("SubItem1", (){
+            interact.popup.urgent("Click submenu item 1");
+        });
+
+        mb.addButton("Item1", (){
+            interact.popup.urgent("Click item 1");
+        });
+
+        mb.addSep;
+        
+        mb.addCheckItem("Check1", (old, newv){
+            interact.popup.urgent("Check menu 1: " ~ newv.to!dstring);
+        });
+
+        mb.addCheckItem("Check2", (old, newv){
+            interact.popup.urgent("Check menu 2: " ~ newv.to!dstring);
+        });
+
+        auto choiceVRoot2 = new VBox;
+        choiceVRoot2.isAlignX = true;
+        choiceHRoot.addCreate(choiceVRoot2);
 
         auto choiceHRoot1 = new HBox;
         choiceHRoot1.isAlignY = true;
         choiceHRoot1.layout.isDecreaseRootHeight = true;
-        choiceRoot1.addCreate(choiceHRoot1);
-
-        auto choice1 = new Choice!dstring;
-        choiceHRoot1.addCreate(choice1);
-        choice1.fill(choiceItems);
+        choiceVRoot2.addCreate(choiceHRoot1);
 
         import api.dm.gui.controls.selects.choices.hchoice : HChoice;
 
@@ -477,7 +511,7 @@ class Controls : Control
 
         auto pagination = new Pagination;
         pagination.pageFactory = (size_t pageIndex) {};
-        choiceRoot1.addCreate(pagination);
+        choiceVRoot2.addCreate(pagination);
     }
 
     import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
@@ -979,6 +1013,7 @@ class Controls : Control
         import api.dm.gui.controls.texts.text_field : TextField;
 
         auto fieldBox = new VBox;
+        fieldBox.isAlignX = true;
         root.addCreate(fieldBox);
 
         auto text = new Text("Text with\nline breaks");
