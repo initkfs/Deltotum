@@ -307,12 +307,18 @@ class AnalogClockFace : BaseRadialGauge
                 onCreatedHandHolder(handHolder);
             }
         }
+
+        setCheckSegments;
+    }
+
+    void setCheckSegments(){
+        isCheckFillSecs = true;
     }
 
     override void pause()
     {
         super.pause;
-        isCheckFillSecs = true;
+        setCheckSegments;
     }
 
     bool setTime(ubyte hour, ubyte min, ubyte sec)
