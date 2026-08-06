@@ -221,6 +221,9 @@ class GuiPopupManager : Container, PopupManager
             newPopup.isVisible = false;
             newPopup.isDrawByParent = false;
             addCreate(newPopup);
+            newPopup.enablePadding;
+            //TODO configurable
+            newPopup.padding.inc(3);
             popupsPool ~= newPopup;
             window.currentScene.takenSprites ~= newPopup;
             freePopup = newPopup;

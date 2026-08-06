@@ -48,6 +48,15 @@ struct Insets
         return true;
     }
 
+    bool inc(float v)
+    {
+        this.top *= v;
+        this.right *= v;
+        this.bottom *= v;
+        this.left *= v;
+        return true;
+    }
+
     float width()
     {
         return left + right;
