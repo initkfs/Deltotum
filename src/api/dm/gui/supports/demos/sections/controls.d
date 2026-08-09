@@ -846,7 +846,7 @@ class Controls : Control
         rootContainer.addCreate(clock1);
     }
 
-    void createCharts(Container root)
+     void createCharts(Container root)
     {
         import api.dm.gui.controls.charts.lines.linear_chart : LinearChart;
 
@@ -857,12 +857,10 @@ class Controls : Control
         import std.array : array;
         import std.algorithm.iteration : map;
         import std.math.trigonometry : sin;
+        import Math = api.math;
 
-        //float[] x = iota(1, 10, 0.01).array;
-        //float[] y = x.map!sin.array;
-
-        float[] x = [0, 1, 2, 3, 7];
-        float[] y = [0, 1, 2, 3, 7];
+        float[] x = iota(10).map!(i => cast(float) (i * 2 * Math.PI / 9)).array;
+        float[] y = x.map!sin.array;
 
         linearChart.data(x, y);
 

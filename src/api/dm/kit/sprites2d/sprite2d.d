@@ -315,11 +315,11 @@ class Sprite2d : EventKitTarget
                     }
                     else
                     {
+                        auto x = e.x + offsetX;
+                        auto y = e.y + offsetY;
+
                         if (onDragXY is null || onDragXY(x, y))
                         {
-                            auto x = e.x + offsetX;
-                            auto y = e.y + offsetY;
-
                             this.x = x;
                             this.y = y;
                         }
