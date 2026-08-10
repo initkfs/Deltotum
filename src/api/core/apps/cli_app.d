@@ -101,7 +101,8 @@ class CliApp : SimpleUnit
         }
         catch (Exception e)
         {
-            consumeThrowable(e, true);
+            consumeThrowable(e, false);
+            return false;
         }
 
         return true;
@@ -623,9 +624,29 @@ class CliApp : SimpleUnit
     protected void createCrashHandlers(
         string[] args)
     {
+        import std.process : environment;
+        import std.conv : to;
+
+        bool isCreateSyslog = true;
+        immutable envValue = environment.get(CoreEnvKeys.appNoCrashSyslog);
+        if (envValue !is null && envValue.to!bool)
+        {
+            isCreateSyslog = false;
+        }
+
+        version (linux)
+        {
+            if (isCreateSyslog)
+            {
+                import api.core.apps.crashes.syslog_crash_handler : SyslogCrashHandler;
+
+                auto syslogHandler = new SyslogCrashHandler(appname);
+                crashHandlers ~= syslogHandler;
+            }
+        }
+
         import std.path : dirName, buildPath, isAbsolute;
         import std.file : exists, isDir, isFile, getcwd;
-        import std.process : environment;
         import std.format : format;
 
         if (!isWriteCrashFile)

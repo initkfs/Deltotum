@@ -7,5 +7,5 @@ abstract class CrashHandler
 
     bool isConsumed;
 
-    void acceptCrash(Throwable t, const(char)[] message = "") inout;
+    void acceptCrash(Throwable t, const(char)[] message = "");
 }

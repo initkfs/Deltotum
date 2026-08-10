@@ -652,6 +652,7 @@ class SdlApp : GuiApp
             }
 
             validate;
+            throw new Exception("hello");
         }
         catch (Throwable e)
         {

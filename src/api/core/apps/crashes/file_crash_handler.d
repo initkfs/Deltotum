@@ -54,7 +54,7 @@ class FileCrashHandler : TimeCrashHandler
         return filePath;
     }
 
-    override void acceptCrash(Throwable t, const(char)[] message = "") inout
+    override void acceptCrash(Throwable t, const(char)[] message = "")
     {
         import std.file : exists, write;
         import std.file : isFile;
