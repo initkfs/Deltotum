@@ -13,14 +13,14 @@ class FileHandler : BaseLogHandler
     protected
     {
         File* _logFile;
-        string path;
+        string _path;
     }
 
     bool isFlush = true;
 
     this(string path)
     {
-        this.path = path;
+        this._path = path;
     }
 
     override void output(LogLevel level, const(char)[] message)
@@ -32,7 +32,7 @@ class FileHandler : BaseLogHandler
 
         if (!_logFile)
         {
-            _logFile = new File(path, "a+");
+            _logFile = new File(_path, "a+");
         }
 
         _logFile.writeln(message);
@@ -41,4 +41,6 @@ class FileHandler : BaseLogHandler
             _logFile.flush;
         }
     }
+
+    const(string) path() => _path;
 }

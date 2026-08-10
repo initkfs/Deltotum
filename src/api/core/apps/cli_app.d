@@ -13,6 +13,7 @@ import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.contexts.context : Context;
 import api.core.validations.validation : Validation;
 import api.core.validations.validators.validator : Validator;
+import api.core.validations.validators.validator_async : ValidatorAsync, ValidationMessage;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.validations.errors.err_status : ErrStatus;
@@ -36,6 +37,7 @@ class CliApp : SimpleUnit
     string defaultUserDataDir = "userdata";
 
     CrashHandler[] crashHandlers;
+    ValidatorAsync[] asyncValidators;
 
     int exitCode;
 
@@ -98,6 +100,8 @@ class CliApp : SimpleUnit
             }
 
             buildCreateServices;
+
+            asyncValidators = createAsyncValidators;
         }
         catch (Exception e)
         {
@@ -121,7 +125,7 @@ class CliApp : SimpleUnit
         services.configs = createConfiguration(services.context);
         assert(services.hasConfigs);
 
-        services.logging = createLogging;
+        services.logging = createLogging(services.context, services.config);
         assert(services.hasLogging);
 
         assert(services.logging.logger);
@@ -133,6 +137,47 @@ class CliApp : SimpleUnit
     }
 
     Validator[] createValidators() => null;
+
+    ValidatorAsync[] createAsyncValidators()
+    {
+        import std.process : environment;
+
+        ValidatorAsync[] validators;
+
+        auto isValidLog = environment.get(CoreEnvKeys.appLogValidate);
+        if (isValidLog)
+        {
+            import std.conv : to;
+
+            if (isValidLog.to!bool)
+            {
+                if (!uservices.hasLogging)
+                {
+                    throw new Exception("Logging is null for validation");
+                }
+
+                uservices.logging.logger.onHandler((handler) {
+                    import api.core.loggers.builtins.handlers.file_handler : FileHandler;
+                    import api.core.validations.validators.validator_async : ValidatorAsync;
+                    import api.core.validations.errors.logs.log_file_validator : LogFileValidator;
+
+                    if (auto fileHandler = cast(FileHandler) handler)
+                    {
+                        import std.file : exists, isFile;
+
+                        auto path = fileHandler.path;
+                        if (path.exists && path.isFile)
+                        {
+                            validators ~= new ValidatorAsync(new LogFileValidator(path));
+                        }
+                    }
+                    return true;
+                });
+            }
+        }
+
+        return validators;
+    }
 
     Validator createConfigValidator(Config config, string[] configKeys)
     {
@@ -183,6 +228,38 @@ class CliApp : SimpleUnit
                 }
             }
 
+        }
+    }
+
+    void validateAsync()
+    {
+        foreach (v; asyncValidators)
+        {
+            v.start;
+        }
+    }
+
+    void checkAsyncValidators(void delegate(ValidationMessage) onMessage)
+    {
+        if (asyncValidators.length == 0)
+        {
+            return;
+        }
+
+        size_t doneCount;
+        foreach (v; asyncValidators)
+        {
+            v.checkResult;
+            if (v.isDone)
+            {
+                onMessage(v.resultMessage);
+                doneCount++;
+            }
+        }
+
+        if (doneCount == asyncValidators.length)
+        {
+            asyncValidators = null;
         }
     }
 
@@ -528,11 +605,12 @@ class CliApp : SimpleUnit
 
     protected Configuration newConfiguration(Config config) => new Configuration(config);
 
-    protected Logger createLogger()
+    protected Logger createLogger(Context context, Config config)
     {
         import api.core.loggers.builtins.base_logger : LogLevel;
         import api.core.loggers.builtins.logger : Logger;
         import api.core.loggers.builtins.handlers.console_handler : ConsoleHandler;
+        import api.core.loggers.builtins.handlers.file_handler : FileHandler;
 
         //TODO from config
         auto multiLogger = new Logger;
@@ -543,6 +621,22 @@ class CliApp : SimpleUnit
         consoleLogger.level = consoleLoggerLevel;
 
         multiLogger.add(consoleLogger);
+
+        // if (context.app.hasDataDir)
+        // {
+        //     import std.path : buildPath;
+        //     import std.file : exists, mkdir;
+
+        //     auto logDir = buildPath(context.app.dataDir, "logs");
+        //     if (!logDir.exists)
+        //     {
+        //         logDir.mkdir;
+        //     }
+        //     auto logFile = buildPath(logDir, "log.txt");
+        //     auto fileHandler = new FileHandler(logFile);
+        //     fileHandler.level = consoleLoggerLevel;
+        //     multiLogger.add(fileHandler);
+        // }
 
         // auto errLogger = new class Logger
         // {
@@ -567,9 +661,9 @@ class CliApp : SimpleUnit
         return multiLogger;
     }
 
-    protected Logging createLogging()
+    protected Logging createLogging(Context context, Config config)
     {
-        auto logger = createLogger;
+        auto logger = createLogger(context, config);
         assert(logger);
         return newLogging(logger);
     }

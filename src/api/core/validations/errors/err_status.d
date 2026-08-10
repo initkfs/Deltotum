@@ -11,6 +11,8 @@ class ErrStatus
         bool _error;
     }
 
+    void delegate(string)[] onNewError;
+
     void error(string err)
     {
         //TODO hash and duplicates
@@ -18,6 +20,11 @@ class ErrStatus
         if (!_error)
         {
             _error = true;
+        }
+
+        foreach (dg; onNewError)
+        {
+            dg(err);
         }
     }
 

@@ -81,6 +81,7 @@ import api.dm.back.sdl3.gpu.sdl_gpu_device;
 import api.dm.kit.graphics.gpu.gpu_graphic : GPUGraphic;
 
 import api.core.validations.validators.validator : Validator;
+import api.core.validations.validators.validator_async : ValidatorAsync;
 
 /**
  * Authors: initkfs
@@ -541,7 +542,7 @@ class SdlApp : GuiApp
                         windowing.onWindowsById(e.ownerId, (win) {
 
                             hideWindow(win);
-                            
+
                             if (win.onDisappear.length > 0)
                             {
                                 foreach (dg; win.onDisappear)
@@ -552,7 +553,8 @@ class SdlApp : GuiApp
 
                             version (EnableTrace)
                             {
-                                uservices.logger.tracef("Disappear window '%s' with id %d, state: %s", win.title, win.id, win
+                                uservices.logger.tracef("Disappear window '%s' with id %d, state: %s", win.title, win
+                                    .id, win
                                     .state);
                             }
                             return true;
@@ -652,6 +654,7 @@ class SdlApp : GuiApp
             }
 
             validate;
+            validateAsync;
         }
         catch (Throwable e)
         {
@@ -1625,6 +1628,21 @@ class SdlApp : GuiApp
             }
             window.update(startMs, deltaTimeMs, fixedDtSec);
             return true;
+        });
+
+        checkAsyncValidators((msg) {
+            if (!msg.isValid)
+            {
+                if (msg.isNonLoggable)
+                {
+                    uservices.validation.errStatus.error(msg.message);
+                }
+                else
+                {
+                    //TODO validator name;
+                    uservices.logger.error("Async validator fail: " ~ msg.message);
+                }
+            }
         });
 
         const endStateTime = SDL_GetTicks();

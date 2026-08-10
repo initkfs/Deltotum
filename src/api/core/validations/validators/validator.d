@@ -9,13 +9,13 @@ abstract class Validator
     
     protected
     {
-        bool _valid;
-
         string[] _fails;
         Throwable[] _errors;
+        bool _valid;
     }
 
     bool isAutoFailOnErrors = true;
+    bool isNonLoggable;
 
     abstract
     {

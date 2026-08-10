@@ -164,6 +164,22 @@ class Logger : BaseLogger
     {
         logf!(file, line)(LogLevel.error, args);
     }
+
+    void onHandler(scope bool delegate(BaseLogHandler) onHandlerIsContinue)
+    {
+        _mutex.lock_nothrow;
+        scope (exit)
+        {
+            _mutex.unlock_nothrow;
+        }
+        foreach (h; handlers)
+        {
+            if (!onHandlerIsContinue(h))
+            {
+                break;
+            }
+        }
+    }
 }
 
 unittest
