@@ -136,6 +136,12 @@ abstract class GraphicApp : CliApp
                 KitConfigKeys.backendIsWeb);
         }
 
+        if (uservices.config.hasKey(KitConfigKeys.backendIsFont))
+        {
+            _graphicServices.platform.cap.isFont = uservices.config.getBool(
+                KitConfigKeys.backendIsFont);
+        }
+
         if (uservices.config.hasKey(KitConfigKeys.backendIsJoystick))
         {
             _graphicServices.platform.cap.isJoystick = uservices.config.getBool(

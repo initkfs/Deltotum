@@ -49,6 +49,12 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     {
         if (hasPtr)
         {
+            // enum maxSize = 64;
+            // if (newWidth == getWidth && newHeight == getHeight && format == getFormat && (newWidth < maxSize && newHeight < maxSize))
+            // {
+            //     return fill(0, 0, 0, 0);
+            // }
+
             disposePtr;
         }
 
@@ -445,6 +451,19 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         //SDL_WriteSurfacePixel
         SDL_GetRGBA(*pixel, details, palette, &r, &g, &b, &a);
         return true;
+    }
+
+    uint mapColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
+    {
+        SDL_PixelFormatDetails* details = getFormatDetails(ptr.format);
+        SDL_Palette* palette = getPalette;
+
+        if (!details)
+        {
+            return 0;
+        }
+
+        return SDL_MapRGBA(details, palette, r, g, b, a);
     }
 
     bool setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow

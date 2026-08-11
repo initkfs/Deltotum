@@ -374,17 +374,22 @@ class SdlApp : GuiApp
             _media = new MultiMedia(spec, player);
             _media.initialize;
 
-            auto ftLib = new FreeTypeLib;
-            if (ftLib.load)
+            if (gservices.platform.cap.isFont)
             {
-                freetypeLib = ftLib;
-                freetypeLib.initialize;
-                freetypeLib.setLCDFilter;
-                uservices.logger.trace("Load FreeType library.");
-            }
-            else
-            {
-                uservices.logger.error("FreeType loading error: " ~ ftLib.errorsText);
+                auto ftLib = new FreeTypeLib;
+                ftLib.onLoad = () {
+                    freetypeLib = ftLib;
+                    freetypeLib.initialize;
+                    freetypeLib.setLCDFilter;
+                    uservices.logger.trace("Load FreeType library.");
+                };
+
+                ftLib.onErrorsStr = (errs) {
+                    gservices.platform.cap.isFont = false;
+                    uservices.logger.error("FreeType loading error: " ~ ftLib.errorsText);
+                };
+
+                ftLib.load;
             }
 
             if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
@@ -997,6 +1002,12 @@ class SdlApp : GuiApp
 
     ComFont newComFont()
     {
+        if (!gservices.platform.cap.isFont || !freetypeLib)
+        {
+            import api.dm.kit.assets.fonts.roms.simple_rom_font : SimpleRomFont;
+
+            return new SimpleRomFont;
+        }
         return new FreeTypeFont(freetypeLib);
     }
 
