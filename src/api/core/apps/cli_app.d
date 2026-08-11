@@ -611,6 +611,7 @@ class CliApp : SimpleUnit
         import api.core.loggers.builtins.logger : Logger;
         import api.core.loggers.builtins.handlers.console_handler : ConsoleHandler;
         import api.core.loggers.builtins.handlers.file_handler : FileHandler;
+        import api.core.loggers.builtins.handlers.base_log_handler : BaseLogHandler;
 
         //TODO from config
         auto multiLogger = new Logger;
@@ -638,22 +639,22 @@ class CliApp : SimpleUnit
         //     multiLogger.add(fileHandler);
         // }
 
-        // auto errLogger = new class Logger
-        // {
-        //     this()
-        //     {
-        //         super(LogLevel.warning);
-        //     }
+        auto errHandler = new class BaseLogHandler
+        {
+            override void output(LogLevel level, const(char)[] message)
+            {
+                if (level != LogLevel.error)
+                {
+                    return;
+                }
+                if (uservices.hasValidation)
+                {
+                    uservices.validation.errStatus.error(message);
+                }
+            }
+        };
 
-        //     override void writeLogMsg(ref LogEntry payload) @trusted
-        //     {
-        //         auto logLevel = payload.logLevel;
-        //         auto dt = payload.timestamp;
-        //         string message = format("%02d:%02d %s %s(%d): %s", dt.hour(), dt.minute(),
-        //             payload.logLevel, payload.moduleName, payload.line, payload.msg);
-        //         support.errStatus.error(message);
-        //     }
-        // };
+        multiLogger.add(errHandler);
 
         multiLogger.tracef(
             "Create stdout logging, level '%s'", consoleLoggerLevel);

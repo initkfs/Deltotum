@@ -13,6 +13,13 @@ class ErrStatus
 
     void delegate(string)[] onNewError;
 
+    void error(const(char)[] err)
+    {
+        import std.conv : to;
+
+        error(err.to!string);
+    }
+
     void error(string err)
     {
         //TODO hash and duplicates
