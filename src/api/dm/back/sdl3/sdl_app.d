@@ -802,36 +802,35 @@ class SdlApp : GuiApp
         {
             if (jpegLib)
             {
-                if (jpegLib.load)
-                {
+                jpegLib.onLoad = () {
                     version (EnableTrace)
                     {
                         uservices.logger.trace("Load libjpeg");
                     }
-                }
-                else
-                {
-                    uservices.logger.errorf("libjpeg errors: %s", jpegLib.errorsText);
+                };
+                jpegLib.onErrorsStr = (errs) {
+                    uservices.logger.errorf("libjpeg errors: %s", errs);
                     gservices.platform.cap.isImage = false;
                     jpegLib = null;
-                }
+                };
+                jpegLib.load;
             }
 
             if (pngLib)
             {
-                if (pngLib.load)
-                {
+                pngLib.onLoad = () {
                     version (EnableTrace)
                     {
                         uservices.logger.trace("Load libpng");
                     }
-                }
-                else
-                {
-                    uservices.logger.errorf("libpng errors: %s", pngLib.errorsText);
+                };
+
+                pngLib.onErrorsStr = (errs) {
+                    uservices.logger.errorf("libpng errors: %s", errs);
                     gservices.platform.cap.isImage = false;
                     pngLib = null;
-                }
+                };
+                pngLib.load;
             }
         }
 
