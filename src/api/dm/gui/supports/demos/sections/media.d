@@ -92,6 +92,12 @@ class Media : Control
 
         piano.onPianoKey = (key, ref e) {
 
+            if (!platform.cap.isAudio)
+            {
+                interact.popup.urgent("Audio disabled");
+                return;
+            }
+
             auto freq = key.freqHz;
 
             import api.dm.com.inputs.com_keyboard : ComKeyName;
@@ -131,7 +137,8 @@ class Media : Control
 
             AudioChunk* chunk = synt.noteNew(MusicNote(freq, noteType, 120), amp);
             MixSound MixSound = MixSound(chunk.buffer);
-            import std.conv: to;
+            import std.conv : to;
+
             MixSound.name = freq.to!string;
 
             MixSound.freeFunPtr = &free;

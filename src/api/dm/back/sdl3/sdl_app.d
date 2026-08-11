@@ -344,8 +344,7 @@ class SdlApp : GuiApp
             {
                 auto audioLib = new PortAudioLib;
 
-                if (audioLib.load)
-                {
+                audioLib.onLoad = () {
                     uservices.logger.tracef("Load PortAudio library: %s, dev: %s", audioLib.libVersionStr, audioLib
                             .deviceInfoNew);
 
@@ -359,12 +358,8 @@ class SdlApp : GuiApp
                     {
                         portaudioLib = audioLib;
                     }
-                }
-                else
-                {
-                    gservices.platform.cap.isAudio = false;
-                    uservices.logger.error("PortAudio loading error: " ~ audioLib.errorsText);
-                }
+                };
+                audioLib.load;
             }
 
             //TODO factory methods
