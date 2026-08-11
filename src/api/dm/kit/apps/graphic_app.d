@@ -124,6 +124,12 @@ abstract class GraphicApp : CliApp
                 KitConfigKeys.backendIsAudio);
         }
 
+        if (uservices.config.hasKey(KitConfigKeys.backendIsVideo))
+        {
+            _graphicServices.platform.cap.isVideo = uservices.config.getBool(
+                KitConfigKeys.backendIsVideo);
+        }
+
         if (uservices.config.hasKey(KitConfigKeys.backendIsJoystick))
         {
             _graphicServices.platform.cap.isJoystick = uservices.config.getBool(

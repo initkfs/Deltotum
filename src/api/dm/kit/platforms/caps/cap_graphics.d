@@ -6,11 +6,12 @@ class CapGraphics : ComponentService
 {
     bool isPointer = true;
     
-    bool isImage;
-    bool isIconPack;
-    bool isVector;
+    bool isImage = true;
+    bool isIconPack = true;
+    bool isVector = true;
    
-    bool isAudio;
+    bool isAudio = true;
+    bool isVideo = true;
     bool isJoystick;
     bool isGPU;
 }

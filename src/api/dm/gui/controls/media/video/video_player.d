@@ -84,6 +84,12 @@ class VideoPlayer : Control
         addCreate(panel);
         panel.onPlay = () {
 
+            if (!platform.cap.isVideo)
+            {
+                interact.popup.urgent("Video disabled");
+                return;
+            }
+
             if (!media.audio.isRunning)
             {
                 media.audio.start;

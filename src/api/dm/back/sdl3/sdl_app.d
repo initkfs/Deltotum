@@ -206,13 +206,13 @@ class SdlApp : GuiApp
                 string gpuName;
                 if (const err = gpuDevice.getDriverNameNew(gpuName))
                 {
-                    uservices.logger.error("Error reading GPU driver name: ", err.toString);
+                    uservices.logger.error("Error reading GPU driver name: " ~ err.toString);
                 }
                 else
                 {
                     version (EnableTrace)
                     {
-                        uservices.logger.trace("Create GPU device: ", gpuName);
+                        uservices.logger.trace("Create GPU device: " ~ gpuName);
                     }
                 }
 
@@ -236,7 +236,7 @@ class SdlApp : GuiApp
             if (!setMetadata(appname, appver, appid))
             {
                 assert(sdlLib);
-                uservices.logger.error("Error setting app metadata: ", sdlLib.getError);
+                uservices.logger.error("Error setting app metadata: " ~ sdlLib.getError);
             }
 
             assert(mainLoop);
@@ -316,21 +316,28 @@ class SdlApp : GuiApp
                 cairoLibForLoad.load;
             }
 
-            auto ffmpegLibForLoad = new FfmpegLib;
-
-            //TODO from config
-            import std.path : buildPath;
-
-            ffmpegLibForLoad.workDirPath = buildPath(uservices.context.app.workDir, "libs/ffmpeg/lib");
-
-            if (ffmpegLibForLoad.load)
+            if (gservices.platform.cap.isVideo)
             {
-                ffmpegLib = ffmpegLibForLoad;
-                uservices.logger.trace("Load FFMPEG library.");
-            }
-            else
-            {
-                uservices.logger.error("FFMPEG loading error: ", ffmpegLibForLoad.errorsText);
+                auto ffmpegLibForLoad = new FfmpegLib;
+
+                //TODO from config
+                import std.path : buildPath;
+
+                ffmpegLibForLoad.workDirPath = buildPath(uservices.context.app.workDir, "libs/ffmpeg/lib");
+
+                ffmpegLibForLoad.onLoad = () {
+                    ffmpegLib = ffmpegLibForLoad;
+                    uservices.logger.trace("Load FFMPEG library.");
+                };
+
+                ffmpegLibForLoad.onErrorsStr = (errs) {
+                    import std.conv : text;
+
+                    uservices.logger.error(text("FFMPEG loading error: ", errs));
+                    gservices.platform.cap.isVideo = false;
+                };
+
+                ffmpegLibForLoad.load;
             }
 
             if (gservices.platform.cap.isAudio)
@@ -356,7 +363,7 @@ class SdlApp : GuiApp
                 else
                 {
                     gservices.platform.cap.isAudio = false;
-                    uservices.logger.error("PortAudio loading error: ", audioLib.errorsText);
+                    uservices.logger.error("PortAudio loading error: " ~ audioLib.errorsText);
                 }
             }
 
@@ -382,7 +389,7 @@ class SdlApp : GuiApp
             }
             else
             {
-                uservices.logger.error("FreeType loading error: ", ftLib.errorsText);
+                uservices.logger.error("FreeType loading error: " ~ ftLib.errorsText);
             }
 
             if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
