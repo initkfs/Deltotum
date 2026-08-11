@@ -9,6 +9,7 @@ class CapGraphics : ComponentService
     bool isImage = true;
     bool isIconPack = true;
     bool isVector = true;
+    bool isWeb = true;
    
     bool isAudio = true;
     bool isVideo = true;

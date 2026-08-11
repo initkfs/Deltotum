@@ -25,6 +25,15 @@ class WebBrowser : Control
     {
         super.create;
 
+        if (!platform.cap.isWeb)
+        {
+            import api.dm.gui.controls.texts.text : Text;
+
+            addCreate(new Text("Web engine disabled"));
+            enablePadding;
+            return;
+        }
+
         mainPanel = new WBrowserMainPanel;
         addCreate(mainPanel);
 
@@ -33,13 +42,9 @@ class WebBrowser : Control
 
         mainPanel.onGo = () { engine.loadUri(mainPanel.url); };
 
-        mainPanel.onPrev = () {
+        mainPanel.onPrev = () {};
 
-        };
-
-        mainPanel.onNext = () {
-
-        };
+        mainPanel.onNext = () {};
 
         enablePadding;
     }

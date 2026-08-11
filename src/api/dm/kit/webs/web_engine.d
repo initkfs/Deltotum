@@ -133,6 +133,10 @@ class WebEngine : Sprite2d
     {
         super.create;
 
+        if(!platform.cap.isWeb){
+            return;
+        }
+
         pixelBuffer.initialize;
 
         pixelDensity = window.pixelDensity;

@@ -13,6 +13,7 @@ string sceneIsDebug = "sceneIsDebug";
 
 string backendIsAudio = "backendIsAudio";
 string backendIsVideo = "backendIsVideo";
+string backendIsWeb = "backendIsWeb";
 string backendIsJoystick = "backendIsJoystick";
 
 string backendIsGPU = "backendIsGPU";
