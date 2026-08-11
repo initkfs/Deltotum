@@ -74,10 +74,10 @@ class Theme
 
     @ConfigKey
     Insets controlPadding = Insets(5, 5, 5, 5);
-    
+
     @ConfigKey
     float controlSpacing = 2;
-    
+
     @ConfigKey
     float controlCornersBevel = 0;
     GraphicStyle controlStyle = GraphicStyle.simple;
@@ -242,9 +242,14 @@ class Theme
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
+            //if (style.isFill)
+            //{
+            return rectShape(width, height, angle, style);
+            // }
 
-            newShape = new ConvexPolygon(width, height, style, cornerBevel);
+            //import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
+
+            //newShape = new ConvexPolygon(width, height, style, cornerBevel);
         }
 
         newShape.angle = angle;

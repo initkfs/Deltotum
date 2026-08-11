@@ -61,14 +61,17 @@ class Graphics : Control
         auto rectFill = new Rectangle(50, 50, GraphicStyle(1, RGBA.green, true, RGBA.green));
         shapeContainer.addCreate(rectFill);
 
-        import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
+        if (platform.cap.isVector)
+        {
+            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
-        auto reg = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
-        shapeContainer.addCreate(reg);
+            auto reg = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
+            shapeContainer.addCreate(reg);
 
-        auto regFill = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA
-                .lightsteelblue), 10);
-        shapeContainer.addCreate(regFill);
+            auto regFill = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA
+                    .lightsteelblue), 10);
+            shapeContainer.addCreate(regFill);
+        }
 
         auto container1 = new HBox;
         addCreate(container1);
@@ -203,7 +206,7 @@ class Graphics : Control
         }
 
         const bounds = drawContainer.boundsRect;
-        
+
         float startX = bounds.x;
         float startY = bounds.y;
 

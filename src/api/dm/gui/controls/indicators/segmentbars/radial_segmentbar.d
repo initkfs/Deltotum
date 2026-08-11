@@ -169,7 +169,13 @@ class RadialSegmentBar : Control
                 segmentStyleOff.isFill = false;
             }
 
-            const segmentSize = 360 / segmentsCount / 2;
+            import Math = api.math;
+
+            //const segmentSize = 360 / segmentsCount / 2;
+            const segmentSize = diameter * Math.sinDeg(180.0 / segmentsCount) / 2;
+
+            auto fillStyle = segmentStyleOn;
+            fillStyle.isFill = true;
 
             foreach (i; 0 .. segmentsCount)
             {
@@ -178,7 +184,7 @@ class RadialSegmentBar : Control
                 addCreate(segment);
                 _segmentsOff ~= segment;
 
-                auto fillSegment = new Circle(segmentSize, segmentStyleOn);
+                auto fillSegment = new Circle(segmentSize, fillStyle);
                 fillSegment.isResizedByParent = false;
                 addCreate(fillSegment);
                 fillSegment.isVisible = false;

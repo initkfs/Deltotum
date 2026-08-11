@@ -101,7 +101,8 @@ class SevenSegment : Control
             segmentCornerBevel = hSegmentHeight / 2;
         }
 
-        if(dotDiameter == 0){
+        if (dotDiameter == 0)
+        {
             dotDiameter = hSegmentHeight * 1.5;
         }
     }
@@ -111,7 +112,7 @@ class SevenSegment : Control
         super.create;
 
         segmentVAngleXOffset = vSegmentHeight / 2 * Math.cosDeg(segmentAngle);
-        
+
         segmentA = createSegmentA;
         setUpSegment(segmentA);
 
@@ -123,13 +124,13 @@ class SevenSegment : Control
 
         segmentD = createSegmentD;
         setUpSegment(segmentD);
-        
+
         segmentE = createSegmentE;
         setUpSegment(segmentE);
-        
+
         segmentF = createSegmentF;
         setUpSegment(segmentF);
-        
+
         segmentG = createSegmentG;
         setUpSegment(segmentG);
 
@@ -140,13 +141,15 @@ class SevenSegment : Control
 
         auto rightTop = Vec2f(segmentB.boundsRect.right, segmentB.y);
         auto dw = rightTop.x - x;
-        if(dw > width){
+        if (dw > width)
+        {
             width = dw;
         }
 
         auto topY = segmentA.y;
         auto dh = boundsRect.bottom - topY;
-        if(dh > height){
+        if (dh > height)
+        {
             height = dh;
         }
 
@@ -163,20 +166,20 @@ class SevenSegment : Control
         segmentE.x = segmentD.x - segmentCornerBevel;
         segmentE.y = segmentD.y - segmentE.height + segmentCornerBevel;
 
-        segmentC.x = segmentD.boundsRect.right- segmentCornerBevel;
+        segmentC.x = segmentD.boundsRect.right - segmentCornerBevel;
         segmentC.y = segmentD.y - segmentC.height + segmentCornerBevel;
 
         segmentG.x = segmentE.boundsRect.right - segmentCornerBevel;
         segmentG.y = segmentE.y - segmentCornerBevel;
 
-        segmentB.x = segmentG.boundsRect.right- segmentCornerBevel;
+        segmentB.x = segmentG.boundsRect.right - segmentCornerBevel;
         segmentB.y = segmentG.y - segmentB.height + segmentCornerBevel;
 
-        segmentF.x = segmentG.x- segmentCornerBevel;
-        segmentF.y = segmentG.y- segmentF.height + segmentCornerBevel;
+        segmentF.x = segmentG.x - segmentCornerBevel;
+        segmentF.y = segmentG.y - segmentF.height + segmentCornerBevel;
 
         segmentA.x = segmentF.boundsRect.right - segmentCornerBevel;
-        segmentA.y = segmentF.y- segmentCornerBevel;
+        segmentA.y = segmentF.y - segmentCornerBevel;
 
         segmentLeftBottomDot.x = segmentD.boundsRect.right + segmentCornerBevel;
         segmentLeftBottomDot.y = segmentD.boundsRect.middleY - segmentLeftBottomDot.halfHeight;
@@ -205,7 +208,7 @@ class SevenSegment : Control
     Sprite2d createSegmentD() => createHSegment;
     Sprite2d createSegmentE() => createVSegment;
     Sprite2d createSegmentF() => createVSegment;
-    Sprite2d createSegmentG() =>  createHSegment;
+    Sprite2d createSegmentG() => createHSegment;
     Sprite2d createDot() => createDotSegment;
 
     protected GraphicStyle createSegmentStyle()
@@ -223,6 +226,11 @@ class SevenSegment : Control
     protected Sprite2d createDotSegment()
     {
         const float size = dotDiameter;
+
+        if (!platform.cap.isVector)
+        {
+            return theme.circleShape(size, createSegmentStyle);
+        }
 
         Rect2f box = Rect2f(0, 0, size, size).boundingBox(segmentAngle);
         auto segment = createVShapeSegment(box, size, size, segmentAngle, size, createSegmentStyle);
@@ -293,7 +301,8 @@ class SevenSegment : Control
                 ctx.lineTo(cornerBevel, halfH - cornerBevel);
                 ctx.lineTo(0, halfH);
 
-                if(thisStyle.isFill){
+                if (thisStyle.isFill)
+                {
                     ctx.color = thisStyle.fillColor;
                     ctx.fill;
                 }
@@ -309,6 +318,11 @@ class SevenSegment : Control
 
     protected Sprite2d createHShapeSegment(Rect2f box, float cornerBevel, GraphicStyle segmentStyle)
     {
+        if (!platform.cap.isVector)
+        {
+            return theme.rectShape(box.width, box.height, 0, segmentStyle);
+        }
+
         import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 
         auto segment = new class VShape
@@ -332,14 +346,15 @@ class SevenSegment : Control
                 auto halfH = thisHeight / 2;
 
                 ctx.moveTo(0, halfH);
-                ctx.lineTo(cornerBevel,  0);
+                ctx.lineTo(cornerBevel, 0);
                 ctx.lineTo(thisWidth - cornerBevel, 0);
                 ctx.lineTo(thisWidth, cornerBevel);
                 ctx.lineTo(thisWidth - cornerBevel, thisHeight);
                 ctx.lineTo(cornerBevel, thisHeight);
                 ctx.lineTo(0, halfH);
 
-                if(thisStyle.isFill){
+                if (thisStyle.isFill)
+                {
                     ctx.color = thisStyle.fillColor;
                     ctx.fill;
                 }
@@ -360,7 +375,8 @@ class SevenSegment : Control
             segment.isVisible = false;
         }
 
-        if(segmentLeftBottomDot && segmentLeftBottomDot.isVisible){
+        if (segmentLeftBottomDot && segmentLeftBottomDot.isVisible)
+        {
             segmentLeftBottomDot.isVisible = false;
         }
     }

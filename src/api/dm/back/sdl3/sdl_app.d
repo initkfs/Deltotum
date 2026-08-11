@@ -299,20 +299,21 @@ class SdlApp : GuiApp
             {
                 auto cairoLibForLoad = new CairoLib;
 
-                if (cairoLibForLoad.load)
-                {
+                cairoLibForLoad.onLoad = () {
                     cairoLib = cairoLibForLoad;
                     theme.isUseVectorGraphics = gservices.platform.cap.isVector;
                     version (EnableTrace)
                     {
                         uservices.logger.trace("Load Cairo library.");
                     }
-                }
-                else
-                {
+                };
+
+                cairoLibForLoad.onErrorsStr = (err) {
                     gservices.platform.cap.isVector = false;
                     uservices.logger.error(cairoLibForLoad.errorsText);
-                }
+                };
+
+                cairoLibForLoad.load;
             }
 
             auto ffmpegLibForLoad = new FfmpegLib;

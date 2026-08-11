@@ -44,6 +44,11 @@ class PlanPositionIndicator : MinMaxMeter!float
     {
         super.create;
 
+        if (!platform.cap.isVector)
+        {
+            return;
+        }
+
         const wv = width, hv = height;
         scale = new class VectorTexture
         {

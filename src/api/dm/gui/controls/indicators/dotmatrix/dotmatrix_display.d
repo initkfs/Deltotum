@@ -126,6 +126,10 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
             texture.blendModeBlend;
             return texture;
         }
+        else
+        {
+            buildInitCreate(led);
+        }
         auto newTexture = new Texture2d(led.width, led.height);
         buildInitCreate(newTexture);
         newTexture.createTargetRGBA32;

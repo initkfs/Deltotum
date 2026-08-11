@@ -126,6 +126,7 @@ class DynamicLoader
 
         import std.conv : to;
 
+        string[] checkPaths;
         foreach (path; libPaths)
         {
             string loadPath = path.to!string;
@@ -161,9 +162,7 @@ class DynamicLoader
 
             if (!loadFromPath(loadPath))
             {
-                import std.conv : text;
-
-                errors ~= text("Not found library ", loadPath);
+                checkPaths ~= loadPath;
             }
             else
             {
@@ -191,15 +190,22 @@ class DynamicLoader
 
         if (libs.length == 0)
         {
+            import std.conv : text;
+
+            auto errMessage = text("Not found any library: ", checkPaths);
             if ((!onErrors) && (!onErrorsStr) && isExceptionOnErrors)
             {
-                import std.conv : text;
-
-                throw new Exception(text("Not found any library: ", errors));
+                throw new Exception(errMessage);
+            }
+            else
+            {
+                errors ~= errMessage;
             }
         }
-
-        bindAll;
+        else
+        {
+            bindAll;
+        }
 
         if (errors.length > 0)
         {

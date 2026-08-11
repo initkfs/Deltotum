@@ -69,8 +69,8 @@ class Slider : Container
         import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        float handleWidth = 30;
-        float handleHeight = 10;
+        float handleWidth = theme.meterThumbWidth;
+        float handleHeight = theme.meterThumbHeight / 2;
         if (position == SliderPos.left || position == SliderPos.right)
         {
             import std.algorithm.mutation : swap;
@@ -78,8 +78,7 @@ class Slider : Container
             swap(handleWidth, handleHeight);
         }
 
-        _handle = new VConvexPolygon(handleWidth, handleHeight, GraphicStyle(1, theme.colorAccent, true, theme
-                .colorAccent), 3);
+        _handle = theme.convexPolyShape(handleWidth, handleHeight, 0, theme.controlCornersBevel / 3, createFillStyle);
         addCreate(_handle);
 
         _content = new CenterBox;

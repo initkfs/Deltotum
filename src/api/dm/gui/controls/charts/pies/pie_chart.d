@@ -2,7 +2,9 @@ module api.dm.gui.controls.charts.pies.pie_chart;
 
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
@@ -31,6 +33,12 @@ class PieTexture : VectorTexture
 
     override void createContent()
     {
+        //TODO vectors
+        if (!platform.cap.isVector)
+        {
+            return;
+        }
+
         super.createContent;
 
         if (totalValue == 0 || values.length == 0)
@@ -95,7 +103,7 @@ class LabelInfo : Container
     import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
     Text textLabel;
-    Texture2d colorLabel;
+    Sprite2d colorLabel;
     RGBA color;
 
     float startAngleDeg = 0;
@@ -119,9 +127,13 @@ class LabelInfo : Container
 
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        colorLabel = new VCircle(5, GraphicStyle(1, RGBA.white, true, RGBA.white));
+        colorLabel = theme.circleShape(5, GraphicStyle(1, RGBA.white, true, RGBA.white));
         addCreate(colorLabel);
-        colorLabel.blendModeBlend;
+
+        if (auto colorTexture = cast(Texture2d) colorLabel)
+        {
+            colorTexture.blendModeBlend;
+        }
 
         textLabel = new Text();
         textLabel.setSmallSize;
@@ -173,6 +185,11 @@ class PieChart : Container
     {
         super.create;
 
+        if (!platform.cap.isVector)
+        {
+            return;
+        }
+
         if (!texture && isCreateTexture)
         {
             auto t = newTexture(chartAreaWidth, chartAreaHeight);
@@ -191,7 +208,11 @@ class PieChart : Container
 
                 label.textLabel.text = format("%s (%s%%)", data.name, percent);
 
-                label.colorLabel.color = color;
+                if (auto colorTexture = cast(Texture2d) label.colorLabel)
+                {
+                    colorTexture.color = color;
+                }
+
                 //TODO from texture?
                 label.color = color;
 

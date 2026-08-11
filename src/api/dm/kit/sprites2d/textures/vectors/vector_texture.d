@@ -148,6 +148,11 @@ class VectorTexture : Texture2d
     {
         super.create;
 
+        if (!platform.cap.isVector)
+        {
+            throw new Exception("Vector graphics disabled. Check platform flags");
+        }
+
         if (isMutable)
         {
             createMutTexture;
@@ -336,7 +341,7 @@ class VectorTexture : Texture2d
 
         int w, h;
         texture.getSize(w, h);
-       
+
         int newWidth = cast(int) width;
         int newHeight = cast(int) height;
         if (newWidth != w || newHeight != h)

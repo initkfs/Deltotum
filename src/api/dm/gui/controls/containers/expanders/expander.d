@@ -194,13 +194,9 @@ class Expander : Control
 
     Sprite2d newExpandButton()
     {
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
-
-        auto style = createFillStyle;
-
         const size = theme.iconSize / 2;
-
-        return new VTriangle(size, size, style);
+        auto style = createFillStyle;
+        return theme.triangleShape(size, size, angle, style);
     }
 
     protected void createContentBar()

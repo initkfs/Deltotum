@@ -59,10 +59,7 @@ class DayContainer : Control
     override Sprite2d newBackground()
     {
         auto style = createStyle;
-        //TODO caps
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-
-        return new VConvexPolygon(width, height, style, 0);
+        return theme.convexPolyShape(width, height, angle, theme.controlCornersBevel, style);
     }
 
     override void create()

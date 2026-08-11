@@ -269,7 +269,6 @@ class ColorPickerDialog : Control
 
         assert(hslHField.scrollField);
         auto scroll = hslHField.scrollField;
-        import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
         auto colorBarW = scroll.width;
         if (scroll.thumb && colorBarW > scroll.thumb.width)
@@ -278,49 +277,54 @@ class ColorPickerDialog : Control
         }
         auto colorBarH = scroll.height > 0 ? scroll.height / 2 : 10;
 
-        auto colorBar = new class VectorTexture
+        if (platform.cap.isVector)
         {
-            this()
+            import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+
+            auto colorBar = new class VectorTexture
             {
-                super(colorBarW, colorBarH);
-            }
-
-            override void createContent()
-            {
-                auto ctx = canvas;
-
-                import api.dm.kit.graphics.canvases.graphic_canvas : GStop;
-                import api.math.geom2.vec2 : Vec2f;
-
-                enum pointsCount = 10;
-                float offsetDelta = 1.0 / pointsCount;
-
-                GStop[pointsCount] points;
-
-                HSLA currentColor = HSLA(0, 1, 0.5, 1);
-                float currentOffset = 0;
-                float hueDelta = 360 / pointsCount;
-
-                ctx.color = currentColor.toRGBA;
-
-                foreach (pi, ref p; points)
+                this()
                 {
-                    p = GStop(currentOffset, currentColor.toRGBA);
-                    currentOffset += offsetDelta;
-                    currentColor.h += hueDelta;
+                    super(colorBarW, colorBarH);
                 }
 
-                points[$ - 1].offset = 1;
+                override void createContent()
+                {
+                    auto ctx = canvas;
 
-                ctx.linearGradient(Vec2f(0, 0), Vec2f(colorBarW, 0), points, () {
-                    ctx.fillRect(0, 0, colorBarW, colorBarH);
-                });
+                    import api.dm.kit.graphics.canvases.graphic_canvas : GStop;
+                    import api.math.geom2.vec2 : Vec2f;
 
-                ctx.stroke;
-            }
-        };
-        colorBar.isResizedByParent = false;
-        scroll.addCreate(colorBar, 0);
+                    enum pointsCount = 10;
+                    float offsetDelta = 1.0 / pointsCount;
+
+                    GStop[pointsCount] points;
+
+                    HSLA currentColor = HSLA(0, 1, 0.5, 1);
+                    float currentOffset = 0;
+                    float hueDelta = 360 / pointsCount;
+
+                    ctx.color = currentColor.toRGBA;
+
+                    foreach (pi, ref p; points)
+                    {
+                        p = GStop(currentOffset, currentColor.toRGBA);
+                        currentOffset += offsetDelta;
+                        currentColor.h += hueDelta;
+                    }
+
+                    points[$ - 1].offset = 1;
+
+                    ctx.linearGradient(Vec2f(0, 0), Vec2f(colorBarW, 0), points, () {
+                        ctx.fillRect(0, 0, colorBarW, colorBarH);
+                    });
+
+                    ctx.stroke;
+                }
+            };
+            colorBar.isResizedByParent = false;
+            scroll.addCreate(colorBar, 0);
+        }
 
         assert(hslHField.scrollField);
         hslHField.scrollField.valueStep = 0.25;
@@ -541,7 +545,7 @@ class ColorPickerDialog : Control
 
         assert(hslSField);
         hslSField.value(newColor.s, false, true);
-        
+
         assert(hslLField);
         hslLField.value(newColor.l, false, true);
 
