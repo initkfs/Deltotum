@@ -3,14 +3,14 @@ module api.dm.gui.controls.selects.choices.base_choice;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.texts.text_view : TextView;
-import api.dm.gui.controls.selects.base_selector : BaseSelector;
+import api.dm.gui.controls.selects.one_base_selector : OneBaseSelector;
 import api.dm.gui.controls.popups.menus.popup_menu : PopupMenu;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
 
 /**
  * Authors: initkfs
  */
-class BaseChoice(T) : BaseSelector!T
+class BaseChoice(T) : OneBaseSelector!T
 {
     Button prevButton;
 

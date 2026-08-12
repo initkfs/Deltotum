@@ -3,7 +3,7 @@ module api.dm.gui.controls.selects.tables.base_table;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.selects.base_selector : BaseSelector;
+import api.dm.gui.controls.selects.one_base_selector : OneBaseSelector;
 
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
@@ -100,7 +100,7 @@ class TableHeader : HSplitBox
  */
 class BaseTable(T, TCol:
     BaseTableColumn!T, TR:
-    BaseTableRow!(T, TCol)) : BaseSelector!TR
+    BaseTableRow!(T, TCol)) : OneBaseSelector!TR
 {
     Container rowContainer;
 

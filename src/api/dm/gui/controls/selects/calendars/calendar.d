@@ -7,7 +7,7 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton;
 import api.dm.gui.controls.selects.calendars.dialogs.calendar_dialog : CalendarDialog;
-import api.dm.gui.controls.selects.base_dropdown_selector : BaseDropDownSelector;
+import api.dm.gui.controls.selects.one_base_dropdown_selector : OneBaseDropDownSelector;
 
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.text_view: TextView;
@@ -22,7 +22,7 @@ import std.algorithm.searching : canFind;
 /**
  * Authors: initkfs
  */
-class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
+class Calendar : OneBaseDropDownSelector!(CalendarDialog, Date)
 {
     Container dateChangeContainer;
     bool isCreateDateChangeContainer = true;

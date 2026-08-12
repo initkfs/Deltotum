@@ -1,4 +1,4 @@
-module api.dm.gui.controls.selects.base_selector;
+module api.dm.gui.controls.selects.one_base_selector;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.selects.selectable : Selectable;
@@ -6,7 +6,7 @@ import api.dm.gui.controls.selects.selectable : Selectable;
 /**
  * Authors: initkfs
  */
-class BaseSelector(T) : Control
+class OneBaseSelector(T) : Control
 {
     bool isSelectable = true;
 

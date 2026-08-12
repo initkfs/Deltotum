@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.selects.time_pickers.dialogs.time_picker_dialog : TimePickerDialog;
-import api.dm.gui.controls.selects.base_dropdown_selector : BaseDropDownSelector;
+import api.dm.gui.controls.selects.one_base_dropdown_selector : OneBaseDropDownSelector;
 import api.dm.gui.controls.selects.time_pickers.dialogs.choosers.base_time_chooser : BaseTimeChooser;
 
 import api.dm.gui.controls.texts.text : Text;
@@ -23,7 +23,7 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-class TimePicker : BaseDropDownSelector!(TimePickerDialog, TimeOfDay)
+class TimePicker : OneBaseDropDownSelector!(TimePickerDialog, TimeOfDay)
 {
     Container timeContainer;
     bool isCreateTimeContainer = true;

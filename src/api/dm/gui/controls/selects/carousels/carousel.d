@@ -1,7 +1,7 @@
 module api.dm.gui.controls.selects.carousels.carousel;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.selects.base_selector : BaseSelector;
+import api.dm.gui.controls.selects.one_base_selector : OneBaseSelector;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton;
@@ -25,7 +25,7 @@ enum CarouselDirection
 /**
  * Authors: initkfs
  */
-class Carousel : BaseSelector!Sprite2d
+class Carousel : OneBaseSelector!Sprite2d
 {
     size_t itemChangeDuration = 500;
     MinMaxTween!float itemChangeAnimation;

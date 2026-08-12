@@ -1,14 +1,14 @@
-module api.dm.gui.controls.selects.base_dropdown_selector;
+module api.dm.gui.controls.selects.one_base_dropdown_selector;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.selects.base_selector : BaseSelector;
+import api.dm.gui.controls.selects.one_base_selector : OneBaseSelector;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
 import api.dm.gui.controls.popups.popup : Popup;
 
 /**
  * Authors: initkfs
  */
-class BaseDropDownSelector(D, T) : BaseSelector!T
+class OneBaseDropDownSelector(D, T) : OneBaseSelector!T
 {
     bool isDropDownDialog;
 
