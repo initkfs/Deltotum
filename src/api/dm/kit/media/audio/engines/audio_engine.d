@@ -21,16 +21,13 @@ class AudioEngine : Thread
 {
     double delegate() timestampMsProvider;
 
-    enum AUDIO_QUEUE_SIZE_SEC = 5;
+    enum AUDIO_QUEUE_SIZE_SEC = 3;
 
     //interval <= ideal callback interval 512 / 44100 = 0.01161 sec = 11.6 ms
-    //enum MIX_INTERVAL_MS = 10;
+    //enum mixIntervalMs = 10;
     enum SAMPLE_RATE = 44100;
     enum CHANNELS = 2;
     enum FRAMES_PER_BUFFER = 2048;
-
-    enum CallbackIntervalMs = (FRAMES_PER_BUFFER / (cast(float) SAMPLE_RATE)) * 1000.0;
-    enum float MIX_INTERVAL_MS = CallbackIntervalMs * 0.95;
 
     enum AudioQueueSize = SAMPLE_RATE * AUDIO_QUEUE_SIZE_SEC * 2;
 
@@ -39,6 +36,10 @@ class AudioEngine : Thread
 
     //length % channels == 0
     __gshared float[] samples;
+
+    float callbackIntervalMs = (FRAMES_PER_BUFFER / (cast(float) SAMPLE_RATE)) * 1000.0;
+    float callbackFillCoeff = 0.99;
+    float mixIntervalMs = 0;
 
     shared Mutex mixerMutex;
 
@@ -51,7 +52,7 @@ class AudioEngine : Thread
     __gshared double bufferStartTimeSec = 0;
     __gshared double lastMixTimeMs = 0;
 
-    __gshared bool isMixRealtime;
+    __gshared bool isMixRealtime = true;
 
     this(AudioSpec spec)
     {
@@ -63,12 +64,14 @@ class AudioEngine : Thread
         mixer = new AudioMixer;
 
         // const mixBufferFrames = Math.nextPowerOfTwo(cast(uint) Math.max(FRAMES_PER_BUFFER, (
-        //         SAMPLE_RATE * MIX_INTERVAL_MS * 2 / 1000)));
+        //         SAMPLE_RATE * mixIntervalMs * 2 / 1000)));
         //samples = new float[](mixBufferFrames * 2);
         samples = new float[](FRAMES_PER_BUFFER * 2);
         samples[] = 0;
 
         dspProcessor = new typeof(dspProcessor)(dspMutex, SAMPLE_RATE, DspWindowSize);
+
+        mixIntervalMs = callbackIntervalMs * callbackFillCoeff;
 
         super(&mix);
     }
@@ -112,7 +115,7 @@ class AudioEngine : Thread
 
                 //auto streamTimeSec = buffer.streamTimeSec;
 
-                if (!isMixRealtime || (elapsedMs >= MIX_INTERVAL_MS))
+                if (!isMixRealtime || (elapsedMs >= mixIntervalMs))
                 {
                     auto mixSize = mixer.mix(samples, 2, true);
                     if (mixSize == 0)

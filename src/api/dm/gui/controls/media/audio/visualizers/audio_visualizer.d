@@ -121,7 +121,7 @@ class AudioVisualizer : Control
         auto now = platform.timer.ticksMs;
         auto elapsed = now - lastUpdateMs;
 
-        if (elapsed >= media.audio.CallbackIntervalMs)
+        if (elapsed >= media.audio.callbackIntervalMs)
         {
             auto readSize = media.audio.dspProcessor.fftQueue.read(fftBuffer);
             if (readSize > 0)
