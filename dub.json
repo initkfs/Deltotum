@@ -73,6 +73,7 @@
         "-preview=in",
         "-preview=fixAliasThis",
         "-Xcc=-fuse-ld=lld",
+        "-preview=fastdfa",
         "-J=./data"
     ],
     "lflags": [

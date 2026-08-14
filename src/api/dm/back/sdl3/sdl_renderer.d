@@ -337,12 +337,18 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
             return getErrorRes("Error getting texture wrap mode");
         }
 
-        if (!targetXMode || !targetYMode)
+        if (!targetXMode)
         {
-            return getErrorRes("Texture wrapping mode must not be null");
+            return getErrorRes("Texture wrapping X-mode must not be null");
         }
 
         xMode = toComMode(*targetXMode);
+
+        if (!targetYMode)
+        {
+            return getErrorRes("Texture wrapping Y-mode must not be null");
+        }
+
         yMode = toComMode(*targetYMode);
         return ComResult.success;
     }

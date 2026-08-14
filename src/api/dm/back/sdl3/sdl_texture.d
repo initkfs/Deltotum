@@ -462,7 +462,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             return err;
         }
-        assert(newSurfPtr);
+
+        if (!newSurfPtr)
+        {
+            return ComResult.error("New surface is null");
+        }
         return surf.create(ComNativePtr(newSurfPtr));
     }
 
@@ -474,7 +478,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             return err;
         }
-        assert(newSurfPtr);
+
+        if (!newSurfPtr)
+        {
+            return ComResult.error("New surfacee is null");
+        }
+
         return surf.create(ComNativePtr(newSurfPtr));
     }
 

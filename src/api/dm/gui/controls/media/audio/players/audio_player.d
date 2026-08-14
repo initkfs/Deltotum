@@ -104,7 +104,7 @@ class AudioEngine : Control
             }
 
             assert(panel);
-            float pos;
+            float pos = 0;
             // if (const err = audio.getPosTimeMs(pos))
             // {
             //     logger.error(err);
