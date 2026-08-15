@@ -88,7 +88,7 @@ class Asset : PathResource
 
     ComFont newFont(string fontFilePath, uint size)
     {
-        const path = fontPath(fontFilePath);
+        const path = fontFilePath.length > 0 ? fontPath(fontFilePath) : null;
         auto comFont = comFontProvider();
         if (const err = comFont.create(path, size))
         {

@@ -15,17 +15,16 @@ class SimpleRomFont : ComFont
 {
     protected
     {
-        string _path;
         uint _size;
         uint _maxHeight;
+        bool _disposed;
     }
 
     ComResult create(string path, uint size) nothrow
     {
-        this._path = path;
-        if (_path.length == 0)
+        if (path.length != 0)
         {
-            return ComResult.error("Font path must not be empty");
+            return ComResult.error("ROM fonts must not load from path");
         }
 
         this._size = size;
@@ -183,6 +182,15 @@ class SimpleRomFont : ComFont
 
         immutable(uint[8])* glyph = &font[idx];
 
+        //TODO fixme, remove dups with freetype fonts
+        enum colorMin = 12;
+        if (fr == 0 && fg == 0 && fb == 0)
+        {
+            fr = colorMin;
+            fg = colorMin;
+            fb = colorMin;
+        }
+
         foreach (uint y; 0 .. size)
         {
             uint rowByte = (*glyph)[y];
@@ -211,15 +219,15 @@ class SimpleRomFont : ComFont
         return ComResult.success;
     }
 
-    string getFontPath() nothrow => _path;
+    string getFontPath() nothrow => null;
     uint getFontSize() nothrow => _size;
     uint getMaxHeight() nothrow => _maxHeight;
 
     bool dispose() nothrow
     {
-        _path = null;
-        return true;
+        _disposed = true;
+        return _disposed;
     }
 
-    bool isDisposed() pure nothrow @safe => _path is null;
+    bool isDisposed() pure nothrow @safe => _disposed;
 }

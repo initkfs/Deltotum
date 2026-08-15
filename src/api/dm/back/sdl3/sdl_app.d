@@ -1201,7 +1201,7 @@ class SdlApp : GuiApp
 
         auto asset = createAsset(uservices.logging, uservices.config, uservices.context, () {
             return newComFont;
-        });
+        }, gservices.platform.cap.isFont);
         assert(asset);
         asset.initialize;
         version (EnableTrace)
@@ -1209,24 +1209,27 @@ class SdlApp : GuiApp
             uservices.logger.tracef("Build assets for window: %s", window.id);
         }
 
-        import std.array : split;
-
-        uint fontIconSize = theme.fontIconsSize;
-        auto fontListPaths = theme.fontIconsList.split(";");
-        foreach (fontListPath; fontListPaths)
+        if (gservices.platform.cap.isFont)
         {
-            auto font = asset.newFont(fontListPath, fontIconSize);
-            //TODO check exists
-            theme.iconPack.iconFonts ~= font;
+            import std.array : split;
 
-            if (!gservices.platform.cap.isIconPack)
+            uint fontIconSize = theme.fontIconsSize;
+            auto fontListPaths = theme.fontIconsList.split(";");
+            foreach (fontListPath; fontListPaths)
             {
-                gservices.platform.cap.isIconPack = true;
+                auto font = asset.newFont(fontListPath, fontIconSize);
+                //TODO check exists
+                theme.iconPack.iconFonts ~= font;
+
+                if (!gservices.platform.cap.isIconPack)
+                {
+                    gservices.platform.cap.isIconPack = true;
+                }
+                //version (EnableTrace)
+                //{
+                uservices.logger.tracef("Load icon font, size:%d: %s", fontIconSize, fontListPath);
+                //}
             }
-            //version (EnableTrace)
-            //{
-            uservices.logger.tracef("Load icon font, size:%d: %s", fontIconSize, fontListPath);
-            //}
         }
 
         windowBuilder.asset = asset;

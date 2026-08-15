@@ -498,7 +498,8 @@ abstract class GraphicApp : CliApp
         return new Graphic(logging, renderer);
     }
 
-    Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider)
+    //TODO remove fonts
+    Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider, bool isLoadFont)
     {
         //default dir?
         string assetsDir = uservices.context.app.userDir;

@@ -152,15 +152,23 @@ abstract class GuiApp : LoopApp
         return new Interact;
     }
 
-    override Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider)
+    override Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider, bool isLoadFont)
     {
         import api.dm.kit.assets.fonts.font_size : FontSize;
 
-        Asset asset = super.createAsset(logging, config, context, comFontProvider);
+        Asset asset = super.createAsset(logging, config, context, comFontProvider, isLoadFont);
 
         if (!theme)
         {
             throw new Exception("No theme found");
+        }
+
+        auto defaultSize = theme.fontSizeMedium;
+
+        if(!isLoadFont){
+            auto defaultFont = asset.newFont(null, defaultSize);
+            asset.addFont(defaultFont);
+            return asset;
         }
 
         import KitConfigKeys = api.dm.kit.kit_config_keys;
@@ -178,7 +186,6 @@ abstract class GuiApp : LoopApp
             throw new Exception("Font path does not exist or not a file: " ~ fontFilePath);
         }
 
-        auto defaultSize = theme.fontSizeMedium;
         ComFont defaultFont = asset.newFont(fontFilePath, defaultSize);
         asset.addFont(defaultFont);
         version (EnableTrace)
