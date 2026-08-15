@@ -38,9 +38,9 @@ class ColorPickerDialog : Control
     RegulateTextField hslSField;
     RegulateTextField hslLField;
 
-    RegulateTextField lchHField;
-    RegulateTextField lchCField;
-    RegulateTextField lchLField;
+    RegulateTextField hsvHField;
+    RegulateTextField hsvSField;
+    RegulateTextField hsvVField;
 
     Text palNameText;
     Text delegate(Text) onNewPalNameText;
@@ -66,8 +66,9 @@ class ColorPickerDialog : Control
             string name;
         }
 
-        Tab rgbTab;
         Tab hslTab;
+        Tab hsvTab;
+        Tab rgbTab;
         Tab palTab;
     }
 
@@ -78,8 +79,7 @@ class ColorPickerDialog : Control
         layout = new VLayout;
         layout.isAutoResize = true;
         layout.isDecreaseRootSize = true;
-
-        //isBorder = true;
+        isBorder = true;
     }
 
     override void loadTheme()
@@ -125,6 +125,7 @@ class ColorPickerDialog : Control
             }
 
             createHSLTab;
+            createHSVTab;
             createRGBTab;
             createPalTab;
         }
@@ -153,18 +154,15 @@ class ColorPickerDialog : Control
         _lastColor = newColor;
     }
 
+    Control rootContainer() => contentContainer ? contentContainer : this;
+
     protected void createRGBTab()
     {
-        assert(contentContainer);
-
         rgbTab = newRGBTab("RGB");
         rgbTab.id = "color_picker_rgb_tab";
-
         rgbTab.onActivate = () { setColorRGBA(_lastColor); };
-
         rgbTab.content = createRGBTabContent;
-
-        contentContainer.addCreate(rgbTab);
+        rootContainer.addCreate(rgbTab);
     }
 
     Sprite2d createRGBTabContent()
@@ -189,13 +187,11 @@ class ColorPickerDialog : Control
 
     protected RegulateTextField createRGBField(dstring text)
     {
-        auto minValue = RGBA.minColor;
-        auto maxValue = RGBA.maxColor;
-
-        auto field = new RegulateTextField(text, minValue, maxValue, (v) {
+        auto field = new RegulateTextField(text, RGBA.minColor, RGBA.maxColor, (v) {
             updateColorRGBA;
         });
         field.scrollDt = valueStep;
+        field.valueFormatPrec = 0;
         return field;
     }
 
@@ -216,60 +212,40 @@ class ColorPickerDialog : Control
 
     protected void createHSLTab()
     {
-        assert(contentContainer);
-
         hslTab = newHSLTab("HSL");
         hslTab.id = "color_picker_hsl_tab";
-
         hslTab.onActivate = () { setColorHSL(_lastColor.toHSLA); };
-
         hslTab.content = createHSLTabContent;
-
-        contentContainer.addCreate(hslTab);
+        rootContainer.addCreate(hslTab);
     }
 
-    Sprite2d createHSLTabContent()
+    void createThumbPointer(Sprite2d thumb)
     {
-        import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
-        import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
-        auto form = new RegulateTextPanel;
-        buildInitCreate(form);
+        thumb.layout = new CenterLayout;
 
-        hslHField = new RegulateTextField("H", HSLA.minHue, HSLA.maxHue, (v) {
-            updateColorHSL;
-        });
-        hslHField.scrollDt = valueStep;
-        hslHField.onNewScrollField = (scroll) {
-            auto thumbStyle = createStyle;
-            thumbStyle.isFill = false;
-            scroll.thumbStyle = thumbStyle;
-            return scroll;
-        };
+        import api.dm.gui.controls.separators.vsep : VSep;
 
-        hslHField.onCreatedScrollField = (scroll) {
-            if (scroll.thumb)
-            {
-                import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+        //TOCO calc padding
+        float linePadding = 5;
+        // if(auto thumbControl = cast(Control) thumb){
+        //     auto thumbStyle = createStyle;
+        //     linePadding += thumbStyle.lineWidth * 2;
+        // }
 
-                scroll.thumb.layout = new CenterLayout;
+        auto pointer = new VSep;
+        pointer.width = 2;
+        pointer.height = thumb.height - linePadding;
+        pointer.isVGrow = true;
+        buildInitCreate(pointer);
+        thumb.add(pointer);
+    }
 
-                import api.dm.gui.controls.separators.vsep : VSep;
+    import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegularMonoScroll;
 
-                auto pointer = new VSep;
-                pointer.width = 2;
-                pointer.height = scroll.thumb.height;
-                pointer.isVGrow = true;
-                buildInitCreate(pointer);
-                scroll.thumb.add(pointer);
-            }
-        };
-
-        form.addCreate(hslHField);
-
-        assert(hslHField.scrollField);
-        auto scroll = hslHField.scrollField;
-
+    void createHueColorBar(BaseRegularMonoScroll scroll, RGBA delegate(float) onHueStep)
+    {
         auto colorBarW = scroll.width;
         if (scroll.thumb && colorBarW > scroll.thumb.width)
         {
@@ -300,17 +276,17 @@ class ColorPickerDialog : Control
 
                     GStop[pointsCount] points;
 
-                    HSLA currentColor = HSLA(0, 1, 0.5, 1);
+                    RGBA currentColor = onHueStep(0);
                     float currentOffset = 0;
                     float hueDelta = 360 / pointsCount;
 
-                    ctx.color = currentColor.toRGBA;
+                    ctx.color = currentColor;
 
                     foreach (pi, ref p; points)
                     {
-                        p = GStop(currentOffset, currentColor.toRGBA);
+                        p = GStop(currentOffset, currentColor);
                         currentOffset += offsetDelta;
-                        currentColor.h += hueDelta;
+                        currentColor = onHueStep(hueDelta);
                     }
 
                     points[$ - 1].offset = 1;
@@ -326,8 +302,46 @@ class ColorPickerDialog : Control
             scroll.addCreate(colorBar, 0);
         }
 
-        assert(hslHField.scrollField);
-        hslHField.scrollField.valueStep = 0.25;
+    }
+
+    Sprite2d createHSLTabContent()
+    {
+        import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+
+        auto form = new RegulateTextPanel;
+        buildInitCreate(form);
+
+        hslHField = new RegulateTextField("H", HSLA.minHue, HSLA.maxHue, (v) {
+            updateColorHSL;
+        });
+        hslHField.scrollDt = valueStep;
+        hslHField.onNewScrollField = (scroll) {
+            auto thumbStyle = createStyle;
+            thumbStyle.isFill = false;
+            scroll.thumbStyle = thumbStyle;
+            return scroll;
+        };
+
+        hslHField.onCreatedScrollField = (scroll) {
+            if (scroll.thumb)
+            {
+                createThumbPointer(scroll.thumb);
+            }
+        };
+
+        form.addCreate(hslHField);
+
+        if (hslHField.scrollField)
+        {
+            auto currentColor = HSLA(0, 1, 0.5, 1);
+
+            createHueColorBar(hslHField.scrollField, (hueDelta) {
+                currentColor.h += hueDelta;
+                return currentColor.toRGBA;
+            });
+
+            hslHField.scrollField.valueStep = 0.25;
+        }
 
         hslSField = new RegulateTextField("S", HSLA.minSaturation, HSLA.maxSaturation, (v) {
             updateColorHSL;
@@ -362,14 +376,95 @@ class ColorPickerDialog : Control
         return HSLA(h, s, l, alpha);
     }
 
+    protected void createHSVTab()
+    {
+        hsvTab = newHSVTab("HSV");
+        hsvTab.id = "color_picker_hsv_tab";
+
+        hsvTab.onActivate = () { setColorHSV(_lastColor.toHSVA); };
+
+        hsvTab.content = createHSVTabContent;
+
+        rootContainer.addCreate(hsvTab);
+    }
+
+    Sprite2d createHSVTabContent()
+    {
+        import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+
+        auto form = new RegulateTextPanel;
+        buildInitCreate(form);
+
+        hsvHField = new RegulateTextField("H", HSVA.minHue, HSVA.maxHue, (v) {
+            updateColorHSV;
+        });
+        hsvHField.scrollDt = valueStep;
+        hsvHField.onNewScrollField = (scroll) {
+            auto thumbStyle = createStyle;
+            thumbStyle.isFill = false;
+            scroll.thumbStyle = thumbStyle;
+            return scroll;
+        };
+
+        hsvHField.onCreatedScrollField = (scroll) {
+            if (scroll.thumb)
+            {
+                createThumbPointer(scroll.thumb);
+            }
+        };
+
+        form.addCreate(hsvHField);
+
+        if (hsvHField.scrollField)
+        {
+            auto currentColor = HSVA(0, 1, 1, 1);
+            createHueColorBar(hsvHField.scrollField, (hueDelta) {
+                currentColor.h += hueDelta;
+                return currentColor.toRGBA;
+            });
+
+            hsvHField.scrollField.valueStep = 0.25;
+        }
+
+        hsvSField = new RegulateTextField("S", HSVA.minSaturation, HSVA.maxSaturation, (v) {
+            updateColorHSV;
+        });
+        hsvSField.scrollDt = valueStep;
+        form.addCreate(hsvSField);
+        hslHField.value(HSVA.maxSaturation, false);
+
+        hsvVField = new RegulateTextField("V", HSVA.minValue, HSVA.maxValue, (v) {
+            updateColorHSV;
+        });
+        hsvVField.scrollDt = valueStep;
+        form.addCreate(hsvVField);
+        hsvVField.value(HSVA.maxValue, false);
+
+        form.alignFields;
+
+        return form;
+    }
+
+    void updateColorHSV(bool isTriggerListeners = true)
+    {
+        //Warn! if L == 1 => RGBA.white!
+        updateColor(colorHSV.toRGBA, isTriggerListeners);
+    }
+
+    HSVA colorHSV()
+    {
+        auto h = Math.clamp(HSVA.minHue, hsvHField.value, HSVA.maxHue);
+        auto s = Math.clamp(HSVA.minSaturation, hsvSField.value, HSVA.maxSaturation);
+        auto v = Math.clamp(HSVA.minValue, hsvVField.value, HSVA.maxValue);
+        return HSVA(h, s, v, alpha);
+    }
+
     protected void createPalTab()
     {
-        assert(contentContainer);
-
         palTab = newPalTab("Pal");
         palTab.id = "color_picker_pal_tab";
         palTab.content = createPalTabContent;
-        contentContainer.addCreate(palTab);
+        rootContainer.addCreate(palTab);
     }
 
     Sprite2d createPalTabContent()
@@ -377,20 +472,19 @@ class ColorPickerDialog : Control
         import api.dm.gui.controls.containers.scroll_box : ScrollBox, ScrollBarPolicy;
         import api.dm.gui.controls.containers.hbox : HBox;
 
-        HBox contentRoot = new HBox;
-        buildInitCreate(contentRoot);
-
         auto container = new ScrollBox;
         container.isBorder = false;
-        contentRoot.addCreate(container);
-
+        buildInitCreate(container);
         import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
 
         import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
         size_t colorInRow = MaterialPalette.maxToneCount;
 
-        assert(paletteColorSize > 0);
+        if (paletteColorSize == 0)
+        {
+            return container;
+        }
 
         auto colorTextureW = colorInRow * paletteColorSize;
         auto colorTextureH = MaterialPalette.colorCount * paletteColorSize;
@@ -507,7 +601,10 @@ class ColorPickerDialog : Control
 
     float alpha()
     {
-        assert(alphaField);
+        if (!alphaField)
+        {
+            throw new Exception("Alpha field is null");
+        }
         //TODO HSVA min\max value?
         return Math.clamp(RGBA.minAlpha, alphaField.value, RGBA.maxAlpha);
     }
@@ -520,6 +617,7 @@ class ColorPickerDialog : Control
         //TODO is tab active + alpha
         setColorHSL(newColor.toHSLA);
         setColorRGBA(newColor);
+        setColorHSV(newColor.toHSVA);
 
         return true;
     }
@@ -554,10 +652,27 @@ class ColorPickerDialog : Control
             false, true);
     }
 
+    protected void setColorHSV(HSVA newColor)
+    {
+        assert(hsvHField);
+        hsvHField.value(newColor.h, false, true);
+
+        assert(hsvSField);
+        hsvSField.value(newColor.s, false, true);
+
+        assert(hsvVField);
+        hsvVField.value(newColor.v, false, true);
+
+        assert(alphaField);
+        alphaField.value(newColor.a, isTriggerListeners:
+            false, true);
+    }
+
     Tab newTab(dstring text) => new Tab(text);
 
     Tab newRGBTab(dstring text) => newTab(text);
     Tab newHSLTab(dstring text) => newTab(text);
+    Tab newHSVTab(dstring text) => newTab(text);
 
     Text newPalNameText(dstring text) => new Text(text);
 

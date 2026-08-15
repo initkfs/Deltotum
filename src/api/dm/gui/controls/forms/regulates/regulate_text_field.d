@@ -36,6 +36,9 @@ class RegulateTextField : Control
 
     void delegate(float) onValue;
 
+    string delegate(float) valueFieldFormatter;
+    ubyte valueFormatPrec = 2;
+
     protected
     {
         dstring labelText;
@@ -235,7 +238,20 @@ class RegulateTextField : Control
         {
             return false;
         }
-        auto text = format("%.2f", v);
+
+        string text;
+        if (!valueFieldFormatter)
+        {
+            import std.format : format;
+            import std.conv : to;
+
+            text = format("%." ~ valueFormatPrec.to!string ~ "f", v);
+        }
+        else
+        {
+            text = valueFieldFormatter(v);
+        }
+
         valueField.text(text, isTriggerListeners);
         return true;
     }
