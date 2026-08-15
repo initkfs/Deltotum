@@ -13,15 +13,28 @@ abstract class BaseCircularTimeChooser : BaseTimeChooser
     float radius = 0;
     float startAngleDeg = 0;
 
-    override void loadTheme(){
+    override void loadTheme()
+    {
         super.loadTheme;
         loadBaseCircularTimeChooserTheme;
     }
 
-    void loadBaseCircularTimeChooserTheme(){
-        if(radius == 0){
+    void loadBaseCircularTimeChooserTheme()
+    {
+        if (radius == 0)
+        {
             radius = theme.meterThumbDiameter;
         }
+    }
+
+    float circleBoxPadding()
+    {
+        if (hasTheme)
+        {
+            return theme.controlGraphicsGap * 3;
+        }
+
+        return 15;
     }
 
     CircleBox newCircleBox()

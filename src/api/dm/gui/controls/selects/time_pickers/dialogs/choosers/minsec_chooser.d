@@ -169,6 +169,8 @@ class MinSecChooser : BaseCircularTimeChooser
             auto box = newCircleBox(radius, startAngleDeg);
             minSec0to55Box = !onNewMinSec0to55Box ? box : onNewMinSec0to55Box(box);
 
+            box.isBorder = false;
+
             if (onConfiguredMinSec0to55Box)
             {
                 onConfiguredMinSec0to55Box(minSec0to55Box);

@@ -39,8 +39,14 @@ class TimePickerDialog : Control
 
         import api.dm.gui.controls.containers.center_box : CenterBox;
 
-        chooserContainer = new CenterBox;
+        auto chooserBox = new CenterBox;
+        chooserContainer = chooserBox;
+
+        chooserBox.isBorder = true;
+
         addCreate(chooserContainer);
+
+        chooserBox.enablePadding;
 
         hourChooser = new HourChooser;
         chooserContainer.addCreate(hourChooser);

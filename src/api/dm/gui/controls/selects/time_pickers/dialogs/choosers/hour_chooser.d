@@ -82,6 +82,8 @@ class HourChooser : BaseCircularTimeChooser
             auto box = newCircleBox(outerBoxRadius, startAngleDeg);
             hour12to23Box = !onNewHour12to23Box ? box : onNewHour12to23Box(box);
 
+            hour12to23Box.isBorder = false;
+
             if (onConfiguredHour12to23Box)
             {
                 onConfiguredHour12to23Box(hour12to23Box);
