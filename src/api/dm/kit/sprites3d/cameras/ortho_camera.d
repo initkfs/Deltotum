@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.cameras.orthographic_camera;
+module api.dm.kit.sprites3d.cameras.ortho_camera;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : Scene3d;
@@ -13,7 +13,7 @@ import api.math.matrices.affine3;
 /**
  * Authors: initkfs
  */
-class OrthographicCamera : Camera
+class OrthoCamera : Camera
 {
     float _orthoSize = 5.0f;
     float aspectRatio = 1.0f;

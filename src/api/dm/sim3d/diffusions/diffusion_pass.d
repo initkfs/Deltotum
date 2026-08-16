@@ -1,7 +1,7 @@
 module api.dm.sim3d.diffusions.diffusion_pass;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.sim3d.diffusions.textures.diffusion_texture_array : DiffusionTextureArray;
+import api.dm.sim3d.diffusions.textures.diffusion_tex_array : DiffusionTexArray;
 
 //TODO remove native api
 import api.dm.back.sdl3.externs.csdl3;
@@ -20,8 +20,8 @@ struct DiffusionParams
  */
 class DiffusionPass : Sprite3d
 {
-    DiffusionTextureArray diffusionMaps1;
-    DiffusionTextureArray diffusionMaps2;
+    DiffusionTexArray diffusionMaps1;
+    DiffusionTexArray diffusionMaps2;
     bool isReadMap1 = true;
     bool isDiffusionMap = true;
 
@@ -29,7 +29,7 @@ class DiffusionPass : Sprite3d
 
     DiffusionParams params;
 
-    DiffusionTextureArray outputTexture;
+    DiffusionTexArray outputTexture;
 
     this()
     {
@@ -41,10 +41,10 @@ class DiffusionPass : Sprite3d
     {
         super.create;
 
-        diffusionMaps1 = new DiffusionTextureArray;
+        diffusionMaps1 = new DiffusionTexArray;
         buildInitCreate(diffusionMaps1);
 
-        diffusionMaps2 = new DiffusionTextureArray;
+        diffusionMaps2 = new DiffusionTexArray;
         buildInitCreate(diffusionMaps2);
 
         import api.dm.com.graphics.gpu.com_pipeline : ComComputeBuffers;
@@ -86,7 +86,7 @@ class DiffusionPass : Sprite3d
         }
     }
 
-    DiffusionTextureArray diffusionInput() => isReadMap1 ? diffusionMaps1 : diffusionMaps2;
+    DiffusionTexArray diffusionInput() => isReadMap1 ? diffusionMaps1 : diffusionMaps2;
 
     override bool draw(float at)
     {

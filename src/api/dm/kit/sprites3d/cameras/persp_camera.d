@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.cameras.perspective_camera;
+module api.dm.kit.sprites3d.cameras.persp_camera;
 
 import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -14,7 +14,7 @@ import api.math.matrices.affine3;
 /**
  * Authors: initkfs
  */
-class PerspectiveCamera : Camera
+class PerspCamera : Camera
 {
 
     float fov = 45;

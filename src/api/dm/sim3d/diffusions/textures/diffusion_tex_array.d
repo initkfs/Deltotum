@@ -1,4 +1,4 @@
-module api.dm.sim3d.diffusions.textures.diffusion_texture_array;
+module api.dm.sim3d.diffusions.textures.diffusion_tex_array;
 
 import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
@@ -9,7 +9,7 @@ import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 import api.dm.back.sdl3.externs.csdl3;
 import core.stdc.stdlib : malloc, free, realloc;
 
-class DiffusionTextureArray : Tex3d
+class DiffusionTexArray : Tex3d
 {
     size_t count;
 
@@ -23,7 +23,7 @@ class DiffusionTextureArray : Tex3d
     this(float w = 32, float h = 32, size_t count = 256)
     {
         initSize(w, h);
-        id = "DiffusionTextureArray";
+        id = "DiffusionTexArray";
         assert(count > 0);
         this.count = count;
 

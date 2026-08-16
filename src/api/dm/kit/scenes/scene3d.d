@@ -5,8 +5,8 @@ import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites3d.textures.depth_tex : DepthTex;
 import api.dm.kit.sprites3d.cameras.camera : Camera;
-import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
-import api.dm.kit.sprites3d.cameras.orthographic_camera : OrthographicCamera;
+import api.dm.kit.sprites3d.cameras.persp_camera : PerspCamera;
+import api.dm.kit.sprites3d.cameras.ortho_camera : OrthoCamera;
 import api.dm.kit.scenes.antialiasings.antialiaser : AntiAliaser;
 import api.dm.kit.scenes.antialiasings.msaa : MSAA;
 import api.dm.kit.scenes.antialiasings.fxaa : FXAA;
@@ -362,8 +362,8 @@ class Scene3d : Scene2d
         //TODO flush?
     }
 
-    PerspectiveCamera newPerspCamera() => new PerspectiveCamera(this);
-    OrthographicCamera newOrthoCamera() => new OrthographicCamera(this);
+    PerspCamera newPerspCamera() => new PerspCamera(this);
+    OrthoCamera newOrthoCamera() => new OrthoCamera(this);
 
     Camera createCamera()
     {
