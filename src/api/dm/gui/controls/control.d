@@ -718,7 +718,6 @@ class Control : GuiComponent
 
     Sprite2d newHoverEffect()
     {
-        assert(theme);
         return newHoverEffect(width, height, angle, newHoverStyle);
     }
 
@@ -1017,11 +1016,6 @@ class Control : GuiComponent
         }
 
         return newStyle;
-    }
-
-    protected Sprite2d createBackgroundShape(float w, float h)
-    {
-        return createShape(w, h, angle, createBackgroundStyle);
     }
 
     // protected Sprite2d createShape(float w, float h)

@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.ppis.plan_position_indicator;
 
 import api.dm.gui.controls.meters.min_max_meter : MinMaxMeter;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -13,7 +13,7 @@ import Math = api.math;
  */
 class PlanPositionIndicator : MinMaxMeter!float
 {
-    VectorTexture scale;
+    VTexture scale;
 
     float maxDist = 1.0;
 
@@ -50,7 +50,7 @@ class PlanPositionIndicator : MinMaxMeter!float
         }
 
         const wv = width, hv = height;
-        scale = new class VectorTexture
+        scale = new class VTexture
         {
             this()
             {

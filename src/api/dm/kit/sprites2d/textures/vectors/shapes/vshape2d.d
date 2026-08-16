@@ -1,6 +1,6 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d;
 
-import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
@@ -8,7 +8,7 @@ import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanv
 /**
  * Authors: initkfs
  */
-class VShape : VectorTexture
+class VShape : VTexture
 {
     bool isInnerStroke;
 

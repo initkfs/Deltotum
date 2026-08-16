@@ -2974,10 +2974,11 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    void isGrow(bool value)
+    bool isGrow(bool value)
     {
         isHGrow = value;
         isVGrow = value;
+        return value;
     }
 
     bool isGrow() => isHGrow && isVGrow;

@@ -255,9 +255,9 @@ class ColorPickerDialog : Control
 
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+            import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
 
-            auto colorBar = new class VectorTexture
+            auto colorBar = new class VTexture
             {
                 this()
                 {

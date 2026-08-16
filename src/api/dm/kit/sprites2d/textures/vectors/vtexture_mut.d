@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.textures.vectors.vector_texture_mut;
+module api.dm.kit.sprites2d.textures.vectors.vtexture_mut;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -20,7 +20,7 @@ import api.dm.lib.cairo;
 /**
  * Authors: initkfs
  */
-class VectorTextureMut : Texture2d
+class VTextureMut : Texture2d
 {
     GraphicStyle style;
     //TODO moveTo + lineTo + stroke, extract class?

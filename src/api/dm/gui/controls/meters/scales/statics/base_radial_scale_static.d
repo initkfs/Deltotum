@@ -125,9 +125,9 @@ class BaseRadialScaleStatic : BaseScaleStatic
             const centerShapeW = width;
             const centerShapeH = height;
 
-            import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+            import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
 
-            auto tickShape = new class VectorTexture
+            auto tickShape = new class VTexture
             {
                 this()
                 {

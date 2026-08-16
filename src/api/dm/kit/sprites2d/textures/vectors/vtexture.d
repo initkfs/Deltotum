@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.textures.vectors.vector_texture;
+module api.dm.kit.sprites2d.textures.vectors.vtexture;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -32,7 +32,7 @@ extern (C) cairo_status_t writeSvgToBuffer(void* closure, const ubyte* data, uin
 /**
  * Authors: initkfs
  */
-class VectorTexture : Texture2d
+class VTexture : Texture2d
 {
     protected
     {

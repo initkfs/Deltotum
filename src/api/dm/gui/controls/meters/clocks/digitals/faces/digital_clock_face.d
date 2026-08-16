@@ -288,9 +288,9 @@ class DigitalClockFace : Control
         }
         else
         {
-            import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+            import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
 
-            auto dotProto = new class VectorTexture
+            auto dotProto = new class VTexture
             {
                 this()
                 {

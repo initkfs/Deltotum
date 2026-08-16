@@ -10,7 +10,7 @@ import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
 //TODO mutable texture
-import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
 import api.math.geom2.plane_angle;
 
 struct PieData
@@ -19,7 +19,7 @@ struct PieData
     float value = 0;
 }
 
-class PieTexture : VectorTexture
+class PieTexture : VTexture
 {
     float totalValue = 0;
     PieData[] values;

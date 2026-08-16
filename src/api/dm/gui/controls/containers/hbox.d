@@ -8,13 +8,16 @@ import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
  */
 class HBox : SpaceableContainer
 {
-    this(float spacing = SpaceableLayout.DefaultSpacing)
+    this(float spacing = SpaceableLayout.DefaultSpacing, bool isCreateLayout = true)
     {
         super(spacing);
 
-        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+        if (isCreateLayout)
+        {
+            import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
-        layout = new HLayout(spacing);
-        layout.isAutoResize = true;
+            layout = new HLayout(spacing);
+            layout.isAutoResize = true;
+        }
     }
 }
