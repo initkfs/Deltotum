@@ -15,7 +15,7 @@ import api.dm.back.sdl3.externs.csdl3;
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
 /**
  * Authors: initkfs
@@ -37,12 +37,12 @@ class GPUGraphic : ApplicationUnit
         SDL_GPUSampler* _defaultSampler;
         SDL_GPUSampler* _defaultMipMapSampler;
 
-        TextureGPU _defaultDiffuse;
-        TextureGPU _defaultSpecular;
-        TextureGPU _defaultNormal;
-        TextureGPU _defaultAO;
-        TextureGPU _defaultEmission;
-        TextureGPU _defaultDisp;
+        Tex3d _defaultDiffuse;
+        Tex3d _defaultSpecular;
+        Tex3d _defaultNormal;
+        Tex3d _defaultAO;
+        Tex3d _defaultEmission;
+        Tex3d _defaultDisp;
     }
 
     SdlGPUDevice dev() => device;
@@ -145,67 +145,67 @@ class GPUGraphic : ApplicationUnit
         return targets;
     }
 
-    void defaultDiffuse(TextureGPU tex)
+    void defaultDiffuse(Tex3d tex)
     {
         _defaultDiffuse = tex;
     }
 
-    TextureGPU defaultDiffuse()
+    Tex3d defaultDiffuse()
     {
         assert(_defaultDiffuse);
         return _defaultDiffuse;
     }
 
-    void defaultSpecular(TextureGPU tex)
+    void defaultSpecular(Tex3d tex)
     {
         _defaultSpecular = tex;
     }
 
-    TextureGPU defaultSpecular()
+    Tex3d defaultSpecular()
     {
         assert(_defaultSpecular);
         return _defaultSpecular;
     }
 
-    void defaultNormal(TextureGPU tex)
+    void defaultNormal(Tex3d tex)
     {
         _defaultNormal = tex;
     }
 
-    TextureGPU defaultNormal()
+    Tex3d defaultNormal()
     {
         assert(_defaultNormal);
         return _defaultNormal;
     }
 
-    void defaultAO(TextureGPU tex)
+    void defaultAO(Tex3d tex)
     {
         _defaultAO = tex;
     }
 
-    TextureGPU defaultAO()
+    Tex3d defaultAO()
     {
         assert(_defaultAO);
         return _defaultAO;
     }
 
-    void defaultEmission(TextureGPU tex)
+    void defaultEmission(Tex3d tex)
     {
         _defaultEmission = tex;
     }
 
-    TextureGPU defaultEmission()
+    Tex3d defaultEmission()
     {
         assert(_defaultEmission);
         return _defaultEmission;
     }
 
-    void defaultDisp(TextureGPU tex)
+    void defaultDisp(Tex3d tex)
     {
         _defaultDisp = tex;
     }
 
-    TextureGPU defaultDisp()
+    Tex3d defaultDisp()
     {
         assert(_defaultDisp);
         return _defaultDisp;

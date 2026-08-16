@@ -3,7 +3,7 @@ module api.dm.kit.scenes.scene3d;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites3d.textures.depth_texture : DepthTexture;
+import api.dm.kit.sprites3d.textures.depth_tex : DepthTex;
 import api.dm.kit.sprites3d.cameras.camera : Camera;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.kit.sprites3d.cameras.orthographic_camera : OrthographicCamera;
@@ -12,7 +12,7 @@ import api.dm.kit.scenes.antialiasings.msaa : MSAA;
 import api.dm.kit.scenes.antialiasings.fxaa : FXAA;
 import api.dm.com.graphics.gpu.com_pipeline : ComPipelineBuffers;
 import api.dm.kit.scenes.postprocess.bloom.bloom : Bloom;
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.math.matrices.matrix;
 
@@ -44,7 +44,7 @@ class Scene3d : Scene2d
 
     Bloom postProc;
 
-    DepthTexture depthTexture;
+    DepthTex depthTexture;
     SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
 
     import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
@@ -55,8 +55,8 @@ class Scene3d : Scene2d
     bool isMixCurrentPass;
 
     bool isNeedCubeMap = true;
-    TextureGPU cubeMap;
-    TextureGPU cubeMapPlaceholder;
+    Tex3d cubeMap;
+    Tex3d cubeMapPlaceholder;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
@@ -146,7 +146,7 @@ class Scene3d : Scene2d
             gpu.dev.depthTextureFormat = gpu.dev.depthTextureStencilFormat;
         }
 
-        depthTexture = new DepthTexture;
+        depthTexture = new DepthTex;
         if (antiAliaser && aaType == AntiAliasing.msaa)
         {
             MSAA msaa = cast(MSAA) antiAliaser;
@@ -175,7 +175,7 @@ class Scene3d : Scene2d
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        cubeMapPlaceholder = new TextureGPU;
+        cubeMapPlaceholder = new Tex3d;
         cubeMapPlaceholder.isNeedCamera = false;
         cubeMapPlaceholder.isNeedDispose = false;
         buildInit(cubeMapPlaceholder);

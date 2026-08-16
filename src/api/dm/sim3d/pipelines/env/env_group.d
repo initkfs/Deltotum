@@ -144,7 +144,7 @@ class EnvGroup : PipelineGroup
     override void bindSpriteData(Sprite3d sprite)
     {
         import api.dm.sim3d.materials.material : Material;
-        import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+        import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
         import api.dm.sim3d.materials.material_sprite3d : MaterialSprite3d;
 
         sprite.bindAll;
@@ -174,9 +174,9 @@ class EnvGroup : PipelineGroup
 
         auto dispMap = (mat && mat.dispMap && mat.isBindDispMap) ? mat.dispMap : gpu.defaultDisp;
 
-        import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+        import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
-        TextureGPU[6] maps = [
+        Tex3d[6] maps = [
             diffuseMap, specularMap, normalMap, aoMap, emissionMap, dispMap
         ];
         gpu.dev.bindFragmentSamplers(maps);

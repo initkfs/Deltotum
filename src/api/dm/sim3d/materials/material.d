@@ -1,7 +1,7 @@
 module api.dm.sim3d.materials.material;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.math;
@@ -12,11 +12,11 @@ import Math = api.math;
 
 class Material : Sprite3d
 {
-    TextureGPU diffuseMap;
-    TextureGPU specularMap;
-    TextureGPU normalMap;
-    TextureGPU dispMap;
-    TextureGPU aoMap;
+    Tex3d diffuseMap;
+    Tex3d specularMap;
+    Tex3d normalMap;
+    Tex3d dispMap;
+    Tex3d aoMap;
 
     RGBA ambient = RGBA.white;
     RGBA specular = RGBA.white;
@@ -59,7 +59,7 @@ class Material : Sprite3d
         {
             if (diffuseMapPath.length > 0)
             {
-                diffuseMap = new TextureGPU;
+                diffuseMap = new Tex3d;
                 diffuseMap.isMipMaps = isMipMaps;
                 build(diffuseMap);
                 diffuseMap.create(diffuseMapPath);
@@ -75,7 +75,7 @@ class Material : Sprite3d
         {
             if (specularMapPath.length > 0)
             {
-                specularMap = new TextureGPU;
+                specularMap = new Tex3d;
                 specularMap.isMipMaps = isMipMaps;
                 build(specularMap);
                 specularMap.create(specularMapPath);
@@ -91,7 +91,7 @@ class Material : Sprite3d
         {
             if (normalMapPath.length > 0)
             {
-                normalMap = new TextureGPU;
+                normalMap = new Tex3d;
                 normalMap.isMipMaps = isMipMaps;
                 build(normalMap);
                 normalMap.create(normalMapPath);
@@ -107,7 +107,7 @@ class Material : Sprite3d
         {
             if (dispMapPath.length > 0)
             {
-                dispMap = new TextureGPU;
+                dispMap = new Tex3d;
                 dispMap.isMipMaps = isMipMaps;
                 build(dispMap);
                 dispMap.create(dispMapPath);
@@ -123,7 +123,7 @@ class Material : Sprite3d
         {
             if (aoMapPath.length > 0)
             {
-                aoMap = new TextureGPU;
+                aoMap = new Tex3d;
                 aoMap.isMipMaps = isMipMaps;
                 build(aoMap);
                 aoMap.create(aoMapPath);

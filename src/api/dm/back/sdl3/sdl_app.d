@@ -72,7 +72,7 @@ import api.dm.kit.sprites2d.images.codecs.jpeg_image_codec : JpegImageCodec;
 import api.dm.lib.libpng.native.binddynamic : PngLib;
 import api.dm.kit.sprites2d.images.codecs.png_image_codec : PngImageCodec;
 import api.dm.kit.sprites2d.images.codecs.bmp_image_codec : BmpImageCodec;
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -114,12 +114,12 @@ class SdlApp : GuiApp
 
         SDL_GPUSampler* defaultSampler;
         SDL_GPUSampler* defaultMipMapSampler;
-        TextureGPU diffuseMap;
-        TextureGPU specularMap;
-        TextureGPU normalMap;
-        TextureGPU aoMap;
-        TextureGPU emissionMap;
-        TextureGPU dispMap;
+        Tex3d diffuseMap;
+        Tex3d specularMap;
+        Tex3d normalMap;
+        Tex3d aoMap;
+        Tex3d emissionMap;
+        Tex3d dispMap;
     }
 
     protected
@@ -1318,9 +1318,9 @@ class SdlApp : GuiApp
 
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
-            TextureGPU createDefaultMap(RGBA color)
+            Tex3d createDefaultMap(RGBA color)
             {
-                auto map = new TextureGPU;
+                auto map = new Tex3d;
                 map.isNeedCamera = false;
                 map.isNeedDispose = false;
                 windowBuilder.buildInit(map);
@@ -1346,7 +1346,7 @@ class SdlApp : GuiApp
             dispMap = createDefaultMap(RGBA.black);
             windowBuilder.gpu.defaultDisp = dispMap;
 
-            TextureGPU[6] defaultTextures = [
+            Tex3d[6] defaultTextures = [
                 diffuseMap, specularMap, normalMap, aoMap, emissionMap, dispMap
             ];
 

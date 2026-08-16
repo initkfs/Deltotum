@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.textures.depth_texture;
+module api.dm.kit.sprites3d.textures.depth_tex;
 
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
 /**
  * Authors: initkfs
@@ -8,14 +8,14 @@ import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 
 import api.dm.back.sdl3.externs.csdl3;
 
-class DepthTexture : TextureGPU
+class DepthTex : Tex3d
 {
     SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1;
     bool isMultiSampler;
 
     this()
     {
-        id = "DepthTexture";
+        id = "DepthTex";
     }
 
     override void create()

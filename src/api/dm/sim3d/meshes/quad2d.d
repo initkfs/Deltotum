@@ -2,7 +2,7 @@ module api.dm.sim3d.meshes.quad2d;
 
 import api.dm.sim3d.meshes.mesh3d_indexed : Mesh3dLow;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
 /**
  * Authors: initkfs

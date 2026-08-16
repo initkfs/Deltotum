@@ -970,9 +970,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         bindIndexBuffer(&indexBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
     }
 
-    import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+    import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
-    void bindFragmentSamplers(TextureGPU texture, uint firstSlot = 0)
+    void bindFragmentSamplers(Tex3d texture, uint firstSlot = 0)
     {
         SDL_GPUTextureSamplerBinding[1] sampleBinding;
         sampleBinding[0].texture = texture.texture;
@@ -980,7 +980,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         bindFragmentSamplers(sampleBinding, firstSlot);
     }
 
-    void bindFragmentSamplers(TextureGPU[] textures, uint firstSlot = 0)
+    void bindFragmentSamplers(Tex3d[] textures, uint firstSlot = 0)
     {
         SDL_GPUTextureSamplerBinding[] sampleBinding = new SDL_GPUTextureSamplerBinding[textures
             .length];

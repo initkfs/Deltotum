@@ -1,6 +1,6 @@
 module api.dm.sim3d.diffusions.textures.diffusion_texture_array;
 
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
 /**
  * Authors: initkfs
@@ -9,7 +9,7 @@ import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
 import api.dm.back.sdl3.externs.csdl3;
 import core.stdc.stdlib : malloc, free, realloc;
 
-class DiffusionTextureArray : TextureGPU
+class DiffusionTextureArray : Tex3d
 {
     size_t count;
 

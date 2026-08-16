@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.textures.texture_gpu;
+module api.dm.kit.sprites3d.textures.tex3d;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -10,7 +10,7 @@ import api.dm.com.graphics.com_surface : ComSurface;
 
 import api.dm.back.sdl3.externs.csdl3;
 
-class TextureGPU : Sprite3d
+class Tex3d : Sprite3d
 {
     bool isCreateSampler;
 
@@ -33,7 +33,7 @@ class TextureGPU : Sprite3d
 
     this()
     {
-        id = "TextureGPU";
+        id = "Tex3d";
     }
 
     void createSampler()

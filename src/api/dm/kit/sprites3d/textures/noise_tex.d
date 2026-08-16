@@ -1,6 +1,6 @@
-module api.dm.kit.sprites3d.textures.noise_texture;
+module api.dm.kit.sprites3d.textures.noise_tex;
 
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.procedural.noises.sample_noise : SampleNoise;
@@ -11,7 +11,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class NoiseTexture : TextureGPU
+class NoiseTex : Tex3d
 {
     float scale = 100;
 

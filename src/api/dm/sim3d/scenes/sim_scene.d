@@ -1,7 +1,7 @@
 module api.dm.sim3d.scenes.sim_scene;
 
 import api.dm.gui.scenes.gui_scene: GuiScene;
-import api.dm.kit.sprites3d.textures.texture_gpu : TextureGPU;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 import api.dm.sim3d.diffusions.diffusion_pass : DiffusionPass;
 import api.math.matrices.matrix;
 
@@ -18,7 +18,7 @@ class SimScene : GuiScene
     protected
     {
         DiffusionPass _diffusionPass;
-        TextureGPU _diffusionPlaceholder;
+        Tex3d _diffusionPlaceholder;
     }
 
     bool isNeedDiffusionTexture = true;
@@ -46,7 +46,7 @@ class SimScene : GuiScene
         {
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
-            _diffusionPlaceholder = new TextureGPU;
+            _diffusionPlaceholder = new Tex3d;
             _diffusionPlaceholder.isNeedCamera = false;
             _diffusionPlaceholder.isNeedDispose = false;
             buildInit(_diffusionPlaceholder);
