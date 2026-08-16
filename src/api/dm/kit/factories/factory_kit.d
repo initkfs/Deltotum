@@ -5,7 +5,7 @@ import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.factories.image_factory : ImageFactory;
 import api.dm.kit.factories.shape_factory : ShapeFactory;
 import api.dm.kit.factories.texture_factory : TextureFactory;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -33,7 +33,7 @@ class FactoryKit : GraphicComponent
 
         if (!textures)
         {
-            throw new Exception("Texture2d factory must not be null");
+            throw new Exception("Tex2d factory must not be null");
         }
 
         this.images = images;
@@ -41,7 +41,7 @@ class FactoryKit : GraphicComponent
         this.textures = textures;
     }
 
-    Texture2d placeholder(float pWidth = 50, float pHeight = 50, RGBA color = RGBA.lightcoral)
+    Tex2d placeholder(float pWidth = 50, float pHeight = 50, RGBA color = RGBA.lightcoral)
     {
         return textures.texture(pWidth, pHeight, () {
             import api.math.geom2.vec2 : Vec2f;

@@ -3,7 +3,7 @@ module api.dm.gui.controls.media.video.video_player;
 import api.dm.kit.media.engines.media_engine : MediaEngine;
 import api.dm.gui.controls.media.video.video_player_panel : VideoPlayerPanel;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
 /**
  * Authors: initkfs
@@ -25,7 +25,7 @@ class VideoPlayer : Control
         VideoBufferSize,
         AudioBufferSize) engine;
 
-    Texture2d texture;
+    Tex2d texture;
 
     VideoPlayerPanel panel;
     string path;
@@ -51,7 +51,7 @@ class VideoPlayer : Control
         addCreate(engine);
         engine.isLayoutManaged = false;
 
-        texture = new Texture2d(width, height);
+        texture = new Tex2d(width, height);
         addCreate(texture);
         texture.createMutYV;
 

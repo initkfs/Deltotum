@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
 import Math = api.math;
 
@@ -133,7 +133,7 @@ class MeterHandFactory : Control
         }
         else
         {
-            auto newHand = new Texture2d(width, height);
+            auto newHand = new Tex2d(width, height);
             buildInitCreate(newHand);
 
             hand = newHand;

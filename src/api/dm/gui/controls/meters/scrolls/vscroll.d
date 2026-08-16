@@ -3,7 +3,7 @@ module api.dm.gui.controls.meters.scrolls.vscroll;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegularMonoScroll;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;

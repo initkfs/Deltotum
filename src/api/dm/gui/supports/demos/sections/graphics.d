@@ -77,9 +77,9 @@ class Graphics : Control
         addCreate(container1);
         container1.enablePadding;
 
-        import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites2d.textures.rgba_tex2d : RgbaTex2d;
 
-        class TestRgbaTexture : RgbaTexture
+        class TestRgbaTexture : RgbaTex2d
         {
             this()
             {

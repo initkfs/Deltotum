@@ -192,9 +192,9 @@ class SevenSegment : Control
         segment.isManaged = false;
         addCreate(segment);
 
-        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-        if (auto texture = cast(Texture2d) segment)
+        if (auto texture = cast(Tex2d) segment)
         {
             texture.bestScaleMode;
         }

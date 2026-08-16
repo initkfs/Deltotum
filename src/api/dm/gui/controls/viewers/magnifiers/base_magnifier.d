@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -22,15 +22,15 @@ class BaseMagnifier : Control
     void delegate(Container) onConfiguredMagnifierContainer;
     void delegate(Container) onCreatedMagnifierContainer;
 
-    Texture2d magnifier;
-    Texture2d delegate(Texture2d) onNewMagnifier;
-    void delegate(Texture2d) onConfiguredMagnifier;
-    void delegate(Texture2d) onCreatedMagnifier;
+    Tex2d magnifier;
+    Tex2d delegate(Tex2d) onNewMagnifier;
+    void delegate(Tex2d) onConfiguredMagnifier;
+    void delegate(Tex2d) onCreatedMagnifier;
 
-    Texture2d thumbnail;
-    Texture2d delegate(Texture2d) onNewThumbnail;
-    void delegate(Texture2d) onConfiguredThumbnail;
-    void delegate(Texture2d) onCreatedThumbnail;
+    Tex2d thumbnail;
+    Tex2d delegate(Tex2d) onNewThumbnail;
+    void delegate(Tex2d) onConfiguredThumbnail;
+    void delegate(Tex2d) onCreatedThumbnail;
 
     float scale = 1;
     float defaultWidth = 100;
@@ -182,14 +182,14 @@ class BaseMagnifier : Control
         return new CenterBox;
     }
 
-    Texture2d newMagnifier(float w, float h)
+    Tex2d newMagnifier(float w, float h)
     {
-        return new Texture2d(w, h);
+        return new Tex2d(w, h);
     }
 
-    Texture2d newThumbnail(float w, float h)
+    Tex2d newThumbnail(float w, float h)
     {
-        return new Texture2d(w, h);
+        return new Tex2d(w, h);
     }
 
 }

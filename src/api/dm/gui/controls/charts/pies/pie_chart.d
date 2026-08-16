@@ -4,7 +4,7 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
@@ -99,7 +99,7 @@ class PieTexture : VecTex
 class LabelInfo : Container
 {
     import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
-    import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+    import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
     import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
 
     Text textLabel;
@@ -130,7 +130,7 @@ class LabelInfo : Container
         colorLabel = theme.circleShape(5, GraphicStyle(1, RGBA.white, true, RGBA.white));
         addCreate(colorLabel);
 
-        if (auto colorTexture = cast(Texture2d) colorLabel)
+        if (auto colorTexture = cast(Tex2d) colorLabel)
         {
             colorTexture.blendModeBlend;
         }
@@ -208,7 +208,7 @@ class PieChart : Container
 
                 label.textLabel.text = format("%s (%s%%)", data.name, percent);
 
-                if (auto colorTexture = cast(Texture2d) label.colorLabel)
+                if (auto colorTexture = cast(Tex2d) label.colorLabel)
                 {
                     colorTexture.color = color;
                 }

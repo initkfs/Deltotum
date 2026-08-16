@@ -1,6 +1,6 @@
 module api.dm.kit.procedural.fractals.images.complex_fractal_image;
 
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import Math = api.dm.math;
 
@@ -9,7 +9,7 @@ import std.complex;
 /**
  * Authors: initkfs
  */
-abstract class ComplexFractalImage : Texture2d
+abstract class ComplexFractalImage : Tex2d
 {
     size_t iterations = 1;
     float scaleFactor = 1;

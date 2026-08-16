@@ -7,7 +7,7 @@ import api.dm.com.graphics.com_font : ComFont, ComFontRenderMode;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;

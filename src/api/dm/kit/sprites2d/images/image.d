@@ -5,7 +5,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_image_codec : ComImageCodec;
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.math.geom2.rect2 : Rect2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.pos2.flip : Flip;
@@ -16,7 +16,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 //TODO remove duplication with animation bitmap
-class Image : Texture2d
+class Image : Tex2d
 {
     this()
     {
@@ -33,7 +33,7 @@ class Image : Texture2d
         super(texture);
     }
 
-    alias create = Texture2d.create;
+    alias create = Tex2d.create;
 
     void create(string path, int requestWidth = -1, int requestHeight = -1)
     {

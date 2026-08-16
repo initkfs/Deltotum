@@ -2,7 +2,7 @@ module api.dm.gui.controls.texts.base_mono_text;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -588,7 +588,7 @@ class BaseMonoText : Control
         }
     }
 
-    void onFontTexture(scope bool delegate(Texture2d, const(Glyph*) glyph) onTextureIsContinue)
+    void onFontTexture(scope bool delegate(Tex2d, const(Glyph*) glyph) onTextureIsContinue)
     {
         assert(fontTexture);
 
@@ -721,7 +721,7 @@ class BaseMonoText : Control
         return true;
     }
 
-    void copyTo(Texture2d texture, Rect2f destBounds)
+    void copyTo(Tex2d texture, Rect2f destBounds)
     {
         assert(texture);
         assert(fontTexture);

@@ -295,9 +295,9 @@ class AnalogClockFace : BaseRadialGauge
 
             addCreate(handHolder);
 
-            import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+            import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-            if (auto holderTexture = cast(Texture2d) handHolder)
+            if (auto holderTexture = cast(Tex2d) handHolder)
             {
                 holderTexture.bestScaleMode;
             }

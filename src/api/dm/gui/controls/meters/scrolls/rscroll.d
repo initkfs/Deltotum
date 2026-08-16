@@ -54,9 +54,9 @@ class RScroll : BaseRadialMonoScroll
 
         assert(thumb);
 
-        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-        if (auto shapeTexture = cast(Texture2d) thumb)
+        if (auto shapeTexture = cast(Tex2d) thumb)
         {
             shapeTexture.bestScaleMode;
         }
@@ -109,11 +109,11 @@ class RScroll : BaseRadialMonoScroll
             thumbShape.dispose;
         }
 
-        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-        import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
+        import api.dm.kit.sprites2d.textures.rgba_tex2d : RgbaTex2d;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        auto thumb = new Texture2d(thumbDiameter + 1, thumbDiameter + 1);
+        auto thumb = new Tex2d(thumbDiameter + 1, thumbDiameter + 1);
         build(thumb);
 
         thumb.isResizedByParent = false;
@@ -122,7 +122,7 @@ class RScroll : BaseRadialMonoScroll
         thumb.blendModeBlend;
         thumb.bestScaleMode;
 
-        if (auto shapeTexture = cast(Texture2d) thumbShape)
+        if (auto shapeTexture = cast(Tex2d) thumbShape)
         {
             shapeTexture.blendModeBlend;
         }

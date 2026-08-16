@@ -1,7 +1,7 @@
 module api.dm.gui.controls.viewers.magnifiers.texture_magnifier;
 
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
 import api.dm.gui.controls.viewers.magnifiers.base_magnifier : BaseMagnifier;
 import api.dm.gui.controls.containers.container : Container;
@@ -17,7 +17,7 @@ class TextureMagnifier : BaseMagnifier
 {
     protected
     {
-        Texture2d _original;
+        Tex2d _original;
     }
 
     override void pointerMove(float pRelX, float pRelY, ref PointerEvent e)
@@ -40,23 +40,23 @@ class TextureMagnifier : BaseMagnifier
         _original.drawTexture(textureBounds, destBounds);
     }
 
-    override Texture2d newMagnifier(float w, float h)
+    override Tex2d newMagnifier(float w, float h)
     {
-        auto t = new Texture2d(w, h);
+        auto t = new Tex2d(w, h);
         build(t);
         t.createTargetRGBA32;
         return t;
     }
 
-    override Texture2d newThumbnail(float w, float h)
+    override Tex2d newThumbnail(float w, float h)
     {
-        auto t = new Texture2d(w, h);
+        auto t = new Tex2d(w, h);
         build(t);
         t.createTargetRGBA32;
         return t;
     }
 
-    void original(Texture2d sprite)
+    void original(Tex2d sprite)
     {
         assert(magnifier, "Magnifier not created");
 

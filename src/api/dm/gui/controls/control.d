@@ -5,7 +5,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.math.pos2.insets : Insets;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 import api.dm.kit.graphics.styles.default_style;

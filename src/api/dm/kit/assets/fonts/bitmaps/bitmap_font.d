@@ -1,13 +1,13 @@
 module api.dm.kit.assets.fonts.bitmaps.bitmap_font;
 
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.com.graphics.com_texture: ComTexture;
 
 /**
  * Authors: initkfs
  */
-class BitmapFont : Texture2d
+class BitmapFont : Tex2d
 {
     //TODO hash map
     Glyph[] glyphs;

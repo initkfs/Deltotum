@@ -7,7 +7,7 @@ import api.math.geom2.polygon2 : Quadrilateral2f;
 import api.math.pos2.alignment : Alignment;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
-import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
+import api.dm.kit.sprites2d.textures.rgba_tex2d : RgbaTex2d;
 import api.dm.kit.scenes.scaling.scale_mode : ScaleMode;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.apps.events.app_event : AppEvent;
@@ -2457,9 +2457,9 @@ class Sprite2d : EventKitTarget
         return null;
     }
 
-    import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+    import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-    Texture2d toTexture(float scaleX = 1, float scaleY = 1, Texture2d delegate() newTextureProvider = null)
+    Tex2d toTexture(float scaleX = 1, float scaleY = 1, Tex2d delegate() newTextureProvider = null)
     {
         assert(width > 0);
         assert(height > 0);
@@ -2467,7 +2467,7 @@ class Sprite2d : EventKitTarget
         auto tW = width * scaleX;
         auto tH = height * scaleY;
 
-        auto texture = newTextureProvider ? newTextureProvider() : new Texture2d(tW, tH);
+        auto texture = newTextureProvider ? newTextureProvider() : new Tex2d(tW, tH);
         if (!texture.isCreated)
         {
             buildInitCreate(texture);
@@ -2478,7 +2478,7 @@ class Sprite2d : EventKitTarget
         return texture;
     }
 
-    void toTexture(Texture2d dest)
+    void toTexture(Tex2d dest)
     {
         assert(dest);
 

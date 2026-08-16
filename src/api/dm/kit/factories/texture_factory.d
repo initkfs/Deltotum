@@ -2,8 +2,8 @@ module api.dm.kit.factories.texture_factory;
 
 import api.dm.kit.components.graphic_component : GraphicComponent;
 
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
+import api.dm.kit.sprites2d.textures.rgba_tex2d : RgbaTex2d;
 
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -12,9 +12,9 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
  */
 class TextureFactory : GraphicComponent
 {
-    Texture2d texture(float newWidth = 100, float newHeight = 100, void delegate() contentDrawer = null)
+    Tex2d texture(float newWidth = 100, float newHeight = 100, void delegate() contentDrawer = null)
     {
-        auto newTexture = new class RgbaTexture
+        auto newTexture = new class RgbaTex2d
         {
             this()
             {

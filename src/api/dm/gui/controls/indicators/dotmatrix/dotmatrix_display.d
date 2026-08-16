@@ -1,7 +1,7 @@
 module api.dm.gui.controls.indicators.dotmatrix.dotmatrix_display;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -16,11 +16,11 @@ import Math = api.dm.math;
  */
 class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
 {
-    Texture2d[Col][Row] matrix;
+    Tex2d[Col][Row] matrix;
 
-    Texture2d delegate(Texture2d) onNewLed;
-    void delegate(Texture2d) onConfiguredLed;
-    void delegate(Texture2d) onCreatedLed;
+    Tex2d delegate(Tex2d) onNewLed;
+    void delegate(Tex2d) onConfiguredLed;
+    void delegate(Tex2d) onCreatedLed;
 
     float colSpacing = 0;
     float rowSpacing = 0;
@@ -111,13 +111,13 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
         }
     }
 
-    Texture2d newLed(float w, float h)
+    Tex2d newLed(float w, float h)
     {
         auto ledStyle = createFillStyle;
         ledStyle.fillColor = RGBA.white;
 
         auto led = theme.rectShape(w, h, angle, ledStyle);
-        if (auto texture = cast(Texture2d) led)
+        if (auto texture = cast(Tex2d) led)
         {
             if (!texture.isCreated)
             {
@@ -130,7 +130,7 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
         {
             buildInitCreate(led);
         }
-        auto newTexture = new Texture2d(led.width, led.height);
+        auto newTexture = new Tex2d(led.width, led.height);
         buildInitCreate(newTexture);
         newTexture.createTargetRGBA32;
         newTexture.blendModeBlend;
@@ -146,7 +146,7 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
         return newTexture;
     }
 
-    void onLed(scope void delegate(size_t row, size_t col, Texture2d led) onLed)
+    void onLed(scope void delegate(size_t row, size_t col, Tex2d led) onLed)
     {
         foreach (r, ref row; matrix)
         {

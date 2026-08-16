@@ -1,8 +1,8 @@
 module api.dm.kit.webs.web_engine;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
+import api.dm.kit.sprites2d.textures.rgba_tex2d : RgbaTex2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.core.utils.queues.ring_buffer_spsc : RingBuffer;
 import api.math.geom2.rect2 : Rect2f;
@@ -28,7 +28,7 @@ class WebEngine : Sprite2d
         wpe_view_backend_exportable_fdo* fdo;
     }
 
-    Texture2d canvas;
+    Tex2d canvas;
     float pixelDensity = 0;
 
     WebKitWebView* webView;
@@ -141,7 +141,7 @@ class WebEngine : Sprite2d
 
         pixelDensity = window.pixelDensity;
 
-        canvas = new Texture2d(width, height);
+        canvas = new Tex2d(width, height);
         build(canvas);
         canvas.createMutBGRA32;
         addCreate(canvas);

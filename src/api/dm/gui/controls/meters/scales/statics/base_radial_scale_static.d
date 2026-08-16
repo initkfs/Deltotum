@@ -2,8 +2,8 @@ module api.dm.gui.controls.meters.scales.statics.base_radial_scale_static;
 
 import api.dm.gui.controls.meters.scales.statics.base_scale_static : BaseScaleStatic;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
+import api.dm.kit.sprites2d.textures.rgba_tex2d : RgbaTex2d;
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.texts.text : Text;
@@ -23,7 +23,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
     float _diameter = 0;
 
-    Texture2d scaleShape;
+    Tex2d scaleShape;
 
     bool isUseTickProtos;
 
@@ -98,7 +98,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
             super.create;
 
-            scaleShape = new Texture2d(width, height);
+            scaleShape = new Tex2d(width, height);
             buildInitCreate(scaleShape);
 
             scaleShape.createTargetRGBA32;
@@ -223,7 +223,7 @@ onDrawAxis : null,
 
             buildInitCreate(tickShape);
 
-            scaleShape = new Texture2d(width, height);
+            scaleShape = new Tex2d(width, height);
             buildInitCreate(scaleShape);
 
             scaleShape.createTargetRGBA32;

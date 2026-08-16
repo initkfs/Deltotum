@@ -39,16 +39,16 @@ class ColorBar : BaseMonoColorBar
 
     override Sprite2d newBar()
     {
-        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-        return new Texture2d(width, height);
+        return new Tex2d(width, height);
     }
 
     override protected void createColorBar(Sprite2d bar)
     {
-        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-        if (auto texture = cast(Texture2d) bar)
+        if (auto texture = cast(Tex2d) bar)
         {
             texture.createTargetRGBA32;
 

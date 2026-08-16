@@ -1,6 +1,6 @@
 module api.dm.kit.sprites2d.textures.vectors.vec_tex;
 
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 
@@ -32,7 +32,7 @@ extern (C) cairo_status_t writeSvgToBuffer(void* closure, const ubyte* data, uin
 /**
  * Authors: initkfs
  */
-class VecTex : Texture2d
+class VecTex : Tex2d
 {
     protected
     {
@@ -311,7 +311,7 @@ class VecTex : Texture2d
         {
             import std.format : format;
 
-            throw new Exception(format("Pitch values do not match. Texture2d: %s, surface: %s", pitch, surfacePitch));
+            throw new Exception(format("Pitch values do not match. Tex2d: %s, surface: %s", pitch, surfacePitch));
         }
 
         int surfHeight = comSurface.getHeight;
@@ -325,7 +325,7 @@ class VecTex : Texture2d
         {
             import std.format : format;
 
-            throw new Exception(format("Height values do not match. Texture2d: %s, surface: %s", textureHeight, surfHeight));
+            throw new Exception(format("Height values do not match. Tex2d: %s, surface: %s", textureHeight, surfHeight));
         }
 
         //TODO unsafe cast to size_t, overflow, NaN;

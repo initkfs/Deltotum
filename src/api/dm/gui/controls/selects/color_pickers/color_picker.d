@@ -156,9 +156,9 @@ class ColorPicker : OneBaseDropDownSelector!(ColorPickerDialog, RGBA)
         float probeWSize = Math.round(newWidth / probeCount);
         float probeHSize = Math.round(newHeight / probeCount);
 
-        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-        auto texture = new Texture2d(newWidth, newHeight);
+        auto texture = new Tex2d(newWidth, newHeight);
         buildInitCreate(texture);
         texture.isResizedByParent = false;
         texture.createTargetRGBA32;

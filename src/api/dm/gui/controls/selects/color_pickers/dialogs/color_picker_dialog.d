@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.gui.controls.texts.text : Text;
@@ -475,7 +475,7 @@ class ColorPickerDialog : Control
         auto container = new ScrollBox;
         container.isBorder = false;
         buildInitCreate(container);
-        import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites2d.textures.rgba_tex2d : RgbaTex2d;
 
         import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
@@ -492,7 +492,7 @@ class ColorPickerDialog : Control
         container.width = colorTextureW;
         container.height = colorTextureH;
 
-        auto colorTexture = new class RgbaTexture
+        auto colorTexture = new class RgbaTex2d
         {
             this()
             {
@@ -687,11 +687,11 @@ class ColorPickerDialog : Control
         tab.labelButton.layout = new CenterLayout;
         tab.labelButton.layout.isAutoResize = true;
 
-        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
         auto colorSize = theme.iconSize / 2;
 
-        auto palTabColor = new Texture2d(colorSize, colorSize);
+        auto palTabColor = new Tex2d(colorSize, colorSize);
         buildInitCreate(palTabColor);
         palTabColor.createTargetRGBA32;
         palTabColor.setRenderTarget;

@@ -167,14 +167,14 @@ class Scene2d : EventKitTarget
                                     });
                                 }
 
-                                import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+                                import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-                                static if (isTypeOrArray!(member, Texture2d))
+                                static if (isTypeOrArray!(member, Tex2d))
                                 {
                                     const w = udaAttr.width > 0 ? udaAttr.width : 1;
                                     const h = udaAttr.height > 0 ? udaAttr.height : 1;
 
-                                    injectField!(typeof(member), Texture2d, fieldName, udaAttr)(() {
+                                    injectField!(typeof(member), Tex2d, fieldName, udaAttr)(() {
                                         return f.textures.texture(w, h);
                                     });
                                 }

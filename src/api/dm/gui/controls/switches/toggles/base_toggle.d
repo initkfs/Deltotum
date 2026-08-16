@@ -11,7 +11,7 @@ import api.dm.kit.sprites2d.tweens.min_max_tween : MinMaxTween;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites2d.tweens.targets.value_tween : ValueTween;
 import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.tweens.targets.target_tween : TargetTween;

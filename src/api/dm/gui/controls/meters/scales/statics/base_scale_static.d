@@ -3,7 +3,7 @@ module api.dm.gui.controls.meters.scales.statics.base_scale_static;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.scales.base_drawable_scale : BaseDrawableScale;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.rect2 : Rect2f;
@@ -21,7 +21,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
 {
     float prefLabelWidth = 0;
 
-    Texture2d scaleShape;
+    Tex2d scaleShape;
 
     bool isCreateMinorTickProto = true;
     Sprite2d minorTickProto;
@@ -79,7 +79,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
                 buildInitCreate(minorTickProto);
             }
 
-            if (auto texture = cast(Texture2d) minorTickProto)
+            if (auto texture = cast(Tex2d) minorTickProto)
             {
                 texture.bestScaleMode;
                 texture.blendModeBlend;
@@ -108,7 +108,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
                 buildInitCreate(majorTickProto);
             }
 
-            if (auto texture = cast(Texture2d) majorTickProto)
+            if (auto texture = cast(Tex2d) majorTickProto)
             {
                 texture.bestScaleMode;
                 texture.blendModeBlend;
@@ -146,7 +146,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         shapeProto.isResizable = false;
         shapeProto.isResizedByParent = false;
 
-        if (auto shapeTexture = cast(Texture2d) shapeProto)
+        if (auto shapeTexture = cast(Tex2d) shapeProto)
         {
             auto maxBox = shapeTexture.boundingBoxMax;
 
@@ -175,7 +175,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         shape.isResizable = false;
         shape.isResizedByParent = false;
 
-        if (auto shapeTexture = cast(Texture2d) shape)
+        if (auto shapeTexture = cast(Tex2d) shape)
         {
             auto maxBox = shape.boundingBoxMax;
             auto newShape = shapeTexture.copyTo(maxBox.width, maxBox.height, isToCenter:

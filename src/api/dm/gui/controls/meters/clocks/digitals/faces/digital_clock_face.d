@@ -254,10 +254,10 @@ class DigitalClockFace : Control
 
     Sprite2d newMinHourSeparator(float nw, float nh)
     {
-        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
         import api.math.geom2.vec2 : Vec2f;
 
-        auto sepTexture = new Texture2d(nw, nh);
+        auto sepTexture = new Tex2d(nw, nh);
         buildInitCreate(sepTexture);
         sepTexture.createTargetRGBA32;
         sepTexture.setRenderTarget;

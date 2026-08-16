@@ -3,7 +3,7 @@ module api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.scales.base_drawable_scale : BaseDrawableScale;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.rect2 : Rect2f;
 import api.dm.gui.controls.texts.text : Text;

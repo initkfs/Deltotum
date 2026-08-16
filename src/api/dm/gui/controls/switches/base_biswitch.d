@@ -5,7 +5,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
@@ -69,7 +69,7 @@ class BaseBiswitch : Labeled
     {
         if (isSwitchIcon && hasIcon)
         {
-            if (auto iconTexture = cast(Texture2d) icon)
+            if (auto iconTexture = cast(Tex2d) icon)
             {
                 //TODO bool flag, sync?
                 if (lastLabelColor == RGBA.init)

@@ -11,7 +11,7 @@ import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.kit.graphics.gpu.gpu_graphic : GPUGraphic;
 import api.dm.kit.assets.asset : Asset;
 
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.assets.fonts.bitmaps.alphabet_font_factory : AlphabetFontFactory;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.core.utils.types : ProviderFactory;

@@ -3,7 +3,7 @@ module api.dm.gui.controls.viewers.magnifiers.window_magnifier;
 import api.dm.com.graphics.com_surface : ComSurface;
 
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
 import api.dm.gui.controls.viewers.magnifiers.base_magnifier : BaseMagnifier;
 import api.dm.gui.controls.containers.container : Container;
@@ -57,7 +57,7 @@ class WindowMagnifier : BaseMagnifier
                 int w, h;
                 buffer.getSize(w, h);
 
-                auto winTexture = new Texture2d(w, h);
+                auto winTexture = new Tex2d(w, h);
                 buildInitCreate(winTexture);
                 winTexture.create(buffer);
                 scope (exit)
@@ -125,17 +125,17 @@ class WindowMagnifier : BaseMagnifier
         }
     }
 
-    override Texture2d newMagnifier(float w, float h)
+    override Tex2d newMagnifier(float w, float h)
     {
-        auto magn = new Texture2d(w, h);
+        auto magn = new Tex2d(w, h);
         build(magn);
         magn.createMutRGBA32;
         return magn;
     }
 
-    override Texture2d newThumbnail(float w, float h)
+    override Tex2d newThumbnail(float w, float h)
     {
-        auto t = new Texture2d(w, h);
+        auto t = new Tex2d(w, h);
         build(t);
         t.createTargetRGBA32;
         return t;

@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.textures.texture2d;
+module api.dm.kit.sprites2d.textures.tex2d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
@@ -14,7 +14,7 @@ import api.math.geom2.vec2 : Vec2f;
 /**
  * Authors: initkfs
  */
-class Texture2d : Sprite2d
+class Tex2d : Sprite2d
 {
     bool isDrawTexture = true;
     Flip flip = Flip.none;
@@ -450,7 +450,7 @@ class Texture2d : Sprite2d
 
     void color(RGBA color)
     {
-        assert(texture, "Texture2d not created");
+        assert(texture, "Tex2d not created");
         if (const err = texture.setColor(color.r, color.g, color.b, color.aByte))
         {
             throw new Exception(err.toString);
@@ -459,7 +459,7 @@ class Texture2d : Sprite2d
 
     RGBA color()
     {
-        assert(texture, "Texture2d not created");
+        assert(texture, "Tex2d not created");
 
         ubyte r, g, b, a;
         if (const err = texture.getColor(r, g, b, a))
@@ -588,7 +588,7 @@ class Texture2d : Sprite2d
         return false;
     }
 
-    Texture2d copy()
+    Tex2d copy()
     {
         assert(texture);
         ComTexture newTexture;
@@ -596,16 +596,16 @@ class Texture2d : Sprite2d
         {
             throw new Exception(err.toString);
         }
-        auto toTexture = new Texture2d(newTexture);
+        auto toTexture = new Tex2d(newTexture);
         build(toTexture);
         toTexture.initialize;
         toTexture.create;
         return toTexture;
     }
 
-    Texture2d copyTo(float toWidth, float toHeight, bool isToCenter = false)
+    Tex2d copyTo(float toWidth, float toHeight, bool isToCenter = false)
     {
-        auto newTexture = new Texture2d(toWidth, toHeight);
+        auto newTexture = new Tex2d(toWidth, toHeight);
         buildInitCreate(newTexture);
 
         newTexture.createTargetRGBA32;
@@ -620,12 +620,12 @@ class Texture2d : Sprite2d
         return newTexture;
     }
 
-    void copyTo(Texture2d other, bool isToCenter = false)
+    void copyTo(Tex2d other, bool isToCenter = false)
     {
         other.copyFrom(this, isToCenter);
     }
 
-    void copyFrom(Texture2d other, bool isToCenter = false)
+    void copyFrom(Tex2d other, bool isToCenter = false)
     {
         //TODO check bounds;
         Rect2f srcRect = {0, 0, other.width, other.height};
@@ -635,7 +635,7 @@ class Texture2d : Sprite2d
         copyFrom(other, srcRect, destRect);
     }
 
-    void copyFrom(Texture2d other, Rect2f srcRect, Rect2f dstRect)
+    void copyFrom(Tex2d other, Rect2f srcRect, Rect2f dstRect)
     {
         assert(texture);
         if (const err = texture.copyFrom(other.nativeTexture, srcRect, dstRect, other.angle, other

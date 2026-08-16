@@ -108,12 +108,12 @@ class MinSecChooser : BaseCircularTimeChooser
 
         if (!labelBox && isCreateLabelBox)
         {
-            import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+            import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
             auto boxRadius = radius * 0.8;
             auto boxSize = boxRadius * 2;
             //auto box = newCircleBox(radius - 15, startAngleDeg);
-            auto newLabelBox = new Texture2d(boxSize, boxSize);
+            auto newLabelBox = new Tex2d(boxSize, boxSize);
             labelBox = newLabelBox;
 
             if (onConfiguredLabelBox)

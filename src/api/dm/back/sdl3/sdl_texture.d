@@ -20,7 +20,7 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 {
-    //TODO move to RgbaTexture
+    //TODO move to RgbaTex2d
     private
     {
         SdlRenderer renderer;

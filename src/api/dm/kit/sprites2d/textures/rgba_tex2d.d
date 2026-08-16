@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.rgba_texture;
+module api.dm.kit.sprites2d.textures.rgba_tex2d;
 
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.math.geom2.rect2 : Rect2f;
@@ -8,7 +8,7 @@ import api.math.geom2.rect2 : Rect2f;
 /**
  * Authors: initkfs
  */
-abstract class RgbaTexture : Texture2d
+abstract class RgbaTex2d : Tex2d
 {
     this(float width = 100, float height = 100)
     {
