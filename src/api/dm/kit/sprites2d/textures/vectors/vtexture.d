@@ -42,6 +42,7 @@ class VTexture : Texture2d
     }
 
     bool delegate(ComSurface) onSurfaceIsContinue;
+    bool delegate(GraphicCanvas ctx) onContentContinue;
 
     bool isMutable;
     bool isClearOnRecreate = true;
@@ -66,6 +67,16 @@ class VTexture : Texture2d
 
     }
 
+    void createFullContent()
+    {
+        auto ctx = canvas;
+        if (!onContentContinue || onContentContinue(ctx))
+        {
+            createContent;
+            createContent(ctx);
+        }
+    }
+
     string createSVG()
     {
         import std.array : Appender;
@@ -86,9 +97,7 @@ class VTexture : Texture2d
 
         import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
 
-        auto ctx = new VectorCanvas(svgContext);
-
-        createContent(ctx);
+        createFullContent;
 
         svgCairoSurface.flush;
         svgCairoSurface.finish;
@@ -173,8 +182,7 @@ class VTexture : Texture2d
             disposeContext;
         }
 
-        createContent;
-        createContent(canvas);
+        createFullContent;
 
         if (onSurfaceIsContinue)
         {
@@ -221,8 +229,13 @@ class VTexture : Texture2d
         tryCreateTempSurface;
         tryCreateDrawContext;
 
-        createContent;
-        createContent(canvas);
+        auto ctx = canvas;
+
+        if (!onContentContinue || onContentContinue(ctx))
+        {
+            createContent;
+            createContent(ctx);
+        }
 
         if (onSurfaceIsContinue)
         {
@@ -351,8 +364,8 @@ class VTexture : Texture2d
         }
 
         canvas.clear(RGBA.transparent);
-        createContent;
-        createContent(canvas);
+
+        createFullContent;
 
         if (onSurfaceIsContinue)
         {

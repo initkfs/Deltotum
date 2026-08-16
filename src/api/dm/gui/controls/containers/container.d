@@ -2,16 +2,36 @@ module api.dm.gui.controls.containers.container;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 
 /**
  * Authors: initkfs
  */
 class Container : Control
 {
-
     this()
     {
 
+    }
+
+    this(scope Layout2d delegate() defaultLayoutProvider, bool isNoLayout = false, scope Layout2d delegate() layoutProvider = null)
+    {
+        if (!isNoLayout)
+        {
+            if (!layoutProvider)
+            {
+                if (!defaultLayoutProvider)
+                {
+                    throw new Exception("Default layout provider must not be null");
+                }
+
+                layout = defaultLayoutProvider();
+            }
+            else
+            {
+                layout = layoutProvider();
+            }
+        }
     }
 
     bool isAlignX()

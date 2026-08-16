@@ -48,13 +48,20 @@ struct Insets
         return true;
     }
 
-    bool inc(float v)
+    bool setMul(float v)
     {
-        this.top *= v;
-        this.right *= v;
-        this.bottom *= v;
-        this.left *= v;
+        this = mul(v);
         return true;
+    }
+
+    Insets mul(float v)
+    {
+        Insets insets = this;
+        insets.top *= v;
+        insets.right *= v;
+        insets.bottom *= v;
+        insets.left *= v;
+        return insets;
     }
 
     float width()

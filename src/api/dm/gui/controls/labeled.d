@@ -60,7 +60,7 @@ class Labeled : Control
     {
         super.initialize;
 
-        if (isEnablePadding && canEnablePadding)
+        if (isEnablePadding)
         {
             enablePadding;
         }

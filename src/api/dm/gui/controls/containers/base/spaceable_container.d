@@ -1,7 +1,7 @@
 module api.dm.gui.controls.containers.base.spaceable_container;
 
 import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
-
+import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.dm.gui.controls.containers.container : Container;
 
 /**
@@ -16,6 +16,12 @@ class SpaceableContainer : Container
 
     this(float spacing = SpaceableLayout.DefaultSpacing)
     {
+        this(spacing, null, true, null);
+    }
+
+    this(float spacing = SpaceableLayout.DefaultSpacing, scope Layout2d delegate() defaultLayoutProvider, bool isNoLayout = false, scope Layout2d delegate() layoutProvider = null)
+    {
+        super(defaultLayoutProvider, isNoLayout, layoutProvider);
         this._spacing = spacing;
     }
 

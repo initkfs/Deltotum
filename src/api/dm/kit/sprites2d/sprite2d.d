@@ -1009,11 +1009,7 @@ class Sprite2d : EventKitTarget
                     initialize(sprite);
                 }
 
-                sprite.create;
-                if (!sprite.isCreated)
-                {
-                    throw new Exception("Sprite2d not created: " ~ sprite.className);
-                }
+                create(sprite);
             }
 
             return add(sprite, index);

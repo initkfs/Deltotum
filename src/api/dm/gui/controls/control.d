@@ -77,7 +77,8 @@ class Control : GuiComponent
 
     bool isThrowInvalidAnimationTime = true;
 
-    Sprite2d delegate(Sprite2d) onNewBackground;
+    Sprite2d delegate() onNewBackground;
+    void delegate(Sprite2d) onConfiguredBackground;
     void delegate(Sprite2d) onCreatedBackground;
 
     bool isProcessHover;
@@ -132,6 +133,9 @@ class Control : GuiComponent
 
     bool isSetNullWidthFromTheme = true;
     bool isSetNullHeightFromTheme = true;
+
+    bool isReplacePadding;
+    Insets delegate(Insets) onPadding;
 
     this()
     {
@@ -1359,14 +1363,21 @@ class Control : GuiComponent
             return false;
         }
 
-        auto back = newBackground;
+        _background = onNewBackground ? onNewBackground() : newBackground;
+        if (!_background)
+        {
+            return false;
+        }
 
-        back.id = idBackground;
-        back.isResizedByParent = true;
-        back.isLayoutManaged = false;
-        back.isDrawAfterParent = false;
+        _background.id = idBackground;
+        _background.isResizedByParent = true;
+        _background.isLayoutManaged = false;
+        _background.isDrawAfterParent = false;
 
-        _background = onNewBackground ? onNewBackground(back) : back;
+        if (onConfiguredBackground)
+        {
+            onConfiguredBackground(_background);
+        }
 
         addCreate(_background, 0);
 
@@ -1474,26 +1485,34 @@ class Control : GuiComponent
         }
     }
 
-    override bool canEnablePadding()
+    Insets themePadding()
     {
-        return hasTheme;
+        if (!hasTheme)
+        {
+            logger.error("Error. Theme for padding is null: " ~ toString);
+            return Insets();
+        }
+
+        return theme.controlPadding;
     }
 
     override void enablePadding()
     {
+        if (!_padding.isEmpty && !isReplacePadding)
+        {
+            return;
+        }
+
         debug
         {
-            if (!canEnablePadding)
+            if (!hasTheme)
             {
                 throw new Exception(
                     "Unable to enable paddings: graphic or theme is null. Perhaps the component is not built correctly");
             }
         }
 
-        if (theme)
-        {
-            _padding = theme.controlPadding;
-        }
+        _padding = !onPadding ? themePadding : onPadding(themePadding);
     }
 
     override void dispose()
