@@ -247,7 +247,7 @@ class Theme
             return rectShape(width, height, angle, style);
             // }
 
-            //import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPoly;
+            //import api.dm.kit.sprites2d.shapes.convex_poly : ConvexPoly;
 
             //newShape = new ConvexPoly(width, height, style, cornerBevel);
         }
@@ -314,7 +314,7 @@ class Theme
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.reqular_polygon : RegularPoly;
+            import api.dm.kit.sprites2d.shapes.reqular_poly : RegularPoly;
 
             shape = new RegularPoly(size, style, sides);
         }

@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.shapes.reqular_polygon;
+module api.dm.kit.sprites2d.shapes.reqular_poly;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
