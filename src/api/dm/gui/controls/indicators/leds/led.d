@@ -30,9 +30,9 @@ class Led : BaseLed
             return theme.circleShape(diameter, style);
         }
 
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
 
-        auto shape = new VCircle(diameter / 2.0, style);
+        auto shape = new VecCircle(diameter / 2.0, style);
         setColorProcessing(shape, blurSize);
         return shape;
     }

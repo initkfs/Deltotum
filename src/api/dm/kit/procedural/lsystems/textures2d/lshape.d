@@ -3,7 +3,7 @@ module api.dm.kit.procedural.lsystems.textures2d.lshape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.brushes.brush : Brush;
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.procedural.lsystems.lsystem_drawer : LSystemDrawer;
@@ -14,7 +14,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class LShape : VShape
+class LShape : VecShape
 {
     protected
     {

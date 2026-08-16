@@ -1,6 +1,6 @@
 module api.dm.kit.procedural.tessellations.textures.penrose_tiling;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -13,7 +13,7 @@ import api.dm.lib.cairo;
 /**
  * Authors: initkfs
  */
-class PenroseTiling : VShape
+class PenroseTiling : VecShape
 {
     /**
     * The algorithm has been ported from https://habr.com/ru/articles/359244/, by Юрий (@yurixi)

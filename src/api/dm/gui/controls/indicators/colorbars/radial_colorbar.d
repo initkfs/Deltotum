@@ -15,9 +15,9 @@ import Math = api.dm.math;
  */
 private
 {
-    import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+    import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 
-    class ColorBarShape : VShape
+    class ColorBarShape : VecShape
     {
         float minAngleDeg = 0;
         float maxAngleDeg = 0;

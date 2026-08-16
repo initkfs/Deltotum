@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle;
+module api.dm.kit.sprites2d.textures.vectors.shapes.vec_rectangle;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import Math = api.dm.math;
@@ -8,7 +8,7 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-class VRectangle : VShape
+class VecRectangle : VecShape
 {
     this(float width = 50, float height = 50, GraphicStyle style = GraphicStyle.simple) 
     {

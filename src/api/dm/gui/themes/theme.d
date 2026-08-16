@@ -10,7 +10,7 @@ import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.core.configs.uda : ConfigKey;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_rectangle;
 
 /**
  * Authors: initkfs
@@ -236,9 +236,9 @@ class Theme
         Sprite2d newShape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly : VecConvexPoly;
 
-            newShape = new VConvexPolygon(width, height, style, cornerBevel);
+            newShape = new VecConvexPoly(width, height, style, cornerBevel);
         }
         else
         {
@@ -261,9 +261,9 @@ class Theme
         Sprite2d shape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle : VRectangle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_rectangle : VecRectangle;
 
-            shape = new VRectangle(width, height, style);
+            shape = new VecRectangle(width, height, style);
         }
         else
         {
@@ -284,9 +284,9 @@ class Theme
         Sprite2d shape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
 
-            shape = new VCircle(radius, style);
+            shape = new VecCircle(radius, style);
         }
         else
         {
@@ -308,9 +308,9 @@ class Theme
 
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly : VecRegularPoly;
 
-            shape = new VRegularPolygon(size, style, sides);
+            shape = new VecRegularPoly(size, style, sides);
         }
         else
         {
@@ -331,9 +331,9 @@ class Theme
 
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_triangle : VecTriangle;
 
-            shape = new VTriangle(width, height, style);
+            shape = new VecTriangle(width, height, style);
         }
         else
         {

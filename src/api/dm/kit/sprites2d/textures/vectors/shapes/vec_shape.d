@@ -1,14 +1,14 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d;
+module api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape;
 
-import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
+import api.dm.kit.sprites2d.textures.vectors.vec_tex : VecTex;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
-import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
+import api.dm.kit.graphics.canvases.vector_canvas : VectorCanvas;
 
 /**
  * Authors: initkfs
  */
-class VShape : VTexture
+class VecShape : VecTex
 {
     bool isInnerStroke;
 

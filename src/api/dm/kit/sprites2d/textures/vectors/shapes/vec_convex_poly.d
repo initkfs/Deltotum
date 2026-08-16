@@ -1,12 +1,12 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon;
+module api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**
  * Authors: initkfs
  */
-class VConvexPolygon : VShape
+class VecConvexPoly : VecShape
 {
     protected
     {

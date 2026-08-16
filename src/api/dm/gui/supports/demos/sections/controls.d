@@ -472,13 +472,13 @@ class Controls : Control
         }
         else
         {
-            import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
+            import api.dm.kit.sprites2d.textures.vectors.vec_tex : VecTex;
             import api.math.geom2.vec2 : Vec2f;
 
             Sprite2d[] shapes;
             foreach_reverse (ii; 2 .. 8)
                 (i) {
-                auto shape = new class VTexture
+                auto shape = new class VecTex
                 {
                     this()
                     {

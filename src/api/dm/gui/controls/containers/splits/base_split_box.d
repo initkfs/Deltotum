@@ -78,7 +78,7 @@ class BaseSplitBox : Container
 
     Sprite2d newDivider()
     {
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly : VecConvexPoly;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         auto sepStyle = createFillStyle;

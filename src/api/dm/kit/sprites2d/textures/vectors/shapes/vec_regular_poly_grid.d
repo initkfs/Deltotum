@@ -1,9 +1,9 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon_grid;
+module api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly_grid;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly : VecRegularPoly;
 import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.dm.math;
@@ -11,13 +11,13 @@ import Math = api.dm.math;
 struct RPolygonGeometry
 {
     Vec2f pos;
-    VRegularPolygon hexagon;
+    VecRegularPoly hexagon;
 }
 
 /**
  * Authors: initkfs
  */
-class VRegularPolygonGrid : Sprite2d
+class VecRegularPolyGrid : Sprite2d
 {
     protected
     {
@@ -53,7 +53,7 @@ class VRegularPolygonGrid : Sprite2d
 
     void drawPolygon(float x, float y)
     {
-        auto hex = new VRegularPolygon(hexagonSize, style);
+        auto hex = new VecRegularPoly(hexagonSize, style);
         addCreate(hex);
         hexagons ~= RPolygonGeometry(Vec2f(x, y), hex);
     }

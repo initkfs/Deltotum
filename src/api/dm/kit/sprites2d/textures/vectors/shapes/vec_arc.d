@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.varc;
+module api.dm.kit.sprites2d.textures.vectors.shapes.vec_arc;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import Math = api.dm.math;
@@ -8,7 +8,7 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-class VArc : VShape
+class VecArc : VecShape
 {
     float xCenter = 0;
     float yCenter = 0;

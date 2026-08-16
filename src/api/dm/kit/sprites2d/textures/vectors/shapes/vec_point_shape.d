@@ -1,13 +1,13 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vpoint_shape;
+module api.dm.kit.sprites2d.textures.vectors.shapes.vec_point_shape;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.vec2 : Vec2f;
 
 /**
  * Authors: initkfs
  */
-class VPointShape : VShape
+class VecPointShape : VecShape
 {
     bool isClosePath;
     bool isDrawFromCenter;

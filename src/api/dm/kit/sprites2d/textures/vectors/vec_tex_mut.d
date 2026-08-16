@@ -1,10 +1,10 @@
-module api.dm.kit.sprites2d.textures.vectors.vtexture_mut;
+module api.dm.kit.sprites2d.textures.vectors.vec_tex_mut;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
+import api.dm.kit.graphics.canvases.vector_canvas : VectorCanvas;
 
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.math.geom2.rect2 : Rect2f;
@@ -20,7 +20,7 @@ import api.dm.lib.cairo;
 /**
  * Authors: initkfs
  */
-class VTextureMut : Texture2d
+class VecTexMut : Texture2d
 {
     GraphicStyle style;
     //TODO moveTo + lineTo + stroke, extract class?

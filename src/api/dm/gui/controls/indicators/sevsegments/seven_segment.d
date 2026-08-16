@@ -257,7 +257,7 @@ class SevenSegment : Control
             return theme.rectShape(vSegmentWidth, vSegmentHeight, segmentAngle, segmentStyle);
         }
 
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 
         Rect2f box = Rect2f(0, 0, vSegmentWidth, vSegmentHeight).boundingBox(segmentAngle);
 
@@ -268,9 +268,9 @@ class SevenSegment : Control
 
     protected Sprite2d createVShapeSegment(Rect2f box, float w, float h, float angle, float cornerBevel, GraphicStyle segmentStyle)
     {
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 
-        auto segment = new class VShape
+        auto segment = new class VecShape
         {
             this()
             {
@@ -323,9 +323,9 @@ class SevenSegment : Control
             return theme.rectShape(box.width, box.height, 0, segmentStyle);
         }
 
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 
-        auto segment = new class VShape
+        auto segment = new class VecShape
         {
             this()
             {

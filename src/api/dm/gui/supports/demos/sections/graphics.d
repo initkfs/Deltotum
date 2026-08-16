@@ -160,33 +160,33 @@ class Graphics : Control
 
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
 
             auto style = GraphicStyle(3.0, RGBA.red, true, RGBA.green);
 
             enum size = 50;
 
-            auto vCircle = new VCircle(size / 2, style);
+            auto vCircle = new VecCircle(size / 2, style);
             vContainer.addCreate(vCircle);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_triangle : VecTriangle;
 
-            auto vTrig = new VTriangle(size, size, style);
+            auto vTrig = new VecTriangle(size, size, style);
             vContainer.addCreate(vTrig);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly : VecConvexPoly;
 
-            auto vReg = new VConvexPolygon(size, size, style, 10);
+            auto vReg = new VecConvexPoly(size, size, style, 10);
             vContainer.addCreate(vReg);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly : VecRegularPoly;
 
-            auto vHex = new VRegularPolygon(size, style);
+            auto vHex = new VecRegularPoly(size, style);
             vContainer.addCreate(vHex);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon_grid : VRegularPolygonGrid;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly_grid : VecRegularPolyGrid;
 
-            auto vHexGrid = new VRegularPolygonGrid(250, 250, 35, style);
+            auto vHexGrid = new VecRegularPolyGrid(250, 250, 35, style);
             vContainer.addCreate(vHexGrid);
 
         }

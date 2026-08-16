@@ -66,7 +66,7 @@ class Slider : Container
 
         padding = 0;
 
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly : VecConvexPoly;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         float handleWidth = theme.meterThumbWidth;

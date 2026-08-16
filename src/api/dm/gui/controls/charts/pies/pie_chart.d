@@ -10,7 +10,7 @@ import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
 //TODO mutable texture
-import api.dm.kit.sprites2d.textures.vectors.vtexture : VTexture;
+import api.dm.kit.sprites2d.textures.vectors.vec_tex : VecTex;
 import api.math.geom2.plane_angle;
 
 struct PieData
@@ -19,7 +19,7 @@ struct PieData
     float value = 0;
 }
 
-class PieTexture : VTexture
+class PieTexture : VecTex
 {
     float totalValue = 0;
     PieData[] values;
@@ -100,7 +100,7 @@ class LabelInfo : Container
 {
     import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
     import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-    import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+    import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
 
     Text textLabel;
     Sprite2d colorLabel;

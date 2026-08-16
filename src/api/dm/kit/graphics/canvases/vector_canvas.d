@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas;
+module api.dm.kit.graphics.canvases.vector_canvas;
 
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GStop;
 import api.dm.lib.cairo.cairo_context : CairoContext;

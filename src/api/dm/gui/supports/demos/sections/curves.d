@@ -72,9 +72,9 @@ class Curves : Control
         Sprite2d shape;
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vpoints_shape : VPointsShape;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_points_shape : VecPointsShape;
 
-            shape = new VPointsShape(points, shapeSize, shapeSize, shapeStyle, isClosePath, isDrawFromCenter);
+            shape = new VecPointsShape(points, shapeSize, shapeSize, shapeStyle, isClosePath, isDrawFromCenter);
         }
         else
         {

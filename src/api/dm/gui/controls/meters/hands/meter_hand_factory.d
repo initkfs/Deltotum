@@ -10,10 +10,10 @@ import Math = api.math;
 
 private
 {
-    import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+    import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
     import api.math.geom2.vec2 : Vec2f;
 
-    class VHand : VShape
+    class VHand : VecShape
     {
         float handWidth = 0;
         float handHeight = 0;

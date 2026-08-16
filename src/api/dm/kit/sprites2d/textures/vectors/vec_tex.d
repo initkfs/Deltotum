@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.textures.vectors.vtexture;
+module api.dm.kit.sprites2d.textures.vectors.vec_tex;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -32,7 +32,7 @@ extern (C) cairo_status_t writeSvgToBuffer(void* closure, const ubyte* data, uin
 /**
  * Authors: initkfs
  */
-class VTexture : Texture2d
+class VecTex : Texture2d
 {
     protected
     {
@@ -95,7 +95,7 @@ class VTexture : Texture2d
             svgContext.dispose;
         }
 
-        import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
+        import api.dm.kit.graphics.canvases.vector_canvas : VectorCanvas;
 
         createFullContent;
 
@@ -382,7 +382,7 @@ class VTexture : Texture2d
 
     override GraphicCanvas newGraphicsContext()
     {
-        import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
+        import api.dm.kit.graphics.canvases.vector_canvas : VectorCanvas;
 
         return new VectorCanvas(cairoContext);
     }

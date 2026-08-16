@@ -86,15 +86,15 @@ class RadialSegmentBar : Control
 
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_arc : VecArc;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 
             const textureWidth = width;
             const textureHeight = height;
             assert(textureWidth > 0);
             assert(textureHeight > 0);
 
-            auto segmentShape = new class VShape
+            auto segmentShape = new class VecShape
             {
                 this()
                 {
@@ -142,11 +142,11 @@ class RadialSegmentBar : Control
 
             addCreate(segmentShape);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_arc : VecArc;
 
             drawSegment((i, startAngleDeg, endAngleDeg, angleOffset) {
 
-                auto segment = new VArc(radius, segmentStyleOn);
+                auto segment = new VecArc(radius, segmentStyleOn);
                 segment.xCenter = 0;
                 segment.yCenter = 0;
                 segment.fromAngleRad = Math.degToRad(startAngleDeg);

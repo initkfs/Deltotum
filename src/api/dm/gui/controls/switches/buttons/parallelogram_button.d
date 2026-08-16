@@ -69,9 +69,9 @@ class ParallelogramButton : BaseButton
 
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vparallelogram : VParallelogram;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_parallelogram : VecParallelogram;
 
-            auto vShape = new VParallelogram(width, height, angleDeg, isInverted, style);
+            auto vShape = new VecParallelogram(width, height, angleDeg, isInverted, style);
             return vShape;
         }
 

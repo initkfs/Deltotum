@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vcircle;
+module api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vec_arc : VecArc;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.pos2.insets : Insets;
 
@@ -9,7 +9,7 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-class VCircle : VArc
+class VecCircle : VecArc
 {
     bool isSetRadiusFromSize = true;
 
