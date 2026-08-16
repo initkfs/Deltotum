@@ -2,21 +2,21 @@ module api.dm.kit.sprites2d.shapes.reqular_polygon;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.geom2.regular_polygon2 : RegularPolygon2f;
+import api.math.geom2.regular_poly2 : RegularPoly2f;
 
 import Math = api.dm.math;
 
 /**
  * Authors: initkfs
  */
-class RegularPolygon : Shape2d
+class RegularPoly : Shape2d
 {
     bool isFlat = true;
 
     protected
     {
         size_t sideCount;
-        RegularPolygon2f polyDrawer;
+        RegularPoly2f polyDrawer;
     }
 
     this(float size, GraphicStyle style, size_t sideCount = 6)
@@ -30,7 +30,7 @@ class RegularPolygon : Shape2d
         super.create;
 
         float radius = width / 2;
-        polyDrawer = RegularPolygon2f(sideCount, radius);
+        polyDrawer = RegularPoly2f(sideCount, radius);
     }
 
     override void drawContent()
@@ -42,10 +42,10 @@ class RegularPolygon : Shape2d
         {
             graphic.restoreColor;
         }
-        drawPolygon;
+        drawPoly;
     }
 
-    void drawPolygon()
+    void drawPoly()
     {
         auto center = boundsRect.center;
         float firstX;

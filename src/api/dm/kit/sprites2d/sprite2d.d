@@ -3,7 +3,7 @@ module api.dm.kit.sprites2d.sprite2d;
 import api.dm.kit.events.event_kit_target : EventKitTarget;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.rect2 : Rect2f;
-import api.math.geom2.polygon2 : Quadrilateral2f;
+import api.math.geom2.poly2 : Quadrilateral2f;
 import api.math.pos2.alignment : Alignment;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;

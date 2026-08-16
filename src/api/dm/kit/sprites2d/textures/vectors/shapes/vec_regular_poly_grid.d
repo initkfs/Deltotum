@@ -8,7 +8,7 @@ import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.dm.math;
 
-struct RPolygonGeometry
+struct RPolyGeometry
 {
     Vec2f pos;
     VecRegularPoly hexagon;
@@ -26,7 +26,7 @@ class VecRegularPolyGrid : Sprite2d
         GraphicStyle style;
     }
 
-    RPolygonGeometry[] hexagons;
+    RPolyGeometry[] hexagons;
 
     this(float width, float height, float hexagonSize, GraphicStyle style, size_t sideCount = 6)
     {
@@ -51,11 +51,11 @@ class VecRegularPolyGrid : Sprite2d
         }
     }
 
-    void drawPolygon(float x, float y)
+    void drawPoly(float x, float y)
     {
         auto hex = new VecRegularPoly(hexagonSize, style);
         addCreate(hex);
-        hexagons ~= RPolygonGeometry(Vec2f(x, y), hex);
+        hexagons ~= RPolyGeometry(Vec2f(x, y), hex);
     }
 
     override void create()
@@ -80,7 +80,7 @@ class VecRegularPolyGrid : Sprite2d
             float x = radius;
             while (offsetX < width)
             {
-                drawPolygon(x, y);
+                drawPoly(x, y);
                 offsetX = x + polarX1;
                 x += polarX1;
                 y += (-1) ^^ j++ * polarY;

@@ -24,17 +24,17 @@ class VecStar : VecShape
         _innerRadius = innerRadius;
     }
 
-    void drawPolygon(float width, float x, float y)
+    void drawPoly(float width, float x, float y)
     {
         if (style.isFill)
         {
             canvas.color(style.fillColor);
         }
 
-        import api.math.geom2.star_polygon2 : StarPolygon2f;
+        import api.math.geom2.star_poly2 : StarPoly2f;
 
         const lineWidth = style.lineWidth;
-        auto polygon = StarPolygon2f(_spikeCount, _innerRadius, width / 2);
+        auto polygon = StarPoly2f(_spikeCount, _innerRadius, width / 2);
 
         canvas.lineWidth(lineWidth);
 
@@ -65,6 +65,6 @@ class VecStar : VecShape
 
     override void createContent()
     {
-        drawPolygon(width, width / 2, height / 2);
+        drawPoly(width, width / 2, height / 2);
     }
 }

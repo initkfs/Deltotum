@@ -82,7 +82,7 @@ class Check : BaseBiswitch
 
     Sprite2d newMarker()
     {
-        import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
+        import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPoly;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         assert(markerWidth > 0);

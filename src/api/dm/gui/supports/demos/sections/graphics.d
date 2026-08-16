@@ -63,12 +63,12 @@ class Graphics : Control
 
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPoly;
 
-            auto reg = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
+            auto reg = new ConvexPoly(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
             shapeContainer.addCreate(reg);
 
-            auto regFill = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA
+            auto regFill = new ConvexPoly(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA
                     .lightsteelblue), 10);
             shapeContainer.addCreate(regFill);
         }

@@ -1,4 +1,4 @@
-module api.math.geom2.polygon2;
+module api.math.geom2.poly2;
 
 import api.math.geom2.line2 : Line2f;
 import api.math.geom2.vec2 : Vec2f;
@@ -29,10 +29,10 @@ struct Quadrilateral2f
 
     Vec2f center() const nothrow pure @safe
     {
-        import api.math.geom2.polygon2 : Polygon2f;
+        import api.math.geom2.poly2 : Poly2f;
 
         Vec2f[4] vertx = [leftTop, rightTop, rightBottom, leftBottom];
-        const poly = Polygon2f(vertx[]);
+        const poly = Poly2f(vertx[]);
         return poly.midpoint;
     }
 }
@@ -40,7 +40,7 @@ struct Quadrilateral2f
 /**
  * Authors: initkfs
  */
-struct Polygon2f
+struct Poly2f
 {
     Vec2f[] vertices;
 
@@ -284,10 +284,10 @@ struct Polygon2f
     unittest
     {
         Vec2f[] points = [{0, 0}, {0, 5}, {5, 5}, {5, 0}];
-        assert((Polygon2f(points)).isConvex);
+        assert((Poly2f(points)).isConvex);
 
         Vec2f[] points2 = [{0, 0}, {0, 5}, {0, 0}, {5, 5}, {5, 0}];
-        assert(!(Polygon2f(points2)).isConvex);
+        assert(!(Poly2f(points2)).isConvex);
 
     }
 
@@ -428,7 +428,7 @@ struct Polygon2f
 //TODO add mixin test
 unittest
 {
-    Polygon2f poly1 = {[
+    Poly2f poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 
@@ -447,7 +447,7 @@ unittest
 
 unittest
 {
-    Polygon2f poly1 = {[
+    Poly2f poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 
@@ -466,7 +466,7 @@ unittest
 
 unittest
 {
-    Polygon2f poly1 = {[
+    Poly2f poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 

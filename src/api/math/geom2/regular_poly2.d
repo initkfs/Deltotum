@@ -1,6 +1,6 @@
-module api.math.geom2.regular_polygon2;
+module api.math.geom2.regular_poly2;
 
-import api.math.geom2.polygon2 : Polygon2f;
+import api.math.geom2.poly2 : Poly2f;
 
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
@@ -8,13 +8,13 @@ import Math = api.math;
 /**
  * Authors: initkfs
  */
-struct RegularPolygon2f
+struct RegularPoly2f
 {
     size_t sideCount;
     float radius = 0;
     bool isRotateCorrection;
 
-    Polygon2f shape;
+    Poly2f shape;
 
     this(size_t sideCount, float radius, bool isRotateCorrection = true)
     {
@@ -58,7 +58,7 @@ struct RegularPolygon2f
 
     void create()
     {
-        shape = Polygon2f(createPoints);
+        shape = Poly2f(createPoints);
     }
 
     Vec2f[] createPoints()

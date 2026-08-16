@@ -7,7 +7,7 @@ import api.math.geom2.line2 : Line2f;
 /**
  * Authors: initkfs
  */
-class ConvexPolygon : Shape2d
+class ConvexPoly : Shape2d
 {
     float cornerPadding;
 

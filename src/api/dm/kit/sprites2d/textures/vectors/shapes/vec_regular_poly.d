@@ -24,18 +24,18 @@ class VecRegularPoly : VecShape
         this.sideCount = sideCount;
     }
 
-    void drawPolygon(float width, float x, float y)
+    void drawPoly(float width, float x, float y)
     {
         if (style.isFill)
         {
             canvas.color(style.fillColor);
         }
 
-        import api.math.geom2.regular_polygon2 : RegularPolygon2f;
+        import api.math.geom2.regular_poly2 : RegularPoly2f;
 
         const lineWidth = style.lineWidth;
         float radius = width / 2 - lineWidth / 2;
-        auto polygon = RegularPolygon2f(sideCount, radius);
+        auto polygon = RegularPoly2f(sideCount, radius);
 
         canvas.lineWidth(lineWidth);
 
@@ -73,6 +73,6 @@ class VecRegularPoly : VecShape
 
     override void createContent()
     {
-        drawPolygon(width, width / 2, height / 2);
+        drawPoly(width, width / 2, height / 2);
     }
 }

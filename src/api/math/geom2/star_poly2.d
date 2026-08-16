@@ -1,6 +1,6 @@
-module api.math.geom2.star_polygon2;
+module api.math.geom2.star_poly2;
 
-import api.math.geom2.polygon2 : Polygon2f;
+import api.math.geom2.poly2 : Poly2f;
 
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
@@ -8,13 +8,13 @@ import Math = api.math;
 /**
  * Authors: initkfs
  */
-struct StarPolygon2f
+struct StarPoly2f
 {
     size_t spikeCount;
     float outerRadius = 0;
     float innerRadius = 0;
 
-    Polygon2f shape;
+    Poly2f shape;
 
     this(size_t spikeCount, float innerRadius, float outerRadius)
     {
@@ -44,7 +44,7 @@ struct StarPolygon2f
 
     void create()
     {
-        shape = Polygon2f(createPoints);
+        shape = Poly2f(createPoints);
     }
 
     Vec2f[] createPoints()
