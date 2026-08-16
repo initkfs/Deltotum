@@ -13,9 +13,11 @@ class HLayout : SpaceableLayout
 {
     bool isInvertY;
 
-    this(float spacing = SpaceableLayout.DefaultSpacing) pure
+    this(float spacing = SpaceableLayout.DefaultSpacing, bool isAutoResize = false, bool isAlignY = false) pure
     {
         super(spacing);
+        this.isAutoResize = isAutoResize;
+        this.isAlignY = isAlignY;
     }
 
     override bool alignChildren(Sprite2d root)

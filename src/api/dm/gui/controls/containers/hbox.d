@@ -9,13 +9,14 @@ import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
  */
 class HBox : SpaceableContainer
 {
-    this(float spacing = SpaceableLayout.DefaultSpacing, bool isNoLayout = false)
+    this(float spacing = SpaceableLayout.DefaultSpacing, bool isAutoResize = true, bool isAlignY = false, bool isNoLayout = false)
     {
         super(spacing, () {
             import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
             layout = new HLayout(spacing);
-            layout.isAutoResize = true;
+            layout.isAlignY = isAlignY;
+            layout.isAutoResize = isAutoResize;
             return layout;
         }, isNoLayout, null);
     }

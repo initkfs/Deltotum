@@ -9,13 +9,14 @@ import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
  */
 class VBox : SpaceableContainer
 {
-    this(float spacing = SpaceableLayout.DefaultSpacing, bool isNoLayout = false)
+    this(float spacing = SpaceableLayout.DefaultSpacing, bool isAutoResize = true, bool isAlignX = false, bool isNoLayout = false)
     {
         super(spacing, () {
             import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
             layout = new VLayout(spacing);
-            layout.isAutoResize = true;
+            layout.isAutoResize = isAutoResize;
+            layout.isAlignX = isAlignX;
             return layout;
         }, isNoLayout, null);
     }

@@ -13,9 +13,11 @@ class VLayout : SpaceableLayout
 {
     bool isInvertX;
 
-    this(float spacing = SpaceableLayout.DefaultSpacing) pure
+    this(float spacing = SpaceableLayout.DefaultSpacing, bool isAutoResize = false, bool isAlignX = false) pure
     {
         super(spacing);
+        this.isAutoResize = isAutoResize;
+        this.isAlignX = isAlignX;
     }
 
     override bool alignChildren(Sprite2d root)
