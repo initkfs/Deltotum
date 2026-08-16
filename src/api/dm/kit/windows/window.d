@@ -220,11 +220,15 @@ class Window : GraphicComponent
             assert(scene.isBuilt);
         }
 
-        scene.initialize;
-        assert(scene.isInitializing);
+        if (!scene.isInitializing)
+        {
+            initialize(scene);
+        }
 
-        scene.create;
-        assert(scene.isCreating);
+        if (!scene.isCreating)
+        {
+            super.create(scene);
+        }
 
         if (platform.cap.isGPU)
         {

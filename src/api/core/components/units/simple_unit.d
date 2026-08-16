@@ -2,8 +2,15 @@ module api.core.components.units.simple_unit;
 
 import api.core.components.units.unitable : Unitable;
 
-enum UnitState {
-    none, initialize, create, run, pause, stop, dispose
+enum UnitState
+{
+    none,
+    initialize,
+    create,
+    run,
+    pause,
+    stop,
+    dispose
 }
 
 /**
@@ -42,7 +49,7 @@ class SimpleUnit : Unitable
         UnitState state() => _state;
         bool isState(UnitState s) => _state == s;
         bool isNone() => isState(UnitState.none);
-        
+
         bool isInitializing() => isState(UnitState.initialize);
         bool isCreating() => isState(UnitState.create);
         bool isCreated() => _create;
@@ -66,7 +73,7 @@ class SimpleUnit : Unitable
                 import std.format : format;
 
                 throw new Exception(format("Cannot initialize component '%s' with state: %s",
-                        className, _state));
+                        toString, _state));
             }
         }
 
@@ -102,7 +109,7 @@ class SimpleUnit : Unitable
 
             if (isThrowInvalidChangeState)
             {
-                throw new Exception("Unit not initialized: " ~ unit.className);
+                throw new Exception("Unit not initialized: " ~ unit.toString);
             }
         }
     }
@@ -121,7 +128,7 @@ class SimpleUnit : Unitable
                 import std.format : format;
 
                 throw new Exception(format("Cannot create component '%s' with state: %s",
-                        className, _state));
+                        toString, _state));
             }
         }
 
@@ -146,7 +153,7 @@ class SimpleUnit : Unitable
 
             if (isThrowInvalidChangeState)
             {
-                throw new Exception("Unit not created: " ~ unit.className);
+                throw new Exception("Unit not created: " ~ unit.toString);
             }
         }
     }
@@ -171,7 +178,7 @@ class SimpleUnit : Unitable
                 import std.format : format;
 
                 throw new Exception(format("Cannot run component '%s' with state: %s",
-                        className, _state));
+                        toString, _state));
             }
         }
 
@@ -195,7 +202,7 @@ class SimpleUnit : Unitable
 
             if (isThrowInvalidChangeState)
             {
-                throw new Exception("Unit not running: " ~ unit.className);
+                throw new Exception("Unit not running: " ~ unit.toString);
             }
         }
     }
@@ -221,7 +228,7 @@ class SimpleUnit : Unitable
                 import std.format : format;
 
                 throw new Exception(format("Cannot pause component '%s' with state: %s",
-                        className, _state));
+                        toString, _state));
             }
         }
 
@@ -245,7 +252,7 @@ class SimpleUnit : Unitable
 
             if (isThrowInvalidChangeState)
             {
-                throw new Exception("Unit not paused: " ~ unit.className);
+                throw new Exception("Unit not paused: " ~ unit.toString);
             }
 
         }
@@ -265,7 +272,7 @@ class SimpleUnit : Unitable
                 import std.format : format;
 
                 throw new Exception(format("Cannot stop component '%s' with state: %s",
-                        className, _state));
+                        toString, _state));
             }
         }
 
@@ -289,7 +296,7 @@ class SimpleUnit : Unitable
 
             if (isThrowInvalidChangeState)
             {
-                throw new Exception("Unit not stopped: " ~ unit.className);
+                throw new Exception("Unit not stopped: " ~ unit.toString);
             }
         }
     }
@@ -309,7 +316,7 @@ class SimpleUnit : Unitable
                 import std.format : format;
 
                 throw new Exception(format("Cannot dispose component '%s' with state: %s",
-                        className, _state));
+                        toString, _state));
             }
         }
 
@@ -341,7 +348,7 @@ class SimpleUnit : Unitable
 
             if (isThrowInvalidChangeState)
             {
-                throw new Exception("Unit not disposed: " ~ unit.className);
+                throw new Exception("Unit not disposed: " ~ unit.toString);
             }
         }
     }

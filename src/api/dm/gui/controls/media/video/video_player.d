@@ -80,6 +80,18 @@ class VideoPlayer : Control
             logger.error(texture.lastErrorNew);
         }
 
+        if (!platform.cap.isVideo)
+        {
+            import api.dm.gui.controls.texts.text : Text;
+            import api.dm.kit.sprites2d.layouts.center_layout: CenterLayout;
+
+            texture.layout = new CenterLayout;
+            auto message = new Text("Media system disabled");
+            buildInitCreate(message);
+
+            texture.addCreate(message);
+        }
+
         panel = new VideoPlayerPanel;
         addCreate(panel);
         panel.onPlay = () {
