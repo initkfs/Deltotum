@@ -14,9 +14,9 @@ class Container : Control
 
     }
 
-    this(scope Layout2d delegate() defaultLayoutProvider, bool isNoLayout = false, scope Layout2d delegate() layoutProvider = null)
+    this(scope Layout2d delegate() defaultLayoutProvider, bool isLayout = true, scope Layout2d delegate() layoutProvider = null)
     {
-        if (!isNoLayout)
+        if (isLayout)
         {
             if (!layoutProvider)
             {

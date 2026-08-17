@@ -9,7 +9,7 @@ import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
  */
 class HBox : SpaceableContainer
 {
-    this(float spacing = SpaceableLayout.DefaultSpacing, bool isAutoResize = true, bool isAlignY = false, bool isNoLayout = false)
+    this(float spacing = SpaceableLayout.DefaultSpacing, bool isAutoResize = true, bool isAlignY = false, bool isLayout = true)
     {
         super(spacing, () {
             import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
@@ -18,6 +18,6 @@ class HBox : SpaceableContainer
             layout.isAlignY = isAlignY;
             layout.isAutoResize = isAutoResize;
             return layout;
-        }, isNoLayout, null);
+        }, isLayout, null);
     }
 }

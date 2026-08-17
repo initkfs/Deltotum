@@ -19,9 +19,9 @@ class SpaceableContainer : Container
         this(spacing, null, true, null);
     }
 
-    this(float spacing = SpaceableLayout.DefaultSpacing, scope Layout2d delegate() defaultLayoutProvider, bool isNoLayout = false, scope Layout2d delegate() layoutProvider = null)
+    this(float spacing = SpaceableLayout.DefaultSpacing, scope Layout2d delegate() defaultLayoutProvider, bool isLayout = true, scope Layout2d delegate() layoutProvider = null)
     {
-        super(defaultLayoutProvider, isNoLayout, layoutProvider);
+        super(defaultLayoutProvider, isLayout, layoutProvider);
         this._spacing = spacing;
     }
 
