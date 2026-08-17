@@ -1,4 +1,4 @@
-module api.dm.com.graphics.com_texture;
+module api.dm.com.graphics.com_tex;
 
 import api.dm.com.ptrs.com_pointerable: ComPointerable;
 import api.dm.com.objects.com_unique_objectable : ComUniqueObjectable;
@@ -29,7 +29,7 @@ enum ComTextureWrapMode
 /**
  * Authors: initkfs
  */
-interface ComTexture : ComUniqueObjectable, ComPointerable, ComErrorManageable
+interface ComTex : ComUniqueObjectable, ComPointerable, ComErrorManageable
 {
 nothrow:
 
@@ -86,14 +86,14 @@ nothrow:
     bool getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
     bool getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
 
-    bool draw(ComTexture other, Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
+    bool draw(ComTex other, Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none, Vec2f rotateCenter = Vec2f.zero);
     bool draw(Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none, Vec2f rotateCenter = Vec2f.zero);
 
-    ComResult copyToNew(out ComTexture);
-    ComResult copyTo(ComTexture toTexture, Rect2f srcRect, Rect2f destRect, float angle = 0, Flip flip = Flip
+    ComResult copyToNew(out ComTex);
+    ComResult copyTo(ComTex toTexture, Rect2f srcRect, Rect2f destRect, float angle = 0, Flip flip = Flip
             .none);
-    ComResult copyFrom(ComTexture other, Rect2f srcRect, Rect2f dstRect, float angle = 0, Flip flip = Flip
+    ComResult copyFrom(ComTex other, Rect2f srcRect, Rect2f dstRect, float angle = 0, Flip flip = Flip
             .none);
 }

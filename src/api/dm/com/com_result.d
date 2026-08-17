@@ -21,6 +21,8 @@ import core.attribute : mustuse;
         this.isError = isError;
     }
 
+    alias ok = success;
+
     static ComResult success(int code = defaultCodeSuccess)  nothrow pure @safe
     {
         return ComResult(code, null, false);

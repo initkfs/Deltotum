@@ -4,7 +4,7 @@ import api.dm.com.com_result;
 
 import api.dm.com.ptrs.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_renderer : ComRenderer, ComRendererLogicalScaling;
-import api.dm.com.graphics.com_texture : ComTexture, ComTextureWrapMode;
+import api.dm.com.graphics.com_tex : ComTex, ComTextureWrapMode;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;

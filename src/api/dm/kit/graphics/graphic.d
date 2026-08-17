@@ -21,7 +21,7 @@ import api.math.geom2.line2 : Line2f;
 import api.core.loggers.logging : Logging;
 import std.conv : to;
 
-import api.dm.com.graphics.com_texture : ComTexture;
+import api.dm.com.graphics.com_tex : ComTex;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_image_codec : ComImageCodec;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
@@ -44,7 +44,7 @@ class Graphic : LoggableUnit
         ComRenderer renderer;
     }
 
-    ProviderFactory!ComTexture comTextureProvider;
+    ProviderFactory!ComTex comTextureProvider;
     ProviderFactory!ComSurface comSurfaceProvider;
 
     ComImageCodec[] comImageCodecs;

@@ -52,7 +52,7 @@ abstract class RgbaTex2d : Tex2d
             texture = graphic.comTextureProvider.getNew();
         }
 
-        //autodisposing should work in ComTexture
+        //autodisposing should work in ComTex
         if (const createErr = texture.createTargetRGBA32(cast(int) width, cast(int) height))
         {
             throw new Exception(createErr.toString);

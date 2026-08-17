@@ -2,10 +2,10 @@ module api.dm.kit.sprites2d.textures.tex2d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-import api.dm.com.graphics.com_texture : ComTexture;
+import api.dm.com.graphics.com_tex : ComTex;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
-import api.dm.com.graphics.com_texture : ComTextureScaleMode;
+import api.dm.com.graphics.com_tex : ComTextureScaleMode;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.pos2.flip : Flip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -32,7 +32,7 @@ class Tex2d : Sprite2d
 
     protected
     {
-        ComTexture texture;
+        ComTex texture;
         ComTextureScaleMode _scaleMode = ComTextureScaleMode.quality;
     }
 
@@ -60,7 +60,7 @@ class Tex2d : Sprite2d
         this.height = height;
     }
 
-    this(ComTexture texture)
+    this(ComTex texture)
     {
         assert(texture);
 
@@ -439,7 +439,7 @@ class Tex2d : Sprite2d
         drawTexture(texture, textureBounds, destBounds, angle, flip);
     }
 
-    void drawTexture(ComTexture texture, Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
+    void drawTexture(ComTex texture, Rect2f textureBounds, Rect2f destBounds, float angle = 0, Flip flip = Flip
             .none)
     {
         if (!texture.draw(textureBounds, destBounds, angle, flip, rotateCenter))
@@ -591,7 +591,7 @@ class Tex2d : Sprite2d
     Tex2d copy()
     {
         assert(texture);
-        ComTexture newTexture;
+        ComTex newTexture;
         if (const err = texture.copyToNew(newTexture))
         {
             throw new Exception(err.toString);
@@ -645,7 +645,7 @@ class Tex2d : Sprite2d
         }
     }
 
-    inout(ComTexture) nativeTexture() inout nothrow
+    inout(ComTex) nativeTexture() inout nothrow
     {
         return this.texture;
     }

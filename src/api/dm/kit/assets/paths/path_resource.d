@@ -78,22 +78,15 @@ class PathResource : LoggableUnit
         return resourcePath;
     }
 
-    string fileResource(string[] paths...) const
+    bool checkFile(string path) const
     {
+        if (path.length == 0)
+        {
+            return false;
+        }
         import std.file : exists, isFile;
 
-        const mustBeResourcePath = withResourcePaths(paths);
-        if (mustBeResourcePath.length == 0)
-        {
-            return mustBeResourcePath;
-        }
-
-        if (mustBeResourcePath.exists && mustBeResourcePath.isFile)
-        {
-            return mustBeResourcePath;
-        }
-
-        return null;
+        return path.exists && path.isFile;
     }
 
     string dirResource(string[] paths...) const

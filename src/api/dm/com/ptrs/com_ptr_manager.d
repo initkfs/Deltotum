@@ -17,16 +17,16 @@ abstract class ComPtrManager(T) : ComUniqueObject
 
     abstract protected bool disposePtr() nothrow;
 
-    this() pure @safe
+    this() nothrow pure @safe
     {
 
     }
 
-    this(T* ptr) pure @safe
+    this(T* ptr) nothrow pure @safe
     {
         if (!ptr)
         {
-            throw new Exception("Common native object pointer must not be null");
+            throw new Error("Common native object pointer must not be null");
         }
 
         this._ptr = ptr;
@@ -36,10 +36,13 @@ abstract class ComPtrManager(T) : ComUniqueObject
     {
         if (_ptr)
         {
-            import std.stdio : stderr;
+            debug
+            {
+                import std.stdio : stdout;
 
-            stderr.writefln("Warning! Undestroyed common native object %s, with id: %s", typeof(
-                    this).stringof, id);
+                stdout.writefln("COM. Destroy native object %s, with id: %s", typeof(
+                        this).stringof, id);
+            }
 
             dispose;
         }

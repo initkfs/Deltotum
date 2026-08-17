@@ -33,7 +33,7 @@ import api.dm.kit.windows.events.window_event : WindowEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
-import api.dm.com.graphics.com_texture : ComTexture;
+import api.dm.com.graphics.com_tex : ComTex;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_screen : ComScreenId;
 import api.dm.com.graphics.com_font : ComFont;
@@ -970,12 +970,12 @@ class SdlApp : GuiApp
         return new SdlRenderer(ptr);
     }
 
-    ComTexture newComTexture(SdlRenderer renderer)
+    ComTex newComTexture(SdlRenderer renderer)
     {
         return new SdlTexture(renderer);
     }
 
-    void newComTextureScoped(scope void delegate(ComTexture) onNew, SdlRenderer renderer)
+    void newComTextureScoped(scope void delegate(ComTex) onNew, SdlRenderer renderer)
     {
         scope text = new SdlTexture(renderer);
         scope (exit)
@@ -1255,7 +1255,7 @@ class SdlApp : GuiApp
 
         windowBuilder.gpu = new GPUGraphic(uservices.logging, uservices.config, uservices.context, gpuDevice, window);
 
-        windowBuilder.graphic.comTextureProvider = ProviderFactory!ComTexture(
+        windowBuilder.graphic.comTextureProvider = ProviderFactory!ComTex(
             () => newComTexture(sdlRenderer),
             (dg) => newComTextureScoped(dg, sdlRenderer)
         );

@@ -40,7 +40,7 @@ private
         override void create()
         {
             super.create;
-            import api.dm.com.graphics.com_texture : ComTextureScaleMode;
+            import api.dm.com.graphics.com_tex : ComTextureScaleMode;
 
             scaleMode = ComTextureScaleMode.quality;
         }

@@ -47,14 +47,15 @@ class VecTex : Tex2d
     bool isMutable;
     bool isClearOnRecreate = true;
 
-    this(float width, float height)
+    this(float width, float height, bool isResizable = true, bool delegate(GraphicCanvas ctx) onContentContinue = null)
     {
         this.width = width;
         this.height = height;
-        isResizable = true;
+        this.isResizable = isResizable;
         //isResizedByParent = true;
 
         this.id = "vector_texture";
+        this.onContentContinue = onContentContinue;
     }
 
     void createContent(GraphicCanvas ctx)
@@ -205,7 +206,7 @@ class VecTex : Tex2d
         assert(texture);
         assert(comSurface);
 
-        import api.dm.com.graphics.com_texture : ComTextureScaleMode;
+        import api.dm.com.graphics.com_tex : ComTextureScaleMode;
 
         const createErr = texture.create(comSurface);
         if (createErr)

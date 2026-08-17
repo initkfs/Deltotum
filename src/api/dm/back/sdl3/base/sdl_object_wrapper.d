@@ -10,12 +10,12 @@ abstract class SdlObjectWrapper(T) : ComPtrManager!T
 {
     mixin SdlObjectMixin;
 
-    this()
+    this() nothrow
     {
 
     }
 
-    this(T* newPtr)
+    this(T* newPtr) nothrow
     {
         super(newPtr);
     }

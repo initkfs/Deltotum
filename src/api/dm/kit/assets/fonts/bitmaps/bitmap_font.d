@@ -2,7 +2,7 @@ module api.dm.kit.assets.fonts.bitmaps.bitmap_font;
 
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
-import api.dm.com.graphics.com_texture: ComTexture;
+import api.dm.com.graphics.com_tex: ComTex;
 
 /**
  * Authors: initkfs
@@ -15,7 +15,7 @@ class BitmapFont : Tex2d
     Glyph placeholder;
     Glyph e0;
 
-    this(ComTexture texture, Glyph[] glyphs = null)
+    this(ComTex texture, Glyph[] glyphs = null)
     {
         super(texture);
         this.glyphs = glyphs;
@@ -29,7 +29,7 @@ class BitmapFont : Tex2d
     BitmapFont copyBitmap()
     {
         assert(texture);
-        ComTexture newTexture;
+        ComTex newTexture;
         if (const err = texture.copyToNew(newTexture))
         {
             throw new Exception(err.toString);

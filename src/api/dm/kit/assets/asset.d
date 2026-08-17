@@ -34,7 +34,6 @@ class Asset : PathResource
         FontCache[string] fontCaches;
     }
 
-    string defaultImagesResourceDir = "images";
     string defaultFontResourceDir = "fonts";
 
     this(Logging logging, string assetsDir, ComFont delegate() comFontProvider) pure @safe
@@ -58,10 +57,10 @@ class Asset : PathResource
             return imageFile;
         }
 
-        auto mustBeImagePath = fileResource(defaultImagesResourceDir, imageFile);
-        if (mustBeImagePath.length == 0)
+        auto mustBeImagePath = withResourcePath(imageFile);
+        if (!checkFile(mustBeImagePath))
         {
-            throw new Exception("Not found image in resources: " ~ imageFile);
+            throw new Exception("Not found image in resources: " ~ mustBeImagePath);
         }
 
         return mustBeImagePath;
@@ -76,12 +75,12 @@ class Asset : PathResource
             return fontFile;
         }
 
-        auto mustBeFontPath = fileResource(defaultFontResourceDir, fontFile);
-        if (mustBeFontPath.length == 0)
+        auto mustBeFontPath = withResourcePaths(defaultFontResourceDir, fontFile);
+        if (!checkFile(mustBeFontPath))
         {
             import std.format : format;
 
-            throw new Exception(format("Not found font file %s in resources dir %s", fontFile, defaultFontResourceDir));
+            throw new Exception(format("Not found font file %s in resources dir %s: %s", fontFile, defaultFontResourceDir, mustBeFontPath));
         }
         return mustBeFontPath;
     }

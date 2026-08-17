@@ -18,12 +18,12 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 {
-    this()
+    this() nothrow
     {
         super();
     }
 
-    this(SDL_Surface* ptr)
+    this(SDL_Surface* ptr) nothrow
     {
         super(ptr);
     }

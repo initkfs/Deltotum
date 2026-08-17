@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.images.image;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-import api.dm.com.graphics.com_texture : ComTexture;
+import api.dm.com.graphics.com_tex : ComTex;
 import api.dm.com.graphics.com_image_codec : ComImageCodec;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
@@ -28,7 +28,7 @@ class Image : Tex2d
         super(width, height);
     }
 
-    this(ComTexture texture)
+    this(ComTex texture)
     {
         super(texture);
     }

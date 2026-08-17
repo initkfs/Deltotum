@@ -2,7 +2,7 @@ module api.dm.com.graphics.com_renderer;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.ptrs.com_pointerable: ComPointerable;
-import api.dm.com.graphics.com_texture : ComTexture, ComTextureWrapMode;
+import api.dm.com.graphics.com_tex : ComTex, ComTextureWrapMode;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.com_disposable : ComDisposable;
@@ -86,7 +86,7 @@ nothrow:
 
     ComResult readPixels(Rect2f rect, ComSurface buffer);
 
-    // ComResult drawTexture(ComTexture texture);
-    // ComResult drawTexture(ComTexture texture, Rect2f srcRect, Rect2f dstRect);
-    // ComResult drawTextureEx(ComTexture texture, Rect2f srcRect, Rect2f dstRect, float angle, Vec2f center, Flip flip);
+    // ComResult drawTexture(ComTex texture);
+    // ComResult drawTexture(ComTex texture, Rect2f srcRect, Rect2f dstRect);
+    // ComResult drawTextureEx(ComTex texture, Rect2f srcRect, Rect2f dstRect, float angle, Vec2f center, Flip flip);
 }

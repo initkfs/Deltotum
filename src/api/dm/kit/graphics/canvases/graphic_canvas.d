@@ -41,14 +41,16 @@ struct GStopBuilder
     }
 
     //https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient/addColorStop
-    void addColorStop(float offset, string colorHex)
+    ref GStopBuilder addColorStop(float offset, string colorHex)
     {
         stops ~= GStop(offset, colorHex);
+        return this;
     }
 
-    void addColorStop(float offset, RGBA color)
+    ref GStopBuilder addColorStop(float offset, RGBA color)
     {
         stops ~= GStop(offset, color);
+        return this;
     }
 }
 
