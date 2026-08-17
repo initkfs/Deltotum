@@ -41,7 +41,7 @@ abstract class BaseProgressBar : MinMaxMeter!float
 
     float value() => _value;
 
-    bool value(float newValue, bool isTriggerListeners = true)
+    bool value(float newValue, bool isTrigger = true)
     {
         if (_value == newValue)
         {
@@ -49,7 +49,7 @@ abstract class BaseProgressBar : MinMaxMeter!float
         }
         float oldValue = _value;
         _value = Math.clamp(newValue, minValue, maxValue);
-        if (isTriggerListeners)
+        if (isTrigger)
         {
             triggerListeners(oldValue, _value);
         }

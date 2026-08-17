@@ -27,7 +27,7 @@ abstract class MinMaxValueMeter(ValueType) : MinMaxMeter!ValueType
     {
     }
 
-    bool value(ValueType v, bool isTriggerListeners = true, bool isForce = false)
+    bool value(ValueType v, bool isTrigger = true, bool isForce = false)
     {
         auto oldValue = _value;
         if (!trySetValue(v))
@@ -45,7 +45,7 @@ abstract class MinMaxValueMeter(ValueType) : MinMaxMeter!ValueType
 
         updateState;
 
-        if (isTriggerListeners)
+        if (isTrigger)
         {
             triggerListeners(oldValue, v);
         }

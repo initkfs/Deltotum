@@ -140,13 +140,13 @@ class ColorPickerDialog : Control
 
         if (contentContainer)
         {
-            contentContainer.selectFirstTab(isTriggerListeners : false);
+            contentContainer.selectFirstTab(isTrigger : false);
         }
     }
 
-    protected void updateColor(RGBA newColor, bool isTriggerListeners = true)
+    protected void updateColor(RGBA newColor, bool isTrigger = true)
     {
-        if (onChangeOldNew && isTriggerListeners)
+        if (onChangeOldNew && isTrigger)
         {
             onChangeOldNew(_lastColor, newColor);
         }
@@ -195,9 +195,9 @@ class ColorPickerDialog : Control
         return field;
     }
 
-    void updateColorRGBA(bool isTriggerListeners = true)
+    void updateColorRGBA(bool isTrigger = true)
     {
-        updateColor(colorRGBA, isTriggerListeners);
+        updateColor(colorRGBA, isTrigger);
     }
 
     RGBA colorRGBA()
@@ -362,10 +362,10 @@ class ColorPickerDialog : Control
         return form;
     }
 
-    void updateColorHSL(bool isTriggerListeners = true)
+    void updateColorHSL(bool isTrigger = true)
     {
         //Warn! if L == 1 => RGBA.white!
-        updateColor(colorHSL.toRGBA, isTriggerListeners);
+        updateColor(colorHSL.toRGBA, isTrigger);
     }
 
     HSLA colorHSL()
@@ -445,10 +445,10 @@ class ColorPickerDialog : Control
         return form;
     }
 
-    void updateColorHSV(bool isTriggerListeners = true)
+    void updateColorHSV(bool isTrigger = true)
     {
         //Warn! if L == 1 => RGBA.white!
-        updateColor(colorHSV.toRGBA, isTriggerListeners);
+        updateColor(colorHSV.toRGBA, isTrigger);
     }
 
     HSVA colorHSV()
@@ -611,7 +611,7 @@ class ColorPickerDialog : Control
 
     bool color(RGBA newColor)
     {
-        updateColor(newColor, isTriggerListeners:
+        updateColor(newColor, isTrigger:
             false);
 
         //TODO is tab active + alpha
@@ -632,7 +632,7 @@ class ColorPickerDialog : Control
         bField.value = newColor.b;
 
         assert(alphaField);
-        alphaField.value(newColor.a, isTriggerListeners:
+        alphaField.value(newColor.a, isTrigger:
             false);
     }
 
@@ -648,7 +648,7 @@ class ColorPickerDialog : Control
         hslLField.value(newColor.l, false, true);
 
         assert(alphaField);
-        alphaField.value(newColor.a, isTriggerListeners:
+        alphaField.value(newColor.a, isTrigger:
             false, true);
     }
 
@@ -664,7 +664,7 @@ class ColorPickerDialog : Control
         hsvVField.value(newColor.v, false, true);
 
         assert(alphaField);
-        alphaField.value(newColor.a, isTriggerListeners:
+        alphaField.value(newColor.a, isTrigger:
             false, true);
     }
 

@@ -36,13 +36,13 @@ class BaseBiswitch : Labeled
         isOn = _state;
     }
 
-    bool toggle(bool isTriggerListeners = true) => isOn(!_state, isTriggerListeners);
+    bool toggle(bool isTrigger = true) => isOn(!_state, isTrigger);
 
     bool isOff() => !isOn;
 
     bool isOn() => _state;
 
-    bool isOn(bool value, bool isTriggerListeners = true)
+    bool isOn(bool value, bool isTrigger = true)
     {
         if (value == _state)
         {
@@ -56,7 +56,7 @@ class BaseBiswitch : Labeled
         {
             switchContentState(oldValue, _state);
 
-            if (isTriggerListeners)
+            if (isTrigger)
             {
                 runSwitchListeners(oldValue, _state);
             }

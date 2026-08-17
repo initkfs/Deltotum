@@ -160,17 +160,17 @@ class TextField : Control
         return textView.text;
     }
 
-    void text(dstring t, bool isTriggerListeners = true)
+    void text(dstring t, bool isTrigger = true)
     {
         assert(textView);
-        textView.text(t, isTriggerListeners);
+        textView.text(t, isTrigger);
     }
 
-    void text(string t, bool isTriggerListeners = true)
+    void text(string t, bool isTrigger = true)
     {
         import std.conv : to;
 
-        text(t.to!dstring, isTriggerListeners);
+        text(t.to!dstring, isTrigger);
     }
 
     auto textTo(T)() => text.to!T;

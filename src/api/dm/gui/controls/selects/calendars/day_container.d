@@ -121,15 +121,15 @@ class DayContainer : Control
         }
     }
 
-    void toggleMark(bool isTriggerListeners = true)
+    void toggleMark(bool isTrigger = true)
     {
         if (_mark)
         {
-            unmark(isTriggerListeners);
+            unmark(isTrigger);
             return;
         }
 
-        mark(isTriggerListeners);
+        mark(isTrigger);
     }
 
     void setMark()
@@ -141,19 +141,19 @@ class DayContainer : Control
         }
     }
 
-    void mark(bool isTriggerListeners = true)
+    void mark(bool isTrigger = true)
     {
         setMark;
-        if (onMarkNewValue && isTriggerListeners)
+        if (onMarkNewValue && isTrigger)
         {
             onMarkNewValue(_mark);
         }
     }
 
-    void unmark(bool isTriggerListeners = true)
+    void unmark(bool isTrigger = true)
     {
         setUnmark;
-        if (onMarkNewValue && isTriggerListeners)
+        if (onMarkNewValue && isTrigger)
         {
             onMarkNewValue(_mark);
         }

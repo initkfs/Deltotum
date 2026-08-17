@@ -89,7 +89,7 @@ class ColorPicker : OneBaseDropDownSelector!(ColorPickerDialog, RGBA)
             };
         });
 
-        color(RGBA.red, isTriggerListeners:
+        color(RGBA.red, isTrigger:
             false);
     }
 
@@ -107,9 +107,9 @@ class ColorPicker : OneBaseDropDownSelector!(ColorPickerDialog, RGBA)
         }
     }
 
-    protected bool updateColor(RGBA newColor, bool isTriggerListeners = true, bool isReplaceForce = false)
+    protected bool updateColor(RGBA newColor, bool isTrigger = true, bool isReplaceForce = false)
     {
-        if (!current(newColor, isTriggerListeners, isReplaceForce))
+        if (!current(newColor, isTrigger, isReplaceForce))
         {
             return false;
         }
@@ -124,9 +124,9 @@ class ColorPicker : OneBaseDropDownSelector!(ColorPickerDialog, RGBA)
         return true;
     }
 
-    bool color(RGBA newColor, bool isTriggerListeners = true, bool isReplaceForce = false)
+    bool color(RGBA newColor, bool isTrigger = true, bool isReplaceForce = false)
     {
-        if (!updateColor(newColor, isTriggerListeners, isReplaceForce))
+        if (!updateColor(newColor, isTrigger, isReplaceForce))
         {
             return false;
         }

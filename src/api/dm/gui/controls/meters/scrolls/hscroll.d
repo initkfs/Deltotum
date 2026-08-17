@@ -126,9 +126,9 @@ class HScroll : BaseRegularMonoScroll
 
     alias value = BaseRegularMonoScroll.value;
 
-    override bool value(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
+    override bool value(float v, bool isTrigger = true, bool isUpdateIfEqual = false)
     {
-        if (!super.value(v, isTriggerListeners, isUpdateIfEqual) || !thumb)
+        if (!super.value(v, isTrigger, isUpdateIfEqual) || !thumb)
         {
             return false;
         }

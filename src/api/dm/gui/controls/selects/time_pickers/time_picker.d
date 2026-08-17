@@ -458,12 +458,12 @@ class TimePicker : OneBaseDropDownSelector!(TimePickerDialog, TimeOfDay)
         setDialogTime(current);
     }
 
-    void setCurrentTime(bool isTriggerListeners = true)
+    void setCurrentTime(bool isTrigger = true)
     {
         assert(dialog);
         import std.datetime : Clock;
 
-        time(cast(TimeOfDay) Clock.currTime, isTriggerListeners);
+        time(cast(TimeOfDay) Clock.currTime, isTrigger);
     }
 
     void setTime(TimeOfDay newTime)
@@ -475,9 +475,9 @@ class TimePicker : OneBaseDropDownSelector!(TimePickerDialog, TimeOfDay)
         setDialogTime(newTime);
     }
 
-    void time(TimeOfDay newTime, bool isTriggerListeners = true)
+    void time(TimeOfDay newTime, bool isTrigger = true)
     {
-        if (!current(newTime, isTriggerListeners))
+        if (!current(newTime, isTrigger))
         {
             return;
         }

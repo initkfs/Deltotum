@@ -111,7 +111,7 @@ abstract class BaseClippedFlatTable(T, TCol:
         }
     }
 
-    bool selectByIndex(size_t index, bool isTriggerListeners = true)
+    bool selectByIndex(size_t index, bool isTrigger = true)
     {
         if (index >= rows.length)
         {
@@ -121,7 +121,7 @@ abstract class BaseClippedFlatTable(T, TCol:
         }
 
         auto row = rows[index];
-        return current(row, isTriggerListeners);
+        return current(row, isTrigger);
     }
 
     void onRow(bool delegate(TRow) onRowContinue)

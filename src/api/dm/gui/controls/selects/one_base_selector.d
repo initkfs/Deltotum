@@ -19,7 +19,7 @@ class OneBaseSelector(T) : Control
 
     inout(T) current() inout => _current;
 
-    bool current(T item, bool isTriggerListeners = true, bool isReplaceForce = false)
+    bool current(T item, bool isTrigger = true, bool isReplaceForce = false)
     {
         static if (__traits(compiles, item is item))
         {
@@ -36,10 +36,10 @@ class OneBaseSelector(T) : Control
             }
         }
 
-        return currentForce(item, isTriggerListeners);
+        return currentForce(item, isTrigger);
     }
 
-    bool currentForce(T item, bool isTriggerListeners = true)
+    bool currentForce(T item, bool isTrigger = true)
     {
         static if (is(T : Selectable))
         {
@@ -54,7 +54,7 @@ class OneBaseSelector(T) : Control
             }
         }
 
-        if (isTriggerListeners && onChangeOldNew.length > 0)
+        if (isTrigger && onChangeOldNew.length > 0)
         {
             //_current may be null
             foreach (dg; onChangeOldNew)

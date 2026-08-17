@@ -242,7 +242,7 @@ class Piano : Control
 
                 if (settings)
                 {
-                    settings.fc(key.freqHz, isTriggerListeners:
+                    settings.fc(key.freqHz, isTrigger:
                         false);
                 }
 

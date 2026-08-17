@@ -110,9 +110,9 @@ class RegulateTextField : Control
             }
 
             scrollField.onValue ~= (v) {
-                updateValue(v, isTriggerListeners:
+                updateValue(v, isTrigger:
                     true);
-                updateValueField(v, isTriggerListeners:
+                updateValueField(v, isTrigger:
                     true);
                 if (onScroll)
                 {
@@ -150,9 +150,9 @@ class RegulateTextField : Control
                 try
                 {
                     auto v = valueField.text.to!float;
-                    updateValue(v, isTriggerListeners:
+                    updateValue(v, isTrigger:
                         true);
-                    scrollField.value(v, isTriggerListeners:
+                    scrollField.value(v, isTrigger:
                         false);
                     if (onScroll)
                     {
@@ -202,11 +202,11 @@ class RegulateTextField : Control
 
     float value() => lastValue;
 
-    protected bool updateValue(float v, bool isTriggerListeners = true)
+    protected bool updateValue(float v, bool isTrigger = true)
     {
         lastValue = v;
 
-        if (onValue && isTriggerListeners)
+        if (onValue && isTrigger)
         {
             onValue(v);
         }
@@ -214,18 +214,18 @@ class RegulateTextField : Control
         return true;
     }
 
-    protected bool updateScrollField(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
+    protected bool updateScrollField(float v, bool isTrigger = true, bool isUpdateIfEqual = false)
     {
         if (!scrollField)
         {
             return false;
         }
 
-        scrollField.value(v, isTriggerListeners, isUpdateIfEqual);
+        scrollField.value(v, isTrigger, isUpdateIfEqual);
         return true;
     }
 
-    protected bool updateValueField(float v, bool isTriggerListeners = true)
+    protected bool updateValueField(float v, bool isTrigger = true)
     {
         if (!valueField)
         {
@@ -252,11 +252,11 @@ class RegulateTextField : Control
             text = valueFieldFormatter(v);
         }
 
-        valueField.text(text, isTriggerListeners);
+        valueField.text(text, isTrigger);
         return true;
     }
 
-    bool value(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
+    bool value(float v, bool isTrigger = true, bool isUpdateIfEqual = false)
     {
         if (lastValue == v && !isUpdateIfEqual)
         {
@@ -269,9 +269,9 @@ class RegulateTextField : Control
 
         bool isUpdate;
 
-        isUpdate |= updateValue(v, isTriggerListeners);
-        isUpdate |= updateScrollField(v, isTriggerListeners, isUpdateIfEqual);
-        isUpdate |= updateValueField(v, isTriggerListeners);
+        isUpdate |= updateValue(v, isTrigger);
+        isUpdate |= updateScrollField(v, isTrigger, isUpdateIfEqual);
+        isUpdate |= updateValueField(v, isTrigger);
 
         return isUpdate;
     }

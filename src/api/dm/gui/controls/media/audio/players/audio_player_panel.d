@@ -95,7 +95,7 @@ class AudioPlayerPanel : Control
 
     void setPos(float v01)
     {
-        positionTracker.value(v01, isTriggerListeners:
+        positionTracker.value(v01, isTrigger:
             false);
     }
 

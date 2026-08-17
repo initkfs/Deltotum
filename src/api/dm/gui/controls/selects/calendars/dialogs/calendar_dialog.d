@@ -221,7 +221,7 @@ class CalendarDialog : Control
                             {
                                 return;
                             }
-                            dc.unmark(isTriggerListeners : false);
+                            dc.unmark(isTrigger : false);
                         }
                         selected = null;
                     }

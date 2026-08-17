@@ -85,11 +85,11 @@ class Tab : Container
 
     Button newLabelButton(dstring text, dchar iconName) => new Button(text, iconName);
 
-    void isSelected(bool isSelected, bool isTriggerListeners = true)
+    void isSelected(bool isSelected, bool isTrigger = true)
     {
         if (labelButton)
         {
-            labelButton.isOn(isSelected, isTriggerListeners);
+            labelButton.isOn(isSelected, isTrigger);
         }
     }
 }

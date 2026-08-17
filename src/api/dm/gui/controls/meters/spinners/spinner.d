@@ -306,7 +306,7 @@ class Spinner(T) : MinMaxValueMeter!T
             }
         }
 
-        value(initValue, isTriggerListeners:
+        value(initValue, isTrigger:
             false);
     }
 

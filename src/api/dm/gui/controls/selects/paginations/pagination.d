@@ -351,7 +351,7 @@ class Pagination : OneBaseSelector!size_t
         }
 
         pageIndex(0, isAllowReplace:
-            true, isTriggerListeners:
+            true, isTrigger:
             false);
 
         if (infoPageCurrent)
@@ -447,7 +447,7 @@ class Pagination : OneBaseSelector!size_t
         }
     }
 
-    bool pageIndex(size_t index, bool isAllowReplace = false, bool isTriggerListeners = true)
+    bool pageIndex(size_t index, bool isAllowReplace = false, bool isTrigger = true)
     {
         if (numPages == 0 || index >= numPages)
         {
@@ -459,7 +459,7 @@ class Pagination : OneBaseSelector!size_t
             return false;
         }
 
-        currentForce(index, isTriggerListeners);
+        currentForce(index, isTrigger);
 
         if (selectNewPage)
         {

@@ -423,19 +423,19 @@ class BaseChoice(T) : OneBaseSelector!T
         return false;
     }
 
-    protected bool setSelectedWithIndex(size_t index, T newItem, bool isTriggerListeners = true)
+    protected bool setSelectedWithIndex(size_t index, T newItem, bool isTrigger = true)
     {
         if (!selectListIndex(index))
         {
             return false;
         }
 
-        current(newItem, isTriggerListeners);
+        current(newItem, isTrigger);
         setSelectedText(current);
         return true;
     }
 
-    bool setSelected(T newItem, bool isTriggerListeners = true)
+    bool setSelected(T newItem, bool isTrigger = true)
     {
         static if (__traits(compiles, newItem is current))
         {
@@ -458,17 +458,17 @@ class BaseChoice(T) : OneBaseSelector!T
             return false;
         }
 
-        return setSelectedWithIndex(index, newItem, isTriggerListeners);
+        return setSelectedWithIndex(index, newItem, isTrigger);
     }
 
-    bool setSelectedIndex(size_t newIndex, bool isTriggerListeners = true)
+    bool setSelectedIndex(size_t newIndex, bool isTrigger = true)
     {
         if (newIndex >= items.length)
         {
             return false;
         }
         auto item = items[newIndex];
-        return setSelectedWithIndex(newIndex, item, isTriggerListeners);
+        return setSelectedWithIndex(newIndex, item, isTrigger);
     }
 
     bool selectNext()
@@ -513,7 +513,7 @@ class BaseChoice(T) : OneBaseSelector!T
     {
         if (popupMenu && index < items.length)
         {
-            if (auto isChange = popupMenu.menuList.selectByIndex(index, isTriggerListeners:
+            if (auto isChange = popupMenu.menuList.selectByIndex(index, isTrigger:
                     false))
             {
                 return true;

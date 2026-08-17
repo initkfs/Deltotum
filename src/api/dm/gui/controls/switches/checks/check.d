@@ -219,9 +219,9 @@ class Check : BaseBiswitch
 
     override bool isOn() => super.isOn;
 
-    override bool isOn(bool value, bool isTriggerListeners = true)
+    override bool isOn(bool value, bool isTrigger = true)
     {
-        bool isSetState = super.isOn(value, isTriggerListeners);
+        bool isSetState = super.isOn(value, isTrigger);
         if (isSetState)
         {
             if (isIndeterminate)

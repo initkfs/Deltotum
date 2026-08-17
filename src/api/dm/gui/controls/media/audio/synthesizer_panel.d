@@ -162,7 +162,7 @@ class SynthesizerPanel : Container
         };
     }
 
-    bool tryChangePattern(scope bool delegate(SoundPattern*) onPattern, bool isTriggerListeners = true)
+    bool tryChangePattern(scope bool delegate(SoundPattern*) onPattern, bool isTrigger = true)
     {
 
         if (!soundPatternProvider)
@@ -178,7 +178,7 @@ class SynthesizerPanel : Container
 
         if (onPattern(ptr))
         {
-            if (onUpdatePattern && isTriggerListeners)
+            if (onUpdatePattern && isTrigger)
             {
                 onUpdatePattern();
             }
@@ -229,13 +229,13 @@ class SynthesizerPanel : Container
         return isADSRField.isOn;
     }
 
-    void adsr(ADSR v, bool isTriggerListeners = true)
+    void adsr(ADSR v, bool isTrigger = true)
     {
         //TODO one listener;
-        aADSR.value(v.attack, isTriggerListeners);
-        dADSR.value(v.decay, isTriggerListeners);
-        sADSR.value(v.sustain, isTriggerListeners);
-        rADSR.value(v.release, isTriggerListeners);
+        aADSR.value(v.attack, isTrigger);
+        dADSR.value(v.decay, isTrigger);
+        sADSR.value(v.sustain, isTrigger);
+        rADSR.value(v.release, isTrigger);
     }
 
     protected FracSpinner newADSRField(Container root)
@@ -252,18 +252,18 @@ class SynthesizerPanel : Container
         return ampField.value;
     }
 
-    void amp(float v, bool isTriggerListeners = true)
+    void amp(float v, bool isTrigger = true)
     {
         assert(ampField);
-        ampField.value(v, isTriggerListeners);
+        ampField.value(v, isTrigger);
     }
 
     bool isFcMulFm() => isFcMulFmField.isOn;
 
-    void isFcMulFm(bool v, bool isTriggerListeners = true)
+    void isFcMulFm(bool v, bool isTrigger = true)
     {
         assert(isFcMulFmField);
-        isFcMulFmField.isOn(v, isTriggerListeners);
+        isFcMulFmField.isOn(v, isTrigger);
     }
 
     float fc()
@@ -272,10 +272,10 @@ class SynthesizerPanel : Container
         return fcField.value;
     }
 
-    void fc(float v, bool isTriggerListeners = true)
+    void fc(float v, bool isTrigger = true)
     {
         assert(fcField);
-        fcField.value(v, isTriggerListeners);
+        fcField.value(v, isTrigger);
     }
 
     float fm()
@@ -284,10 +284,10 @@ class SynthesizerPanel : Container
         return fmField.value;
     }
 
-    void fm(float v, bool isTriggerListeners = true)
+    void fm(float v, bool isTrigger = true)
     {
         assert(fmField);
-        fmField.value(v, isTriggerListeners);
+        fmField.value(v, isTrigger);
     }
 
     float fmIndex()
@@ -296,16 +296,16 @@ class SynthesizerPanel : Container
         return fmIndexField.value;
     }
 
-    void fmIndex(float v, bool isTriggerListeners = true)
+    void fmIndex(float v, bool isTrigger = true)
     {
         assert(fmIndexField);
-        fmIndexField.value(v, isTriggerListeners);
+        fmIndexField.value(v, isTrigger);
     }
 
-    void noteType(NoteType type, bool isTriggerListeners = true)
+    void noteType(NoteType type, bool isTrigger = true)
     {
         assert(noteDurType);
-        noteDurType.setSelected(type, isTriggerListeners);
+        noteDurType.setSelected(type, isTrigger);
     }
 
     NoteType noteType()

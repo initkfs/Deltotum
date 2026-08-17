@@ -213,11 +213,11 @@ class RScroll : BaseRadialMonoScroll
         return newValue;
     }
 
-    override bool value(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
+    override bool value(float v, bool isTrigger = true, bool isUpdateIfEqual = false)
     {
         assert(thumb);
 
-        if (!super.value(v, isTriggerListeners, isUpdateIfEqual))
+        if (!super.value(v, isTrigger, isUpdateIfEqual))
         {
             return false;
         }

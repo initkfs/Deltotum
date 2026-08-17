@@ -118,14 +118,14 @@ abstract class BaseMonoScroll : BaseScroll
 
     float value() => _value;
 
-    bool value(float v, bool isTriggerListeners = true, bool isUpdateIfEqual = false)
+    bool value(float v, bool isTrigger = true, bool isUpdateIfEqual = false)
     {
         if (!trySetValue(v, isUpdateIfEqual))
         {
             return false;
         }
 
-        if (isTriggerListeners)
+        if (isTrigger)
         {
             triggerListeners(v);
         }

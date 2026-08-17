@@ -129,7 +129,7 @@ class TabBox : Container
     }
 
     //TODO events
-    bool changeTab(Tab newTab, bool isTriggerListeners = true)
+    bool changeTab(Tab newTab, bool isTrigger = true)
     {
         if (!has(newTab) || newTab is _currentTab)
         {
@@ -240,13 +240,13 @@ class TabBox : Container
         return container;
     }
 
-    bool selectFirstTab(bool isTriggerListeners = true)
+    bool selectFirstTab(bool isTrigger = true)
     {
         if (!header || header.tabs.length == 0)
         {
             return false;
         }
-        return changeTab(header.tabs[0], isTriggerListeners);
+        return changeTab(header.tabs[0], isTrigger);
     }
 
     Tab currentTabUnsafe() => _currentTab;

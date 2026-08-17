@@ -152,7 +152,7 @@ class Calendar : OneBaseDropDownSelector!(CalendarDialog, Date)
                             if (currMonth <= Month.min)
                             {
                                 //TODO min year
-                                decYear(isTriggerListeners : false);
+                                decYear(isTrigger : false);
                                 auto newDate = current;
                                 newDate.month = Month.max;
                                 current(newDate);
@@ -204,7 +204,7 @@ class Calendar : OneBaseDropDownSelector!(CalendarDialog, Date)
                             Month newMonth;
                             if (currMonth >= Month.max)
                             {
-                                incYear(isTriggerListeners : false);
+                                incYear(isTrigger : false);
                                 auto newDate = current;
                                 newDate.month = Month.min;
                                 current(newDate);
@@ -355,13 +355,13 @@ class Calendar : OneBaseDropDownSelector!(CalendarDialog, Date)
 
     override inout(Date) current() inout => super.current;
 
-    override bool current(Date date, bool isTriggerListeners = true, bool isSetDialog = true)
+    override bool current(Date date, bool isTrigger = true, bool isSetDialog = true)
     {
         assert(monthLabel);
         assert(yearLabel);
         assert(dayLabel);
 
-        if (!super.current(date, isTriggerListeners))
+        if (!super.current(date, isTrigger))
         {
             return false;
         }
@@ -384,7 +384,7 @@ class Calendar : OneBaseDropDownSelector!(CalendarDialog, Date)
         return true;
     }
 
-    void incYear(bool isTriggerListeners = true)
+    void incYear(bool isTrigger = true)
     {
         const year = current.year;
         if (year == current.year.max)
@@ -394,10 +394,10 @@ class Calendar : OneBaseDropDownSelector!(CalendarDialog, Date)
 
         auto newDate = current;
         newDate.year = year + 1;
-        current(newDate, isTriggerListeners);
+        current(newDate, isTrigger);
     }
 
-    void decYear(bool isTriggerListeners = true)
+    void decYear(bool isTrigger = true)
     {
         const year = current.year;
         if (year == 0 || year == current.year.min)
@@ -407,7 +407,7 @@ class Calendar : OneBaseDropDownSelector!(CalendarDialog, Date)
 
         auto newDate = current;
         newDate.year = year - 1;
-        current(newDate, isTriggerListeners);
+        current(newDate, isTrigger);
     }
 
     void updateDate()

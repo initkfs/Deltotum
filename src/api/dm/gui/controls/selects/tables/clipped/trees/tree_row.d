@@ -302,7 +302,7 @@ class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
 
     bool expand() => isExpand;
 
-    void expand(bool value, bool isTriggerListeners = true)
+    void expand(bool value, bool isTrigger = true)
     {
         bool oldValue = isExpand;
         isExpand = value;
@@ -313,7 +313,7 @@ class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
         isManaged = value;
         isLayoutManaged = value;
 
-        if (isTriggerListeners && onExpandOldNewValue)
+        if (isTrigger && onExpandOldNewValue)
         {
             onExpandOldNewValue(oldValue, value);
         }

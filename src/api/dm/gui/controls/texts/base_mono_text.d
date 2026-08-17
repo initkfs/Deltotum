@@ -135,7 +135,7 @@ class BaseMonoText : Control
         bufferCreate;
     }
 
-    void updateRows(bool isForce = false, bool isTriggerListeners = true)
+    void updateRows(bool isForce = false, bool isTrigger = true)
     {
         if (!isBuilt && !isForce)
         {
@@ -143,7 +143,7 @@ class BaseMonoText : Control
             return;
         }
 
-        if (onTextChange && isTriggerListeners)
+        if (onTextChange && isTrigger)
         {
             onTextChange();
         }
@@ -682,14 +682,14 @@ class BaseMonoText : Control
         return builder.data;
     }
 
-    void text(string t, bool isTriggerListeners = true)
+    void text(string t, bool isTrigger = true)
     {
         import std.conv : to;
 
-        this.text(t.to!dstring, isTriggerListeners);
+        this.text(t.to!dstring, isTrigger);
     }
 
-    void text(dstring t, bool isTriggerListeners = true)
+    void text(dstring t, bool isTrigger = true)
     {
         if (t.length == 0 && _textBuffer.length == 0)
         {
