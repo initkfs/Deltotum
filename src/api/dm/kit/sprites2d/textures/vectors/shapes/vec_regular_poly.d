@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
@@ -18,7 +18,7 @@ class VecRegularPoly : VecShape
         size_t sideCount;
     }
 
-    this(float size, GraphicStyle style, size_t sideCount = 6)
+    this(float size, GStyle style, size_t sideCount = 6)
     {
         super(size, size, style);
         this.sideCount = sideCount;

@@ -83,7 +83,7 @@ class Check : BaseBiswitch
     Sprite2d newMarker()
     {
         import api.dm.kit.sprites2d.shapes.convex_poly : ConvexPoly;
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
         assert(markerWidth > 0);
         assert(markerHeight > 0);
@@ -102,7 +102,7 @@ class Check : BaseBiswitch
     Sprite2d newIndeterminateMarker()
     {
         import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
         assert(markerWidth > 0);
         assert(markerHeight > 0);

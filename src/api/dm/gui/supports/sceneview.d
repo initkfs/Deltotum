@@ -79,7 +79,7 @@ class SceneView : Container
         infoStyle.fillColor = RGBA.hex("#ffb641");
         infoStyle.isFill = false;
 
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         infoPanel = new InfoPanel;

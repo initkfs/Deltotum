@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.canvases.renderer_canvas;
 
 import api.dm.kit.graphics.canvases.state_canvas : StateCanvas;
-import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GStop;
+import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GrStop;
 import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
@@ -140,17 +140,17 @@ class RendererCanvas : StateCanvas
 
     }
 
-    void linearGradient(float x0, float y0, float x1, float y1, GStop[] stopPoints, void delegate() onPattern)
+    void linearGradient(float x0, float y0, float x1, float y1, GrStop[] stopPoints, void delegate() onPattern)
     {
 
     }
 
-    void linearGradient(Vec2f start, Vec2f end, GStop[] stopPoints, void delegate() onPattern)
+    void linearGradient(Vec2f start, Vec2f end, GrStop[] stopPoints, void delegate() onPattern)
     {
 
     }
 
-    void radialGradient(Vec2f innerCenter, float innerRadius, Vec2f outerCenter, float outerRadius, GStop[] stopPoints, void delegate() onPattern)
+    void radialGradient(Vec2f innerCenter, float innerRadius, Vec2f outerCenter, float outerRadius, GrStop[] stopPoints, void delegate() onPattern)
     {
 
     }

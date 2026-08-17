@@ -4,7 +4,7 @@ import api.dm.gui.controls.indicators.colorbars.base_mono_colorbar : BaseMonoCol
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.indicators.colorbars.colorbar_data : ColorBarData;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
@@ -24,7 +24,7 @@ private
 
         ColorBarData[] data;
 
-        this(float width, float height, GraphicStyle style)
+        this(float width, float height, GStyle style)
         {
             super(width, height, style);
         }

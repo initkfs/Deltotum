@@ -3,7 +3,7 @@ module api.dm.gui.controls.selects.color_pickers.color_picker;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.selects.one_base_dropdown_selector : OneBaseDropDownSelector;
 import api.dm.gui.controls.selects.color_pickers.dialogs.color_picker_dialog : ColorPickerDialog;

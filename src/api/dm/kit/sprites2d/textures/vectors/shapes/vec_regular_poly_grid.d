@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly_grid;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly : VecRegularPoly;
 import api.math.geom2.vec2 : Vec2f;
@@ -23,12 +23,12 @@ class VecRegularPolyGrid : Sprite2d
     {
         size_t sideCount;
         float hexagonSize = 0;
-        GraphicStyle style;
+        GStyle style;
     }
 
     RPolyGeometry[] hexagons;
 
-    this(float width, float height, float hexagonSize, GraphicStyle style, size_t sideCount = 6)
+    this(float width, float height, float hexagonSize, GStyle style, size_t sideCount = 6)
     {
         this.width = width;
         this.height = height;

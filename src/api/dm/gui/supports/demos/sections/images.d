@@ -3,7 +3,7 @@ module api.dm.gui.supports.demos.sections.images;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.images.image : Image;
 import api.dm.kit.sprites2d.images.image : Image;
 import std.string : toStringz;
@@ -21,7 +21,7 @@ class Images : Control
 {
     private
     {
-        GraphicStyle shapeStyle = GraphicStyle.simple;
+        GStyle shapeStyle = GStyle.simple;
         enum imageSize = 100;
     }
 

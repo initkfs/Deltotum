@@ -461,7 +461,7 @@ class MainPanel : BaseDebuggerPanel
 
     // private DebugInfo createDebugInfo(Sprite2d obj)
     // {
-    //     import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+    //     import api.dm.kit.graphics.styles.gstyle : GStyle;
     //     import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
     //     import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -470,11 +470,11 @@ class MainPanel : BaseDebuggerPanel
     //     container.height = obj.height;
     //     container.isLayoutManaged = false;
 
-    //     auto borderStyle = GraphicStyle(1, RGBA.red);
+    //     auto borderStyle = GStyle(1, RGBA.red);
 
     //     if (container.width == 0 || container.height == 0)
     //     {
-    //         borderStyle = GraphicStyle(1, RGBA.green);
+    //         borderStyle = GStyle(1, RGBA.green);
     //         container.width = 10;
     //         container.height = 10;
     //     }

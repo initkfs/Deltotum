@@ -55,10 +55,10 @@ class TextArea : HBox
 
     // override Sprite2d newBackground()
     // {
-    //     import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+    //     import api.dm.kit.graphics.styles.gstyle : GStyle;
     //     import api.dm.kit.sprites2d.shapes.convex_poly : ConvexPoly;
 
-    //     GraphicStyle backgroundStyle = GraphicStyle(1, theme.colorAccent, isBackground, theme
+    //     GStyle backgroundStyle = GStyle(1, theme.colorAccent, isBackground, theme
     //             .colorPrimary);
     //     auto background = super.newBackground(width, height, angle, backgroundStyle);
     //     return background;

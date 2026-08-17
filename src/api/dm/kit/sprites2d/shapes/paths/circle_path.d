@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.shapes.paths.circle_path;
 
 import api.dm.kit.sprites2d.shapes.paths.path : Path;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 /**
  * Authors: initkfs
@@ -10,7 +10,7 @@ class CirclePath : Path
 {
     int radius;
 
-    this(int radius, GraphicStyle style)
+    this(int radius, GStyle style)
     {
         super(radius * 2, radius * 2, style);
         this.radius = radius;

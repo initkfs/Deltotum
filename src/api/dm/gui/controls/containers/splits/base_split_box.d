@@ -2,7 +2,7 @@ module api.dm.gui.controls.containers.splits.base_split_box;
 
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 struct DividerData
@@ -79,7 +79,7 @@ class BaseSplitBox : Container
     Sprite2d newDivider()
     {
         import api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly : VecConvexPoly;
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
         auto sepStyle = createFillStyle;
 
@@ -98,7 +98,7 @@ class BaseSplitBox : Container
         return newDividerShape(newSepWidth, newSepHeight, angle, sepStyle);
     }
 
-    Sprite2d newDividerShape(float w, float h, float angle, GraphicStyle style)
+    Sprite2d newDividerShape(float w, float h, float angle, GStyle style)
     {
         auto shape = theme.rectShape(w, h, angle, style);
         return shape; 

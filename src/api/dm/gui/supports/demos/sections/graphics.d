@@ -7,7 +7,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.pos2.flip : Flip;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import Math = api.math;
 
@@ -47,28 +47,28 @@ class Graphics : Control
 
         import api.dm.kit.sprites2d.shapes.circle : Circle;
 
-        auto circle = new Circle(20, GraphicStyle(1, RGBA.red));
+        auto circle = new Circle(20, GStyle(1, RGBA.red));
         shapeContainer.addCreate(circle);
 
-        auto circleFill = new Circle(20, GraphicStyle(1, RGBA.blue, true, RGBA.blue));
+        auto circleFill = new Circle(20, GStyle(1, RGBA.blue, true, RGBA.blue));
         shapeContainer.addCreate(circleFill);
 
         import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 
-        auto rect = new Rectangle(50, 50, GraphicStyle(1, RGBA.yellow));
+        auto rect = new Rectangle(50, 50, GStyle(1, RGBA.yellow));
         shapeContainer.addCreate(rect);
 
-        auto rectFill = new Rectangle(50, 50, GraphicStyle(1, RGBA.green, true, RGBA.green));
+        auto rectFill = new Rectangle(50, 50, GStyle(1, RGBA.green, true, RGBA.green));
         shapeContainer.addCreate(rectFill);
 
         if (platform.cap.isVector)
         {
             import api.dm.kit.sprites2d.shapes.convex_poly : ConvexPoly;
 
-            auto reg = new ConvexPoly(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
+            auto reg = new ConvexPoly(50, 50, GStyle(1, RGBA.lightcoral), 10);
             shapeContainer.addCreate(reg);
 
-            auto regFill = new ConvexPoly(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA
+            auto regFill = new ConvexPoly(50, 50, GStyle(1, RGBA.lightsteelblue, true, RGBA
                     .lightsteelblue), 10);
             shapeContainer.addCreate(regFill);
         }
@@ -162,7 +162,7 @@ class Graphics : Control
         {
             import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
 
-            auto style = GraphicStyle(3.0, RGBA.red, true, RGBA.green);
+            auto style = GStyle(3.0, RGBA.red, true, RGBA.green);
 
             enum size = 50;
 

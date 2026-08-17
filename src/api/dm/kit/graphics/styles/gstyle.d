@@ -1,11 +1,11 @@
-module api.dm.kit.graphics.styles.graphic_style;
+module api.dm.kit.graphics.styles.gstyle;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
  * Authors: initkfs
  */
-struct GraphicStyle
+struct GStyle
 {
     float lineWidth = 1;
     RGBA lineColor = RGBA.lime;
@@ -18,9 +18,9 @@ struct GraphicStyle
 
     static pure @safe
     {
-        GraphicStyle simple() => GraphicStyle(1, RGBA.lightcyan, false, RGBA.transparent);
-        GraphicStyle simpleFill() => GraphicStyle(1, RGBA.lightcyan, true, RGBA.red);
-        GraphicStyle transparentFill() => GraphicStyle(1, RGBA.transparent, true, RGBA.transparent);
+        GStyle simple() => GStyle(1, RGBA.lightcyan, false, RGBA.transparent);
+        GStyle simpleFill() => GStyle(1, RGBA.lightcyan, true, RGBA.red);
+        GStyle transparentFill() => GStyle(1, RGBA.transparent, true, RGBA.transparent);
     }
 
     void color(RGBA color)
@@ -29,14 +29,14 @@ struct GraphicStyle
         lineColor = color;
     }
 
-    GraphicStyle copyOfColor(RGBA color)
+    GStyle copyOfColor(RGBA color)
     {
         auto copy = this;
         copy.lineColor = color;
         return copy;
     }
 
-    GraphicStyle copyOfFillColor(RGBA color)
+    GStyle copyOfFillColor(RGBA color)
     {
         auto copy = this;
         copy.fillColor = color;

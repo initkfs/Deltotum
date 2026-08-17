@@ -2,7 +2,7 @@ module api.dm.gui.controls.labels.badges.badge;
 
 import api.dm.gui.controls.labels.label : Label;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.pos2.position : Pos;
 
 import std.conv : to;
@@ -56,9 +56,9 @@ class Badge : Label
         }
     }
 
-    override protected GraphicStyle createBackgroundStyle() => createSelectStyle;
+    override protected GStyle createBackgroundStyle() => createSelectStyle;
 
-    override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+    override protected Sprite2d createShape(float w, float h, float angle, GStyle style)
     {
         import Math = api.math;
 

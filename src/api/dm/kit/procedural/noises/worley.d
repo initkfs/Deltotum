@@ -2,7 +2,7 @@ module api.dm.kit.procedural.noises.worley;
 
 import api.dm.kit.procedural.noises.sample_noise : SampleNoise;
 import api.dm.kit.procedural.noises.voronoi: VoronoiDistance, VoronoiCombination;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;

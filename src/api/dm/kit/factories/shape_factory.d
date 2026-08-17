@@ -6,21 +6,21 @@ import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.sprites2d.shapes.circle : Circle;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 /**
  * Authors: initkfs
  */
 class ShapeFactory : GraphicComponent
 {
-    Circle circle(float radius, GraphicStyle style)
+    Circle circle(float radius, GStyle style)
     {
         auto shape = new Circle(radius, style);
         buildInitCreate(shape);
         return shape;
     }
 
-    Rectangle rectangle(float width, float height, GraphicStyle style)
+    Rectangle rectangle(float width, float height, GStyle style)
     {
         auto shape = new Rectangle(width, height, style);
         buildInitCreate(shape);

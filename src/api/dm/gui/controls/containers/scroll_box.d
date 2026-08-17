@@ -175,16 +175,16 @@ class ScrollBox : Container
 
     HScroll newHScroll()
     {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
         return new class HScroll
         {
-            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            override protected Sprite2d createShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }
 
-            override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+            override Sprite2d newThumbShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }
@@ -193,16 +193,16 @@ class ScrollBox : Container
 
     VScroll newVScroll()
     {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
         return new class VScroll
         {
-            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            override protected Sprite2d createShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }
 
-            override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+            override Sprite2d newThumbShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(h, w, angle, style);
             }

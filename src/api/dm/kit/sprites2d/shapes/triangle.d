@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.shapes.triangle;
 
 import api.dm.kit.sprites2d.shapes.shape2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.shapes.circle : Circle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.vec2: Vec2f;
@@ -11,14 +11,14 @@ import api.math.geom2.vec2: Vec2f;
  */
 class Triangle : Shape2d
 {
-    this(float width, float height, GraphicStyle style)
+    this(float width, float height, GStyle style)
     {
         super(width, height, style);
     }
 
     this(float width, float height)
     {
-        super(width, height, GraphicStyle.simple);
+        super(width, height, GStyle.simple);
     }
 
     override void drawContent()

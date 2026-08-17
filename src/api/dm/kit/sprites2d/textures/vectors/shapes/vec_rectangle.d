@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_rectangle;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import Math = api.dm.math;
 
@@ -10,7 +10,7 @@ import Math = api.dm.math;
  */
 class VecRectangle : VecShape
 {
-    this(float width = 50, float height = 50, GraphicStyle style = GraphicStyle.simple) 
+    this(float width = 50, float height = 50, GStyle style = GStyle.simple) 
     {
         super(width, height, style);
     }

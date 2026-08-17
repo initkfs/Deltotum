@@ -3,7 +3,7 @@ module api.dm.gui.controls.meters.scrolls.base_radial_mono_scroll;
 import api.dm.gui.controls.meters.scrolls.base_labeled_scroll : BaseLabeledScroll;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.meters.scrolls.base_scroll : BaseScroll;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import Math = api.math;
 

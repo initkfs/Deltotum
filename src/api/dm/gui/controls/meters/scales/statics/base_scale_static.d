@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.scales.base_drawable_scale : BaseDrawableScale;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.rect2 : Rect2f;
 import api.dm.gui.controls.texts.text : Text;
@@ -139,7 +139,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         }
     }
 
-    Sprite2d newMinorTickProtoShape(float width, float height, float angle, GraphicStyle style)
+    Sprite2d newMinorTickProtoShape(float width, float height, float angle, GStyle style)
     {
         auto shapeProto = theme.rectShape(width, height, angle, style);
         buildInitCreate(shapeProto);
@@ -169,7 +169,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         return shapeProto;
     }
 
-    Sprite2d newMajorTickProtoShape(float width, float height, float angle, GraphicStyle style)
+    Sprite2d newMajorTickProtoShape(float width, float height, float angle, GStyle style)
     {
         auto shape = newMinorTickProtoShape(width, height, angle, style);
         shape.isResizable = false;

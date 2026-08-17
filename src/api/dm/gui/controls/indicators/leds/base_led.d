@@ -2,7 +2,7 @@ module api.dm.gui.controls.indicators.leds.base_led;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -37,7 +37,7 @@ class BaseLed : Control
         super.loadTheme;
     }
 
-    abstract Sprite2d newLayerShape(GraphicStyle style, float layerInnerPadding, float blurSize);
+    abstract Sprite2d newLayerShape(GStyle style, float layerInnerPadding, float blurSize);
     abstract Sprite2d createLedLayer();
 
     protected void setColorProcessing(T)(T shape, float blurSize)
@@ -94,35 +94,35 @@ class BaseLed : Control
     float middleLayerOpacity() => 0.8;
     float topLayerOpacity() => 0.2;
 
-    protected GraphicStyle layersStyle()
+    protected GStyle layersStyle()
     {
         auto style = createStyle;
         style.isFill = true;
         return style;
     }
 
-    GraphicStyle bottomLayerStyle(HSLA color)
+    GStyle bottomLayerStyle(HSLA color)
     {
         auto style = layersStyle;
         style.color = bottomColor(color).toRGBA;
         return style;
     }
 
-    GraphicStyle middleLayerStyle(HSLA color)
+    GStyle middleLayerStyle(HSLA color)
     {
         auto style = layersStyle;
         style.color = middleColor(color).toRGBA;
         return style;
     }
 
-    GraphicStyle topLayerStyle(HSLA color)
+    GStyle topLayerStyle(HSLA color)
     {
         auto style = layersStyle;
         style.color = topColor(color).toRGBA;
         return style;
     }
 
-    protected Sprite2d createLayer(GraphicStyle style, float layerSize, float blurSize)
+    protected Sprite2d createLayer(GStyle style, float layerSize, float blurSize)
     {
         auto shape = newLayerShape(style, layerSize, blurSize);
         if (!shape.isBuilt)

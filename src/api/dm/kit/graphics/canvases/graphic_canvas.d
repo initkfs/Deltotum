@@ -4,7 +4,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.rect2: Rect2f;
 
-struct GStop
+struct GrStop
 {
     float offset = 0;
     RGBA color;
@@ -22,9 +22,9 @@ struct GStop
     }
 }
 
-struct GStopBuilder
+struct GrStops
 {
-    GStop[] stops;
+    GrStop[] stops;
 
     Vec2f start;
     float innerRadius = 0;
@@ -41,15 +41,15 @@ struct GStopBuilder
     }
 
     //https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient/addColorStop
-    ref GStopBuilder addColorStop(float offset, string colorHex)
+    ref GrStops addColorStop(float offset, string colorHex)
     {
-        stops ~= GStop(offset, colorHex);
+        stops ~= GrStop(offset, colorHex);
         return this;
     }
 
-    ref GStopBuilder addColorStop(float offset, RGBA color)
+    ref GrStops addColorStop(float offset, RGBA color)
     {
-        stops ~= GStop(offset, color);
+        stops ~= GrStop(offset, color);
         return this;
     }
 }
@@ -78,23 +78,23 @@ interface GraphicCanvas
     alias strokeStyle = color;
 
     //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient
-    final GStopBuilder createLinearGradient(float x0, float y0, float x1, float y1)
+    final GrStops createLinearGradient(float x0, float y0, float x1, float y1)
     {
-        return GStopBuilder(2, Vec2f(x0, y0), 0, Vec2f(x1, y1), 0);
+        return GrStops(2, Vec2f(x0, y0), 0, Vec2f(x1, y1), 0);
     }
 
-    final void linearGradient(GStopBuilder builder, void delegate() onPattern)
+    final void linearGradient(GrStops builder, void delegate() onPattern)
     {
         linearGradient(builder.start, builder.end, builder.stops, onPattern);
     }
 
     //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createRadialGradient
-    final GStopBuilder createRadialGradient(float innerCenterX, float innerCenterY, float innerRadius, float outerCenterX, float outerCenterY, float outerRadius)
+    final GrStops createRadialGradient(float innerCenterX, float innerCenterY, float innerRadius, float outerCenterX, float outerCenterY, float outerRadius)
     {
-        return GStopBuilder(2, Vec2f(innerCenterX, innerCenterY), innerRadius, Vec2f(outerCenterX, outerCenterY), outerRadius);
+        return GrStops(2, Vec2f(innerCenterX, innerCenterY), innerRadius, Vec2f(outerCenterX, outerCenterY), outerRadius);
     }
 
-    final void radialGradient(GStopBuilder builder, void delegate() onPattern)
+    final void radialGradient(GrStops builder, void delegate() onPattern)
     {
         radialGradient(builder.start, builder.innerRadius, builder.end, builder.outerRadius, builder.stops, onPattern);
     }
@@ -162,9 +162,9 @@ interface GraphicCanvas
 
     void bezierCurveTo(float x1, float y1, float x2, float y2, float x3, float y3);
 
-    void linearGradient(float x0, float y0, float x1, float y1, GStop[] stopPoints, void delegate() onPattern);
-    void linearGradient(Vec2f start, Vec2f end, GStop[] stopPoints, void delegate() onPattern);
-    void radialGradient(Vec2f innerCenter, float innerRadius, Vec2f outerCenter, float outerRadius, GStop[] stopPoints, void delegate() onPattern);
+    void linearGradient(float x0, float y0, float x1, float y1, GrStop[] stopPoints, void delegate() onPattern);
+    void linearGradient(Vec2f start, Vec2f end, GrStop[] stopPoints, void delegate() onPattern);
+    void radialGradient(Vec2f innerCenter, float innerRadius, Vec2f outerCenter, float outerRadius, GrStop[] stopPoints, void delegate() onPattern);
 
     void text(string text);
     void strokeText(string text, float x, float y);

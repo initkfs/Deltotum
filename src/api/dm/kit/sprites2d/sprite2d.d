@@ -15,7 +15,7 @@ import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.events.focus.focus_event : FocusEvent;
 import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.events.dnd.dnd_event : DNDEvent;
 import api.dm.kit.scenes.scene2d : Scene2d;
@@ -2246,7 +2246,7 @@ class Sprite2d : EventKitTarget
 
     void drawBounds(RGBA color)
     {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         if (width == 0 || height == 0)
@@ -2257,7 +2257,7 @@ class Sprite2d : EventKitTarget
         graphic.color(color);
 
         const b = boundsRect;
-        //graphic.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
+        //graphic.rect(b.x, b.y, b.width, b.height, GStyle(1, RGBA.red));
         const float leftTopX = b.x, leftTopY = b.y;
 
         const float rightTopX = leftTopX + b.width, rightTopY = leftTopY;
@@ -2276,7 +2276,7 @@ class Sprite2d : EventKitTarget
 
     void drawCenterBounds()
     {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         if (width == 0 || height == 0)
@@ -2297,7 +2297,7 @@ class Sprite2d : EventKitTarget
 
     void drawClip()
     {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         if (clip.width == 0 || clip.height == 0)

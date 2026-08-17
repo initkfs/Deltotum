@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape;
 
 import api.dm.kit.sprites2d.textures.vectors.vec_tex : VecTex;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.canvases.vector_canvas : VectorCanvas;
 
@@ -13,7 +13,7 @@ class VecShape : VecTex
     bool isInnerStroke;
 
     //TODO remove from shape
-    GraphicStyle style;
+    GStyle style;
 
     float shapeAngleDeg = 0;
 
@@ -23,7 +23,7 @@ class VecShape : VecTex
     float translateX = 0;
     float translateY = 0;
 
-    this(float width, float height, GraphicStyle style = GraphicStyle.simple)
+    this(float width, float height, GStyle style = GStyle.simple)
     {
         super(width, height);
         this.style = style;

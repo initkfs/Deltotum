@@ -3,7 +3,7 @@ module api.dm.kit.sprites2d.textures.vectors.vec_tex_mut;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.canvases.vector_canvas : VectorCanvas;
 
 import api.dm.com.graphics.com_surface : ComSurface;
@@ -22,7 +22,7 @@ import api.dm.lib.cairo;
  */
 class VecTexMut : Tex2d
 {
-    GraphicStyle style;
+    GStyle style;
     //TODO moveTo + lineTo + stroke, extract class?
     Vec2f center;
     Vec2f prevPoint;

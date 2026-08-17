@@ -9,7 +9,7 @@ import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f, Vec2i;
 import math = api.dm.math;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
 import Math = api.dm.math;
@@ -811,12 +811,12 @@ class Graphic : LoggableUnit
         }
     }
 
-    void rect(Vec2f pos, float width, float height, GraphicStyle style = GraphicStyle.simple)
+    void rect(Vec2f pos, float width, float height, GStyle style = GStyle.simple)
     {
         rect(pos.x, pos.y, width, height, style);
     }
 
-    void rect(float x, float y, float width, float height, GraphicStyle style = GraphicStyle
+    void rect(float x, float y, float width, float height, GStyle style = GStyle
             .simple)
     {
         if (style.isFill && style.lineWidth == 0)

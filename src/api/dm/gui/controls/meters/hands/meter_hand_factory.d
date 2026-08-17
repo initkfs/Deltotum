@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.hands.meter_hand_factory;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
@@ -22,7 +22,7 @@ private
 
         Vec2f startPoint;
 
-        this(float textureWidth, float textureHeight, float handWidth, float handHeight, float coneWidth = 0, float coneHeight = 0, GraphicStyle style)
+        this(float textureWidth, float textureHeight, float handWidth, float handHeight, float coneWidth = 0, float coneHeight = 0, GStyle style)
         {
             super(textureWidth, textureHeight, style);
 
@@ -92,7 +92,7 @@ private
 class MeterHandFactory : Control
 {
     //TODO rename to createHalfHand (from center)
-    Sprite2d createHand(float handWidth = 0, float handHeight = 0, GraphicStyle handStyle = GraphicStyle
+    Sprite2d createHand(float handWidth = 0, float handHeight = 0, GStyle handStyle = GStyle
             .simpleFill, float coneWidth = 0, float coneHeight = 0)
     {
         assert(handWidth > 0);

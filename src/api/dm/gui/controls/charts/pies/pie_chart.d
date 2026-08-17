@@ -125,9 +125,9 @@ class LabelInfo : Container
 
         enablePadding;
 
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
-        colorLabel = theme.circleShape(5, GraphicStyle(1, RGBA.white, true, RGBA.white));
+        colorLabel = theme.circleShape(5, GStyle(1, RGBA.white, true, RGBA.white));
         addCreate(colorLabel);
 
         if (auto colorTexture = cast(Tex2d) colorLabel)

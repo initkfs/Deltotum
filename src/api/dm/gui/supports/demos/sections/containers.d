@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.pos2.insets : Insets;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -307,7 +307,7 @@ class Containers : Control
         box.resize(100, 100);
         root.addCreate(box);
 
-        auto content = theme.circleShape(200, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellowgreen));
+        auto content = theme.circleShape(200, GStyle(1, RGBA.lightblue, true, RGBA.yellowgreen));
         box.setContent(content);
     }
 
@@ -324,13 +324,13 @@ class Containers : Control
         const float rectW = 60;
         const float rectH = 80;
 
-        auto content1 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+        auto content1 = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.greenyellow, true, RGBA
                 .greenyellow));
         buildInitCreate(content1);
-        auto content2 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+        auto content2 = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.salmon, true, RGBA
                 .salmon));
         buildInitCreate(content2);
-        auto content3 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+        auto content3 = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.salmon, true, RGBA
                 .salmon));
         buildInitCreate(content3);
 
@@ -339,13 +339,13 @@ class Containers : Control
         auto split2 = new HSplitBox;
         root.addCreate(split2);
 
-        auto content11 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+        auto content11 = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.greenyellow, true, RGBA
                 .greenyellow));
         buildInitCreate(content11);
-        auto content22 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+        auto content22 = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.salmon, true, RGBA
                 .salmon));
         buildInitCreate(content22);
-        auto content33 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.crimson, true, RGBA
+        auto content33 = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.crimson, true, RGBA
                 .crimson));
         buildInitCreate(content33);
 
@@ -356,10 +356,10 @@ class Containers : Control
         auto splitLeft = new VSplitBox;
         //splitLeft.boundsColor = RGBA.blueviolet;
         buildInitCreate(splitLeft);
-        auto contentLeftTop = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+        auto contentLeftTop = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.greenyellow, true, RGBA
                 .greenyellow));
         buildInitCreate(contentLeftTop);
-        auto contentLeftBottom = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+        auto contentLeftBottom = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.salmon, true, RGBA
                 .salmon));
         buildInitCreate(contentLeftBottom);
 
@@ -367,10 +367,10 @@ class Containers : Control
 
         auto splitCenter = new VSplitBox;
         buildInitCreate(splitCenter);
-        auto contentCenterTop = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+        auto contentCenterTop = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.greenyellow, true, RGBA
                 .greenyellow));
         buildInitCreate(contentCenterTop);
-        auto contentCenterBottom = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+        auto contentCenterBottom = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.salmon, true, RGBA
                 .salmon));
         buildInitCreate(contentCenterBottom);
 
@@ -380,10 +380,10 @@ class Containers : Control
 
         auto splitRight = new VSplitBox;
         buildInitCreate(splitRight);
-        auto contentRightTop = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+        auto contentRightTop = theme.rectShape(rectW, rectH, 0, GStyle(1, RGBA.greenyellow, true, RGBA
                 .greenyellow));
         buildInitCreate(contentRightTop);
-        auto contentRightBottom = theme.rectShape(rectW, rectH, 0,GraphicStyle(1, RGBA.salmon, true, RGBA
+        auto contentRightBottom = theme.rectShape(rectW, rectH, 0,GStyle(1, RGBA.salmon, true, RGBA
                 .salmon));
         buildInitCreate(contentRightBottom);
 

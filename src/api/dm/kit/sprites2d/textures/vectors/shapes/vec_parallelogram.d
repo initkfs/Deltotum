@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_parallelogram;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.parallelogram2 : Parallelogram2f;
 import api.math.geom2.vec2 : Vec2f;
@@ -19,7 +19,7 @@ class VecParallelogram : VecShape
         Parallelogram2f shape;
     }
 
-    this(float width, float height, float angleDeg, bool isInverted, GraphicStyle style)
+    this(float width, float height, float angleDeg, bool isInverted, GStyle style)
     {
         super(width, height, style);
         this.angleDeg = angleDeg;

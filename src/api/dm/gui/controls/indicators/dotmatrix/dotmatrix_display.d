@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;

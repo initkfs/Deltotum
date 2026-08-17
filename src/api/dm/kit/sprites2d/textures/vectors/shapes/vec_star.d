@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_star;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import Math = api.dm.math;
 
@@ -16,7 +16,7 @@ class VecStar : VecShape
         float _innerRadius = 0; 
     }
 
-    this(float size, GraphicStyle style, size_t spikeCount = 3, float innerRadius = 5)
+    this(float size, GStyle style, size_t spikeCount = 3, float innerRadius = 5)
     {
         super(size, size, style);
         assert(innerRadius <= size / 2);

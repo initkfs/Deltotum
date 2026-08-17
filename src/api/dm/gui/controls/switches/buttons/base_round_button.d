@@ -2,7 +2,7 @@ module api.dm.gui.controls.switches.buttons.base_round_button;
 
 import api.dm.gui.controls.switches.buttons.base_button : BaseButton;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.control : Control;
 

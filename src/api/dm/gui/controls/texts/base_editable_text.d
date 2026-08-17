@@ -569,9 +569,9 @@ class BaseEditableText : BaseMonoText
             const cursorColor = theme.colorAccent;
 
             import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+            import api.dm.kit.graphics.styles.gstyle : GStyle;
 
-            cursor = new Rectangle(2, 20, GraphicStyle(1, cursorColor, true, cursorColor));
+            cursor = new Rectangle(2, 20, GStyle(1, cursorColor, true, cursorColor));
             addCreate(cursor);
             cursor.isLayoutManaged = false;
             cursor.isVisible = false;

@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.radial_min_max_value_meter;
 
 import api.dm.gui.controls.meters.min_max_meter : MinMaxMeter;
-import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle: GStyle;
 import api.math.geom2.rect2: Rect2f;
 
 /**
@@ -29,7 +29,7 @@ abstract class RadialMinMaxMeter(ValueType) : MinMaxMeter!ValueType
         this.maxAngleDeg = maxAngleDeg;
     }
 
-    GraphicStyle createHandStyle(){
+    GStyle createHandStyle(){
         auto handStyle = createFillStyle;
         if (!handStyle.isPreset)
         {

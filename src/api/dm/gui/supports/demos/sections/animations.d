@@ -6,7 +6,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.dm.math;
 import api.math.geom2.vec2 : Vec2f;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import api.dm.kit.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 import api.dm.kit.sprites2d.tweens.targets.motions2.linear_motion : LinearMotion;
@@ -64,10 +64,10 @@ class Animations : Control
         }
 
         import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        auto rect = new Rectangle(50, 50, GraphicStyle(1.0, RGBA.lightcoral, true, RGBA.lightcoral));
+        auto rect = new Rectangle(50, 50, GStyle(1.0, RGBA.lightcoral, true, RGBA.lightcoral));
         const startPos = Vec2f(200, 200);
         const endPos = Vec2f(450, 200);
         rect.x = startPos.x;

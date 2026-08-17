@@ -9,7 +9,7 @@ import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import Math = api.dm.math;
 
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;

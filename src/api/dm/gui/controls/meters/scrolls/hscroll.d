@@ -3,7 +3,7 @@ module api.dm.gui.controls.meters.scrolls.hscroll;
 import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll: BaseRegularMonoScroll;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 /**
  * Authors: initkfs
@@ -31,7 +31,7 @@ class HScroll : BaseRegularMonoScroll
         }
     }
 
-    override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+    override Sprite2d newThumbShape(float w, float h, float angle, GStyle style)
     {
         return theme.shape(w, h, angle, style);
     }

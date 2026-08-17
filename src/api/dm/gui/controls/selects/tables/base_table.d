@@ -1,6 +1,6 @@
 module api.dm.gui.controls.selects.tables.base_table;
 
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.selects.one_base_selector : OneBaseSelector;
@@ -60,9 +60,9 @@ class TableHeader : HSplitBox
         }
     }
 
-    import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+    import api.dm.kit.graphics.styles.gstyle : GStyle;
 
-    override Sprite2d newDividerShape(float w, float h, float angle, GraphicStyle style)
+    override Sprite2d newDividerShape(float w, float h, float angle, GStyle style)
     {
         import Math = api.math;
         auto newW = Math.roundEven(w * 5);
@@ -72,7 +72,7 @@ class TableHeader : HSplitBox
         return shape;
     }
 
-    override Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
+    override Sprite2d newBackground(float w, float h, float angle, GStyle style)
     {
         return theme.rectShape(w, h, angle, style);
     }
@@ -250,7 +250,7 @@ class BaseTable(T, TCol:
         return width / columnCount;
     }
 
-    override Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
+    override Sprite2d newBackground(float w, float h, float angle, GStyle style)
     {
         return theme.rectShape(w, h, angle, style);
     }
@@ -272,7 +272,7 @@ class BaseTable(T, TCol:
     {
         return new class Container
         {
-            override Sprite2d newBackground(float nw, float nh, float angle, GraphicStyle style)
+            override Sprite2d newBackground(float nw, float nh, float angle, GStyle style)
             {
                 return theme.rectShape(nw, nh, angle, style);
             }
@@ -333,16 +333,16 @@ class BaseTable(T, TCol:
 
     VScroll newVScroll()
     {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
         return new class VScroll
         {
-            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            override protected Sprite2d createShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }
 
-            override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+            override Sprite2d newThumbShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(h, w, angle, style);
             }
@@ -351,16 +351,16 @@ class BaseTable(T, TCol:
 
     HScroll newHScroll()
     {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
         return new class HScroll
         {
-            override protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            override protected Sprite2d createShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }
 
-            override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+            override Sprite2d newThumbShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }

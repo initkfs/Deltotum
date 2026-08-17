@@ -2,7 +2,7 @@ module api.dm.gui.controls.indicators.segmentbars.radial_segmentbar;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
 
@@ -18,8 +18,8 @@ class RadialSegmentBar : Control
         Sprite2d[] _segmentsOn;
     }
 
-    GraphicStyle segmentStyleOn;
-    GraphicStyle segmentStyleOff;
+    GStyle segmentStyleOn;
+    GStyle segmentStyleOff;
 
     float diameter = 0;
     float minAngleDeg = 0;
@@ -54,7 +54,7 @@ class RadialSegmentBar : Control
         assert(diameter > 0);
         initSize(diameter, diameter);
 
-        if (segmentStyleOn == GraphicStyle.init)
+        if (segmentStyleOn == GStyle.init)
         {
             segmentStyleOn = createFillStyle;
             if (!segmentStyleOn.isPreset)

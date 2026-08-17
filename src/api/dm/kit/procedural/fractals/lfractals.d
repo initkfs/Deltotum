@@ -2,7 +2,7 @@ module api.dm.kit.procedural.fractals.lfractals;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.procedural.lsystems.lsystem : LSystemData;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 /**
  * Authors: initkfs

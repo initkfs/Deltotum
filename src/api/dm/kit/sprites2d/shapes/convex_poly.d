@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.shapes.convex_poly;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.line2 : Line2f;
 
 /**
@@ -14,7 +14,7 @@ class ConvexPoly : Shape2d
     //TODO other sides  
     Line2f topClip;
 
-    this(float width, float height, GraphicStyle style, float cornerPadding)
+    this(float width, float height, GStyle style, float cornerPadding)
     {
         super(width, height, style);
         this.cornerPadding = cornerPadding;

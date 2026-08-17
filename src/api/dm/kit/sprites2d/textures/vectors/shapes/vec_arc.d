@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_arc;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import Math = api.dm.math;
 
@@ -16,12 +16,12 @@ class VecArc : VecShape
     float fromAngleRad = 0;
     float toAngleRad = 2 * Math.PI;
 
-    this(float radius, GraphicStyle style)
+    this(float radius, GStyle style)
     {
         this(radius, style, radius * 2, radius * 2);
     }
 
-    this(float radius, GraphicStyle style, float width, float height)
+    this(float radius, GStyle style, float width, float height)
     {
         super(width, height, style);
         this.radius = radius;

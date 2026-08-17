@@ -3,7 +3,7 @@ module api.dm.gui.controls.selects.color_pickers.dialogs.color_picker_dialog;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
@@ -268,13 +268,13 @@ class ColorPickerDialog : Control
                 {
                     auto ctx = canvas;
 
-                    import api.dm.kit.graphics.canvases.graphic_canvas : GStop;
+                    import api.dm.kit.graphics.canvases.graphic_canvas : GrStop;
                     import api.math.geom2.vec2 : Vec2f;
 
                     enum pointsCount = 10;
                     float offsetDelta = 1.0 / pointsCount;
 
-                    GStop[pointsCount] points;
+                    GrStop[pointsCount] points;
 
                     RGBA currentColor = onHueStep(0);
                     float currentOffset = 0;
@@ -284,7 +284,7 @@ class ColorPickerDialog : Control
 
                     foreach (pi, ref p; points)
                     {
-                        p = GStop(currentOffset, currentColor);
+                        p = GrStop(currentOffset, currentColor);
                         currentOffset += offsetDelta;
                         currentColor = onHueStep(hueDelta);
                     }

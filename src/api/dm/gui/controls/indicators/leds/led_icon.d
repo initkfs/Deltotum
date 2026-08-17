@@ -3,7 +3,7 @@ module api.dm.gui.controls.indicators.leds.led_icon;
 import api.dm.gui.controls.indicators.leds.base_led : BaseLed;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -40,7 +40,7 @@ class LedIcon : BaseLed
         height = theme.iconSize;
     }
 
-    override protected Sprite2d newLayerShape(GraphicStyle style, float iconSize, float blurSize)
+    override protected Sprite2d newLayerShape(GStyle style, float iconSize, float blurSize)
     {
         //TODO load from surface
         RGBA[][] buff = createIconBuffer(iconName, colorHue);

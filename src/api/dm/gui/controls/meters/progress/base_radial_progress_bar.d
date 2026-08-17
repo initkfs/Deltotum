@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.progress.base_radial_progress_bar;
 
 import api.dm.gui.controls.meters.progress.base_labeled_progress_bar : BaseLabeledProgressBar;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.gui.controls.indicators.segmentbars.radial_segmentbar : RadialSegmentBar;
 
 import std.conv : to, text;

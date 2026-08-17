@@ -6,7 +6,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 import api.math.pos2.alignment : Alignment;
@@ -42,7 +42,7 @@ class VScroll : BaseRegularMonoScroll
         }
     }
 
-    override Sprite2d newThumbShape(float w, float h, float angle, GraphicStyle style)
+    override Sprite2d newThumbShape(float w, float h, float angle, GStyle style)
     {
         return theme.shape(h, w, angle, style);
     }

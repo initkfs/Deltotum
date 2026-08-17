@@ -108,9 +108,9 @@ class TimePicker : OneBaseDropDownSelector!(TimePickerDialog, TimeOfDay)
                 super(newText);
             }
 
-            import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
+            import api.dm.kit.graphics.styles.gstyle: GStyle;
 
-            override Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
+            override Sprite2d newBackground(float w, float h, float angle, GStyle style)
             {
                 style.isFill = false;
                 style.lineColor = theme.colorAccent;

@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.shapes.paths.path;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.vec2 : Vec2f;
 
 /**
@@ -12,7 +12,7 @@ class Path : Shape2d
     Vec2f[] points;
     bool isDrawPoints = false;
 
-    this(float canvasWidth, float canvasHeight, GraphicStyle style)
+    this(float canvasWidth, float canvasHeight, GStyle style)
     {
         super(canvasWidth, canvasHeight, style);
         debug

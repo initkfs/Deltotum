@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 /**
  * Authors: initkfs
@@ -13,7 +13,7 @@ class VecConvexPoly : VecShape
         float cornerPadding = 0;
     }
 
-    this(float width, float height, GraphicStyle style = GraphicStyle.simpleFill, float cornerPadding = 0)
+    this(float width, float height, GStyle style = GStyle.simpleFill, float cornerPadding = 0)
     {
         super(width, height, style);
         this.cornerPadding = cornerPadding;

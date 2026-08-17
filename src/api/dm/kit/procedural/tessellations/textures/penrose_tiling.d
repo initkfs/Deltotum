@@ -1,7 +1,7 @@
 module api.dm.kit.procedural.tessellations.textures.penrose_tiling;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
@@ -21,7 +21,7 @@ class PenroseTiling : VecShape
     */
     this(float width = 100, float height = 100)
     {
-        super(width, height, GraphicStyle.simple);
+        super(width, height, GStyle.simple);
     }
 
     private enum float sqrt5Value = Math.sqrt(5.0);

@@ -5,7 +5,7 @@ import api.dm.gui.controls.control : Control;
 import api.math.geom2.rect2 : Rect2f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.tweens.pause_tween : PauseTween;
 import api.math.random : Random, rands;
 import api.dm.gui.controls.containers.hbox : HBox;

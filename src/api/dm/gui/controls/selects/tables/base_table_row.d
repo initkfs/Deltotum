@@ -195,7 +195,7 @@ class BaseTableRow(TItem, TCol:
                 super(0);
             }
 
-            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+            import api.dm.kit.graphics.styles.gstyle : GStyle;
 
             override Sprite2d newBackground()
             {
@@ -208,7 +208,7 @@ class BaseTableRow(TItem, TCol:
                 return super.newBackground(width, height, angle, style);
             }
 
-            override Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+            override Sprite2d createShape(float w, float h, float angle, GStyle style)
             {
                 return theme.rectShape(w, h, angle, style);
             }

@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.shapes.parallelogram;
 
 import api.dm.kit.sprites2d.shapes.shape2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.shapes.circle : Circle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.parallelogram2 : Parallelogram2f;
@@ -18,7 +18,7 @@ class Parallelogram : Shape2d
         Parallelogram2f shape;
     }
 
-    this(float width, float height, float angleDeg, bool isInverted, GraphicStyle style)
+    this(float width, float height, float angleDeg, bool isInverted, GStyle style)
     {
         super(width, height, style);
         this.angleDeg = angleDeg;

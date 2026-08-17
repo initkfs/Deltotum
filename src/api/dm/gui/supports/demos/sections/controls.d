@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
@@ -451,11 +451,11 @@ class Controls : Control
         spinner1.isCreateIncDec = true;
         choiceHRoot1.addCreate(spinner1);
 
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         const imageSize = 45;
-        auto style = GraphicStyle.transparentFill;
+        auto style = GStyle.transparentFill;
 
         import PlaneCurves = api.math.geom2.curves.plane_curves;
 

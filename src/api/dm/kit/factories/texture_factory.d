@@ -5,7 +5,7 @@ import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.sprites2d.textures.rgba_tex2d : RgbaTex2d;
 
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 /**
  * Authors: initkfs

@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.shapes.reqular_poly;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.regular_poly2 : RegularPoly2f;
 
 import Math = api.dm.math;
@@ -19,7 +19,7 @@ class RegularPoly : Shape2d
         RegularPoly2f polyDrawer;
     }
 
-    this(float size, GraphicStyle style, size_t sideCount = 6)
+    this(float size, GStyle style, size_t sideCount = 6)
     {
         super(size, size, style);
         this.sideCount = sideCount;

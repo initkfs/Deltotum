@@ -3,7 +3,7 @@ module api.dm.gui.themes.theme;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.com.graphics.com_font : ComFont;
 import api.math.pos2.insets : Insets;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.sprites2d.images.image : Image;
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
@@ -80,7 +80,7 @@ class Theme
 
     @ConfigKey
     float controlCornersBevel = 0;
-    GraphicStyle controlStyle = GraphicStyle.simple;
+    GStyle controlStyle = GStyle.simple;
 
     @ConfigKey
     float controlDefaultWidth = 80;
@@ -195,12 +195,12 @@ class Theme
         return _defaultMediumFont;
     }
 
-    GraphicStyle* newDefaultStyle()
+    GStyle* newDefaultStyle()
     {
-        return new GraphicStyle(lineThickness, colorAccent, false, colorControlBackground);
+        return new GStyle(lineThickness, colorAccent, false, colorControlBackground);
     }
 
-    GraphicStyle defaultStyle(GraphicStyle* ownStyle)
+    GStyle defaultStyle(GStyle* ownStyle)
     {
         if (ownStyle)
         {
@@ -209,29 +209,29 @@ class Theme
         return defaultStyle();
     }
 
-    GraphicStyle defaultStyle()
+    GStyle defaultStyle()
     {
-        GraphicStyle style = GraphicStyle(lineThickness, colorAccent, false, colorControlBackground);
+        GStyle style = GStyle(lineThickness, colorAccent, false, colorControlBackground);
         return style;
     }
 
     //TODO @safe
-    Sprite2d background(float width, float height, float angle, scope GraphicStyle* parentStyle = null)
+    Sprite2d background(float width, float height, float angle, scope GStyle* parentStyle = null)
     {
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
 
-        GraphicStyle backgroundStyle = parentStyle ? *parentStyle : GraphicStyle(
+        GStyle backgroundStyle = parentStyle ? *parentStyle : GStyle(
             lineThickness, colorAccent, true, colorControlBackground);
 
         return shape(width, height, angle, backgroundStyle);
     }
 
-    Sprite2d shape(float width, float height, float angle, GraphicStyle style)
+    Sprite2d shape(float width, float height, float angle, GStyle style)
     {
         return convexPolyShape(width, height, angle, controlCornersBevel, style);
     }
 
-    Sprite2d convexPolyShape(float width, float height, float angle, float cornerBevel, GraphicStyle style)
+    Sprite2d convexPolyShape(float width, float height, float angle, float cornerBevel, GStyle style)
     {
         Sprite2d newShape;
         if (isUseVectorGraphics)
@@ -256,7 +256,7 @@ class Theme
         return newShape;
     }
 
-    Sprite2d rectShape(float width, float height, float angle, GraphicStyle style)
+    Sprite2d rectShape(float width, float height, float angle, GStyle style)
     {
         Sprite2d shape;
         if (isUseVectorGraphics)
@@ -275,9 +275,9 @@ class Theme
         return shape;
     }
 
-    Sprite2d circleShape(GraphicStyle style) => circleShape(roundShapeDiameter, style);
+    Sprite2d circleShape(GStyle style) => circleShape(roundShapeDiameter, style);
 
-    Sprite2d circleShape(float diameter, GraphicStyle style)
+    Sprite2d circleShape(float diameter, GStyle style)
     {
         float radius = diameter / 2;
 
@@ -297,10 +297,10 @@ class Theme
         return shape;
     }
 
-    Sprite2d regularPolyShape(float angle, GraphicStyle style) => regularPolyShape(
+    Sprite2d regularPolyShape(float angle, GStyle style) => regularPolyShape(
         regularPolyDiameter, regularPolySides, angle, style);
 
-    Sprite2d regularPolyShape(float size, size_t sides, float angle, GraphicStyle style)
+    Sprite2d regularPolyShape(float size, size_t sides, float angle, GStyle style)
     {
         Sprite2d shape;
 
@@ -324,7 +324,7 @@ class Theme
         return shape;
     }
 
-    Sprite2d triangleShape(float width, float height, float angleDeg, GraphicStyle style)
+    Sprite2d triangleShape(float width, float height, float angleDeg, GStyle style)
     {
 
         Sprite2d shape;

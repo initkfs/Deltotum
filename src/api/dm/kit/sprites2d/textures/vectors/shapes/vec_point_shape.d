@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_point_shape;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.vec2 : Vec2f;
 
 /**
@@ -19,7 +19,7 @@ class VecPointShape : VecShape
 
     Vec2f[] points;
 
-    this(Vec2f[] points, float width, float height, GraphicStyle style = GraphicStyle.simple, bool isDrawFromCenter = false, bool isClosePath = true)
+    this(Vec2f[] points, float width, float height, GStyle style = GStyle.simple, bool isDrawFromCenter = false, bool isClosePath = true)
     {
         super(width, height, style);
 

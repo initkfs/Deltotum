@@ -4,7 +4,7 @@ import api.dm.gui.controls.meters.min_max_meter : MinMaxMeter;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.textures.vectors.vec_tex : VecTex;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import Math = api.math;
 
@@ -17,7 +17,7 @@ class PlanPositionIndicator : MinMaxMeter!float
 
     float maxDist = 1.0;
 
-    GraphicStyle ringStyle;
+    GStyle ringStyle;
     double fontSize = 10;
 
     bool isShowLabelDist = true;
@@ -34,9 +34,9 @@ class PlanPositionIndicator : MinMaxMeter!float
     {
         super.loadTheme;
 
-        if (ringStyle == GraphicStyle.init)
+        if (ringStyle == GStyle.init)
         {
-            ringStyle = GraphicStyle(1, RGBA.hex("#00ff00"), true, RGBA.hex("#00ff00"));
+            ringStyle = GStyle(1, RGBA.hex("#00ff00"), true, RGBA.hex("#00ff00"));
         }
     }
 

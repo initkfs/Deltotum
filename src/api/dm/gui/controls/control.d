@@ -6,7 +6,7 @@ import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 import api.dm.kit.graphics.styles.default_style;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -60,10 +60,10 @@ class Control : GuiComponent
 
     bool isInitStyleFactory = true;
 
-    GraphicStyle style;
+    GStyle style;
     string styleId;
-    GraphicStyle[string] styles;
-    GraphicStyle delegate(string id) styleFactory;
+    GStyle[string] styles;
+    GStyle delegate(string id) styleFactory;
     bool isStyleUseParent;
     bool isStyleForChild;
     bool isStyleAppendForChild = true;
@@ -668,7 +668,7 @@ class Control : GuiComponent
         }
     }
 
-    Sprite2d newBackground(float w, float h, float angle, GraphicStyle style)
+    Sprite2d newBackground(float w, float h, float angle, GStyle style)
     {
         Sprite2d shape;
         if (auto stylePtr = hasStyle(ControlStyle.background))
@@ -688,18 +688,18 @@ class Control : GuiComponent
         return newBackground(width, height, angle, createBackgroundStyle);
     }
 
-    Sprite2d newHoverEffectShape(float w, float h, float angle, GraphicStyle style)
+    Sprite2d newHoverEffectShape(float w, float h, float angle, GStyle style)
     {
         return createShape(w, h, angle, style);
     }
 
-    Sprite2d newHoverEffect(float w, float h, float angle, GraphicStyle style)
+    Sprite2d newHoverEffect(float w, float h, float angle, GStyle style)
     {
         Sprite2d newHover = newHoverEffectShape(w, h, angle, style);
         return newHover;
     }
 
-    GraphicStyle newHoverStyle()
+    GStyle newHoverStyle()
     {
         if (auto stylePtr = hasStyle(ControlStyle.hoverEffect))
         {
@@ -803,12 +803,12 @@ class Control : GuiComponent
         };
     }
 
-    Sprite2d newActionEffectShape(float w, float h, float angle, GraphicStyle style)
+    Sprite2d newActionEffectShape(float w, float h, float angle, GStyle style)
     {
         return createShape(w, h, angle, style);
     }
 
-    Sprite2d newActionEffect(float w, float h, float angle, GraphicStyle style)
+    Sprite2d newActionEffect(float w, float h, float angle, GStyle style)
     {
         Sprite2d effect = newActionEffectShape(w, h, angle, style);
         return effect;
@@ -818,7 +818,7 @@ class Control : GuiComponent
     {
         assert(theme);
 
-        GraphicStyle newStyle;
+        GStyle newStyle;
         if (auto stylePtr = hasStyle(ControlStyle.actionEffect))
         {
             newStyle = *stylePtr;
@@ -907,7 +907,7 @@ class Control : GuiComponent
 
     Sprite2d newFocusEffect()
     {
-        GraphicStyle focusStyle = createDefaultStyle;
+        GStyle focusStyle = createDefaultStyle;
         if (!focusStyle.isNested && !focusStyle.isDefault)
         {
             focusStyle.lineColor = theme.colorFocus;
@@ -918,12 +918,12 @@ class Control : GuiComponent
         return effect;
     }
 
-    GraphicStyle delegate(string id) newStyleFactory()
+    GStyle delegate(string id) newStyleFactory()
     {
         return (id) {
             assert(theme);
 
-            if (style != GraphicStyle.init)
+            if (style != GStyle.init)
             {
                 return style;
             }
@@ -932,14 +932,14 @@ class Control : GuiComponent
         };
     }
 
-    GraphicStyle createDefaultStyle(string id)
+    GStyle createDefaultStyle(string id)
     {
         if (auto stylePtr = hasStyle(id))
         {
             return *stylePtr;
         }
 
-        GraphicStyle newStyle = createDefaultStyle;
+        GStyle newStyle = createDefaultStyle;
 
         switch (id) with (DefaultStyle)
         {
@@ -967,13 +967,13 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    GraphicStyle createDefaultStyle()
+    GStyle createDefaultStyle()
     {
-        return GraphicStyle(theme.lineThickness, theme.colorAccent, isBackground, theme
+        return GStyle(theme.lineThickness, theme.colorAccent, isBackground, theme
                 .colorControlBackground);
     }
 
-    protected GraphicStyle createStyle()
+    protected GStyle createStyle()
     {
         if (styleFactory)
         {
@@ -983,7 +983,7 @@ class Control : GuiComponent
         return createDefaultStyle(styleId);
     }
 
-    protected GraphicStyle createFillStyle(RGBA fillColor = RGBA.init)
+    protected GStyle createFillStyle(RGBA fillColor = RGBA.init)
     {
         assert(styleFactory);
 
@@ -996,7 +996,7 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    protected GraphicStyle createSelectStyle(RGBA fillColor = RGBA.init)
+    protected GStyle createSelectStyle(RGBA fillColor = RGBA.init)
     {
         auto newStyle = createStyle;
         if (!newStyle.isPreset)
@@ -1007,7 +1007,7 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    protected GraphicStyle createBackgroundStyle()
+    protected GStyle createBackgroundStyle()
     {
         auto newStyle = createStyle;
 
@@ -1027,7 +1027,7 @@ class Control : GuiComponent
     //     return createShape(w, h, angle, createStyle);
     // }
 
-    protected Sprite2d createShape(float w, float h, float angle, GraphicStyle style)
+    protected Sprite2d createShape(float w, float h, float angle, GStyle style)
     {
         //TODO return theme.shape
         return theme.background(w, h, angle, &style);
@@ -1224,14 +1224,14 @@ class Control : GuiComponent
         }
 
         import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
         auto iconSize = theme.fontIconsSize;
 
-        auto placeholder = new Rectangle(iconSize, iconSize, GraphicStyle(1, RGBA.red, true, RGBA
+        auto placeholder = new Rectangle(iconSize, iconSize, GStyle(1, RGBA.red, true, RGBA
                 .red));
         return placeholder;
     }
@@ -1318,7 +1318,7 @@ class Control : GuiComponent
                 }
             }
 
-            if (control.style == GraphicStyle.init)
+            if (control.style == GStyle.init)
             {
                 control.style = style;
             }
@@ -1454,7 +1454,7 @@ class Control : GuiComponent
         return _actionEffectAnimation;
     }
 
-    GraphicStyle* hasStyle(string id)
+    GStyle* hasStyle(string id)
     {
         if (id.length == 0)
         {

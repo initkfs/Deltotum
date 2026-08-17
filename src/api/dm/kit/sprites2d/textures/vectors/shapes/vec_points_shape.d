@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_points_shape;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.vec2 : Vec2f;
 
 import std.container.dlist : DList;
@@ -23,7 +23,7 @@ class VecPointsShape : VecShape
 
     bool isFlipY;
 
-    this(Vec2f[] points, float width, float height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
+    this(Vec2f[] points, float width, float height, GStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
 

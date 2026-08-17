@@ -3,7 +3,7 @@ module api.dm.kit.sprites2d.shapes.points_shape;
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 
 import api.math.geom2.vec2 : Vec2f;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 /**
  * Authors: initkfs
@@ -15,7 +15,7 @@ class PointsShape : Shape2d
 
     Vec2f[] points;
 
-    this(float width = 100, float height = 100, GraphicStyle style = GraphicStyle.simple, Vec2f[] points = null, bool isClosePath = false, bool isDrawFromCenter = false)
+    this(float width = 100, float height = 100, GStyle style = GStyle.simple, Vec2f[] points = null, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
         this.isClosePath = isClosePath;

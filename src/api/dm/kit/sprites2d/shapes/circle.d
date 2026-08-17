@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.shapes.circle;
 
 import api.dm.kit.sprites2d.shapes.shape2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.circle2 : Circle2f;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -13,7 +13,7 @@ class Circle : Shape2d
 {
     const float radius;
 
-    this(float radius = 25, GraphicStyle style = GraphicStyle.simple)
+    this(float radius = 25, GStyle style = GStyle.simple)
     {
         super(radius * 2, radius * 2, style);
         this.radius = radius;

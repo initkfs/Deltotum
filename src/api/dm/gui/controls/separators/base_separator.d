@@ -1,7 +1,7 @@
 module api.dm.gui.controls.separators.base_separator;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**
@@ -20,7 +20,7 @@ abstract class BaseSeparator : Control
         return shape;
     }
 
-    override GraphicStyle createBackgroundStyle()
+    override GStyle createBackgroundStyle()
     {
         auto style = createFillStyle;
         return style;

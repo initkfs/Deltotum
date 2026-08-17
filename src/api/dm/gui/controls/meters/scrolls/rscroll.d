@@ -3,7 +3,7 @@ module api.dm.gui.controls.meters.scrolls.rscroll;
 import api.dm.gui.controls.meters.scrolls.base_radial_mono_scroll : BaseRadialMonoScroll;
 import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 
@@ -87,7 +87,7 @@ class RScroll : BaseRadialMonoScroll
         return new RScaleStatic(rscaleDiameter, fromAngleDeg, toAngleDeg);
     }
 
-    Sprite2d newThumbRadialShape(float diameter, float angle, GraphicStyle style)
+    Sprite2d newThumbRadialShape(float diameter, float angle, GStyle style)
     {
         auto shape = theme.regularPolyShape(diameter, thumbSides, angle, style);
         return shape;

@@ -2,7 +2,7 @@ module api.dm.gui.controls.indicators.sevsegments.seven_segment;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.rect2 : Rect2f;
 import api.math.geom2.vec2 : Vec2f;
 
@@ -211,9 +211,9 @@ class SevenSegment : Control
     Sprite2d createSegmentG() => createHSegment;
     Sprite2d createDot() => createDotSegment;
 
-    protected GraphicStyle createSegmentStyle()
+    protected GStyle createSegmentStyle()
     {
-        GraphicStyle style = createStyle;
+        GStyle style = createStyle;
         if (!style.isNested)
         {
             style.isFill = true;
@@ -266,7 +266,7 @@ class SevenSegment : Control
         return segment;
     }
 
-    protected Sprite2d createVShapeSegment(Rect2f box, float w, float h, float angle, float cornerBevel, GraphicStyle segmentStyle)
+    protected Sprite2d createVShapeSegment(Rect2f box, float w, float h, float angle, float cornerBevel, GStyle segmentStyle)
     {
         import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
 
@@ -316,7 +316,7 @@ class SevenSegment : Control
         return segment;
     }
 
-    protected Sprite2d createHShapeSegment(Rect2f box, float cornerBevel, GraphicStyle segmentStyle)
+    protected Sprite2d createHShapeSegment(Rect2f box, float cornerBevel, GStyle segmentStyle)
     {
         if (!platform.cap.isVector)
         {

@@ -3,7 +3,7 @@ module api.dm.gui.supports.demos.sections.curves;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -22,7 +22,7 @@ class Curves : Control
     private
     {
         enum shapeSize = 60;
-        GraphicStyle shapeStyle = GraphicStyle.simple;
+        GStyle shapeStyle = GStyle.simple;
 
         Vec2f[] pointsBuffer;
         bool delegate(Vec2f) onBuffer;
@@ -42,7 +42,7 @@ class Curves : Control
     {
         super.initialize;
         enablePadding;
-        shapeStyle = GraphicStyle(2, theme.colorAccent);
+        shapeStyle = GStyle(2, theme.colorAccent);
 
         onBuffer = (p) { pointsBuffer ~= p; return true; };
     }

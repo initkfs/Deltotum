@@ -10,7 +10,7 @@ import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.rect2 : Rect2f;
 
 import Math = api.dm.math;

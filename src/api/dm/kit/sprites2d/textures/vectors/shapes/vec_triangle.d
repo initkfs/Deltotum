@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.vectors.shapes.vec_triangle;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import Math = api.dm.math;
 
@@ -13,7 +13,7 @@ class VecTriangle : VecShape
     float xCenter = 0;
     float yCenter = 0;
 
-    this(float width = 50, float height = 50, GraphicStyle style)
+    this(float width = 50, float height = 50, GStyle style)
     {
         super(width, height, style);
     }

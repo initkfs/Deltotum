@@ -144,14 +144,14 @@ class Expander : Control
 
         return new class HBox
         {
-            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+            import api.dm.kit.graphics.styles.gstyle : GStyle;
 
             this()
             {
                 super(0);
             }
 
-            override protected GraphicStyle createBackgroundStyle() => createSelectStyle;
+            override protected GStyle createBackgroundStyle() => createSelectStyle;
         };
     }
 

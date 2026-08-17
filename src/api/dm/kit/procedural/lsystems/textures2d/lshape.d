@@ -1,6 +1,6 @@
 module api.dm.kit.procedural.lsystems.textures2d.lshape;
 
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
@@ -25,7 +25,7 @@ class LShape : VecShape
 
     LSystemData data;
 
-    this(float width = 100, float height = 100, GraphicStyle style = GraphicStyle
+    this(float width = 100, float height = 100, GStyle style = GStyle
             .simple, bool isClosePath = false, bool isDrawFromCenter = true)
     {
         super(width, height, style);
