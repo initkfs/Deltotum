@@ -32,7 +32,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
     dstring delegate(size_t labelIndex, size_t tickIndex, Vec2f pos, bool isMajorTick, float offsetTick) labelTextProvider;
     float delegate(float angledDeg, float radius) labelPosRadiusProvider;
 
-    bool delegate(GraphicCanvas ctx, Rect2f tickBounds, bool isMajorTick) onVTickIsContinue;
+    bool delegate(GraphicCanvas ctx, Rect2f tickBounds, bool isMajorTick) onVTickContinue;
 
     protected
     {
@@ -170,7 +170,7 @@ onDrawAxis : null,
                         }
                         auto leftTopY = -tickH / 2;
 
-                        if (onVTickIsContinue && !onVTickIsContinue(canvas, Rect2f(leftTopX, leftTopY, tickW, tickH), isMajorTick))
+                        if (onVTickContinue && !onVTickContinue(canvas, Rect2f(leftTopX, leftTopY, tickW, tickH), isMajorTick))
                         {
 
                             canvas.restore;

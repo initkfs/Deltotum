@@ -8,9 +8,9 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-void hypotrochoid(scope bool delegate(Vec2f) onPointIsContinue, float radius1, float theta1, float radius2, float theta2, float dots = 500, float scale = 1.0)
+void hypotrochoid(scope bool delegate(Vec2f) onPointContinue, float radius1, float theta1, float radius2, float theta2, float dots = 500, float scale = 1.0)
 {
-    assert(onPointIsContinue);
+    assert(onPointContinue);
 
     auto initTheta = Math.PI * 2 / dots;
     float theta = 0;
@@ -24,21 +24,21 @@ void hypotrochoid(scope bool delegate(Vec2f) onPointIsContinue, float radius1, f
         const y = (radius1 * Math.sin(
                 theta1 * theta) - radius2 * Math.sin(
                 theta2 * theta)) * scale;
-        if (!onPointIsContinue(Vec2f(x, y)))
+        if (!onPointContinue(Vec2f(x, y)))
         {
             break;
         }
     }
 }
 
-void cycloid(scope bool delegate(Vec2f) onPointIsContinue, float radius = 10, size_t dots = 100, float step = 0.5)
+void cycloid(scope bool delegate(Vec2f) onPointContinue, float radius = 10, size_t dots = 100, float step = 0.5)
 {
-    assert(onPointIsContinue);
+    assert(onPointContinue);
 
     //TODO check is -PI<=theta<=PI
     onPointStep(step, 0, dots, (dt) {
         const x = (radius * dt) - radius * Math.sin(dt);
         const y = radius - radius * Math.cos(dt);
-        return onPointIsContinue(Vec2f(x, y));
+        return onPointContinue(Vec2f(x, y));
     });
 }

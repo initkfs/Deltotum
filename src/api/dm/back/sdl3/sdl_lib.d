@@ -143,7 +143,7 @@ class SdlLib : SdlObject
         return isEnabled;
     }
 
-    ComResult onRendererDriver(scope bool delegate(const(char*)) onDriverIsContinue)
+    ComResult onRendererDriver(scope bool delegate(const(char*)) onDriverContinue)
     {
         int numDrivers = SDL_GetNumRenderDrivers;
         if (numDrivers == 0)
@@ -158,7 +158,7 @@ class SdlLib : SdlObject
             {
                 return getErrorRes("Error getting SDL renderer driver name");
             }
-            if (!onDriverIsContinue(name))
+            if (!onDriverContinue(name))
             {
                 break;
             }

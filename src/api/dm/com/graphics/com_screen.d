@@ -40,7 +40,7 @@ interface ComScreen : ComDisposable, ComErrorManageable
 
 nothrow:
 
-    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue);
+    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdContinue);
 
     ComResult getScreenForWindow(ComWindow window, out ComScreenId id);
 

@@ -131,7 +131,7 @@ class RectFillLevel : Control
         }
     }
 
-    void onLevelXY(scope bool delegate(size_t, size_t, float, float) onIndexLevelRowXYIsContinue)
+    void onLevelXY(scope bool delegate(size_t, size_t, float, float) onIndexLevelRowXYContinue)
     {
         assert(levelContainers.length == rows);
 
@@ -147,7 +147,7 @@ class RectFillLevel : Control
             {
                 auto levelIndex = i + (ri * levelsInRow);
 
-                if (!onIndexLevelRowXYIsContinue(levelIndex, ri, currentX, currentY))
+                if (!onIndexLevelRowXYContinue(levelIndex, ri, currentX, currentY))
                 {
                     return;
                 }

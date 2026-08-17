@@ -314,7 +314,7 @@ class BaseMonoText : Control
         return newGlyph;
     }
 
-    void textToGlyphs(const(dchar)[] textString, scope bool delegate(Glyph, size_t) onGlyphIsContinue)
+    void textToGlyphs(const(dchar)[] textString, scope bool delegate(Glyph, size_t) onGlyphContinue)
     {
         const textLength = textString.length;
 
@@ -326,7 +326,7 @@ class BaseMonoText : Control
         foreach (i, ref grapheme; textString)
         {
             Glyph newGlyph = charToGlyph(grapheme);
-            if (!onGlyphIsContinue(newGlyph, i))
+            if (!onGlyphContinue(newGlyph, i))
             {
                 break;
             }
@@ -491,7 +491,7 @@ class BaseMonoText : Control
         onViewportGlyphs((ref glyph, i) { return true; });
     }
 
-    protected void onViewportGlyphs(scope bool delegate(ref Glyph, size_t) onGlyphIndexIsContinue)
+    protected void onViewportGlyphs(scope bool delegate(ref Glyph, size_t) onGlyphIndexContinue)
     {
         if (rowHeight == 0)
         {
@@ -509,7 +509,7 @@ class BaseMonoText : Control
         {
             foreach (ri, ref Glyph glyph; glyphs)
             {
-                if (!onGlyphIndexIsContinue(glyph, ri))
+                if (!onGlyphIndexContinue(glyph, ri))
                 {
                     break;
                 }
@@ -538,7 +538,7 @@ class BaseMonoText : Control
                 continue;
             }
 
-            if (!onGlyphIndexIsContinue(glyph, ri))
+            if (!onGlyphIndexContinue(glyph, ri))
             {
                 break;
             }
@@ -588,13 +588,13 @@ class BaseMonoText : Control
         }
     }
 
-    void onFontTexture(scope bool delegate(Tex2d, const(Glyph*) glyph) onTextureIsContinue)
+    void onFontTexture(scope bool delegate(Tex2d, const(Glyph*) glyph) onTextureContinue)
     {
         assert(fontTexture);
 
         foreach (ref glyph; allGlyphs)
         {
-            if (!onTextureIsContinue(fontTexture, &glyph))
+            if (!onTextureContinue(fontTexture, &glyph))
             {
                 break;
             }

@@ -14,7 +14,7 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SDLScreen : SdlObject, ComScreen
 {
-    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue) nothrow
+    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdContinue) nothrow
     {
         int count;
         SDL_DisplayID* displays = SDL_GetDisplays(&count);
@@ -26,7 +26,7 @@ class SDLScreen : SdlObject, ComScreen
         foreach (i; 0 .. count)
         {
             SDL_DisplayID id = displays[i];
-            if (!onScreenIdIsContinue(id))
+            if (!onScreenIdContinue(id))
             {
                 break;
             }

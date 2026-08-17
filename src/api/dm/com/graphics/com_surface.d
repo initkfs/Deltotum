@@ -13,14 +13,14 @@ import api.math.geom2.rect2 : Rect2f;
  */
 interface ComSurface : ComPointerable, ComErrorManageable
 {
-    void onPixelsRGBA(scope bool delegate(size_t x, size_t y, uint* pixel) onXYPixelIsContinue) @trusted;
+    void onPixelsRGBA(scope bool delegate(size_t x, size_t y, uint* pixel) onXYPixelContinue) @trusted;
 
     bool getPixelsRGBA(
-        scope bool delegate(size_t x, size_t y, ubyte r, ubyte g, ubyte b, ubyte a) onXYRGBAIsContinue
+        scope bool delegate(size_t x, size_t y, ubyte r, ubyte g, ubyte b, ubyte a) onXYRGBAContinue
     ) @trusted;
 
     bool setPixelsRGBA(
-        scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAIsContinue
+        scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAContinue
     ) @trusted;
 
 nothrow:

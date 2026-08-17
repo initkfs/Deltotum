@@ -41,7 +41,7 @@ class VecTex : Tex2d
         CairoContext cairoContext;
     }
 
-    bool delegate(ComSurface) onSurfaceIsContinue;
+    bool delegate(ComSurface) onSurfaceContinue;
     bool delegate(GraphicCanvas ctx) onContentContinue;
 
     bool isMutable;
@@ -184,9 +184,9 @@ class VecTex : Tex2d
 
         createFullContent;
 
-        if (onSurfaceIsContinue)
+        if (onSurfaceContinue)
         {
-            if (!onSurfaceIsContinue(comSurface))
+            if (!onSurfaceContinue(comSurface))
             {
                 return;
             }
@@ -237,9 +237,9 @@ class VecTex : Tex2d
             createContent(ctx);
         }
 
-        if (onSurfaceIsContinue)
+        if (onSurfaceContinue)
         {
-            if (!onSurfaceIsContinue(comSurface))
+            if (!onSurfaceContinue(comSurface))
             {
                 return;
             }
@@ -367,9 +367,9 @@ class VecTex : Tex2d
 
         createFullContent;
 
-        if (onSurfaceIsContinue)
+        if (onSurfaceContinue)
         {
-            if (!onSurfaceIsContinue(comSurface))
+            if (!onSurfaceContinue(comSurface))
             {
                 return false;
             }

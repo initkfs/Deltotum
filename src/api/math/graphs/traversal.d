@@ -8,7 +8,7 @@ import api.math.graphs.graph : Graph;
  * Authors: initkfs
  */
 
-void dfs(Graph graph, Vertex start, scope bool delegate(Vertex) onVertexIsContinue)
+void dfs(Graph graph, Vertex start, scope bool delegate(Vertex) onVertexContinue)
 {
     import std.container.slist : SList;
 
@@ -25,7 +25,7 @@ void dfs(Graph graph, Vertex start, scope bool delegate(Vertex) onVertexIsContin
 
         v.isVisited = true;
 
-        if (!onVertexIsContinue(v))
+        if (!onVertexContinue(v))
         {
             return;
         }
@@ -88,7 +88,7 @@ unittest
     assert(dfsResult == dfsExpected);
 }
 
-void bfs(Graph graph, Vertex start, scope bool delegate(Vertex) onVertexIsContinue)
+void bfs(Graph graph, Vertex start, scope bool delegate(Vertex) onVertexContinue)
 {
     import std.container.dlist : DList;
 
@@ -105,7 +105,7 @@ void bfs(Graph graph, Vertex start, scope bool delegate(Vertex) onVertexIsContin
 
         v.isVisited = true;
 
-        if (!onVertexIsContinue(v))
+        if (!onVertexContinue(v))
         {
             return;
         }

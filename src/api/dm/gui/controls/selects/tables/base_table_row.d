@@ -253,11 +253,11 @@ class BaseTableRow(TItem, TCol:
         return true;
     }
 
-    void onColumn(scope bool delegate(TCol) onColIsContinue)
+    void onColumn(scope bool delegate(TCol) onColContinue)
     {
         foreach (col; columns)
         {
-            if (!onColIsContinue(col))
+            if (!onColContinue(col))
             {
                 break;
             }

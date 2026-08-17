@@ -14,7 +14,7 @@ class LinearMotion : TargetTween!(Vec2f, Sprite2d)
     {
         super(start, end, timeMs, interpolator);
         onChangeOldNew ~= (oldValue, value) {
-            onTargetsIsContinue((object) {
+            onTargetsContinue((object) {
                 object.x = value.x;
                 object.y = value.y;
                 return true;

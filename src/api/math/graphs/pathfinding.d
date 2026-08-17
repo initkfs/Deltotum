@@ -62,14 +62,14 @@ class PathGraph : Graph
 }
 
 bool astar(PathGraph graph, IndexableVertex start, IndexableVertex target, scope bool delegate(
-        IndexableVertex) onVertexIsContinue, scope float delegate(IndexableVertex a, IndexableVertex b) costCalc)
+        IndexableVertex) onVertexContinue, scope float delegate(IndexableVertex a, IndexableVertex b) costCalc)
 {
     import std.container.binaryheap : BinaryHeap;
 
     assert(graph);
     assert(start);
     assert(target);
-    assert(onVertexIsContinue);
+    assert(onVertexContinue);
     assert(costCalc);
 
     IndexableVertex[] store;
@@ -90,7 +90,7 @@ bool astar(PathGraph graph, IndexableVertex start, IndexableVertex target, scope
         auto current = queue.front;
         queue.removeFront;
 
-        if (!onVertexIsContinue(current))
+        if (!onVertexContinue(current))
         {
             return false;
         }

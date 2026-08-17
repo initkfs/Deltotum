@@ -203,9 +203,9 @@ class RadialSegmentBar : Control
     float segmentAngle() => 360.0 / segmentsCount;
     float segmentAngleMiddleOffset() => segmentAngle / 2;
 
-    void drawSegment(scope bool delegate(size_t i, float startAngleDeg, float endAngleDeg, float angleOffset) onAngleDegIsContinue)
+    void drawSegment(scope bool delegate(size_t i, float startAngleDeg, float endAngleDeg, float angleOffset) onAngleDegContinue)
     {
-        assert(onAngleDegIsContinue);
+        assert(onAngleDegContinue);
 
         float angleDiff = segmentAngle;
         float angleMiddleOffset = isUseMiddleAngleOffset ? angleDiff / 2 : 0;
@@ -217,7 +217,7 @@ class RadialSegmentBar : Control
 
             auto endAngle = startAngle + angleDiff;
 
-            if (!onAngleDegIsContinue(i, startAngle, endAngle, angleMiddleOffset))
+            if (!onAngleDegContinue(i, startAngle, endAngle, angleMiddleOffset))
             {
                 break;
             }

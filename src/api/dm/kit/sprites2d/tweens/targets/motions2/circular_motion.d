@@ -26,7 +26,7 @@ class CircularMotion : ValueTween
             const x = center.x + math.cosDeg(value) * radius;
             const y = center.y + math.sinDeg(value) * radius;
 
-            onTargetsIsContinue((object) { object.xy(x, y); return true; });
+            onTargetsContinue((object) { object.xy(x, y); return true; });
 
             if (onPoint)
             {

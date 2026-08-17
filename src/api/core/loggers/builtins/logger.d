@@ -165,7 +165,7 @@ class Logger : BaseLogger
         logf!(file, line)(LogLevel.error, args);
     }
 
-    void onHandler(scope bool delegate(BaseLogHandler) onHandlerIsContinue)
+    void onHandler(scope bool delegate(BaseLogHandler) onHandlerContinue)
     {
         _mutex.lock_nothrow;
         scope (exit)
@@ -174,7 +174,7 @@ class Logger : BaseLogger
         }
         foreach (h; handlers)
         {
-            if (!onHandlerIsContinue(h))
+            if (!onHandlerContinue(h))
             {
                 break;
             }

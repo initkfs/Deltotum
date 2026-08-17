@@ -26,7 +26,7 @@ struct RegularPoly2f
         this.isRotateCorrection = isRotateCorrection;
     }
 
-    void draw(scope bool delegate(size_t, Vec2f) onIndexVertexIsContinue, float rotateAngle = 0)
+    void draw(scope bool delegate(size_t, Vec2f) onIndexVertexContinue, float rotateAngle = 0)
     {
         assert(sideCount > 0);
         float segmentAngle = Math.PI2 / sideCount;
@@ -49,7 +49,7 @@ struct RegularPoly2f
             float angle = rotateAngle != 0 ? (segmentAngle * i + rotateAngle) % Math.PI2 : segmentAngle * i;
 
             Vec2f polarPos = Vec2f.fromPolarRad(angle, radius);
-            if (!onIndexVertexIsContinue(i, polarPos))
+            if (!onIndexVertexContinue(i, polarPos))
             {
                 return;
             }

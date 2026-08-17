@@ -157,7 +157,7 @@ class AnalogClockFace : BaseRadialGauge
         auto size = diameter * 0.9;
         auto scale = new RScaleStatic(size, minAngleDeg, maxAngleDeg);
         scale.isLastTickMajorTick = false;
-        scale.onVTickIsContinue = (ctx, Rect2f tickBounds, bool isMajorTick) {
+        scale.onVTickContinue = (ctx, Rect2f tickBounds, bool isMajorTick) {
             auto style = createFillStyle;
             ctx.color = style.fillColor;
 

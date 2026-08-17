@@ -12,7 +12,7 @@ class AngleTween : ValueTween
     {
         super(0, 360, timeMs, interpolator);
         onChangeOldNew ~= (oldValue, value) {
-            onTargetsIsContinue((object) { object.angle = value; return true; });
+            onTargetsContinue((object) { object.angle = value; return true; });
         };
     }
 }

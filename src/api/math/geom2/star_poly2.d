@@ -26,7 +26,7 @@ struct StarPoly2f
         this.outerRadius = outerRadius;
     }
 
-    void draw(scope bool delegate(size_t, Vec2f) onIndexVertexIsContinue)
+    void draw(scope bool delegate(size_t, Vec2f) onIndexVertexContinue)
     {
         assert(spikeCount > 0);
         const angleRad = Math.PI / spikeCount;
@@ -35,7 +35,7 @@ struct StarPoly2f
         {
             const radius = ((i % 2) != 0) ? outerRadius : innerRadius;
             const polarPos = Vec2f.fromPolarRad(i * angleRad, radius);
-            if (!onIndexVertexIsContinue(i, polarPos))
+            if (!onIndexVertexContinue(i, polarPos))
             {
                 return;
             }

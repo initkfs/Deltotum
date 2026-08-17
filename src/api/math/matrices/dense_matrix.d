@@ -195,13 +195,13 @@ struct DenseMatrix(T = float, size_t RowDim = 1, size_t ColDim = 1)
         return result;
     }
 
-    void onMainDiagonal(scope bool delegate(ref T v) onDiagValueIsContinue)
+    void onMainDiagonal(scope bool delegate(ref T v) onDiagValueContinue)
     {
-        assert(onDiagValueIsContinue);
+        assert(onDiagValueContinue);
 
         foreach (size_t rowIndex, ref row; matrix)
         {
-            if (!onDiagValueIsContinue(matrix[rowIndex][rowIndex]))
+            if (!onDiagValueContinue(matrix[rowIndex][rowIndex]))
             {
                 break;
             }

@@ -31,7 +31,7 @@ class UniComponent : SimpleUnit
         @Service Validation _validation;
     }
     
-    bool delegate(UniComponent component, UniComponent) onPreBuildWithParentIsContinue;
+    bool delegate(UniComponent component, UniComponent) onPreBuildWithParentContinue;
     void delegate(UniComponent component, UniComponent) onPostBuildWithParent;
 
     bool isBuilt;
@@ -113,8 +113,8 @@ class UniComponent : SimpleUnit
             throw new Exception("Parent component not built: " ~ parentComponent.className);
         }
 
-        if (uniComponent.onPreBuildWithParentIsContinue
-            && (!uniComponent.onPreBuildWithParentIsContinue(uniComponent, parentComponent)))
+        if (uniComponent.onPreBuildWithParentContinue
+            && (!uniComponent.onPreBuildWithParentContinue(uniComponent, parentComponent)))
         {
             return;
         }

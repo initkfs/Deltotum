@@ -124,11 +124,11 @@ abstract class BaseClippedFlatTable(T, TCol:
         return current(row, isTriggerListeners);
     }
 
-    void onRow(bool delegate(TRow) onRowIsContinue)
+    void onRow(bool delegate(TRow) onRowContinue)
     {
         foreach (row; rows)
         {
-            if (!onRowIsContinue(row))
+            if (!onRowContinue(row))
             {
                 return;
             }

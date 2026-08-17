@@ -2329,26 +2329,26 @@ class Sprite2d : EventKitTarget
         });
     }
 
-    void onChildrenRec(bool delegate(Sprite2d) onSpriteIsContinue)
+    void onChildrenRec(bool delegate(Sprite2d) onSpriteContinue)
     {
-        onChildrenRec(this, onSpriteIsContinue);
+        onChildrenRec(this, onSpriteContinue);
     }
 
-    void onChildrenRec(Sprite2d root, bool delegate(Sprite2d) onSpriteIsContinue)
+    void onChildrenRec(Sprite2d root, bool delegate(Sprite2d) onSpriteContinue)
     {
         if (root is null)
         {
             return;
         }
 
-        if (!onSpriteIsContinue(root))
+        if (!onSpriteContinue(root))
         {
             return;
         }
 
         foreach (child; root.children)
         {
-            onChildrenRec(child, onSpriteIsContinue);
+            onChildrenRec(child, onSpriteContinue);
         }
     }
 

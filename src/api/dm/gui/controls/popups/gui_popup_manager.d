@@ -292,13 +292,13 @@ class GuiPopupManager : Container, PopupManager
         popup.showAnimation.run;
     }
 
-    void urgent(dstring message, bool delegate(Sprite2d) onPreShowPopupIsContinue = null)
+    void urgent(dstring message, bool delegate(Sprite2d) onPreShowPopupContinue = null)
     {
         auto popup = freeOrNewUrgentPopup;
 
         popup.text.text = message;
 
-        if (!onPreShowPopupIsContinue || onPreShowPopupIsContinue(popup))
+        if (!onPreShowPopupContinue || onPreShowPopupContinue(popup))
         {
             addUrgentPopup(popup);
         }
@@ -306,13 +306,13 @@ class GuiPopupManager : Container, PopupManager
         showPopup(popup);
     }
 
-    void notify(dstring message, bool delegate(Sprite2d) onPreShowPopupIsContinue = null)
+    void notify(dstring message, bool delegate(Sprite2d) onPreShowPopupContinue = null)
     {
         auto popup = freeOrNewNotifyPopup;
 
         popup.text.text = message;
 
-        if (!onPreShowPopupIsContinue || onPreShowPopupIsContinue(popup))
+        if (!onPreShowPopupContinue || onPreShowPopupContinue(popup))
         {
             addNotifyPopup(popup);
         }

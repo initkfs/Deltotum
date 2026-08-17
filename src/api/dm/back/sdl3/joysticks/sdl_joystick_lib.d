@@ -84,7 +84,7 @@ class SdlJoystickLib : SdlObject
         return result;
     }
 
-    void onJoysticks(scope bool delegate(size_t, SdlJoystick) onJoyIndexIsContinue)
+    void onJoysticks(scope bool delegate(size_t, SdlJoystick) onJoyIndexContinue)
     {
         int joystickNums;
         SDL_JoystickID* joysticks = SDL_GetJoysticks(&joystickNums);
@@ -108,7 +108,7 @@ class SdlJoystickLib : SdlObject
             SDL_Joystick* jPtr = SDL_OpenJoystick(jid);
             if (jPtr)
             {
-                if (!onJoyIndexIsContinue(ji, new SdlJoystick(jPtr)))
+                if (!onJoyIndexContinue(ji, new SdlJoystick(jPtr)))
                 {
                     break;
                 }

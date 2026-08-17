@@ -24,11 +24,11 @@ class TargetTween(V, Target) : MinMaxTween!V
         super(minValue, maxValue, timeMs, interpolator);
     }
 
-    void onTargetsIsContinue(scope bool delegate(Target) onTargetIsContinue)
+    void onTargetsContinue(scope bool delegate(Target) onTargetContinue)
     {
         foreach (Sprite2d target; targets)
         {
-            if (!onTargetIsContinue(target))
+            if (!onTargetContinue(target))
             {
                 break;
             }

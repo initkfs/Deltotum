@@ -37,9 +37,9 @@ class Screening
         return SingleScreen(id, screenName, screenBounds, usable, screenMode);
     }
 
-    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue)
+    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdContinue)
     {
-        comScreen.onScreens(onScreenIdIsContinue);
+        comScreen.onScreens(onScreenIdContinue);
     }
 
     Rect2f bounds(ComScreenId id)

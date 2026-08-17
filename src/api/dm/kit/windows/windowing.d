@@ -27,23 +27,23 @@ class Windowing : LoggableUnit
         super(logging);
     }
 
-    void onWindows(scope bool delegate(Window) onWindowIsContinue)
+    void onWindows(scope bool delegate(Window) onWindowContinue)
     {
         foreach (Window window; windows)
         {
-            if (!onWindowIsContinue(window))
+            if (!onWindowContinue(window))
             {
                 break;
             }
         }
     }
 
-    void onWindowsById(long id, scope bool delegate(Window) onWindowIsContinue)
+    void onWindowsById(long id, scope bool delegate(Window) onWindowContinue)
     {
         onWindows((win) {
             if (win.id == id)
             {
-                return onWindowIsContinue(win);
+                return onWindowContinue(win);
             }
             return true;
         });

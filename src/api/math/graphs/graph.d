@@ -52,7 +52,7 @@ class Graph
         return hasVertexUnsafe(vertex) !is null;
     }
 
-    void onEdgeForVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue, bool isReverse = false)
+    void onEdgeForVertex(Vertex vertex, scope bool delegate(Edge) onEdgeContinue, bool isReverse = false)
     {
         auto edgesPtr = hasVertexUnsafe(vertex);
         if (!edgesPtr)
@@ -64,7 +64,7 @@ class Graph
         {
             foreach (edge; (**edgesPtr)[])
             {
-                if (!onEdgeIsContinue(edge))
+                if (!onEdgeContinue(edge))
                 {
                     return;
                 }
@@ -74,7 +74,7 @@ class Graph
         {
             foreach_reverse (edge; (**edgesPtr)[])
             {
-                if (!onEdgeIsContinue(edge))
+                if (!onEdgeContinue(edge))
                 {
                     return;
                 }
@@ -101,12 +101,12 @@ class Graph
         return null;
     }
 
-    void onEdgesToVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue, bool isReverse = false)
+    void onEdgesToVertex(Vertex vertex, scope bool delegate(Edge) onEdgeContinue, bool isReverse = false)
     {
         onEdgeForVertex(vertex, (Edge edge) {
             if (edge.dest == vertex)
             {
-                return onEdgeIsContinue(edge);
+                return onEdgeContinue(edge);
             }
             return true;
         }, isReverse);
@@ -119,12 +119,12 @@ class Graph
         return edges;
     }
 
-    void onEdgesFromVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue, bool isReverse = false)
+    void onEdgesFromVertex(Vertex vertex, scope bool delegate(Edge) onEdgeContinue, bool isReverse = false)
     {
         onEdgeForVertex(vertex, (Edge edge) {
             if (edge.src == vertex)
             {
-                return onEdgeIsContinue(edge);
+                return onEdgeContinue(edge);
             }
             return true;
         }, isReverse);
@@ -263,11 +263,11 @@ class Graph
         return isRemove;
     }
 
-    void onVertex(scope bool delegate(Vertex, DList!Edge*) onVertexIsContinue)
+    void onVertex(scope bool delegate(Vertex, DList!Edge*) onVertexContinue)
     {
         foreach (v, edges; graph)
         {
-            if (!onVertexIsContinue(v, edges))
+            if (!onVertexContinue(v, edges))
             {
                 return;
             }

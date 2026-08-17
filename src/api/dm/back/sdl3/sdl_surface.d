@@ -481,7 +481,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return true;
     }
 
-    void onPixelsRGBA(scope bool delegate(size_t x, size_t y, uint* pixel) onXYPixelIsContinue) @trusted
+    void onPixelsRGBA(scope bool delegate(size_t x, size_t y, uint* pixel) onXYPixelContinue) @trusted
     {
         int h = getHeight;
         int w = getWidth;
@@ -494,7 +494,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             foreach (x; 0 .. w)
             {
                 uint* pixelPtr = &rowPtr[x];
-                if (!onXYPixelIsContinue(x, y, pixelPtr))
+                if (!onXYPixelContinue(x, y, pixelPtr))
                 {
                     return;
                 }
@@ -502,7 +502,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         }
     }
 
-    bool getPixelsRGBA(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue) @trusted
+    bool getPixelsRGBA(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAContinue) @trusted
     {
         bool result = true;
         onPixelsRGBA((x, y, pixelPtr) {
@@ -514,19 +514,19 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
                 return false;
             }
 
-            return onXYRGBAIsContinue(x, y, r, g, b, a);
+            return onXYRGBAContinue(x, y, r, g, b, a);
         });
 
         return result;
     }
 
-    bool setPixelsRGBA(scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAIsContinue) @trusted
+    bool setPixelsRGBA(scope bool delegate(size_t x, size_t y, ref ubyte r, ref ubyte g, ref ubyte b, ref ubyte a) onXYRGBAContinue) @trusted
     {
         bool result = true;
 
         onPixelsRGBA((x, y, pixelPtr) {
             ubyte r, g, b, a;
-            bool isContinue = onXYRGBAIsContinue(x, y, r, g, b, a);
+            bool isContinue = onXYRGBAContinue(x, y, r, g, b, a);
             if (!setPixel(pixelPtr, r, g, b, a))
             {
                 result = false;

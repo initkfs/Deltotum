@@ -44,7 +44,7 @@ class BaseLed : Control
     {
         import std.conv : to;
 
-        shape.onSurfaceIsContinue = (surf) {
+        shape.onSurfaceContinue = (surf) {
             RGBA[][] buff = surfaceToBuffer(surf);
             RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
 

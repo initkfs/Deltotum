@@ -7,6 +7,6 @@ import api.dm.kit.sprites2d.sprite2d: Sprite2d;
  */
 interface PopupManager
 {
-    void urgent(dstring text, bool delegate(Sprite2d) onPreShowPopupIsContinue = null);
-    void notify(dstring text, bool delegate(Sprite2d) onPreShowPopupIsContinue = null);
+    void urgent(dstring text, bool delegate(Sprite2d) onPreShowPopupContinue = null);
+    void notify(dstring text, bool delegate(Sprite2d) onPreShowPopupContinue = null);
 }

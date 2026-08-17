@@ -227,12 +227,12 @@ struct Poly2f
         return result / 2;
     }
 
-    void onLineMidpoint(scope bool delegate(Vec2f) onMidIsContinue, bool isLastLineNeed = true)
+    void onLineMidpoint(scope bool delegate(Vec2f) onMidContinue, bool isLastLineNeed = true)
     {
-        onLine((line) { return onMidIsContinue(line.midpoint); }, isLastLineNeed);
+        onLine((line) { return onMidContinue(line.midpoint); }, isLastLineNeed);
     }
 
-    void onLine(scope bool delegate(Line2f) onLineIsContinue, bool isLastLineNeed = true)
+    void onLine(scope bool delegate(Line2f) onLineContinue, bool isLastLineNeed = true)
     {
 
         if (vertices.length < 3)
@@ -246,7 +246,7 @@ struct Poly2f
             {
                 continue;
             }
-            if (!onLineIsContinue(Line2f(vertices[i - 1], vert)))
+            if (!onLineContinue(Line2f(vertices[i - 1], vert)))
             {
                 return;
             }
@@ -254,7 +254,7 @@ struct Poly2f
 
         if (isLastLineNeed)
         {
-            onLineIsContinue(Line2f(vertices[$ - 1], vertices[0]));
+            onLineContinue(Line2f(vertices[$ - 1], vertices[0]));
         }
     }
 
