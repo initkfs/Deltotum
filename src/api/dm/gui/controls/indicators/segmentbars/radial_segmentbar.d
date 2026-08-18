@@ -86,8 +86,8 @@ class RadialSegmentBar : Control
 
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_arc : VecArc;
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_arc : VecArc;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
 
             const textureWidth = width;
             const textureHeight = height;
@@ -142,7 +142,7 @@ class RadialSegmentBar : Control
 
             addCreate(segmentShape);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_arc : VecArc;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_arc : VecArc;
 
             drawSegment((i, startAngleDeg, endAngleDeg, angleOffset) {
 
@@ -159,7 +159,7 @@ class RadialSegmentBar : Control
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.circle : Circle;
+            import api.dm.kit.sprites2d.shapes.rcircle : RCircle;
 
             _segmentsOff.reserve(segmentsCount);
 
@@ -179,12 +179,12 @@ class RadialSegmentBar : Control
 
             foreach (i; 0 .. segmentsCount)
             {
-                auto segment = new Circle(segmentSize, segmentStyleOff);
+                auto segment = new RCircle(segmentSize, segmentStyleOff);
                 segment.isResizedByParent = false;
                 addCreate(segment);
                 _segmentsOff ~= segment;
 
-                auto fillSegment = new Circle(segmentSize, fillStyle);
+                auto fillSegment = new RCircle(segmentSize, fillStyle);
                 fillSegment.isResizedByParent = false;
                 addCreate(fillSegment);
                 fillSegment.isVisible = false;

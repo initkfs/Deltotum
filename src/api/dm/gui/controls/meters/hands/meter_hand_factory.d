@@ -10,7 +10,7 @@ import Math = api.math;
 
 private
 {
-    import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+    import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
     import api.math.geom2.vec2 : Vec2f;
 
     class VHand : VecShape

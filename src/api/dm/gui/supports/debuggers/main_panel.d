@@ -462,7 +462,7 @@ class MainPanel : BaseDebuggerPanel
     // private DebugInfo createDebugInfo(Sprite2d obj)
     // {
     //     import api.dm.kit.graphics.styles.gstyle : GStyle;
-    //     import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+    //     import api.dm.kit.sprites2d.shapes.rrect : RRect;
     //     import api.dm.kit.graphics.colors.rgba : RGBA;
 
     //     auto container = new DebugInfo;
@@ -482,7 +482,7 @@ class MainPanel : BaseDebuggerPanel
     //     obj.addCreate(container);
 
     //     //Random color?
-    //     auto border = new Rectangle(container.width, container.height, borderStyle);
+    //     auto border = new RRect(container.width, container.height, borderStyle);
     //     border.isLayoutManaged = false;
 
     //     container.addCreate(border);

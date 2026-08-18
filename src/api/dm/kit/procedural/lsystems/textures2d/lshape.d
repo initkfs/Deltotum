@@ -2,8 +2,8 @@ module api.dm.kit.procedural.lsystems.textures2d.lshape;
 
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 
-import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+import api.dm.kit.sprites2d.shapes.rshape2d : RShape2d;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.brushes.brush : Brush;
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.procedural.lsystems.lsystem_drawer : LSystemDrawer;

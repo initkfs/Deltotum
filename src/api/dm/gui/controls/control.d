@@ -1176,7 +1176,7 @@ class Control : GuiComponent
             return icon;
         }
 
-        import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites2d.shapes.rrect : RRect;
         import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -1184,7 +1184,7 @@ class Control : GuiComponent
 
         auto iconSize = theme.fontIconsSize;
 
-        auto placeholder = new Rectangle(iconSize, iconSize, GStyle(1, RGBA.red, true, RGBA
+        auto placeholder = new RRect(iconSize, iconSize, GStyle(1, RGBA.red, true, RGBA
                 .red));
         return placeholder;
     }

@@ -45,30 +45,30 @@ class Graphics : Control
         auto shapeContainer = new HBox;
         addCreate(shapeContainer);
 
-        import api.dm.kit.sprites2d.shapes.circle : Circle;
+        import api.dm.kit.sprites2d.shapes.rcircle : RCircle;
 
-        auto circle = new Circle(20, GStyle(1, RGBA.red));
+        auto circle = new RCircle(20, GStyle(1, RGBA.red));
         shapeContainer.addCreate(circle);
 
-        auto circleFill = new Circle(20, GStyle(1, RGBA.blue, true, RGBA.blue));
+        auto circleFill = new RCircle(20, GStyle(1, RGBA.blue, true, RGBA.blue));
         shapeContainer.addCreate(circleFill);
 
-        import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites2d.shapes.rrect : RRect;
 
-        auto rect = new Rectangle(50, 50, GStyle(1, RGBA.yellow));
+        auto rect = new RRect(50, 50, GStyle(1, RGBA.yellow));
         shapeContainer.addCreate(rect);
 
-        auto rectFill = new Rectangle(50, 50, GStyle(1, RGBA.green, true, RGBA.green));
+        auto rectFill = new RRect(50, 50, GStyle(1, RGBA.green, true, RGBA.green));
         shapeContainer.addCreate(rectFill);
 
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.shapes.convex_poly : ConvexPoly;
+            import api.dm.kit.sprites2d.shapes.rconvex_poly : RConvexPoly;
 
-            auto reg = new ConvexPoly(50, 50, GStyle(1, RGBA.lightcoral), 10);
+            auto reg = new RConvexPoly(50, 50, GStyle(1, RGBA.lightcoral), 10);
             shapeContainer.addCreate(reg);
 
-            auto regFill = new ConvexPoly(50, 50, GStyle(1, RGBA.lightsteelblue, true, RGBA
+            auto regFill = new RConvexPoly(50, 50, GStyle(1, RGBA.lightsteelblue, true, RGBA
                     .lightsteelblue), 10);
             shapeContainer.addCreate(regFill);
         }
@@ -160,7 +160,7 @@ class Graphics : Control
 
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_circle : VecCircle;
 
             auto style = GStyle(3.0, RGBA.red, true, RGBA.green);
 
@@ -169,22 +169,22 @@ class Graphics : Control
             auto vCircle = new VecCircle(size / 2, style);
             vContainer.addCreate(vCircle);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_triangle : VecTriangle;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_triangle : VecTriangle;
 
             auto vTrig = new VecTriangle(size, size, style);
             vContainer.addCreate(vTrig);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly : VecConvexPoly;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_convex_poly : VecConvexPoly;
 
             auto vReg = new VecConvexPoly(size, size, style, 10);
             vContainer.addCreate(vReg);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly : VecRegularPoly;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_regular_poly : VecRegularPoly;
 
             auto vHex = new VecRegularPoly(size, style);
             vContainer.addCreate(vHex);
 
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly_grid : VecRegularPolyGrid;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_regular_poly_grid : VecRegularPolyGrid;
 
             auto vHexGrid = new VecRegularPolyGrid(250, 250, 35, style);
             vContainer.addCreate(vHexGrid);

@@ -7,11 +7,11 @@ import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.gui.themes.theme_style : ThemeStyle;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.sprites2d.images.image : Image;
-import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d : RShape2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.core.configs.uda : ConfigKey;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_rectangle;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_rectangle;
 
 /**
  * Authors: initkfs
@@ -294,7 +294,7 @@ class Theme
         Sprite2d newShape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly : VecConvexPoly;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_convex_poly : VecConvexPoly;
 
             newShape = new VecConvexPoly(width, height, style, cornerBevel);
         }
@@ -305,9 +305,9 @@ class Theme
             return rectShape(width, height, angle, style);
             // }
 
-            //import api.dm.kit.sprites2d.shapes.convex_poly : ConvexPoly;
+            //import api.dm.kit.sprites2d.shapes.rconvex_poly : RConvexPoly;
 
-            //newShape = new ConvexPoly(width, height, style, cornerBevel);
+            //newShape = new RConvexPoly(width, height, style, cornerBevel);
         }
 
         newShape.angle = angle;
@@ -319,15 +319,15 @@ class Theme
         Sprite2d shape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_rectangle : VecRectangle;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_rectangle : VecRectangle;
 
             shape = new VecRectangle(width, height, style);
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+            import api.dm.kit.sprites2d.shapes.rrect : RRect;
 
-            shape = new Rectangle(width, height, style);
+            shape = new RRect(width, height, style);
         }
         shape.angle = angle;
         return shape;
@@ -342,15 +342,15 @@ class Theme
         Sprite2d shape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_circle : VecCircle;
 
             shape = new VecCircle(radius, style);
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.circle : Circle;
+            import api.dm.kit.sprites2d.shapes.rcircle : RCircle;
 
-            shape = new Circle(radius, style);
+            shape = new RCircle(radius, style);
         }
         return shape;
     }
@@ -366,15 +366,15 @@ class Theme
 
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly : VecRegularPoly;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_regular_poly : VecRegularPoly;
 
             shape = new VecRegularPoly(size, style, sides);
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.reqular_poly : RegularPoly;
+            import api.dm.kit.sprites2d.shapes.rreqular_poly : RRegularPoly;
 
-            shape = new RegularPoly(size, style, sides);
+            shape = new RRegularPoly(size, style, sides);
         }
 
         shape.angle = angle;
@@ -389,15 +389,15 @@ class Theme
 
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_triangle : VecTriangle;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_triangle : VecTriangle;
 
             shape = new VecTriangle(width, height, style);
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.triangle : Triangle;
+            import api.dm.kit.sprites2d.shapes.rtriangle : RTriangle;
 
-            shape = new Triangle(width, height, style);
+            shape = new RTriangle(width, height, style);
         }
 
         assert(shape);

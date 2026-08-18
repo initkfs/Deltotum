@@ -1,15 +1,15 @@
-module api.dm.kit.sprites2d.shapes.parallelogram;
+module api.dm.kit.sprites2d.shapes.rparallelogram;
 
-import api.dm.kit.sprites2d.shapes.shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
-import api.dm.kit.sprites2d.shapes.circle : Circle;
+import api.dm.kit.sprites2d.shapes.rcircle : RCircle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.parallelogram2 : Parallelogram2f;
 
 /**
  * Authors: initkfs
  */
-class Parallelogram : Shape2d
+class RParallelogram : RShape2d
 {
     float angleDeg;
     bool isInverted;

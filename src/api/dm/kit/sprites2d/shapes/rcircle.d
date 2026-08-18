@@ -1,15 +1,15 @@
-module api.dm.kit.sprites2d.shapes.circle;
+module api.dm.kit.sprites2d.shapes.rcircle;
 
-import api.dm.kit.sprites2d.shapes.shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.circle2 : Circle2f;
-import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+import api.dm.kit.sprites2d.shapes.rrect : RRect;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
  */
-class Circle : Shape2d
+class RCircle : RShape2d
 {
     const float radius;
 
@@ -37,11 +37,11 @@ class Circle : Shape2d
     {
         //import api.core.utils.types : castSafe;
         //TODO unsafe cast, but fast
-        if (auto circle = cast(Circle) other)
+        if (auto circle = cast(RCircle) other)
         {
             return shape.intersect(circle.shape);
         }
-        else if (auto rect = cast(Rectangle) other)
+        else if (auto rect = cast(RRect) other)
         {
             return other.boundsRect.intersect(shape);
         }

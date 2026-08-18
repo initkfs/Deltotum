@@ -28,7 +28,7 @@ class FactoryKit : GraphicComponent
 
         if (!shapes)
         {
-            throw new Exception("Shape2d factory must not be null");
+            throw new Exception("RShape2d factory must not be null");
         }
 
         if (!textures)

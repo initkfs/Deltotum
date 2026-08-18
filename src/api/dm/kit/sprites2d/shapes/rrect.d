@@ -1,14 +1,14 @@
-module api.dm.kit.sprites2d.shapes.rectangle;
+module api.dm.kit.sprites2d.shapes.rrect;
 
-import api.dm.kit.sprites2d.shapes.shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
-import api.dm.kit.sprites2d.shapes.circle : Circle;
+import api.dm.kit.sprites2d.shapes.rcircle : RCircle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
  */
-class Rectangle : Shape2d
+class RRect : RShape2d
 {
     this(float width, float height, GStyle style)
     {
@@ -36,7 +36,7 @@ class Rectangle : Shape2d
     override bool intersect(Sprite2d other)
     {
         //TODO unsafe cast, but fast
-        if (auto circle = cast(Circle) other)
+        if (auto circle = cast(RCircle) other)
         {
             return boundsRect.intersect(circle.shape);
         }

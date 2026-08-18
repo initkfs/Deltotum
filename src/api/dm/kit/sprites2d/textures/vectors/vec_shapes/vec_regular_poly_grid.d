@@ -1,9 +1,9 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly_grid;
+module api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_regular_poly_grid;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_regular_poly : VecRegularPoly;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_regular_poly : VecRegularPoly;
 import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.dm.math;

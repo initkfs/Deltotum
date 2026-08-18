@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.shapes.points_shape;
+module api.dm.kit.sprites2d.shapes.rpoints_shape;
 
-import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d : RShape2d;
 
 import api.math.geom2.vec2 : Vec2f;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
@@ -8,7 +8,7 @@ import api.dm.kit.graphics.styles.gstyle : GStyle;
 /**
  * Authors: initkfs
  */
-class PointsShape : Shape2d
+class RPointsShape : RShape2d
 {
     bool isClosePath;
     bool isDrawFromCenter;

@@ -5,10 +5,10 @@ import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegular
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 
-import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d : RShape2d;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
-import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+import api.dm.kit.sprites2d.shapes.rrect : RRect;
 import api.math.pos2.alignment : Alignment;
 import std.math.operations : isClose;
 

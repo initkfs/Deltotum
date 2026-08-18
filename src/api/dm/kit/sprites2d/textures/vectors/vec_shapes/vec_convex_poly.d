@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vec_convex_poly;
+module api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_convex_poly;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 /**

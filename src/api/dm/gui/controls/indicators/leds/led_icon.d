@@ -49,9 +49,9 @@ class LedIcon : BaseLed
         {
             logger.error("Invalid buffer for led icon");
 
-            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+            import api.dm.kit.sprites2d.shapes.rrect : RRect;
 
-            return new Rectangle(iconSize, iconSize);
+            return new RRect(iconSize, iconSize);
         }
 
         import api.dm.kit.sprites2d.images.image : Image;

@@ -1,13 +1,13 @@
-module api.dm.kit.sprites2d.shapes.convex_poly;
+module api.dm.kit.sprites2d.shapes.rconvex_poly;
 
-import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d : RShape2d;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.line2 : Line2f;
 
 /**
  * Authors: initkfs
  */
-class ConvexPoly : Shape2d
+class RConvexPoly : RShape2d
 {
     float cornerPadding;
 

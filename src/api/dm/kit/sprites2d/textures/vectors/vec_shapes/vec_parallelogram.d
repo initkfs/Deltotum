@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vec_parallelogram;
+module api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_parallelogram;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.parallelogram2 : Parallelogram2f;

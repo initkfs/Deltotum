@@ -100,7 +100,7 @@ class LabelInfo : Container
 {
     import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
     import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
-    import api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle : VecCircle;
+    import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_circle : VecCircle;
 
     Text textLabel;
     Sprite2d colorLabel;

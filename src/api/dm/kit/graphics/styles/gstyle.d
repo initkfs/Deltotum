@@ -17,8 +17,6 @@ struct GStyle
     bool isDefault;
     //string name;
 
-    pragma(msg, GStyle.sizeof);
-
     static pure @safe
     {
         GStyle simple() => GStyle(1, RGBA.lightcyan, false, RGBA.transparent);

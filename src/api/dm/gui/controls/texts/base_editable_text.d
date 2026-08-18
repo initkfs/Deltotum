@@ -7,7 +7,7 @@ import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
-import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+import api.dm.kit.sprites2d.shapes.rrect : RRect;
 import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.rect2 : Rect2f;
 
@@ -44,7 +44,7 @@ struct Selection
  */
 class BaseEditableText : BaseMonoText
 {
-    Rectangle cursor;
+    RRect cursor;
     CursorPos cursorPos;
 
     Selection selection;
@@ -568,10 +568,10 @@ class BaseEditableText : BaseMonoText
         {
             const cursorColor = theme.colorAccent;
 
-            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+            import api.dm.kit.sprites2d.shapes.rrect : RRect;
             import api.dm.kit.graphics.styles.gstyle : GStyle;
 
-            cursor = new Rectangle(2, 20, GStyle(1, cursorColor, true, cursorColor));
+            cursor = new RRect(2, 20, GStyle(1, cursorColor, true, cursorColor));
             addCreate(cursor);
             cursor.isLayoutManaged = false;
             cursor.isVisible = false;

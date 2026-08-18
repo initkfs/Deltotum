@@ -15,7 +15,7 @@ import Math = api.dm.math;
  */
 private
 {
-    import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+    import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
 
     class ColorBarShape : VecShape
     {
@@ -118,9 +118,9 @@ class RadialColorBar : BaseMonoColorBar
 
         if (!platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.shapes.circle : Circle;
+            import api.dm.kit.sprites2d.shapes.rcircle : RCircle;
 
-            auto placeholder = new Circle(Math.max(width, height), style);
+            auto placeholder = new RCircle(Math.max(width, height), style);
             return placeholder;
         }
 

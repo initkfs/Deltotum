@@ -63,11 +63,11 @@ class Animations : Control
             }
         }
 
-        import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites2d.shapes.rrect : RRect;
         import api.dm.kit.graphics.styles.gstyle : GStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        auto rect = new Rectangle(50, 50, GStyle(1.0, RGBA.lightcoral, true, RGBA.lightcoral));
+        auto rect = new RRect(50, 50, GStyle(1.0, RGBA.lightcoral, true, RGBA.lightcoral));
         const startPos = Vec2f(200, 200);
         const endPos = Vec2f(450, 200);
         rect.x = startPos.x;

@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vec_star;
+module api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_star;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 
 import Math = api.dm.math;

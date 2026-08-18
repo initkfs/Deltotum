@@ -1,4 +1,4 @@
-module api.dm.kit.sprites2d.shapes.shape2d;
+module api.dm.kit.sprites2d.shapes.rshape2d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
@@ -7,7 +7,7 @@ import api.dm.kit.graphics.styles.gstyle : GStyle;
 /**
  * Authors: initkfs
  */
-abstract class Shape2d : Sprite2d
+abstract class RShape2d : Sprite2d
 {
     //TODO remove from shape
     GStyle style;

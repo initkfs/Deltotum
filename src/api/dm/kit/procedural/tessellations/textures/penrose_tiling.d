@@ -1,6 +1,6 @@
 module api.dm.kit.procedural.tessellations.textures.penrose_tiling;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_shape : VecShape;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_shape : VecShape;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.colors.rgba : RGBA;

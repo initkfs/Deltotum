@@ -1,15 +1,15 @@
-module api.dm.kit.sprites2d.shapes.triangle;
+module api.dm.kit.sprites2d.shapes.rtriangle;
 
-import api.dm.kit.sprites2d.shapes.shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d: RShape2d;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
-import api.dm.kit.sprites2d.shapes.circle : Circle;
+import api.dm.kit.sprites2d.shapes.rcircle : RCircle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.vec2: Vec2f;
 
 /**
  * Authors: initkfs
  */
-class Triangle : Shape2d
+class RTriangle : RShape2d
 {
     this(float width, float height, GStyle style)
     {
@@ -48,7 +48,7 @@ class Triangle : Shape2d
     override bool intersect(Sprite2d other)
     {
         //TODO unsafe cast, but fast
-        if (auto circle = cast(Circle) other)
+        if (auto circle = cast(RCircle) other)
         {
             return boundsRect.intersect(circle.shape);
         }

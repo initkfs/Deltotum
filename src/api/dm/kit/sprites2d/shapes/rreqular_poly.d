@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.shapes.reqular_poly;
+module api.dm.kit.sprites2d.shapes.rreqular_poly;
 
-import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
+import api.dm.kit.sprites2d.shapes.rshape2d : RShape2d;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.geom2.regular_poly2 : RegularPoly2f;
 
@@ -9,7 +9,7 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-class RegularPoly : Shape2d
+class RRegularPoly : RShape2d
 {
     bool isFlat = true;
 

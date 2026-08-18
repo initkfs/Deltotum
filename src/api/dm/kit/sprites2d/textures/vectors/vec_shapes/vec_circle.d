@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.vectors.shapes.vec_circle;
+module api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_circle;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vec_arc : VecArc;
+import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_arc : VecArc;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
 import api.math.pos2.insets : Insets;
 

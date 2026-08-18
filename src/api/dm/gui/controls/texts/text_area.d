@@ -56,7 +56,7 @@ class TextArea : HBox
     // override Sprite2d newBackground()
     // {
     //     import api.dm.kit.graphics.styles.gstyle : GStyle;
-    //     import api.dm.kit.sprites2d.shapes.convex_poly : ConvexPoly;
+    //     import api.dm.kit.sprites2d.shapes.rconvex_poly : RConvexPoly;
 
     //     GStyle backgroundStyle = GStyle(1, theme.colorAccent, isBackground, theme
     //             .colorPrimary);

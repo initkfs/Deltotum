@@ -72,15 +72,15 @@ class Curves : Control
         Sprite2d shape;
         if (platform.cap.isVector)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vec_points_shape : VecPointsShape;
+            import api.dm.kit.sprites2d.textures.vectors.vec_shapes.vec_points_shape : VecPointsShape;
 
             shape = new VecPointsShape(points, shapeSize, shapeSize, shapeStyle, isClosePath, isDrawFromCenter);
         }
         else
         {
-            import api.dm.kit.sprites2d.shapes.points_shape : PointsShape;
+            import api.dm.kit.sprites2d.shapes.rpoints_shape : RPointsShape;
 
-            shape = new PointsShape(shapeSize, shapeSize, shapeStyle, points, isClosePath, isDrawFromCenter);
+            shape = new RPointsShape(shapeSize, shapeSize, shapeStyle, points, isClosePath, isDrawFromCenter);
         }
 
         container.addCreate(shape);
