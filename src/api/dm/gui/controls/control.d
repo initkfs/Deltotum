@@ -7,8 +7,8 @@ import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.sprites2d.textures.tex2d : Tex2d;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
-import api.dm.kit.graphics.styles.default_style : DefaultStyle;
-import api.dm.kit.graphics.styles.default_style;
+import api.dm.gui.themes.theme_style : ThemeStyle;
+import api.dm.gui.themes.theme_style;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.math.pos2.alignment : Alignment;
 import api.math.pos2.insets : Insets;
@@ -23,8 +23,8 @@ import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
 enum ControlStyle : string
 {
     background = "background",
-    hoverEffect = "hoverEffect",
-    actionEffect = "actionEffect"
+    hover = "hover",
+    action = "action"
 }
 
 /**
@@ -58,15 +58,12 @@ class Control : GuiComponent
         size_t tooltipDelayCounter;
     }
 
-    bool isInitStyleFactory = true;
-
-    GStyle style;
+    GStyle* style;
     string styleId;
     GStyle[string] styles;
-    GStyle delegate(string id) styleFactory;
     bool isStyleUseParent;
     bool isStyleForChild;
-    bool isStyleAppendForChild = true;
+    bool isStyleAppendForChild;
 
     bool isBackground;
     bool isBorder;
@@ -171,11 +168,6 @@ class Control : GuiComponent
 
                 adjustOrCreateBackground;
             };
-        }
-
-        if (!styleFactory && isInitStyleFactory)
-        {
-            styleFactory = newStyleFactory;
         }
 
         if (!hoverEffectStartBehaviour)
@@ -431,9 +423,10 @@ class Control : GuiComponent
 
             addCreate(_hoverEffect);
 
-            assert(hasTheme);
-
-            _hoverEffect.opacityLimit = theme.opacityHover;
+            if (hasTheme)
+            {
+                _hoverEffect.opacityLimit = theme.opacityHover;
+            }
 
             if (onCreatedHoverEffect)
             {
@@ -670,17 +663,12 @@ class Control : GuiComponent
 
     Sprite2d newBackground(float w, float h, float angle, GStyle style)
     {
-        Sprite2d shape;
-        if (auto stylePtr = hasStyle(ControlStyle.background))
+        if (auto stylePtr = findStyle(ControlStyle.background))
         {
-            shape = createShape(w, h, angle, *stylePtr);
+            return createShape(w, h, angle, *stylePtr);
         }
-        else
-        {
-            shape = createShape(w, h, angle, style);
-        }
-        assert(shape);
-        return shape;
+
+        return createShape(w, h, angle, style);
     }
 
     Sprite2d newBackground()
@@ -701,22 +689,17 @@ class Control : GuiComponent
 
     GStyle newHoverStyle()
     {
-        if (auto stylePtr = hasStyle(ControlStyle.hoverEffect))
+        if (auto stylePtr = findStyle(ControlStyle.hover))
         {
             return *stylePtr;
         }
 
-        auto newStyle = createStyle;
-        if (!newStyle.isNested)
-        {
-            if (!newStyle.isDefault)
-            {
-                newStyle.lineColor = theme.colorHover;
-                newStyle.fillColor = theme.colorHover;
-            }
+        auto newStyle = createDefaultStyle;
+        newStyle.ifAdaptive((style) {
+            style.lineColor = theme.colorHover;
+            style.fillColor = theme.colorHover;
+        }, (style) { style.isFill = true; });
 
-            newStyle.isFill = true;
-        }
         return newStyle;
     }
 
@@ -731,7 +714,7 @@ class Control : GuiComponent
 
         assert(_hoverEffect, "Hover effect is null");
 
-        auto anim = new OpacityTween(hoverAnimationDelayMs.to!int);
+        auto anim = new OpacityTween(hoverAnimationDelayMs.to!int, 0, _hoverEffect.maxOpacity);
         anim.isThrowInvalidTime = isThrowInvalidAnimationTime;
         anim.id = idHoverAnimation;
         anim.addTarget(_hoverEffect);
@@ -819,23 +802,17 @@ class Control : GuiComponent
         assert(theme);
 
         GStyle newStyle;
-        if (auto stylePtr = hasStyle(ControlStyle.actionEffect))
+        if (auto stylePtr = hasStyle(ControlStyle.action))
         {
             newStyle = *stylePtr;
         }
         else
         {
             newStyle = createStyle;
-            if (!newStyle.isNested)
-            {
-                if (!newStyle.isDefault)
-                {
-                    newStyle.lineColor = theme.colorSelect;
-                    newStyle.fillColor = theme.colorSelect;
-                }
-
-                newStyle.isFill = true;
-            }
+            newStyle.ifAdaptive((style) {
+                newStyle.lineColor = theme.colorSelect;
+                newStyle.fillColor = theme.colorSelect;
+            }, (style) { newStyle.isFill = true; });
         }
 
         Sprite2d effect = newActionEffect(width, height, angle, newStyle);
@@ -908,63 +885,40 @@ class Control : GuiComponent
     Sprite2d newFocusEffect()
     {
         GStyle focusStyle = createDefaultStyle;
-        if (!focusStyle.isNested && !focusStyle.isDefault)
-        {
-            focusStyle.lineColor = theme.colorFocus;
-            focusStyle.fillColor = theme.colorFocus;
-        }
-
-        auto effect = theme.shape(width, height, angle, style);
+        focusStyle.ifAdaptive((style) {
+            style.lineColor = theme.colorFocus;
+            style.fillColor = theme.colorFocus;
+        });
+        auto effect = theme.shape(width, height, angle, focusStyle);
         return effect;
-    }
-
-    GStyle delegate(string id) newStyleFactory()
-    {
-        return (id) {
-            assert(theme);
-
-            if (style != GStyle.init)
-            {
-                return style;
-            }
-
-            return createDefaultStyle(id);
-        };
     }
 
     GStyle createDefaultStyle(string id)
     {
+        if (style)
+        {
+            return *style;
+        }
+
         if (auto stylePtr = hasStyle(id))
         {
             return *stylePtr;
         }
 
-        GStyle newStyle = createDefaultStyle;
-
-        switch (id) with (DefaultStyle)
+        if (hasTheme)
         {
-            case standard:
-                break;
-            case success:
-                newStyle.lineColor = theme.colorSuccess;
-                newStyle.fillColor = newStyle.lineColor;
-                newStyle.isDefault = true;
-                break;
-            case warning:
-                newStyle.lineColor = theme.colorWarning;
-                newStyle.fillColor = newStyle.lineColor;
-                newStyle.isDefault = true;
-                break;
-            case danger:
-                newStyle.lineColor = theme.colorDanger;
-                newStyle.fillColor = newStyle.lineColor;
-                newStyle.isDefault = true;
-                break;
-            default:
-                break;
+            if (auto stylePtr = theme.hasStyle(id))
+            {
+                GStyle newStyle = *stylePtr;
+                if (!newStyle.isFixed)
+                {
+                    newStyle.isFill = isBackground;
+                }
+                return newStyle;
+            }
         }
 
-        return newStyle;
+        return createDefaultStyle;
     }
 
     GStyle createDefaultStyle()
@@ -975,18 +929,11 @@ class Control : GuiComponent
 
     protected GStyle createStyle()
     {
-        if (styleFactory)
-        {
-            return styleFactory(styleId);
-        }
-
         return createDefaultStyle(styleId);
     }
 
     protected GStyle createFillStyle(RGBA fillColor = RGBA.init)
     {
-        assert(styleFactory);
-
         auto newStyle = createStyle;
         if (!newStyle.isPreset)
         {
@@ -1011,12 +958,18 @@ class Control : GuiComponent
     {
         auto newStyle = createStyle;
 
-        newStyle.fillColor = theme.colorBackground;
-
-        newStyle.isFill = isBackground;
-        if (!isBorder)
+        if (!newStyle.isFixed)
         {
-            newStyle.lineWidth = 0;
+            newStyle.isFill = isBackground;
+            if (!isBorder)
+            {
+                newStyle.lineWidth = 0;
+            }
+        }
+
+        if (!newStyle.isPreset)
+        {
+            newStyle.fillColor = theme.colorBackground;
         }
 
         return newStyle;
@@ -1302,7 +1255,6 @@ class Control : GuiComponent
 
         if (isStyleForChild || control.isStyleUseParent)
         {
-            control.styleFactory = styleFactory;
             if (!isStyleAppendForChild)
             {
                 control.styles = styles;
@@ -1318,7 +1270,7 @@ class Control : GuiComponent
                 }
             }
 
-            if (control.style == GStyle.init)
+            if (style && !control.style)
             {
                 control.style = style;
             }
@@ -1452,6 +1404,26 @@ class Control : GuiComponent
             throw new Exception("Action effect animation is null");
         }
         return _actionEffectAnimation;
+    }
+
+    void addStyle(string id, GStyle style)
+    {
+        styles[id] = style;
+    }
+
+    GStyle* findStyle(string id)
+    {
+        if (auto stylePtr = hasStyle(id))
+        {
+            return stylePtr;
+        }
+
+        if (!hasTheme)
+        {
+            return null;
+        }
+
+        return theme.hasStyle(id);
     }
 
     GStyle* hasStyle(string id)

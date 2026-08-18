@@ -91,7 +91,7 @@ class BaseMonoText : Control
     {
         if (_color == RGBA.init)
         {
-            if (style.lineColor != style.init.lineColor)
+            if (style)
             {
                 _color = style.lineColor;
             }

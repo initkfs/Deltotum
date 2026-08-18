@@ -18,7 +18,7 @@ class GuiViewer : GuiScene
         super.create;
 
         //must be first
-        //createDebugger;
+        createDebugger;
 
         import api.dm.gui.controls.containers.tabs.tab : Tab;
         import api.dm.gui.controls.containers.tabs.tabbox : TabBox;

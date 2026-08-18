@@ -83,7 +83,7 @@ class SceneView : Container
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         infoPanel = new InfoPanel;
-        infoPanel.style = *infoStyle;
+        infoPanel.style = infoStyle;
         infoPanel.isStyleForChild = true;
         infoPanel.isBorder = true;
         addCreate(infoPanel);

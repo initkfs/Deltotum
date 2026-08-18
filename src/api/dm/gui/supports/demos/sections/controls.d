@@ -210,11 +210,11 @@ class Controls : Control
         toggleBtnContainer.layout.isAlignX = true;
         root.addCreate(toggleBtnContainer);
 
-        import api.dm.kit.graphics.styles.default_style : DefaultStyle;
+        import api.dm.gui.themes.theme_style : ThemeStyle;
 
         auto tbtn1 = new TriangleButton(null, Icons.arrow_up_circle_fill, (ref e) {
         });
-        tbtn1.styleId = DefaultStyle.warning;
+        tbtn1.styleId = ThemeStyle.warning;
         tbtn1.isFixedButton = true;
         tbtn1.isOn = true;
         toggleBtnContainer.addCreate(tbtn1);
@@ -223,7 +223,7 @@ class Controls : Control
         });
         tbtn2.isFixedButton = true;
         tbtn2.angle = 180;
-        tbtn2.styleId = DefaultStyle.danger;
+        tbtn2.styleId = ThemeStyle.danger;
         //tbtn2.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn2);
 

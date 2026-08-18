@@ -4,6 +4,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.com.graphics.com_font : ComFont;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
+import api.dm.gui.themes.theme_style : ThemeStyle;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.sprites2d.images.image : Image;
 import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
@@ -22,6 +23,10 @@ class Theme
     private
     {
         ComFont _defaultMediumFont;
+    }
+
+    protected {
+        GStyle[string] styles;
     }
 
     @ConfigKey
@@ -61,7 +66,7 @@ class Theme
     @ConfigKey
     float opacityBackground = 0.85;
     @ConfigKey
-    float opacityHover = 1;
+    float opacityHover = 0.4;
 
     @ConfigKey
     size_t iconSize = 26;
@@ -209,10 +214,63 @@ class Theme
         return defaultStyle();
     }
 
+    void addStyle(string id, GStyle style, bool isFixed = true){
+        style.isFixed = isFixed;
+        styles[id] = style;
+    }
+
     GStyle defaultStyle()
     {
         GStyle style = GStyle(lineThickness, colorAccent, false, colorControlBackground);
         return style;
+    }
+
+    GStyle* hasStyle(string id)
+    {
+        if (auto stylePtr = id in styles)
+        {
+            return stylePtr;
+        }
+
+        switch (id) with (ThemeStyle)
+        {
+            case standard:
+                return null;
+                break;
+            case success:
+                auto newStyle = createDefaultStyle;
+                newStyle.lineColor = colorSuccess;
+                newStyle.fillColor = newStyle.lineColor;
+                newStyle.isDefault = true;
+                styles[ThemeStyle.success] = newStyle;
+                return &styles[ThemeStyle.success];
+                break;
+            case warning:
+                auto newStyle = createDefaultStyle;
+                newStyle.lineColor = colorWarning;
+                newStyle.fillColor = newStyle.lineColor;
+                newStyle.isDefault = true;
+                styles[ThemeStyle.warning] = newStyle;
+                return &styles[ThemeStyle.warning];
+                break;
+            case danger:
+                auto newStyle = createDefaultStyle;
+                newStyle.lineColor = colorDanger;
+                newStyle.fillColor = newStyle.lineColor;
+                newStyle.isDefault = true;
+                styles[ThemeStyle.danger] = newStyle;
+                return &styles[ThemeStyle.danger];
+                break;
+            default:
+                break;
+        }
+
+        return null;
+    }
+
+    GStyle createDefaultStyle()
+    {
+        return GStyle(lineThickness, colorAccent, false, colorControlBackground);
     }
 
     //TODO @safe

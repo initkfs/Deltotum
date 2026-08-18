@@ -214,12 +214,11 @@ class SevenSegment : Control
     protected GStyle createSegmentStyle()
     {
         GStyle style = createStyle;
-        if (!style.isNested)
-        {
-            style.isFill = true;
-            style.lineColor = theme.colorAccent;
-            style.fillColor = style.lineColor;
-        }
+        style.ifAdaptive((st) {
+            st.isFill = true;
+            st.lineColor = theme.colorAccent;
+            st.fillColor = st.lineColor;
+        });
         return style;
     }
 

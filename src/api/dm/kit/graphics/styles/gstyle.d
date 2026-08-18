@@ -7,14 +7,17 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
  */
 struct GStyle
 {
+    //TODO sizeof must be <= 16 bytes
     float lineWidth = 1;
     RGBA lineColor = RGBA.lime;
-
     bool isFill;
     RGBA fillColor = RGBA.transparent;
-    bool isNested;
+    bool isInherit;
+    bool isFixed;
     bool isDefault;
-    string name;
+    //string name;
+
+    pragma(msg, GStyle.sizeof);
 
     static pure @safe
     {
@@ -43,5 +46,19 @@ struct GStyle
         return copy;
     }
 
-    bool isPreset() => isDefault || isNested;
+    bool isPreset() => isDefault || isInherit || isFixed;
+
+    void ifAdaptive(scope void delegate(GStyle* st) onNotDefault, scope void delegate(GStyle* st) onStyle = null){
+        if (!isInherit && !isFixed)
+        {
+            if (!isDefault)
+            {
+                onNotDefault(&this);
+            }
+
+            if(onStyle){
+                onStyle(&this);
+            }
+        }
+    }
 }

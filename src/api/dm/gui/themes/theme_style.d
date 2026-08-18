@@ -1,11 +1,10 @@
-module api.dm.kit.graphics.styles.default_style;
-
-import api.dm.kit.graphics.colors.rgba : RGBA;
+module api.dm.gui.themes.theme_style;
 
 /**
  * Authors: initkfs
  */
-enum DefaultStyle : string
+
+enum ThemeStyle : string
 {
     standard = "standard",
     success = "success",
