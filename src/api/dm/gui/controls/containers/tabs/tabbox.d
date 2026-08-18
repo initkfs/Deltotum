@@ -151,31 +151,33 @@ class TabBox : Container
         _currentTab = newTab;
         _currentTab.isSelected = true;
 
-        if (_currentTab.content)
+        try
         {
-            if (contentContainer && !contentContainer.hasDirect(_currentTab.content))
+            if (_currentTab.content)
             {
-                auto containerBounds = contentContainer.boundsRect;
-                _currentTab.content.x = containerBounds.x - contentContainer.padding.left;
-                _currentTab.content.y = containerBounds.y - contentContainer.padding.top;
-                if (!_currentTab.content.isCreated)
+                if (contentContainer && !contentContainer.hasDirect(_currentTab.content))
                 {
+                    auto containerBounds = contentContainer.boundsRect;
+                    _currentTab.content.x = containerBounds.x - contentContainer.padding.left;
+                    _currentTab.content.y = containerBounds.y - contentContainer.padding.top;
                     contentContainer.addCreate(newTab.content);
                 }
-                else
+
+                _currentTab.content.isVisible = true;
+                _currentTab.content.isLayoutManaged = true;
+                _currentTab.content.run;
+
+                if (_currentTab.onActivate)
                 {
-                    contentContainer.add(newTab.content);
+                    _currentTab.onActivate();
                 }
             }
-
-            _currentTab.content.isVisible = true;
-            _currentTab.content.isLayoutManaged = true;
-            _currentTab.content.run;
-
-            if (_currentTab.onActivate)
-            {
-                _currentTab.onActivate();
-            }
+        }
+        catch (Exception e)
+        {
+            logger.errorf("Exception from tab %s: %s", _currentTab.id, e);
+            _currentTab.content.isVisible = false;
+            _currentTab.isDisabled = true;
         }
 
         return true;

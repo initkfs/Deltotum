@@ -10,6 +10,11 @@ import api.dm.gui.controls.meters.clocks.base_clock : BaseClock;
  */
 class DigitalClock : BaseClock!DigitalClockFace
 {
+    this()
+    {
+        id = "digital_clock";
+    }
+
     override DigitalClockFace newClockFace()
     {
         auto face = new DigitalClockFace(width, height);

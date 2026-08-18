@@ -28,25 +28,25 @@ class AnalogClockFace : BaseRadialGauge
 
     Sprite2d hourHand;
     bool isCreateHourHand = true;
-    Sprite2d delegate(Sprite2d) onNewHourHand;
+    Sprite2d delegate() onNewHourHand;
     void delegate(Sprite2d) onConfiguredHourHand;
     void delegate(Sprite2d) onCreatedHourHand;
 
     Sprite2d minHand;
     bool isCreateMinHand = true;
-    Sprite2d delegate(Sprite2d) onNewMinHand;
+    Sprite2d delegate() onNewMinHand;
     void delegate(Sprite2d) onConfiguredMinHand;
     void delegate(Sprite2d) onCreatedMinHand;
 
     Sprite2d secHand;
     bool isCreateSecHand = true;
-    Sprite2d delegate(Sprite2d) onNewSecHand;
+    Sprite2d delegate() onNewSecHand;
     void delegate(Sprite2d) onConfiguredSecHand;
     void delegate(Sprite2d) onCreatedSecHand;
 
     Sprite2d handHolder;
     bool isCreateHandHolder = true;
-    Sprite2d delegate(Sprite2d) onNewHandHolder;
+    Sprite2d delegate() onNewHandHolder;
     void delegate(Sprite2d) onConfiguredHandHolder;
     void delegate(Sprite2d) onCreatedHandHolder;
 
@@ -63,6 +63,7 @@ class AnalogClockFace : BaseRadialGauge
     this(float diameter = 0)
     {
         super(diameter, 0, 60, 0, 360);
+        id = "analog_clock_face";
     }
 
     override void loadTheme()
@@ -231,8 +232,9 @@ class AnalogClockFace : BaseRadialGauge
 
         if (!hourHand && isCreateHourHand)
         {
-            auto newHand = newHourHand;
-            hourHand = !onNewHourHand ? newHand : onNewHourHand(newHand);
+            hourHand = !onNewHourHand ? newHourHand : onNewHourHand();
+
+            hourHand.id = "analog_clock_hand_hour";
 
             if (onConfiguredHourHand)
             {
@@ -249,8 +251,9 @@ class AnalogClockFace : BaseRadialGauge
 
         if (!minHand && isCreateMinHand)
         {
-            auto newHand = newMinHand;
-            minHand = !onNewMinHand ? newHand : onNewMinHand(newHand);
+            minHand = !onNewMinHand ? newMinHand : onNewMinHand();
+
+            minHand.id = "analog_clock_hand_min";
 
             if (onConfiguredMinHand)
             {
@@ -267,8 +270,9 @@ class AnalogClockFace : BaseRadialGauge
 
         if (!secHand && isCreateSecHand)
         {
-            auto newHand = newSecHand;
-            secHand = !onNewSecHand ? newHand : onNewSecHand(newHand);
+            secHand = !onNewSecHand ? newSecHand : onNewSecHand();
+
+            secHand.id = "analog_clock_hand_sec";
 
             if (onConfiguredSecHand)
             {
@@ -285,8 +289,9 @@ class AnalogClockFace : BaseRadialGauge
 
         if (!handHolder && isCreateHandHolder)
         {
-            auto newHolder = newHandHolder;
-            handHolder = !onNewHandHolder ? newHolder : onNewHandHolder(newHolder);
+            handHolder = !onNewHandHolder ? newHandHolder : onNewHandHolder();
+
+            handHolder.id = "analog_clock_hand_holder";
 
             if (onConfiguredHandHolder)
             {

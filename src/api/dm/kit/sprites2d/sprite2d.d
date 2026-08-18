@@ -3057,7 +3057,7 @@ class Sprite2d : EventKitTarget
     {
         import std.format : format;
 
-        return format("id: %s, parent: %s, x: %f, y: %f, width: %f, height: %f", id, parent, x, y, width, height);
+        return format("id:%s, state:%s, parent:%s, x:%f, y:%f, w:%f, h:%f", id, state, parent ? parent.id : null, x, y, width, height);
     }
 
 }

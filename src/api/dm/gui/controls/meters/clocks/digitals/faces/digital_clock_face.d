@@ -10,7 +10,7 @@ import api.dm.gui.controls.indicators.sevsegments.seven_segment : SevenSegment;
 class DigitalClockFace : Control
 {
     Sprite2d minHourSeparator;
-    Sprite2d delegate(Sprite2d) onNewMinHourSeparator;
+    Sprite2d delegate() onNewMinHourSeparator;
     void delegate(Sprite2d) onConfiguredMinHourSeparator;
     void delegate(Sprite2d) onCreatedMinHourSeparator;
 
@@ -18,12 +18,12 @@ class DigitalClockFace : Control
     float minHourSeparatorHeight = 0;
 
     SevenSegment hour1;
-    SevenSegment delegate(SevenSegment) onNewHour1Segment;
+    SevenSegment delegate() onNewHour1Segment;
     void delegate(SevenSegment) onConfiguredHour1Segment;
     void delegate(SevenSegment) onCreatedHour1Segment;
 
     SevenSegment hour2;
-    SevenSegment delegate(SevenSegment) onNewHour2Segment;
+    SevenSegment delegate() onNewHour2Segment;
     void delegate(SevenSegment) onConfiguredHour2Segment;
     void delegate(SevenSegment) onCreatedHour2Segment;
 
@@ -31,12 +31,12 @@ class DigitalClockFace : Control
     float hourSegmentHeight = 0;
 
     SevenSegment min1;
-    SevenSegment delegate(SevenSegment) onNewMin1Segment;
+    SevenSegment delegate() onNewMin1Segment;
     void delegate(SevenSegment) onConfiguredMin1Segment;
     void delegate(SevenSegment) onCreatedMin1Segment;
 
     SevenSegment min2;
-    SevenSegment delegate(SevenSegment) onNewMin2Segment;
+    SevenSegment delegate() onNewMin2Segment;
     void delegate(SevenSegment) onConfiguredMin2Segment;
     void delegate(SevenSegment) onCreatedMin2Segment;
 
@@ -44,25 +44,27 @@ class DigitalClockFace : Control
     float minSegmentHeight = 0;
 
     SevenSegment sec1;
-    SevenSegment delegate(SevenSegment) onNewSec1Segment;
+    SevenSegment delegate() onNewSec1Segment;
     void delegate(SevenSegment) onConfiguredSec1Segment;
     void delegate(SevenSegment) onCreatedSec1Segment;
 
     SevenSegment sec2;
-    SevenSegment delegate(SevenSegment) onNewSec2Segment;
+    SevenSegment delegate() onNewSec2Segment;
     void delegate(SevenSegment) onConfiguredSec2Segment;
     void delegate(SevenSegment) onCreatedSec2Segment;
 
     float secSegmentWidth = 0;
     float secSegmentHeight = 0;
 
-    SevenSegment delegate(SevenSegment) onNewSecSegment;
+    SevenSegment delegate() onNewSecSegment;
     void delegate(SevenSegment) onConfiguredSecSegment;
     void delegate(SevenSegment) onCreatedSecSegment;
 
     this(float width = 0, float height = 0)
     {
         initSize(width, height);
+
+        id = "digital_clock_face";
 
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
@@ -135,8 +137,8 @@ class DigitalClockFace : Control
 
         if (!hour1)
         {
-            auto h1 = newHourSegment(hourSegmentWidth, hourSegmentHeight);
-            hour1 = !onNewHour1Segment ? h1 : onNewHour1Segment(h1);
+            hour1 = !onNewHour1Segment ? newHourSegment(hourSegmentWidth, hourSegmentHeight) : onNewHour1Segment();
+            hour1.id = "dg_clock_segment_hour1";
             if (onConfiguredHour1Segment)
             {
                 onConfiguredHour1Segment(hour1);
@@ -150,8 +152,8 @@ class DigitalClockFace : Control
 
         if (!hour2)
         {
-            auto h2 = newHourSegment(hourSegmentWidth, hourSegmentHeight);
-            hour2 = !onNewHour2Segment ? h2 : onNewHour2Segment(h2);
+            hour2 = !onNewHour2Segment ? newHourSegment(hourSegmentWidth, hourSegmentHeight) : onNewHour2Segment();
+            hour2.id = "dg_clock_segment_hour2";
             if (onConfiguredHour2Segment)
             {
                 onConfiguredHour2Segment(hour2);
@@ -165,10 +167,8 @@ class DigitalClockFace : Control
 
         if (!minHourSeparator)
         {
-            auto minHourSep = newMinHourSeparator(minHourSeparatorWidth, minHourSeparatorHeight);
-            minHourSeparator = !onNewMinHourSeparator ? minHourSep : onNewMinHourSeparator(
-                minHourSep);
-
+            minHourSeparator = !onNewMinHourSeparator ? newMinHourSeparator(minHourSeparatorWidth, minHourSeparatorHeight) : onNewMinHourSeparator();
+            minHourSeparator.id = "dg_clock_minhour_sep";
             if (onConfiguredMinHourSeparator)
             {
                 onConfiguredMinHourSeparator(minHourSeparator);
@@ -183,8 +183,8 @@ class DigitalClockFace : Control
 
         if (!min1)
         {
-            auto m1 = newMinSegment(minSegmentWidth, minSegmentHeight);
-            min1 = !onNewMin1Segment ? m1 : onNewMin1Segment(m1);
+            min1 = !onNewMin1Segment ? newMinSegment(minSegmentWidth, minSegmentHeight) : onNewMin1Segment();
+            min1.id = "dg_clock_segment_min1";
             if (onConfiguredMin1Segment)
             {
                 onConfiguredMin1Segment(min1);
@@ -198,8 +198,8 @@ class DigitalClockFace : Control
 
         if (!min2)
         {
-            auto m2 = newMinSegment(minSegmentWidth, minSegmentHeight);
-            min2 = !onNewMin2Segment ? m2 : onNewMin2Segment(m2);
+            min2 = !onNewMin2Segment ? newMinSegment(minSegmentWidth, minSegmentHeight) : onNewMin2Segment();
+            min2.id = "dg_clock_segment_min2";
             if (onConfiguredMin2Segment)
             {
                 onConfiguredMin2Segment(min2);
@@ -213,9 +213,8 @@ class DigitalClockFace : Control
 
         if (!sec1)
         {
-            auto s1 = newSecSegment(secSegmentWidth, secSegmentHeight);
-            sec1 = !onNewSec1Segment ? s1 : onNewSec1Segment(s1);
-            
+            sec1 = !onNewSec1Segment ? newSecSegment(secSegmentWidth, secSegmentHeight) : onNewSec1Segment();
+            sec1.id = "dg_clock_segment_sec1";
             sec1.isLayoutInvertY = true;
             
             if (onConfiguredSec1Segment)
@@ -231,9 +230,8 @@ class DigitalClockFace : Control
 
         if (!sec2)
         {
-            auto s2 = newSecSegment(secSegmentWidth, secSegmentHeight);
-            sec2 = !onNewSec2Segment ? s2 : onNewSec2Segment(s2);
-            
+            sec2 = !onNewSec2Segment ? newSecSegment(secSegmentWidth, secSegmentHeight) : onNewSec2Segment();
+            sec2.id = "dg_clock_segment_sec2";
             sec2.isLayoutInvertY = true;
             
             if (onConfiguredSec2Segment)

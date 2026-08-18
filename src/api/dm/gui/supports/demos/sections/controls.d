@@ -664,14 +664,14 @@ class Controls : Control
 
         auto anClock = new AnalogClock;
         anClock.diameter = 150;
-        anClock.isAutorun = true;
         clockBox.addCreate(anClock);
+        anClock.run;
 
         import api.dm.gui.controls.meters.clocks.digitals.digital_clock : DigitalClock;
 
         auto digClock = new DigitalClock;
-        digClock.isAutorun = true;
         clockBox.addCreate(digClock);
+        digClock.run;
 
         auto ppiContainer = new VBox;
         root.addCreate(ppiContainer);

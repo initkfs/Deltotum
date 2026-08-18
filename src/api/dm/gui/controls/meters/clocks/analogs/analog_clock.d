@@ -21,6 +21,7 @@ class AnalogClock : BaseClock!AnalogClockFace
     this(float diameter = 0)
     {
         this.diameter = diameter;
+        id = "analog_clock";
     }
 
     override void loadTheme()

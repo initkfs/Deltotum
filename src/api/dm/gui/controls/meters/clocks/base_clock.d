@@ -17,8 +17,6 @@ class BaseClock(ClockFace) : Control
         SysTime _current;
     }
 
-    bool isAutorun;
-
     ClockFace clockFace;
     bool isCreateClockFace = true;
     ClockFace delegate(ClockFace) onNewClockFace;
@@ -73,12 +71,6 @@ class BaseClock(ClockFace) : Control
             clockAnimation.onEnd ~= () { setCurrentTime; };
             addCreate(clockAnimation);
         }
-
-        if (isAutorun)
-        {
-            run;
-            clockAnimation.run;
-        }
     }
 
     override void run()
@@ -87,6 +79,20 @@ class BaseClock(ClockFace) : Control
         if (clockFace && !clockFace.isRunning)
         {
             clockFace.run;
+        }
+
+        if (clockAnimation && !clockAnimation.isRunning)
+        {
+            clockAnimation.run;
+        }
+    }
+
+    override void stop()
+    {
+        super.stop;
+        if (clockAnimation && clockAnimation.isRunning)
+        {
+            clockAnimation.stop;
         }
     }
 
