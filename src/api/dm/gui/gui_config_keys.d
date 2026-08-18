@@ -6,3 +6,4 @@ module api.dm.gui.gui_config_keys;
 immutable:
 
 string guiTheme = "guiTheme";
+string guiFocusTraverse = "guiFocusTraverse";

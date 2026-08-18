@@ -59,6 +59,8 @@ class BaseButton : BaseBiswitch
 
         isCreateInteractiveListeners = true;
 
+        id = "base_button";
+
         isBorder = true;
     }
 

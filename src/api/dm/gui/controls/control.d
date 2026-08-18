@@ -16,6 +16,7 @@ import api.dm.gui.controls.popups.tooltips.base_tooltip : BaseTooltip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.gui.scenes.gui_scene : GuiScene;
 
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
@@ -68,6 +69,8 @@ class Control : GuiComponent
     bool isBackground;
     bool isBorder;
     bool isFocusable;
+    bool isFocusAction;
+    bool isFocusTraversal;
     bool isDisabled;
 
     bool isConsumeEventIfBackground = true;
@@ -369,6 +372,11 @@ class Control : GuiComponent
         if (onPostControlContentCreated)
         {
             onPostControlContentCreated();
+        }
+
+        if (isFocusTraversal)
+        {
+            guiScene.addFocusTraverse(this);
         }
     }
 
@@ -1477,6 +1485,13 @@ class Control : GuiComponent
         return _actionEffectAnimation;
     }
 
+    void startVisibleAction()
+    {
+        //TODO remove action event
+        auto ea = ActionEvent(-1, x, y, 0);
+        startAction(ea);
+    }
+
     void addStyle(string id, GStyle style)
     {
         styles[id] = style;
@@ -1558,9 +1573,23 @@ class Control : GuiComponent
         _padding = !onPadding ? themePadding : onPadding(themePadding);
     }
 
+    GuiScene guiScene()
+    {
+        if (auto gs = cast(GuiScene) scene)
+        {
+            return gs;
+        }
+
+        throw new Exception("Not found gui scene");
+    }
+
     override void dispose()
     {
         super.dispose;
+        if (isFocusTraversal)
+        {
+            guiScene.removeFocusTraverse(this);
+        }
     }
 
 }

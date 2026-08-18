@@ -31,6 +31,7 @@ class GuiDialogManager : Container, DialogManager
         mainDialog.isLayoutManaged = false;
 
         isDrawByParent = false;
+        isDrawable = false;
         isLayoutManaged = false;
     }
 

@@ -739,6 +739,8 @@ class Sprite2d : EventKitTarget
 
     }
 
+    bool isNeedDraw() => isNeedDraw(this);
+
     bool isNeedDraw(Sprite2d sprite)
     {
         if ((!sprite.isVisible) || (!sprite.isDrawable))
@@ -3057,7 +3059,7 @@ class Sprite2d : EventKitTarget
     {
         import std.format : format;
 
-        return format("id:%s, state:%s, parent:%s, x:%f, y:%f, w:%f, h:%f", id, state, parent ? parent.id : null, x, y, width, height);
+        return format("%s. id:%s, state:%s, parent:%s, x:%f, y:%f, w:%f, h:%f", typeid(this), id, state, parent ? parent.id : null, x, y, width, height);
     }
 
 }

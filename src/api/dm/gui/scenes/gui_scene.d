@@ -7,7 +7,7 @@ import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.gui.components.gui_component : GuiComponent;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.graphics.colors.rgba: RGBA;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
  * Authors: initkfs
@@ -19,6 +19,10 @@ class GuiScene : Scene3d
 
     SceneView debugger;
 
+    Sprite2d[] focusQueue;
+    size_t focusQueueIndex;
+    size_t prevFocusIndex;
+
     alias addCreate = Scene3d.addCreate;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
@@ -27,9 +31,53 @@ class GuiScene : Scene3d
         initProcessUDA!ThisType(isInitUDAProcessor);
     }
 
+    override void create()
+    {
+        super.create;
+
+        import GuiConfigKeys = api.dm.gui.gui_config_keys;
+
+        if (config.hasKey(GuiConfigKeys.guiFocusTraverse))
+        {
+            bool isFocusTraverse = config.getBool(GuiConfigKeys.guiFocusTraverse);
+
+            if (isFocusTraverse)
+            {
+
+                import api.dm.com.inputs.com_keyboard : ComKeyName;
+
+                onKeyPress ~= (ref e) {
+                    if (e.keyName == ComKeyName.key_tab)
+                    {
+                        traverseFocus;
+                    }
+                    else if (e.keyName == ComKeyName.key_return)
+                    {
+                        if (focusQueue.length > 0)
+                        {
+                            auto index = focusQueueIndex > 0 ? focusQueueIndex - 1 : 0;
+                            auto sp = focusQueue[index];
+                            if (sp.isFocus)
+                            {
+                                import api.dm.gui.controls.control : Control;
+
+                                if (auto control = cast(Control) sp)
+                                {
+                                    control.startVisibleAction;
+                                }
+                            }
+                        }
+                    }
+
+                };
+            }
+        }
+    }
+
     alias build = Scene3d.build;
 
-    void build(GuiComponent guiComponent){
+    void build(GuiComponent guiComponent)
+    {
         if (!guiComponent.hasTheme)
         {
             assert(theme, "Theme must not be null");
@@ -117,6 +165,57 @@ class GuiScene : Scene3d
         return true;
     }
 
+    bool addFocusTraverse(Sprite2d sprite)
+    {
+        //TODO reorder?
+        foreach (sp; focusQueue)
+        {
+            if (sp is sprite)
+            {
+                return false;
+            }
+        }
+        focusQueue ~= sprite;
+        return true;
+    }
+
+    bool removeFocusTraverse(Sprite2d sprite)
+    {
+        import api.core.utils.arrays : drop;
+
+        return focusQueue.drop(sprite);
+    }
+
+    void traverseFocus()
+    {
+        if (focusQueue.length == 0)
+        {
+            return;
+        }
+
+        if (focusQueueIndex >= focusQueue.length)
+        {
+            focusQueueIndex = 0;
+        }
+
+        while (focusQueueIndex < focusQueue.length)
+        {
+            auto currQueueIndex = focusQueueIndex;
+            auto sp = focusQueue[currQueueIndex];
+            focusQueueIndex++;
+            if (sp.isNeedDraw)
+            {
+                sp.focus;
+                if (prevFocusIndex != currQueueIndex)
+                {
+                    focusQueue[prevFocusIndex].unfocus;
+                }
+                prevFocusIndex = currQueueIndex;
+                return;
+            }
+        }
+    }
+
     void createDebugger()
     {
         debugger = new SceneView(this);
@@ -171,7 +270,8 @@ class GuiScene : Scene3d
 
     override void setDebugField(void delegate(float) onValue, float startValue = 0, float minValue = 0, float maxValue = 1, float dt = 0.01, dstring name = "Field")
     {
-        if(!debugger){
+        if (!debugger)
+        {
             return;
         }
 
@@ -180,7 +280,8 @@ class GuiScene : Scene3d
 
     override void setDebugColor(void delegate(RGBA) onValue, RGBA startValue = RGBA.white, dstring name = "Color")
     {
-        if(!debugger){
+        if (!debugger)
+        {
             return;
         }
 
