@@ -61,7 +61,9 @@ class BaseTableRow(TItem, TCol:
         layout.isAutoResize = true;
         layout.isAlignY = true;
 
-        isCreateInteractions = true;
+        isCreateHoverEffect = true;
+        isCreateHoverEffectAnimation = true;
+        isCreateInteractiveListeners = true;
 
         id = "base_table_row";
     }
@@ -172,11 +174,6 @@ class BaseTableRow(TItem, TCol:
         {
             bottomBorder.y = boundsRect.bottom - bottomBorder.halfHeight;
         }
-    }
-
-    Sprite2d newSelectEffect()
-    {
-        return theme.rectShape(width, height, angle, createFillStyle);
     }
 
     override Sprite2d newHoverEffect()

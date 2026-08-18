@@ -103,6 +103,21 @@ abstract class BaseClippedFlatTable(T, TCol:
         return row;
     }
 
+    override bool current(TRow item, bool isTrigger = true, bool isReplaceForce = false)
+    {
+        auto oldRow = _current;
+        if (super.current(item, isTrigger, isReplaceForce))
+        {
+            if (oldRow)
+            {
+                oldRow.endSelect;
+            }
+            _current.startSelect;
+            return true;
+        }
+        return false;
+    }
+
     override protected void resizeColumn(size_t index, float newWidth)
     {
         foreach (row; rows)

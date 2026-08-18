@@ -79,6 +79,7 @@ class Control : GuiComponent
     void delegate(Sprite2d) onCreatedBackground;
 
     bool isProcessHover;
+    bool isProcessSelect;
     bool isProcessAction;
 
     bool isCreateHoverEffect;
@@ -661,6 +662,10 @@ class Control : GuiComponent
 
     void startHover()
     {
+        if (isProcessSelect)
+        {
+            return;
+        }
         //if(isProcessHover)?
         isProcessHover = true;
 
@@ -670,14 +675,41 @@ class Control : GuiComponent
         }
     }
 
-    bool isHover() => isProcessHover;
+    bool isHover() => isProcessHover && !isProcessSelect;
 
     void endHover()
     {
+        if (isProcessSelect)
+        {
+            return;
+        }
+
         isProcessHover = false;
         if (hoverEffectEndBehaviour)
         {
             hoverEffectEndBehaviour();
+        }
+    }
+
+    bool isSelect() => isProcessSelect;
+
+    void startSelect()
+    {
+        isProcessSelect = true;
+        if (_hoverEffect)
+        {
+            _hoverEffect.opacity = 1;
+            _hoverEffect.isVisible = true;
+        }
+    }
+
+    void endSelect()
+    {
+        isProcessSelect = false;
+        if (_hoverEffect)
+        {
+            _hoverEffect.opacity = 0;
+            _hoverEffect.isVisible = false;
         }
     }
 

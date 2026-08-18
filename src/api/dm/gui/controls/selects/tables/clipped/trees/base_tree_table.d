@@ -19,12 +19,13 @@ class BaseTreeTable(T, TCol:
 {
 
     TRow[] rows;
-    bool isNoHoverWithoutPointer = true;
 
     protected
     {
         TRow currentSelected;
     }
+
+    bool isNoHoverWithoutPointer = true;
 
     void delegate(TRow oldRow, TRow newRot) onSelectedOldNewRow;
 
@@ -40,6 +41,7 @@ class BaseTreeTable(T, TCol:
         if (isNoHoverWithoutPointer)
         {
             onPointerExit ~= (ref e) {
+                //TODO viewport only
                 foreach (row; rows)
                 {
                     if (row.isHover)
@@ -129,6 +131,12 @@ class BaseTreeTable(T, TCol:
             {
                 onSelectedOldNewRow(oldSelected, currentSelected);
             }
+
+            if(oldSelected){
+                oldSelected.endSelect;
+            }
+
+            currentSelected.startSelect;
         };
 
         if (item.childrenItems.length > 0)

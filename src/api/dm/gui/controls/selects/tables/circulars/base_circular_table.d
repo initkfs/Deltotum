@@ -157,6 +157,7 @@ abstract class BaseCircularTable(T, TCol:
                     if (firstRow.isMouseOver)
                     {
                         firstRow.isMouseOver = false;
+                        firstRow.endSelect;
                         firstRow.endHover;
                     }
                 }
@@ -200,6 +201,7 @@ abstract class BaseCircularTable(T, TCol:
                         if (lastRow.isMouseOver)
                         {
                             lastRow.isMouseOver = false;
+                            lastRow.endSelect;
                             lastRow.endHover;
                         }
                     }
@@ -229,9 +231,9 @@ abstract class BaseCircularTable(T, TCol:
             onPointerExit ~= (ref e) {
                 foreach (row; visibleRows)
                 {
-                    if (row.isHover)
+                    if (row.isSelect)
                     {
-                        row.endHover;
+                        row.endSelect;
                     }
                 }
             };
