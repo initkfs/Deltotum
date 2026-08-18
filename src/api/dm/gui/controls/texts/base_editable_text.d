@@ -79,21 +79,11 @@ class BaseEditableText : BaseMonoText
         super.initialize;
 
         onFocusEnter ~= (ref e) {
-            if (_focusEffect)
-            {
-                _focusEffect.isVisible = true;
-            }
-
             window.startTextInput;
             isStartTextInput = true;
         };
 
         onFocusExit ~= (ref e) {
-            if (_focusEffect && _focusEffect.isVisible)
-            {
-                _focusEffect.isVisible = false;
-            }
-
             if (cursor)
             {
                 cursor.isVisible = false;

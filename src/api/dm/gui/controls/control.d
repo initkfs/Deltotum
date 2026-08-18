@@ -117,6 +117,7 @@ class Control : GuiComponent
     Sprite2d delegate(Sprite2d) onNewFocusEffect;
     void delegate(Sprite2d) onConfiguredFocusEffect;
     void delegate(Sprite2d) onCreatedFocusEffect;
+    protected void delegate() onTryCreateFocus;
 
     bool isCreateInteractiveListeners;
 
@@ -157,6 +158,37 @@ class Control : GuiComponent
     override void initialize()
     {
         super.initialize;
+
+        if (isFocusable)
+        {
+            isCreateFocusEffect = true;
+            if (!onTryCreateFocus)
+            {
+                onTryCreateFocus = () {
+                    if (!isCreated)
+                    {
+                        return;
+                    }
+
+                    tryCreateFocus;
+                };
+                invalidateListeners ~= onTryCreateFocus;
+            }
+
+            onFocusEnter ~= (ref e) {
+                if (_focusEffect)
+                {
+                    _focusEffect.isVisible = true;
+                }
+            };
+
+            onFocusExit ~= (ref e) {
+                if (_focusEffect)
+                {
+                    _focusEffect.isVisible = false;
+                }
+            };
+        }
 
         if (isBackground || isBorder)
         {
@@ -333,11 +365,6 @@ class Control : GuiComponent
             createInteractiveListeners;
         }
 
-        if (isFocusable)
-        {
-            createFocusEffect;
-        }
-
         if (onPostControlContentCreated)
         {
             onPostControlContentCreated();
@@ -506,32 +533,43 @@ class Control : GuiComponent
         }
     }
 
+    void tryCreateFocus()
+    {
+        if (_width == 0 || _height == 0)
+        {
+            return;
+        }
+
+        createFocusEffect;
+        if (onTryCreateFocus)
+        {
+            removeInvListener(onTryCreateFocus);
+        }
+    }
+
     void createFocusEffect()
     {
-        if (!_focusEffect && isCreateFocusEffect)
+        auto effect = newFocusEffect;
+        assert(effect);
+
+        _focusEffect = onNewFocusEffect ? onNewFocusEffect(effect) : effect;
+        assert(_focusEffect);
+
+        _focusEffect.id = idFocus;
+        _focusEffect.isLayoutManaged = false;
+        _focusEffect.isResizedByParent = true;
+        _focusEffect.isVisible = false;
+
+        if (onConfiguredFocusEffect)
         {
-            auto effect = newFocusEffect;
-            assert(effect);
+            onConfiguredFocusEffect(_focusEffect);
+        }
 
-            _focusEffect = onNewFocusEffect ? onNewFocusEffect(effect) : effect;
-            assert(_focusEffect);
+        addCreate(_focusEffect);
 
-            _focusEffect.id = idFocus;
-            _focusEffect.isLayoutManaged = false;
-            _focusEffect.isResizedByParent = true;
-            _focusEffect.isVisible = false;
-
-            if (onConfiguredFocusEffect)
-            {
-                onConfiguredFocusEffect(_focusEffect);
-            }
-
-            addCreate(_focusEffect);
-
-            if (onCreatedFocusEffect)
-            {
-                onCreatedFocusEffect(_focusEffect);
-            }
+        if (onCreatedFocusEffect)
+        {
+            onCreatedFocusEffect(_focusEffect);
         }
     }
 
@@ -886,10 +924,11 @@ class Control : GuiComponent
     {
         GStyle focusStyle = createDefaultStyle;
         focusStyle.ifAdaptive((style) {
+            style.lineWidth = 2; //TODO from config
             style.lineColor = theme.colorFocus;
             style.fillColor = theme.colorFocus;
         });
-        auto effect = theme.shape(width, height, angle, focusStyle);
+        auto effect = theme.shape(width + 1, height + 1, angle, focusStyle);
         return effect;
     }
 

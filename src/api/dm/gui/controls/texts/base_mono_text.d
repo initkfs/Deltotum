@@ -61,7 +61,7 @@ class BaseMonoText : Control
         this(text.to!dstring);
     }
 
-    this(dstring text = "", typeof(_textBuffer) newBuffer = null, bool isFocusable = true)
+    this(dstring text = "", typeof(_textBuffer) newBuffer = null, bool isFocusable = false)
     {
         _textBuffer = newBuffer ? newBuffer : new ArrayTextBuffer!Glyph;
         this.isFocusable = isFocusable;

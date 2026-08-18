@@ -84,6 +84,7 @@ class TextField : Control
         textView.isHGrow = true;
         textView.isAddLastLineBreak = false;
         textView.isAllowWrapLine = false;
+        textView.isFocusable = false;
 
         textView.onEnter = (ref e) {
             if (onEnter)

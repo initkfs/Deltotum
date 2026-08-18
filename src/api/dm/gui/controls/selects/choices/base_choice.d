@@ -294,6 +294,8 @@ class BaseChoice(T) : OneBaseSelector!T
             auto l = newLabel;
             label = !onNewLabel ? l : onNewLabel(l);
 
+            label.isFocusable = false;
+
             if (onConfiguredLabel)
             {
                 onConfiguredLabel(label);
