@@ -1,5 +1,6 @@
 module api.dm.gui.controls.containers.splits.vsplit_box;
 
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.splits.base_split_box : BaseSplitBox, DividerData;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
@@ -10,10 +11,15 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
  */
 class VSplitBox : BaseSplitBox
 {
-    this()
+    this(bool isAutoResize = true, bool isLayout = true, Control[] children = null)
     {
-        layout = new VLayout(0);
-        layout.isAutoResize = true;
+        super(() {
+            import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+
+            auto layout = new VLayout(0);
+            layout.isAutoResize = isAutoResize;
+            return layout;
+        }, isLayout, null, children);
     }
 
     override float dividerWidth() => width - padding.width;

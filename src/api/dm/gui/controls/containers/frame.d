@@ -25,15 +25,17 @@ class Frame : Container
         dstring initText;
     }
 
-    this(dstring labelText = "Frame")
+    this(dstring labelText = "Frame", bool isAutoResize = true, bool isLayout = true, Control[] children = null)
     {
+        super(() {
+            import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+
+            auto layout = new CenterLayout;
+            layout.isAutoResize = true;
+            return layout;
+        }, isLayout, null, children);
+
         initText = labelText;
-
-        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
-
-        layout = new CenterLayout;
-        layout.isAutoResize = true;
-
         isBorder = true;
     }
 

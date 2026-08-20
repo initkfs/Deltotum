@@ -1,5 +1,6 @@
 module api.dm.gui.controls.containers.slider;
 
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
@@ -33,8 +34,10 @@ class Slider : Container
         bool _expanded;
     }
 
-    this(SliderPos position = SliderPos.left, bool expand = false)
+    this(SliderPos position = SliderPos.left, bool expand = false, Control[] children = null)
     {
+        super(null, isLayout : false, null, children);
+
         if (position == SliderPos.left || position == SliderPos.right)
         {
             layout = new HLayout(0);
@@ -283,7 +286,8 @@ class Slider : Container
     {
         if (newContent.parent)
         {
-            throw new Exception("Content for slider must not be created, but parent is: " ~ parent.toString);
+            throw new Exception(
+                "Content for slider must not be created, but parent is: " ~ parent.toString);
         }
 
         _content.addCreate(newContent);

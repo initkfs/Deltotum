@@ -1,5 +1,6 @@
 module api.dm.gui.controls.containers.splits.hsplit_box;
 
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.splits.base_split_box : BaseSplitBox, DividerData;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
@@ -10,10 +11,16 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
  */
 class HSplitBox : BaseSplitBox
 {
-    this()
+
+    this(bool isAutoResize = true, bool isLayout = true, Control[] children = null)
     {
-        layout = new HLayout(0);
-        layout.isAutoResize = true;
+        super(() {
+            import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+
+            auto layout = new HLayout(0);
+            layout.isAutoResize = isAutoResize;
+            return layout;
+        }, isLayout, null, children);
     }
 
     protected
@@ -81,7 +88,8 @@ class HSplitBox : BaseSplitBox
             auto newPrevWidth = prev.width - dx;
             auto newNextWidth = next.width + dx;
 
-            if(!prev.canChangeWidth(newPrevWidth) || !next.canChangeWidth(newNextWidth)){
+            if (!prev.canChangeWidth(newPrevWidth) || !next.canChangeWidth(newNextWidth))
+            {
                 return false;
             }
 
@@ -122,7 +130,6 @@ class HSplitBox : BaseSplitBox
                     prev.layout.isResizeChild = true;
                 }
             }
-
 
             prev.width = newPrevWidth;
             next.width = newNextWidth;

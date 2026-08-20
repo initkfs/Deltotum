@@ -1,6 +1,7 @@
 module api.dm.gui.controls.containers.border_box;
 
 import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.control : Control;
 
 /**
  * Authors: initkfs
@@ -42,13 +43,16 @@ class BorderBox : Container
     void delegate(Container) onConfiguredCenterContainer;
     void delegate(Container) onCreatedCenterContainer;
 
-    this()
+    this(bool isAutoResize = false, bool isLayout = true, Control[] children = null)
     {
-        import api.dm.kit.sprites2d.layouts.vlayout: VLayout;
-        
-        layout = new VLayout(0);
-        layout.isAutoResize = true;
-        layout.isAlignX = true;
+        super(() {
+            import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+
+            auto layout = new VLayout(0);
+            layout.isAutoResize = isAutoResize;
+            layout.isAlignX = true;
+            return layout;
+        }, isLayout, null, children);
     }
 
     override void create()

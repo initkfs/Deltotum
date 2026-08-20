@@ -1,5 +1,6 @@
 module api.dm.gui.controls.containers.tabs.tab;
 
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -26,27 +27,32 @@ class Tab : Container
 
     void delegate() onActivate;
 
-    this(dstring text)
+    this(dstring text, bool isAutoResize = true, Control[] children = null)
     {
-       this(text, null, dchar.init);
+        this(text, null, dchar.init, isAutoResize, children);
     }
 
-    this(dstring text, dchar iconName)
+    this(dstring text, dchar iconName, bool isAutoResize = true, Control[] children = null)
     {
-       this(text, null, iconName);
+        this(text, null, iconName, isAutoResize, children);
     }
 
-    this(dstring text = "Tab", Sprite2d content = null, dchar iconName = dchar.init)
+    this(dstring text = "Tab", Sprite2d content, dchar iconName = dchar.init, bool isAutoResize = true, Control[] children = null)
     {
+        super(() {
+            import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+
+            import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+
+            auto layout = new CenterLayout;
+            layout.isAutoResize = isAutoResize;
+            return layout;
+        }, true, null, children);
+
         labelButtonText = text;
         labelButtonIconName = iconName;
 
         this.content = content;
-
-        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
-
-        layout = new CenterLayout;
-        layout.isAutoResize = true;
 
         isBorder = false;
         isBackground = false;

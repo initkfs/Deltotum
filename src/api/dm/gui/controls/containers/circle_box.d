@@ -1,5 +1,6 @@
 module api.dm.gui.controls.containers.circle_box;
 
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 
 /**
@@ -14,10 +15,17 @@ class CircleBox : Container
         float _innerPadding = 0;
     }
 
-    this(float radius = 0, float startAngle = 0)
+    this(float radius = 0, float startAngle = 0, bool isAutoResize = true, bool isLayout = true, Control[] children = null)
     {
-        this._radius = radius;
+        super(() {
+            import api.dm.kit.sprites2d.layouts.circle_layout : CircleLayout;
 
+            auto layout = new CircleLayout(radius, _startAngle);
+            layout.isAutoResize = isAutoResize;
+            return layout;
+        }, isLayout, null, children);
+
+        this._radius = radius;
         if (_radius > 0)
         {
             auto diameter = _radius * 2;
@@ -25,11 +33,6 @@ class CircleBox : Container
         }
 
         _startAngle = startAngle;
-
-        import api.dm.kit.sprites2d.layouts.circle_layout : CircleLayout;
-
-        layout = new CircleLayout(layoutRadius, _startAngle);
-        layout.isAutoResize = true;
 
         isBorder = true;
     }

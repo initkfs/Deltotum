@@ -1,9 +1,10 @@
 module api.dm.gui.controls.containers.scroll_box;
 
+
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
 import api.math.geom2.rect2 : Rect2f;
-
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.center_box : CenterBox;
@@ -26,17 +27,17 @@ class ScrollBox : Container
 {
     //protected
     //{
-        VScroll vslider;
-        HScroll hslider;
-        Container content;
-        Container contentContainer;
-        Sprite2d contentRoot;
+    VScroll vslider;
+    HScroll hslider;
+    Container content;
+    Container contentContainer;
+    Sprite2d contentRoot;
 
-        enum
-        {
-            idVscroll = "scb_scroll_v",
-            idHscroll = "scb_scroll_h"
-        }
+    enum
+    {
+        idVscroll = "scb_scroll_v",
+        idHscroll = "scb_scroll_h"
+    }
     //}
 
     ScrollBarPolicy vScrollPolicy = ScrollBarPolicy.ifneed;
@@ -45,20 +46,23 @@ class ScrollBox : Container
     float clipErrorDelta = 1;
     float clipPadding = 2;
 
-    this(float width = 100, float height = 100)
+    this(float width = 100, float height = 100, bool isAutoResize = true, bool isLayout = true, Control[] children = null)
     {
+        super(() {
+            import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+            auto layout = new VLayout(0);
+            layout.isAlignX = false;
+            layout.isAutoResize = isAutoResize;
+            layout.isDecreaseRootSize = true;
+            return layout;
+        }, isLayout, null, children);
+
         this.width = width;
         this.height = height;
 
-        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
-
         isBorder = true;
-        layout = new VLayout(0);
-        layout.isAlignX = false;
-        layout.isAutoResize = true;
-        layout.isDecreaseRootSize = true;
     }
-
+    
     override void initialize()
     {
         super.initialize;

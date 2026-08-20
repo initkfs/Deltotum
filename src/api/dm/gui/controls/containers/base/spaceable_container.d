@@ -1,5 +1,6 @@
 module api.dm.gui.controls.containers.base.spaceable_container;
 
+import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.dm.gui.controls.containers.container : Container;
@@ -14,14 +15,14 @@ class SpaceableContainer : Container
         float _spacing = 0;
     }
 
-    this(float spacing = SpaceableLayout.DefaultSpacing)
+    this(float spacing = SpaceableLayout.DefaultSpacing, Control[] children)
     {
-        this(spacing, null, true, null);
+        this(spacing, null, true, null, children);
     }
 
-    this(float spacing = SpaceableLayout.DefaultSpacing, scope Layout2d delegate() defaultLayoutProvider, bool isLayout = true, scope Layout2d delegate() layoutProvider = null)
+    this(float spacing = SpaceableLayout.DefaultSpacing, scope Layout2d delegate() defaultLayoutProvider, bool isLayout = true, scope Layout2d delegate() layoutProvider = null, Control[] children)
     {
-        super(defaultLayoutProvider, isLayout, layoutProvider);
+        super(defaultLayoutProvider, isLayout, layoutProvider, children);
         this._spacing = spacing;
     }
 

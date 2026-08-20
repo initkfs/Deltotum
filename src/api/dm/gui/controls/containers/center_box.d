@@ -1,17 +1,22 @@
 module api.dm.gui.controls.containers.center_box;
 
 import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.control : Control;
 
 /**
  * Authors: initkfs
  */
 class CenterBox : Container
 {
-    this()
+    this(bool isAutoResize = true, bool isLayout = true, Control[] children = null)
     {
-        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+        super(() {
 
-        layout = new CenterLayout;
-        layout.isAutoResize = true;
+            import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+
+            layout = new CenterLayout;
+            layout.isAutoResize = isAutoResize;
+            return layout;
+        }, isLayout, null, children);
     }
 }

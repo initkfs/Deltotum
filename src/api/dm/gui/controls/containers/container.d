@@ -14,7 +14,7 @@ class Container : Control
 
     }
 
-    this(scope Layout2d delegate() defaultLayoutProvider, bool isLayout = true, scope Layout2d delegate() layoutProvider = null)
+    this(scope Layout2d delegate() defaultLayoutProvider, bool isLayout = true, scope Layout2d delegate() layoutProvider = null, Control[] children = null)
     {
         if (isLayout)
         {
@@ -30,6 +30,33 @@ class Container : Control
             else
             {
                 layout = layoutProvider();
+            }
+        }
+
+        this.children ~= children;
+    }
+
+    override void create()
+    {
+        super.create;
+
+        foreach (ch; children)
+        {
+            trySetParentProps(ch);
+
+            if (!ch.isBuilt)
+            {
+                //TODO remove overload
+                if (auto c = cast(Control) ch)
+                {
+                    build(c);
+                }
+                else
+                {
+                    build(ch);
+                }
+
+                initCreate(ch);
             }
         }
     }

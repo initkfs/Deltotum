@@ -1,5 +1,7 @@
 module api.dm.gui.controls.containers.splits.base_split_box;
 
+import api.dm.gui.controls.control : Control;
+import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.graphics.styles.gstyle : GStyle;
@@ -33,6 +35,11 @@ class BaseSplitBox : Container
     }
 
     void delegate(DividerData) onMoveDivider;
+
+    this(scope Layout2d delegate() defaultLayoutProvider, bool isLayout = true, scope Layout2d delegate() layoutProvider = null, Control[] children = null)
+    {
+        super(defaultLayoutProvider, isLayout, layoutProvider, children);
+    }
 
     abstract
     {
@@ -101,7 +108,7 @@ class BaseSplitBox : Container
     Sprite2d newDividerShape(float w, float h, float angle, GStyle style)
     {
         auto shape = theme.rectShape(w, h, angle, style);
-        return shape; 
+        return shape;
     }
 
     void createDivider(Sprite2d prev, Sprite2d next)
