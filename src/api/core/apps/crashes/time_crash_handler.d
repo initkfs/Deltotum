@@ -46,7 +46,7 @@ unittest
 
     const crHandler = new class TimeCrashHandler
     {
-        override void acceptCrash(Throwable t, const(char)[] message = "") inout
+        override void acceptCrash(Throwable t, const(char)[] message = "")
         {
 
         }

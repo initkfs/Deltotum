@@ -192,9 +192,9 @@ unittest
     auto val4 = config.getBool("value4");
     assert(val4 == true);
 
-    //assert(config.setValue("value1", 2));
-    //assert(config.getInt("value1") == 2);
-
-    //assert(config.setValue("value2", "text"));
-    //assert(config.getString("value2") == "text");
+    enum keyName = "key";
+    auto mutConfig = new AAStrConfig([keyName : "10"]);
+    assert(mutConfig.setValue(keyName, 2));
+    assert(mutConfig.getValue!int(keyName) == 2);
+    assert(mutConfig.getInt(keyName) == 2);
 }
