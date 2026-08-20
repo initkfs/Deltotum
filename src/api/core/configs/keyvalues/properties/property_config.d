@@ -140,7 +140,7 @@ class PropertyConfig : Config
         return (key in keyIndex) !is null;
     }
 
-    protected inout(Line**) containsLinePtr(string key) inout
+    protected inout(Line**) hasLinePtr(string key) inout
     {
         if (key.length == 0)
         {
@@ -155,7 +155,7 @@ class PropertyConfig : Config
 
     T getValue(T)(string key) const
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         //isThrowOnNotExistentKey?
         if (!valuePtr)
         {
@@ -172,7 +172,7 @@ class PropertyConfig : Config
 
     bool setValue(T)(string key, T value)
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         if (!valuePtr)
         {
             return false;
@@ -183,7 +183,7 @@ class PropertyConfig : Config
 
     override bool getBool(string key) const
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -196,7 +196,7 @@ class PropertyConfig : Config
 
     override string getString(string key) const
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -210,7 +210,7 @@ class PropertyConfig : Config
 
     override int getInt(string key) const
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -223,7 +223,7 @@ class PropertyConfig : Config
 
     override long getLong(string key) const
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -236,7 +236,7 @@ class PropertyConfig : Config
 
     override float getFloat(string key) const
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -250,7 +250,7 @@ class PropertyConfig : Config
 
     override double getDouble(string key) const
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -264,7 +264,7 @@ class PropertyConfig : Config
 
     T[] getList(T)(string key) const
     {
-        auto valuePtr = containsLinePtr(key);
+        auto valuePtr = hasLinePtr(key);
         if (!valuePtr)
         {
             if (isThrowOnNotExistentKey)
