@@ -28,6 +28,10 @@ enum ControlStyle : string
     action = "action"
 }
 
+import api.dm.gui.components.gui_component : GuiComponent;
+
+GuiComponent guiStaticBuilder;
+
 /**
  * Authors: initkfs
  */
@@ -146,6 +150,11 @@ class Control : GuiComponent
         isResizable = true;
         isResizeChild = true;
         isScalable = true;
+
+        if (guiStaticBuilder)
+        {
+            guiStaticBuilder.build(this);
+        }
     }
 
     final void isCreateInteractions(bool value)
@@ -1071,7 +1080,10 @@ class Control : GuiComponent
     {
         assert(control);
         applyStyle(control);
-        super.build(control);
+        if (!control.isBuilt)
+        {
+            super.build(control);
+        }
         //TODO from sprite?
         trySetParentProps(control);
     }

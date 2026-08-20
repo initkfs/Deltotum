@@ -1432,6 +1432,15 @@ class SdlApp : GuiApp
         //Rebuilding window with all services
         windowBuilder.build(window);
 
+        import Controls = api.dm.gui.controls.control;
+
+        if (Controls.guiStaticBuilder)
+        {
+            window.build(Controls.guiStaticBuilder);
+            Controls.guiStaticBuilder.theme = theme;
+            Controls.guiStaticBuilder.interact = interact;
+        }
+
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
         if (uservices.config.hasKey(KitConfigKeys.sceneIsDebug))
