@@ -97,6 +97,8 @@ class Window : GraphicComponent
     bool isShowing;
     bool isDisposed;
 
+    bool isControlInvalidState;
+
     //TODO remove
     File* fpsLog;
 
@@ -241,8 +243,9 @@ class Window : GraphicComponent
 
     bool addCreate(Scene2d scene)
     {
+        bool isAdd = add(scene);
         create(scene);
-        return add(scene);
+        return isAdd;
     }
 
     bool add(Scene2d[] scenes...)
@@ -269,12 +272,18 @@ class Window : GraphicComponent
                 return false;
             }
         }
+
         _scenes ~= scene;
 
         if (scene.isAutoSizeToWindow)
         {
             scene.width = width;
             scene.height = height;
+        }
+
+        scene.isControlInvalidState = isControlInvalidState;
+        if(!isControlInvalidState){
+            scene.isThrowInvalidChangeState = false;
         }
 
         return true;

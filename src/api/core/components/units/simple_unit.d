@@ -372,6 +372,12 @@ class SimpleUnit : Unitable
         }
     }
 
+    void isControlInvalidState(bool v)
+    {
+        isThrowInvalidState = v;
+        isThrowInvalidChangeState = v;
+    }
+
     import api.core.utils.arrays : drop;
 
     bool removeOnInitialize(void delegate() dg) => drop(onInitialize, dg);

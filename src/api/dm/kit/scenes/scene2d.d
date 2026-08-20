@@ -56,6 +56,8 @@ class Scene2d : EventKitTarget
 
     bool isAutoSizeToWindow;
 
+    bool isControlInvalidState;
+
     protected
     {
         FactoryKit _factory;
@@ -240,6 +242,7 @@ class Scene2d : EventKitTarget
         }
 
         import std.array : insertInPlace;
+
         sprite.isDrawByParent = isDrawByParent;
         takenSprites.insertInPlace(0, sprite);
         return true;
@@ -506,6 +509,13 @@ class Scene2d : EventKitTarget
         {
             sprite.scene = this;
             isSet |= true;
+        }
+
+        if (!isControlInvalidState)
+        {
+            //TODO else
+            sprite.isControlInvalidState = false;
+            sprite.isUnitStateForChild = true;
         }
 
         return isSet;

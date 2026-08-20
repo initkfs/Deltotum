@@ -200,6 +200,8 @@ class Sprite2d : EventKitTarget
     bool isRoundEvenChildX;
     bool isRoundEvenChildY;
 
+    bool isUnitStateForChild;
+
     version (SdlBackend)
     {
         //TODO correct max size
@@ -955,6 +957,13 @@ class Sprite2d : EventKitTarget
         {
             sprite.onBeforeDrawChildDg = onBeforeDrawChildDg;
         }
+
+        if (isUnitStateForChild)
+        {
+            sprite.isThrowInvalidState = isThrowInvalidState;
+            sprite.isThrowInvalidChangeState = isThrowInvalidChangeState;
+            sprite.isUnitStateForChild = isUnitStateForChild;
+        }
     }
 
     bool addCreate(Sprite2d[] sprites)
@@ -999,6 +1008,8 @@ class Sprite2d : EventKitTarget
                 return false;
             }
 
+            bool isAdd = add(sprite, index);
+
             if (!sprite.isBuilt)
             {
                 buildInit(sprite);
@@ -1014,7 +1025,7 @@ class Sprite2d : EventKitTarget
                 create(sprite);
             }
 
-            return add(sprite, index);
+            return isAdd;
         }
         catch (Exception e)
         {
@@ -3059,7 +3070,8 @@ class Sprite2d : EventKitTarget
     {
         import std.format : format;
 
-        return format("%s. id:%s, state:%s, parent:%s, x:%f, y:%f, w:%f, h:%f", typeid(this), id, state, parent ? parent.id : null, x, y, width, height);
+        return format("%s. id:%s, state:%s, parent:%s, x:%f, y:%f, w:%f, h:%f", typeid(this), id, state, parent ? parent
+                .id : null, x, y, width, height);
     }
 
 }

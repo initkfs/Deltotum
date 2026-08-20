@@ -1036,6 +1036,8 @@ class SdlApp : GuiApp
         assert(windowBuilder.windowing);
         windowBuilder.windowing.main = window;
 
+        window.isControlInvalidState = isControlInvalidState;
+
         if (parent)
         {
             window.parent = parent;

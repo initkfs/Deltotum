@@ -54,8 +54,10 @@ class CliApp : SimpleUnit
     }
 
     bool isStopMainController = true;
+    bool isControlInvalidState = true;
     bool isNoEnvConfig;
     bool isNoFileConfig;
+    
 
     bool initialize(string[] args)
     {
@@ -63,6 +65,15 @@ class CliApp : SimpleUnit
 
         try
         {
+            import std.process : environment;
+            import std.conv : to;
+
+            if (auto mustThrowOnState = environment.get(
+                    CoreEnvKeys.appControlInvalidState))
+            {
+                isControlInvalidState = mustThrowOnState.to!bool;
+            }
+
             createCrashHandlers(args);
 
             _uniServices = newUniServices;
