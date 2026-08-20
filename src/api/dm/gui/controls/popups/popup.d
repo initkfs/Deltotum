@@ -9,6 +9,6 @@ class Popup : BasePopup
 {
     this()
     {
-        super(isCreateLayout: true);
+        super(isLayout: true);
     }
 }

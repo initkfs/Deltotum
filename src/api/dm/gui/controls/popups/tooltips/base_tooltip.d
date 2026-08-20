@@ -14,6 +14,6 @@ class BaseTooltip : BaseTextPopup
 
     this(dstring text, dchar iconName, float graphicsGap)
     {
-        super(text, iconName, graphicsGap, isCreateLayout : true);
+        super(text, iconName, graphicsGap, isLayout : true);
     }
 }

@@ -27,9 +27,9 @@ class OneBaseDropDownSelector(D, T) : OneBaseSelector!T
 
     void delegate() onShowPopup;
 
-    this(bool isCreateLayout = true)
+    this(bool isLayout = true)
     {
-        if (isCreateLayout)
+        if (isLayout)
         {
             import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 

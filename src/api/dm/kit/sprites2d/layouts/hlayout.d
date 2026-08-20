@@ -24,7 +24,7 @@ class HLayout : SpaceableLayout
     {
         auto bounds = root.boundsRect;
         float nextX = 0;
-        if (isFillStartToEnd)
+        if (!isAlignReverse)
         {
             nextX = bounds.x + root.padding.left;
         }
@@ -47,7 +47,7 @@ class HLayout : SpaceableLayout
             }
             else
             {
-                if (isFillStartToEnd)
+                if (!isAlignReverse)
                 {
                     const childX = nextX + child.margin.left;
                     if (Math.abs(child.x - childX) >= sizeChangeDelta)

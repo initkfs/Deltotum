@@ -48,9 +48,9 @@ class BaseToggle : BaseBiswitch
 
     bool isCreatePointerListeners = true;
 
-    this(dstring label, float width, float height, dchar iconName = dchar.init, float graphicsGap = 5, bool isCreateLayout = true)
+    this(dstring label, float width, float height, dchar iconName = dchar.init, float graphicsGap = 5, bool isLayout = true)
     {
-        super(label, iconName, graphicsGap, isCreateLayout);
+        super(label, iconName, graphicsGap, isLayout);
         initSize(width, height);
     }
 

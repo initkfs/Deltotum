@@ -11,7 +11,7 @@ class BasePopup : Control
 
     float showPadding = 0;
 
-    this(bool isCreateLayout = true)
+    this(bool isLayout = true)
     {
         isDrawByParent = false;
 
@@ -21,7 +21,7 @@ class BasePopup : Control
 
         isBackground = true;
 
-        if (isCreateLayout)
+        if (isLayout)
         {
             import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 

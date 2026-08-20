@@ -33,7 +33,7 @@ class Check : BaseBiswitch
 
     this(dstring text = "Check", float width, float height, dchar iconName = dchar.init, float graphicsGap = 5)
     {
-        super(text, iconName, graphicsGap, isCreateLayout:
+        super(text, iconName, graphicsGap, isLayout:
             true);
 
         initSize(width, height);

@@ -18,7 +18,7 @@ class PopupMenu(T) : BasePopup
 
     this()
     {
-        super(isCreateLayout : false);
+        super(isLayout : false);
 
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 

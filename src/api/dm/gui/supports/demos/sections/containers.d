@@ -88,7 +88,7 @@ class Containers : Control
         auto checkFill = configureControl(new Check("StoE"));
         hbox1.addCreate(checkFill);
         checkFill.isOn = true;
-        checkFill.onChangeOldNew ~= (oldv, newv) { hbox1.isFillStartToEnd = newv; };
+        checkFill.onChangeOldNew ~= (oldv, newv) { hbox1.isAlignReverse = newv; };
 
         auto hboxInc10 = configureControl(createButtonInc10("MT10+=10"));
         hboxInc10.marginTop = 10;
@@ -158,7 +158,7 @@ class Containers : Control
         auto checkFill = configureControl(new Check("StoE"));
         vbox1.addCreate(checkFill);
         checkFill.isOn = true;
-        checkFill.onChangeOldNew ~= (oldv, newv) { vbox1.isFillStartToEnd = newv; };
+        checkFill.onChangeOldNew ~= (oldv, newv) { vbox1.isAlignReverse = newv; };
 
         auto vboxInc10 = configureControl(createButtonInc10("ML10+=10"));
         vboxInc10.marginLeft = 10;
@@ -286,7 +286,7 @@ class Containers : Control
 
         auto fbox2 = new FlowBox(5, 5);
         fbox2.isBorder = true;
-        fbox2.layout.isFillStartToEnd = false;
+        fbox2.layout.isAlignReverse = false;
         fbox2.width = 150;
         fbox2.height = 150;
         root.addCreate(fbox2);

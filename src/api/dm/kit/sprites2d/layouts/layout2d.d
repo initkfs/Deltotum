@@ -13,7 +13,7 @@ abstract class Layout2d
     bool isAlignXifOneChild;
     bool isAlignYifOneChild;
 
-    bool isFillStartToEnd = true;
+    bool isAlignReverse;
 
     bool isIncreaseChildrenWidth;
     bool isIncreaseChildrenHeight;

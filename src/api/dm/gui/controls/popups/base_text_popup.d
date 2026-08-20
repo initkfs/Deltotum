@@ -22,9 +22,9 @@ class BaseTextPopup : BasePopup
         float _graphicsGap = 0;
     }
 
-    this(dstring text = "Popup", dchar iconName = dchar.init, float graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring text = "Popup", dchar iconName = dchar.init, float graphicsGap = 0, bool isLayout = true)
     {
-        super(isCreateLayout);
+        super(isLayout);
 
         _labelText = text;
         _iconName = iconName;

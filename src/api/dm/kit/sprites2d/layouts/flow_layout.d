@@ -32,7 +32,7 @@ class FlowLayout : ManagedLayout
         float nextX = 0;
         float nextY = 0;
 
-        if (isFillStartToEnd)
+        if (!isAlignReverse)
         {
             nextX = rootBounds.x + root.padding.left;
             nextY = rootBounds.y + root.padding.top;
@@ -54,7 +54,7 @@ class FlowLayout : ManagedLayout
 
             const childHeight = childBounds.height + child.margin.height;
 
-            if (isFillStartToEnd)
+            if (!isAlignReverse)
             {
                 const rootRightEndX = isUseFlowWidth ? rootBounds.x + flowWidth : rootBounds.right - root.padding.right;
                 const newChildX = nextX + child.margin.left;

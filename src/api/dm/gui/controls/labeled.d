@@ -38,14 +38,14 @@ class Labeled : Control
     void delegate() onPreTextCreate;
     void delegate() onPostTextCreated;
 
-    this(dstring labelText = null, dchar iconName = dchar.init, float graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring labelText = null, dchar iconName = dchar.init, float graphicsGap = 0, bool isLayout = true)
     {
         this._iconName = iconName;
         this._labelText = labelText;
 
         this._graphicsGap = graphicsGap;
 
-        if (isCreateLayout)
+        if (isLayout)
         {
             this.layout = new HLayout(graphicsGap);
             this.layout.isAutoResizeAndAlignOne = true;

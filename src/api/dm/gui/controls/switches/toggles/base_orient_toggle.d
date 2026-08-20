@@ -13,7 +13,7 @@ class BaseOrientToggle : BaseToggle
 
     this(dstring label, float width, float height, dchar iconName = dchar.init, Orientation orientation, float graphicsGap = 5)
     {
-        super(label, width, height, iconName, graphicsGap, isCreateLayout:
+        super(label, width, height, iconName, graphicsGap, isLayout:
             false);
         this.orientation = orientation;
         if (orientation == Orientation.vertical)

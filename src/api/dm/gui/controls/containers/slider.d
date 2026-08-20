@@ -48,7 +48,7 @@ class Slider : Container
 
         if (position == SliderPos.left || position == SliderPos.top)
         {
-            layout.isFillStartToEnd = false;
+            layout.isAlignReverse = true;
         }
 
         layout.isAutoResize = true;

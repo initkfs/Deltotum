@@ -48,7 +48,7 @@ class CircleLayout : ManagedLayout
         const startX = rootBounds.center.x;
         const startY = rootBounds.center.y;
 
-        float nextDeg = isFillStartToEnd ? startAngle : (fullAngle - startAngle);
+        float nextDeg = !isAlignReverse ? startAngle : (fullAngle - startAngle);
         foreach (child; children)
         {
             const childBounds = child.boundsRect;
@@ -58,7 +58,7 @@ class CircleLayout : ManagedLayout
             child.y = child.margin.top + startY + pos.y - childBounds.halfHeight - child
                 .margin.bottom;
 
-            if (isFillStartToEnd)
+            if (!isAlignReverse)
             {
                 nextDeg += angleDegStep;
             }

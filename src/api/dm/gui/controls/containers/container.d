@@ -78,24 +78,24 @@ class Container : Control
         return true;
     }
 
-    bool isFillStartToEnd()
+    bool isAlignReverse()
     {
         if (!layout)
         {
             return false;
         }
 
-        return layout.isFillStartToEnd;
+        return layout.isAlignReverse;
     }
 
-    bool isFillStartToEnd(bool isFill)
+    bool isAlignReverse(bool isReverse)
     {
         if (!layout)
         {
             return false;
         }
 
-        layout.isFillStartToEnd = isFill;
+        layout.isAlignReverse = isReverse;
         setInvalid;
         return true;
     }

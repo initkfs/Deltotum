@@ -24,7 +24,7 @@ class VLayout : SpaceableLayout
     {
         auto bounds = root.boundsRect;
         float nextY = 0;
-        if (isFillStartToEnd)
+        if (!isAlignReverse)
         {
             nextY = bounds.y + root.padding.top;
         }
@@ -48,7 +48,7 @@ class VLayout : SpaceableLayout
             }
             else
             {
-                if (isFillStartToEnd)
+                if (!isAlignReverse)
                 {
                     const newChildY = nextY + child.margin.top;
                     if (Math.abs(child.y - newChildY) > sizeChangeDelta)

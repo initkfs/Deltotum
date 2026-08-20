@@ -9,14 +9,14 @@ import api.dm.gui.events.action_event : ActionEvent;
 class Button : BaseButton
 {
     
-    this(dstring text = defaultButtonText, dchar iconName = dchar.init)
+    this(dstring text = defaultButtonText, dchar iconName = dchar.init, bool isLayout = true)
     {
-        super(text, iconName);
+        super(text, iconName, isLayout);
     }
 
-    this(dstring text = defaultButtonText, dchar iconName, void delegate(ref ActionEvent) onAction)
+    this(dstring text = defaultButtonText, dchar iconName, void delegate(ref ActionEvent) onAction, bool isLayout = true)
     {
-        this(text, iconName);
+        this(text, iconName, isLayout);
         this.onAction ~= onAction;
     }
 

@@ -9,7 +9,7 @@ class Label : Labeled
 {
     this(dstring text = "Label", dchar iconName = dchar.init, float graphicsGap = 0)
     {
-        super(text, iconName, graphicsGap, isCreateLayout : true);
+        super(text, iconName, graphicsGap, isLayout : true);
 
         isCreateLabelText = true;
         isCreateLabelIcon = true;

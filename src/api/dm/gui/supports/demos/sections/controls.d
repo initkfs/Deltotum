@@ -245,7 +245,7 @@ class Controls : Control
         auto check2 = new Check("Check2", Icons.person_fill_check);
         check2.isBorder = true;
         checkBoxContainer.addCreate(check2);
-        check2.layout.isFillStartToEnd = false;
+        check2.layout.isAlignReverse = true;
         check2.isOn = true;
 
         auto toggleContainer = new SwitchGroup;

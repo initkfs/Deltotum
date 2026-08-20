@@ -264,17 +264,17 @@ class PieChart : Container
             if (middleAngleDeg >= 0 && middleAngleDeg <= 90)
             {
                 //label.y = labelY - label.boundsRect.halfHeight;
-                label.layout.isFillStartToEnd = true;
+                label.layout.isAlignReverse = false;
             }
             else if (middleAngleDeg > 90 && middleAngleDeg <= 270)
             {
                 labelX -= label.boundsRect.width;
-                label.layout.isFillStartToEnd = false;
+                label.layout.isAlignReverse = true;
             }
             else if (middleAngleDeg > 270 && middleAngleDeg < 360)
             {
                 labelY -= label.boundsRect.height;
-                label.layout.isFillStartToEnd = true;
+                label.layout.isAlignReverse = false;
             }
 
             label.x = labelX;
