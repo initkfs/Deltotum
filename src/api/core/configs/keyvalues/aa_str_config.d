@@ -1,4 +1,4 @@
-module api.core.configs.keyvalues.aa_const_config;
+module api.core.configs.keyvalues.aa_str_config;
 
 import api.core.configs.keyvalues.config : Config;
 
@@ -8,7 +8,7 @@ import std.conv : to;
  * Authors: initkfs
  * TODO remove code duplications
  */
-class AAConstConfig : Config
+class AAStrConfig : Config
 {
     string[string] config;
 
@@ -29,31 +29,37 @@ class AAConstConfig : Config
 
     override bool load() const => false;
     override bool save() const => false;
-    override bool clear() const => false;
 
-    override bool hasKey(string key) const => containsPtr(key) !is null;
+    override bool clear()
+    {
+        config = null;
+        return true;
+    }
 
-    const(string*) containsPtr(string key) const
+    override bool hasKey(string key) const => hasPtr(key) !is null;
+
+    const(string*) hasPtr(string key) const
     {
         assert(key.length > 0);
         return key in config;
     }
 
-    T getValue(T)(const(string*) valuePtr) const
-    {
-        return (*valuePtr).to!T;
-    }
+    T getValue(T)(const(string*) valuePtr) const => (*valuePtr).to!T;
+    T getValue(T)(string key) const => config[key].to!T;
 
-    T getValue(T)(string key) const
+    bool setValue(T)(string key, T value)
     {
-        return config[key].to!T;
+        if (auto keyPtr = key in config)
+        {
+            *keyPtr = value.to!string;
+            return true;
+        }
+        return false;
     }
-
-    bool setValue(T)(string key, T value) const => false;
 
     override bool getBool(string key) const
     {
-        const valuePtr = containsPtr(key);
+        const valuePtr = hasPtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -62,11 +68,11 @@ class AAConstConfig : Config
         return getValue!bool(valuePtr);
     }
 
-    override bool setBool(string key, bool value) const => false;
+    override bool setBool(string key, bool value) => setValue(key, value);
 
     override string getString(string key) const
     {
-        const valuePtr = containsPtr(key);
+        const valuePtr = hasPtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -76,11 +82,11 @@ class AAConstConfig : Config
         return getValue!string(valuePtr);
     }
 
-    override bool setString(string key, string value) const => false;
+    override bool setString(string key, string value) => setValue(key, value);
 
     override int getInt(string key) const
     {
-        const valuePtr = containsPtr(key);
+        const valuePtr = hasPtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -89,11 +95,11 @@ class AAConstConfig : Config
         return getValue!int(valuePtr);
     }
 
-    override bool setInt(string key, int value) => false;
+    override bool setInt(string key, int value) => setValue(key, value);
 
     override long getLong(string key) const
     {
-        const valuePtr = containsPtr(key);
+        const valuePtr = hasPtr(key);
         if (!valuePtr)
         {
             throw new Exception("Not found long value in AA config with key: " ~ key);
@@ -101,11 +107,11 @@ class AAConstConfig : Config
         return getValue!long(valuePtr);
     }
 
-    override bool setLong(string key, long value) const => false;
+    override bool setLong(string key, long value) => setValue(key, value);
 
     override float getFloat(string key) const
     {
-        const valuePtr = containsPtr(key);
+        const valuePtr = hasPtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -115,11 +121,11 @@ class AAConstConfig : Config
         return getValue!float(valuePtr);
     }
 
-    override bool setFloat(string key, float value) const => false;
+    override bool setFloat(string key, float value) => setValue(key, value);
 
     override double getDouble(string key) const
     {
-        const valuePtr = containsPtr(key);
+        const valuePtr = hasPtr(key);
         if (!valuePtr)
         {
             throw new Exception(
@@ -129,7 +135,7 @@ class AAConstConfig : Config
         return getValue!double(valuePtr);
     }
 
-    override bool setDouble(string key, double value) const => false;
+    override bool setDouble(string key, double value) => setValue(key, value);
 
     T[] getList(T)(string key) const
     {
@@ -143,11 +149,11 @@ class AAConstConfig : Config
         return config.to!string;
     }
 
-    override immutable(AAConstConfig) idup() const
+    override immutable(AAStrConfig) idup() const
     {
         //TODO unsafe hack        
-        immutable newConfig = cast(immutable(string[string])) config;
-        return new immutable AAConstConfig(newConfig);
+        immutable newConfig = cast(immutable(string[string])) config.dup;
+        return new immutable AAStrConfig(newConfig);
     }
 }
 
@@ -162,14 +168,14 @@ unittest
         "value4": "true"
     ];
 
-    immutable config = new immutable AAConstConfig(aa);
+    immutable config = new immutable AAStrConfig(aa);
 
     assert(aa == config.config);
 
     assert(!config.load);
     assert(!config.save);
 
-    import std.conv: to;
+    import std.conv : to;
 
     auto val1 = config.getLong("value1");
     assert(val1 == 1, val1.to!string);
@@ -186,8 +192,9 @@ unittest
     auto val4 = config.getBool("value4");
     assert(val4 == true);
 
-    assert(!config.setValue("value1", 2));
-    assert(!config.setValue("value2", "text"));
-    assert(!config.setValue("value3", 10.5));
-    assert(!config.setValue("value4", false));
+    //assert(config.setValue("value1", 2));
+    //assert(config.getInt("value1") == 2);
+
+    //assert(config.setValue("value2", "text"));
+    //assert(config.getString("value2") == "text");
 }

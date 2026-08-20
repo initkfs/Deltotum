@@ -484,18 +484,18 @@ class CliApp : SimpleUnit
 
     Config createEnvConfig()
     {
-        import api.core.configs.keyvalues.aa_const_config : AAConstConfig;
+        import api.core.configs.keyvalues.aa_str_config : AAStrConfig;
         import std.process : environment;
 
         try
         {
             auto envAA = environment.toAA;
-            return new AAConstConfig(envAA);
+            return new AAStrConfig(envAA);
         }
         catch (Exception e)
         {
             uservices.logger.error(e.toString);
-            return new AAConstConfig(null);
+            return new AAStrConfig(null);
         }
     }
 

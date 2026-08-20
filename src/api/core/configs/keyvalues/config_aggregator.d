@@ -310,7 +310,7 @@ unittest
     import std.exception : assertThrown;
 
     //TODO add simple implementation
-    import api.core.configs.keyvalues.aa_const_config : AAConstConfig;
+    import api.core.configs.keyvalues.aa_str_config : AAStrConfig;
 
     enum keyName = "key";
 
