@@ -1008,8 +1008,6 @@ class Sprite2d : EventKitTarget
                 return false;
             }
 
-            bool isAdd = add(sprite, index);
-
             if (!sprite.isBuilt)
             {
                 buildInit(sprite);
@@ -1025,7 +1023,7 @@ class Sprite2d : EventKitTarget
                 create(sprite);
             }
 
-            return isAdd;
+            return add(sprite, index);;
         }
         catch (Exception e)
         {
