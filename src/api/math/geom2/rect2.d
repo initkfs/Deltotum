@@ -31,6 +31,9 @@ struct Rect2f
     float width = 0;
     float height = 0;
 
+    alias w = width;
+    alias h = height;
+
     bool contains(float x, float y) const nothrow pure @safe
     {
         return x >= this.x && y >= this.y && x < right && y < bottom;
@@ -100,15 +103,25 @@ struct Rect2f
         return (cornerDistance <= (circle.radius ^^ 2));
     }
 
+    alias halfW = halfWidth;
+    alias halfH = halfHeight;
+    alias halfS = halfSize;
+
     float halfWidth() const nothrow pure @safe => width / 2;
     float halfHeight() const nothrow pure @safe => height / 2;
     Vec2f halfSize() const nothrow pure @safe => Vec2f(halfWidth, halfHeight);
+
+    alias r = right;
+    alias b = bottom;
 
     float right() const nothrow pure @safe => x + width;
     float bottom() const nothrow pure @safe => y + height;
 
     alias centerX = middleX;
     alias centerY = middleY;
+
+    alias mX = middleX;
+    alias mY = middleY;
 
     //TODO remove
     float middleX() const nothrow pure @safe => x + halfWidth;
