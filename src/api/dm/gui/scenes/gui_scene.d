@@ -5,6 +5,7 @@ import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.interacts.interact : Interact;
 import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.gui.components.gui_component : GuiComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -76,14 +77,25 @@ class GuiScene : Scene3d
 
     alias build = Scene3d.build;
 
-    void build(GuiComponent guiComponent)
+    //TODO UniComponent
+    override void build(GraphicComponent sprite)
     {
-        if (!guiComponent.hasTheme)
+        if (auto guiComponent = cast(GuiComponent) sprite)
         {
-            assert(theme, "Theme must not be null");
-            guiComponent.theme = theme;
+            if (!guiComponent.hasTheme)
+            {
+                assert(theme, "Theme must not be null");
+                guiComponent.theme = theme;
+            }
+
+            if (!guiComponent.hasInteract)
+            {
+                assert(interact, "Interact must not be null");
+                guiComponent.interact = interact;
+            }
         }
-        super.build(guiComponent);
+
+        super.build(sprite);
     }
 
     void addCreate(GuiComponent guiComponent)
