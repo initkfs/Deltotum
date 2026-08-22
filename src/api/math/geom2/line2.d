@@ -4,6 +4,8 @@ import api.math.geom2.vec2 : Vec2f;
 
 import Math = api.math;
 
+alias Line2 = Line2f;
+
 /**
  * Authors: initkfs
  */

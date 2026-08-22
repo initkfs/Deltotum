@@ -2,6 +2,8 @@ module api.math.geom2.circle2;
 
 import api.math.geom2.vec2 : Vec2f;
 
+alias Circle2 = Circle2f;
+
 /**
  * Authors: initkfs
  */

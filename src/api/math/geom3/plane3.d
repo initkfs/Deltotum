@@ -2,6 +2,8 @@ module api.math.geom3.plane3;
 
 import api.math.geom3.vec3: Vec3f;
 
+alias Plane3 = Plane3f;
+
 /**
  * Authors: initkfs
  * 3D plane in normal form: ax + by + cz + d = 0

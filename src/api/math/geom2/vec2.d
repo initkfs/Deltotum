@@ -9,6 +9,8 @@ import api.math.matrices.matrix : Matrix2x2, Matrix2x1;
 
 import Math = api.dm.math;
 
+alias Vec2 = Vec2f;
+
 //TODO template with Vec2f
 struct Vec2i
 {

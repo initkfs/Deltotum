@@ -6,6 +6,8 @@ import Math = api.math;
  * Authors: initkfs
  */
 
+alias Vec4 = Vec4f;
+
 struct Vec4f
 {
     float x = 0;

@@ -37,6 +37,8 @@ struct Quadrilateral2f
     }
 }
 
+alias Poly2 = Poly2f;
+
 /**
  * Authors: initkfs
  */

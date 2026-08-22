@@ -4,6 +4,8 @@ import api.math.geom2.vec2 : Vec2f;
 import api.math.geom2.circle2 : Circle2f;
 import api.math.pos2.position : Pos;
 
+alias Rect2 = Rect2f;
+
 //TODO template from Rect2f
 struct Rect2i
 {

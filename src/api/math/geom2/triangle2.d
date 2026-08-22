@@ -6,6 +6,8 @@ import api.math.geom2.circle2 : Circle2f;
 
 import Math = api.dm.math;
 
+alias Triangle2 = Triangle2f;
+
 /**
  * Authors: initkfs
  */

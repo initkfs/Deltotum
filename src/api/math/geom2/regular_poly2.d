@@ -5,6 +5,8 @@ import api.math.geom2.poly2 : Poly2f;
 import api.math.geom2.vec2 : Vec2f;
 import Math = api.math;
 
+alias RegularPoly2 = RegularPoly2f;
+
 /**
  * Authors: initkfs
  */
