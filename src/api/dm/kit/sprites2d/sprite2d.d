@@ -122,6 +122,8 @@ class Sprite2d : EventKitTarget
     bool isKeepAspectRatio;
     bool isForwardEventsToChild = true;
 
+    bool isMultiParent;
+
     Layout2d layout;
     bool _layoutManaged = true;
     bool _layoutMovable = true;
@@ -930,6 +932,13 @@ class Sprite2d : EventKitTarget
         {
             sprite.parent = this;
         }
+        else
+        {
+            if (!isMultiParent)
+            {
+                throw new Exception("Сhild already has parent: " ~ sprite.toString);
+            }
+        }
 
         if (!sprite.hasScene && hasScene)
         {
@@ -1023,7 +1032,8 @@ class Sprite2d : EventKitTarget
                 create(sprite);
             }
 
-            return add(sprite, index);;
+            return add(sprite, index);
+            ;
         }
         catch (Exception e)
         {
@@ -3068,8 +3078,7 @@ class Sprite2d : EventKitTarget
     {
         import std.format : format;
 
-        return format("%s. id:%s, state:%s, parent:%s, x:%f, y:%f, w:%f, h:%f", typeid(this), id, state, parent ? parent
-                .id : null, x, y, width, height);
+        return format("%s. id:%s, %s, p:{%s}, x:%.2f, y:%.2f, w:%.2f, h:%.2f", typeid(this), id, state, parent, x, y, width, height);
     }
 
 }
