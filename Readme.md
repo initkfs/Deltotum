@@ -17,6 +17,19 @@ Deltotum is a work-in-progress graphics engine and GUI toolkit written in D.
 ![Dlang, demo 2D new_year](demo/dlang_demo2_new_year.gif)
 ![Dlang, demo 2D valentines day](demo/dlang_demo2_valentines-day.gif)
 
+Halloween demo assets:
+https://opengameart.org/content/dark-halloween-castle
+https://opengameart.org/content/halloween-animation-pumpkin
+https://opengameart.org/content/angel-wings-effect
+https://opengameart.org/content/bat-rework
+https://opengameart.org/content/rodents-rat-rework
+
+New year demo assets:
+https://opengameart.org/content/winter-holiday-2d-backgrounds
+https://gamedeveloperstudio.itch.io/smoke-whisp
+https://karsiori.itch.io/free-pixel-art-christmas-trees
+https://jitsukoan.itch.io/little-pingu
+
 ## 3D (SDL GPU, in progress)
 
 Some videos are available on YT: https://www.youtube.com/playlist?list=PL-kVIrOmkk0L3kfijf5JshQE5nNLJ0wt0
