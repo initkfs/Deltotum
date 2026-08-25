@@ -13,7 +13,9 @@ Deltotum is a work-in-progress graphics engine and GUI toolkit written in D.
 
 ![Dlang, Cairo demo 2D](demo/dlang_demo1_2dgraphics_sdl_cairo.jpg)
 
-![Dlang, Cairo demo 2D](demo/dlang_demo2_2dgraphics_sdl_cairo.jpg)
+![Dlang, demo 2D helloween](demo/dlang_demo2_halloween.gif)
+![Dlang, demo 2D new_year](demo/dlang_demo2_new_year.gif)
+![Dlang, demo 2D valentines day](demo/dlang_demo2_valentines-day.gif)
 
 ## 3D (SDL GPU, in progress)
 
