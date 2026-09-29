@@ -122,7 +122,7 @@ class Sprite2d : EventKitTarget
     bool isKeepAspectRatio;
     bool isForwardEventsToChild = true;
 
-    bool isMultiParent;
+    bool isFixedParent;
 
     Layout2d layout;
     bool _layoutManaged = true;
@@ -934,10 +934,13 @@ class Sprite2d : EventKitTarget
         }
         else
         {
-            if (!isMultiParent)
+            if (sprite.isFixedParent && (sprite.parent !is this))
             {
-                throw new Exception("Сhild already has parent: " ~ sprite.toString);
+                import std.format: format;
+                throw new Exception(format("Сhild %s already has parent %s, BUT NOT %s", sprite, sprite.parent, this));
             }
+
+            sprite.parent = this;
         }
 
         if (!sprite.hasScene && hasScene)
