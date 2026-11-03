@@ -1,6 +1,6 @@
 /**
-* Author: initkfs
-*/
+ * Author: initkfs
+ */
 Texture2D<float4> diffuseMap : register(t0, space2);
 SamplerState diffuseSampler : register(s0, space2);
 
@@ -19,14 +19,14 @@ SamplerState emissionSampler : register(s4, space2);
 Texture2D<float4> dispMap : register(t5, space2);
 SamplerState dispMapSampler : register(s5, space2);
 
-Texture3D<float>  thermalMap  : register(t6, space2);
+Texture3D<float> thermalMap : register(t6, space2);
 SamplerState thermalMapSampler : register(s6, space2);
 
 TextureCube<float4> skyboxTexture : register(t7, space2);
 SamplerState skyboxSampler : register(s7, space2);
 
-//TODO one sampler for all
-//SamplerState mainSampler : register(s0, space2);
+// TODO one sampler for all
+// SamplerState mainSampler : register(s0, space2);
 
 // struct SimpleDataBuffer
 // {
@@ -34,7 +34,6 @@ SamplerState skyboxSampler : register(s7, space2);
 // };
 
 // RWStructuredBuffer<SimpleDataBuffer> sdataBuffer : register(u0, space2);
-
 
 struct Material
 {
@@ -48,13 +47,15 @@ struct Material
     uint isLamp;
 };
 
-namespace LightType {
+namespace LightType
+{
     static const uint Directional = 0;
     static const uint Point = 1;
     static const uint Spot = 2;
 };
 
-struct Light {
+struct Light
+{
     float3 position;
     uint lightType;
     float3 direction;
@@ -66,15 +67,15 @@ struct Light {
     float3 diffuse;
     float cutoff;
     float3 specular;
-    float outerCutoff;  
-    uint spectrum1; 
-    uint spectrum2; 
+    float outerCutoff;
+    uint spectrum1;
+    uint spectrum2;
 };
 
-struct Spectrum 
+struct Spectrum
 {
     float4 highEnergy; // chans 0, 1, 2, 3
-    float4 lowEnergy; // chans 4, 5, 6, 7
+    float4 lowEnergy;  // chans 4, 5, 6, 7
 
     float GetGamma() { return highEnergy.x; }
     float GetXrays() { return highEnergy.y; }
@@ -86,7 +87,8 @@ struct Spectrum
     float GetRadiowaves() { return lowEnergy.w; }
 };
 
-struct SceneConfig {
+struct SceneConfig
+{
     float3 cameraPos;
     float nearPlane;
     float farPlane;
@@ -99,7 +101,8 @@ struct SceneConfig {
 static const uint SceneFlagIsUseDiffusion = 1 << 0;
 static const uint SceneFlagIsUseTemp = 1 << 1;
 
-struct MaterialConfig {
+struct MaterialConfig
+{
     Material material;
     uint layerId;
 };
@@ -118,21 +121,22 @@ cbuffer MaterialUBO : register(b1, space3)
 #include "Com/ComDepth.hlsli"
 #include "Com/ComFunc.hlsli"
 
-float3 palette(float t) {
+float3 palette(float t)
+{
     float3 a = float3(0.5, 0.5, 0.5);
     float3 b = float3(0.5, 0.5, 0.5);
     float3 c = float3(1.0, 1.0, 1.0);
 
     float3 d = float3(0.5, 0.5, 0.5);
-    //float3 d = float3(0.26, 0.41, 0.55);
+    // float3 d = float3(0.26, 0.41, 0.55);
     return a + b * cos(6.28318 * (c * t + d));
 }
 
-Spectrum UnpackSpectrum(uint p1, uint p2) 
+Spectrum UnpackSpectrum(uint p1, uint p2)
 {
     Spectrum output;
 
-    const float scale = 0.01; 
+    const float scale = 0.01;
 
     output.highEnergy.x = float(p1 & 0xFF) * scale;
     output.highEnergy.y = float((p1 >> 8) & 0xFF) * scale;
@@ -147,84 +151,86 @@ Spectrum UnpackSpectrum(uint p1, uint p2)
     return output;
 }
 
-float3 calcDir(float3 diffuseColor, float4 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir){
+float3 calcDir(float3 diffuseColor, float4 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir)
+{
     float3 lightDir = normalize(-light.direction);
     float diff = max(dot(normal, lightDir), 0.0);
-    //float3 reflectDir = reflect(-lightDir, input.normal);
+    // float3 reflectDir = reflect(-lightDir, input.normal);
     float3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    //float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.shininess);
+    // float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.shininess);
     float specMask = diff > 0.0 ? 1.0 : 0.0;
-    float3 ambient  = light.ambient  * diffuseColor * material.albedo.rgb * ao;
-    float3 diffuse  = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
-    float3 specular = light.specular * spec * specMask  * specularColor.rgb;
+    float3 ambient = light.ambient * diffuseColor * material.albedo.rgb * ao;
+    float3 diffuse = light.diffuse * diff * diffuseColor * material.albedo.rgb;
+    float3 specular = light.specular * spec * specMask * specularColor.rgb;
 
-    //hard shadow return (ambient + diffuse) * attenuation * ao + specular;
+    // hard shadow return (ambient + diffuse) * attenuation * ao + specular;
     return ambient + diffuse + specular;
 }
 
-float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir){
+float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float ao, Light light, FragInput input, Material material, float3 viewDir)
+{
     float3 lightDir = normalize(light.position - input.worldPos);
     float diff = max(dot(normal, lightDir), 0.0);
-    //float3 reflectDir = reflect(-lightDir, input.normal);
+    // float3 reflectDir = reflect(-lightDir, input.normal);
     float3 halfwayDir = normalize(lightDir + viewDir);
 
     float gloss = specularColor.a * material.gloss;
 
-    //float frequency = 500; //10.0 - 1000.0 for goldnoise
-    //float noise = goldNoise(input.texcoord * frequency, 12.9898);
-    //gloss = gloss * (0.8 + noise * 0.4); //20% variation
-    
-    //float shininess = pow(2.0, gloss * 8.0);  //0..1, 2..256
-    //float shininess = exp2(10.0 * gloss + 1.0);
+    // float frequency = 500; //10.0 - 1000.0 for goldnoise
+    // float noise = goldNoise(input.texcoord * frequency, 12.9898);
+    // gloss = gloss * (0.8 + noise * 0.4); //20% variation
+
+    // float shininess = pow(2.0, gloss * 8.0);  //0..1, 2..256
+    // float shininess = exp2(10.0 * gloss + 1.0);
     float shininess = clamp(pow(2.0, gloss * 8.0), 1.0, 512.0);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
     // float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    
+
     float distance = length(light.position - input.worldPos);
     float radius = light.radius;
-    //if (distance > radius) return 0.0;
+    // if (distance > radius) return 0.0;
 
     float constantCoeff = 1;
 
-    //too dark, need to adjust intensity
-    //float d2 = distance * distance;
-    //float attenuation = 1.0 / (d2, 0.01);
-    
-    float attenuation = 1.0 / (constantCoeff + light.linearCoeff * distance + 
-  			     light.quadraticCoeff * (distance * distance)); 
-    //float attenuation = 1.0 / distance; for gamma  
+    // too dark, need to adjust intensity
+    // float d2 = distance * distance;
+    // float attenuation = 1.0 / (d2, 0.01);
+
+    float attenuation = 1.0 / (constantCoeff + light.linearCoeff * distance +
+                               light.quadraticCoeff * (distance * distance));
+    // float attenuation = 1.0 / distance; for gamma
     float alpha = distance / radius;
-    float damping = 1.0 - (alpha * alpha);  // smooth
-    //or damping = 1.0 - pow(alpha, 4);
+    float damping = 1.0 - (alpha * alpha); // smooth
+    // or damping = 1.0 - pow(alpha, 4);
     attenuation = clamp(attenuation * damping, 0, 1);
 
-    //float factor = distance / radius;
-    
-    //float smoothFactor = clamp(1.0 - factor * factor, 0.0, 1.0); //(1 - alpha^2)^2
-    //float damping = smoothFactor * smoothFactor;
-    //attenuation *= damping;
-    //attenuation = clamp(attenuation, 0, 1);
-    
-    //float factor2 = factor * factor;
-    //float factor4 = factor2 * factor2;
-    //float windowing = clamp(1.0 - factor4, 0.0, 1.0);
-    
-    //attenuation = attenuation * (windowing * windowing);
+    // float factor = distance / radius;
 
-    float3 ambient = light.ambient  * diffuseColor * material.albedo.rgb * ao;
-    //float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
-    
+    // float smoothFactor = clamp(1.0 - factor * factor, 0.0, 1.0); //(1 - alpha^2)^2
+    // float damping = smoothFactor * smoothFactor;
+    // attenuation *= damping;
+    // attenuation = clamp(attenuation, 0, 1);
+
+    // float factor2 = factor * factor;
+    // float factor4 = factor2 * factor2;
+    // float windowing = clamp(1.0 - factor4, 0.0, 1.0);
+
+    // attenuation = attenuation * (windowing * windowing);
+
+    float3 ambient = light.ambient * diffuseColor * material.albedo.rgb * ao;
+    // float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
+
     float3 specular = light.specular * spec * specularColor.rgb;
-    //float3 specular = light.specular * spec * specularColor;
+    // float3 specular = light.specular * spec * specularColor;
 
-    float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
+    float3 diffuse = light.diffuse * diff * diffuseColor * material.albedo.rgb;
 
-    //float noise = goldNoise(input.texcoord * 800.0, 1.0);
-    //0.97, 1.03
-    //diffuse.rgb *= (1.03 + noise * 0.06); 
+    // float noise = goldNoise(input.texcoord * 800.0, 1.0);
+    // 0.97, 1.03
+    // diffuse.rgb *= (1.03 + noise * 0.06);
 
-    //return ambient + (diffuse * attenuation) + (specular * attenuation);
+    // return ambient + (diffuse * attenuation) + (specular * attenuation);
     return (ambient + diffuse + specular) * attenuation;
 }
 
@@ -232,33 +238,34 @@ float3 calcSpot(float3 diffuseColor, float4 specularColor, float3 normal, float 
 {
     float3 lightDir = normalize(light.position - input.worldPos);
     float diff = max(dot(normal, lightDir), 0.0);
-    //float3 reflectDir = reflect(-lightDir, input.normal);
+    // float3 reflectDir = reflect(-lightDir, input.normal);
     float3 halfwayDir = normalize(lightDir + viewDir);
-    
+
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     float specMask = diff > 0.0 ? 1.0 : 0.0;
 
     float distance = length(light.position - input.worldPos);
     float radius = light.radius;
-    if (distance > radius) return 0.0;
+    if (distance > radius)
+        return 0.0;
 
     float constantCoeff = 1;
 
-    float attenuation = 1.0 / (constantCoeff + light.linearCoeff * distance + light.quadraticCoeff * (distance * distance));  
+    float attenuation = 1.0 / (constantCoeff + light.linearCoeff * distance + light.quadraticCoeff * (distance * distance));
     float alpha = distance / radius;
-    float damping = 1.0 - (alpha * alpha);  // smooth
-    //or damping = 1.0 - pow(alpha, 4);
-    attenuation = clamp(attenuation * damping, 0, 1);  
-    
-    //float theta = dot(lightDir, normalize(-light.lightDirection)); 
+    float damping = 1.0 - (alpha * alpha); // smooth
+    // or damping = 1.0 - pow(alpha, 4);
+    attenuation = clamp(attenuation * damping, 0, 1);
+
+    // float theta = dot(lightDir, normalize(-light.lightDirection));
     float theta = dot(lightDir, normalize(-light.direction));
-    
-    //float epsilon = light.cutoff - light.outerCutoff;
+
+    // float epsilon = light.cutoff - light.outerCutoff;
     float epsilon = max(light.cutoff - light.outerCutoff, 0.0001);
     float intensity = clamp((theta - light.outerCutoff) / epsilon, 0.0, 1.0);
-    
+
     float3 ambient = light.ambient * diffuseColor * material.albedo.rgb * ao;
-    float3 diffuse = light.diffuse * diff * diffuseColor  * material.albedo.rgb;
+    float3 diffuse = light.diffuse * diff * diffuseColor * material.albedo.rgb;
     float3 specular = light.specular * spec * specMask * specularColor.rgb;
 
     float combinedFactor = attenuation * intensity;
@@ -266,7 +273,7 @@ float3 calcSpot(float3 diffuseColor, float4 specularColor, float3 normal, float 
     float3 finalAmbient = ambient * attenuation;
     float3 finalDiffuse = diffuse * combinedFactor;
     float3 finalSpecular = specular * combinedFactor;
-    
+
     return finalAmbient + finalDiffuse + finalSpecular;
 }
 
@@ -274,31 +281,34 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 {
     FragOutputColor result;
 
-    if(matConfig.material.isLamp == 1){
+    if (matConfig.material.isLamp == 1)
+    {
         result.color = matConfig.material.albedo;
         return result;
     }
 
-    if(matConfig.material.intensity != 1){
+    if (matConfig.material.intensity != 1)
+    {
         result.color = matConfig.material.albedo * matConfig.material.intensity;
         return result;
     }
 
-    //HEAT
-    //TODO from config?
+    // HEAT
+    // TODO from config?
     float temperature = 0;
-    if(sceneConfig.flags & SceneFlagIsUseTemp && sceneConfig.flags & SceneFlagIsUseDiffusion){
+    if (sceneConfig.flags & SceneFlagIsUseTemp && sceneConfig.flags & SceneFlagIsUseDiffusion)
+    {
         uint layerId = 0;
         float itemCount = 256;
         uint twidth, theight, tdepth;
         thermalMap.GetDimensions(twidth, theight, tdepth);
-    
+
         // float2 pixelCoord = input.texcoord * float2(twidth, theight);
         // int2 iCoord;
         // iCoord.x = (int)clamp(floor(pixelCoord.x), 0.0f, (float)(twidth - 2));
         // iCoord.y = (int)clamp(floor(pixelCoord.y), 0.0f, (float)(theight - 2));
         // float2 f = frac(pixelCoord);
-        // int layer = (int)layerId;    
+        // int layer = (int)layerId;
         // float t00 = thermalMap.Load(int4(iCoord + int2(0,0), layer, 0)).r;
         // float t10 = thermalMap.Load(int4(iCoord + int2(1,0), layer, 0)).r;
         // float t01 = thermalMap.Load(int4(iCoord + int2(0,1), layer, 0)).r;
@@ -314,47 +324,47 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
         float2 pixelCoord = heatUV * float2(twidth, theight) - 0.5f;
         int2 iCoord = (int2)floor(pixelCoord);
         float2 f = frac(pixelCoord);
-        //f = f * f * (3.0f - 2.0f * f); 
+        // f = f * f * (3.0f - 2.0f * f);
         int layer = (int)layerId;
         int maxX = (int)twidth - 1;
         int maxY = (int)theight - 1;
-        
+
         int2 c00 = clamp(iCoord + int2(0, 0), int2(0, 0), int2(maxX, maxY));
         int2 c10 = clamp(iCoord + int2(1, 0), int2(0, 0), int2(maxX, maxY));
         int2 c01 = clamp(iCoord + int2(0, 1), int2(0, 0), int2(maxX, maxY));
         int2 c11 = clamp(iCoord + int2(1, 1), int2(0, 0), int2(maxX, maxY));
-        
+
         float t00 = thermalMap.Load(int4(c00, layer, 0)).r;
         float t10 = thermalMap.Load(int4(c10, layer, 0)).r;
         float t01 = thermalMap.Load(int4(c01, layer, 0)).r;
         float t11 = thermalMap.Load(int4(c11, layer, 0)).r;
-        
+
         float tempTexelX0 = lerp(t00, t10, f.x);
         float tempTexelX1 = lerp(t01, t11, f.x);
 
         temperature = lerp(tempTexelX0, tempTexelX1, f.y);
     }
-    
-    //result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 
-    //SimpleDataBuffer dbuff;
-    //dbuff.value1 = float4(0, lights[1].position);
-    //sdataBuffer[0] = dbuff;
+    // result.depth = linearizeDepthReversedDX(input.outPosition.z, config.nearPlane, config.farPlane);
 
-    //float ao = aoMap.Sample(sampler, texcoord).r;
-    //float3 ambient = lightAmbientColor * materialDiffuse * ao;
+    // SimpleDataBuffer dbuff;
+    // dbuff.value1 = float4(0, lights[1].position);
+    // sdataBuffer[0] = dbuff;
 
-    //float3 emissive = emissionMap.Sample(sampler, texcoord).rgb * emissionStrength;
-    //finalColor.rgb += emissive;
+    // float ao = aoMap.Sample(sampler, texcoord).r;
+    // float3 ambient = lightAmbientColor * materialDiffuse * ao;
 
-    //light.ambient * material.albedo; 
-    float3 resultColor = (float3) 0;
+    // float3 emissive = emissionMap.Sample(sampler, texcoord).r * emissionStrength;
+    // finalColor.rgb += emissive;
+
+    // light.ambient * material.albedo;
+    float3 resultColor = (float3)0;
 
     float3 normalV = normalize(input.normal);
     float3 tangentV = normalize(input.tangent);
-    
-    //result.color = float4(input.tangent * 0.5 + 0.5, 1.0);
-    //return result;
+
+    // result.color = float4(input.tangent * 0.5 + 0.5, 1.0);
+    // return result;
 
     // if (!isFrontFace) {
     //     normalV = -normalV;
@@ -362,27 +372,27 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     // }
     tangentV = normalize(tangentV - dot(tangentV, normalV) * normalV);
 
-    //* 2.0 - 1.0 for SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM 
-    //float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
-    //mapNormal = normalize(mapNormal);
+    //* 2.0 - 1.0 for SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM
+    // float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
+    // mapNormal = normalize(mapNormal);
 
-    //OpenGL-style
-    //float3 bitangent = cross(normalV, tangentV);
-    //result.color = float4(bitangent * 0.5 + 0.5, 1.0);
-    //return result;
-    
-    //float3x3 TBN = float3x3(tangentV, bitangent, normalV);
-    //mapNormal.y = -mapNormal.y;
-    //float3 normal = normalize(mul(mapNormal, TBN)); 
-    //result.color = float4(normal * 0.5 + 0.5, 1.0);
-    //return result;
+    // OpenGL-style
+    // float3 bitangent = cross(normalV, tangentV);
+    // result.color = float4(bitangent * 0.5 + 0.5, 1.0);
+    // return result;
 
-    float3 bitangent = cross(normalV, tangentV);    
+    // float3x3 TBN = float3x3(tangentV, bitangent, normalV);
+    // mapNormal.y = -mapNormal.y;
+    // float3 normal = normalize(mul(mapNormal, TBN));
+    // result.color = float4(normal * 0.5 + 0.5, 1.0);
+    // return result;
+
+    float3 bitangent = cross(normalV, tangentV);
     float3x3 TBN = float3x3(tangentV, bitangent, normalV);
     float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
     mapNormal = mapNormal * 2.0f - 1.0f; // <--- КРИТИЧЕСКИЙ ФИКС ДЛЯ КАРТ НОРМАЛЕЙ
     // DirectX
-    // mapNormal.y = -mapNormal.y; 
+    // mapNormal.y = -mapNormal.y;
     float3 normal = normalize(mul(mapNormal, TBN));
 
     float3 I = normalize(input.worldPos - sceneConfig.cameraPos);
@@ -392,34 +402,34 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
 
     float3 viewDir = normalize(sceneConfig.cameraPos - input.worldPos);
 
-    //Disp map
-    float3 viewDirTS = mul(viewDir, TBN); 
+    // Disp map
+    float3 viewDirTS = mul(viewDir, TBN);
     float height = dispMap.Sample(dispMapSampler, input.texcoord).r;
     float scale = 0.03;
     float2 texUV = input.texcoord - (viewDirTS.xy / viewDirTS.z) * (height * scale);
     // if(texUV.x > 1.0 || texUV.y > 1.0 || texUV.x < 0.0 || texUV.y < 0.0){
-    //     discard; 
+    //     discard;
     // }
 
-    //diff = max(dot(N, lightDir), 0.0); 
-    //Two side light
-    //float diff = abs(dot(N, lightDir)); 
+    // diff = max(dot(N, lightDir), 0.0);
+    // Two side light
+    // float diff = abs(dot(N, lightDir));
 
-    // float3 p = input.localPos; 
+    // float3 p = input.localPos;
     // float t = sceneConfig.time * 0.4;
 
     // // // 3D Domain Warping
     // p.x += 0.15 * sin(t + p.y * 4.0);
     // p.y += 0.15 * cos(t + p.z * 4.0);
     // p.z += 0.15 * sin(t + p.x * 4.0);
-    
+
     // // // Wave summation
     // float v = 0.0;
     // v += cos(p.x * 8.0 + t);
     // v += cos(p.y * 7.0 + t * 1.1);
     // v += cos(p.z * 9.0 + t * 1.3);
     // v += cos(length(p.xyz) * 12.0 - t);
-    
+
     // // v = saturate(v * 0.25 + 0.5);
     // float3 effectColor = palette(v + t * 0.1);
     // resultColor += effectColor;
@@ -427,114 +437,137 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     float ao = aoMap.Sample(aoSampler, input.texcoord).r;
 
     float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, texUV);
-    fullDiffuseColor.rgb = pow(fullDiffuseColor.rgb, 2.2); 
-    
+    fullDiffuseColor.rgb = pow(fullDiffuseColor.rgb, 2.2);
+
     float3 diffuseColor = fullDiffuseColor.rgb;
     float4 specularColor = specularMap.Sample(specularSampler, texUV) * matConfig.material.specular;
 
-    for (int li = 0; li < sceneConfig.lightCount; li++) {
-         Light light = sceneConfig.lights[li];
+    //float3 emissionChans = emissionMap.Sample(sampler, input.texcoord).rgba;
 
-         if(light.lightType == LightType::Directional){
+    for (int li = 0; li < sceneConfig.lightCount; li++)
+    {
+        Light light = sceneConfig.lights[li];
+
+        if (light.lightType == LightType::Directional)
+        {
             resultColor += calcDir(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
-         }else if(light.lightType == LightType::Point){
+        }
+        else if (light.lightType == LightType::Point)
+        {
             resultColor += calcPoint(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
-         }else if(light.lightType == LightType::Spot){
+        }
+        else if (light.lightType == LightType::Spot)
+        {
             resultColor += calcSpot(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
-         }
+        }
 
-         float lightDistance = length(light.position - input.worldPos);
+        float lightDistance = length(light.position - input.worldPos);
 
-         Spectrum spectrum = UnpackSpectrum(light.spectrum1, light.spectrum2);
-         
-         float3 lightDir = normalize(-light.direction);
-         float3 L = normalize(lightDir);
-         float3 V = normalize(viewDir);
-         float3 H = normalize(L + V);
+        Spectrum spectrum = UnpackSpectrum(light.spectrum1, light.spectrum2);
 
-         float irValue = spectrum.GetIR();
-         if(irValue != 0){
-            float irDiffuse  = max(dot(normal, L), 0.0f);
+        float3 lightDir = normalize(-light.direction);
+        float3 L = normalize(lightDir);
+        float3 V = normalize(viewDir);
+        float3 H = normalize(L + V);
+
+        float irValue = spectrum.GetIR();
+        if (irValue != 0)
+        {
+            float irDiffuse = max(dot(normal, L), 0.0f);
             float irSpecular = pow(max(dot(normal, H), 0.0f), 16.0f);
             float incomingIR = (irDiffuse + irSpecular) * irValue;
             float absorptionIR = 0.5;
-            float tempFromIR = incomingIR * absorptionIR; 
-            temperature+=tempFromIR;
-         }
+            float tempFromIR = incomingIR * absorptionIR;
+            temperature += tempFromIR;
+        }
 
-         float gammaValue = spectrum.GetGamma();
-         if(gammaValue != 0){
-            //Gamma
+        float gammaValue = spectrum.GetGamma();
+        if (gammaValue != 0)
+        {
+            // Gamma
             float attenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
-            //shadow map
-            float gammaShadow = 1; 
-            float incomingGamma = gammaValue * attenuation * gammaShadow;
-            float gammaAbsorption = 1; 
+            // shadow map
+            float incomingGamma = gammaValue * attenuation;
+            float gammaAbsorption = 1;
             temperature += incomingGamma * gammaAbsorption;
 
-            //https://en.wikipedia.org/wiki/Cherenkov_radiation
+            // https://en.wikipedia.org/wiki/Cherenkov_radiation
             float3 ionizationGlowColor = float3(0.0f, 0.4f, 1.0f);
-            //matConfig.material.ionizationYield
-            float ionizationIntensity = incomingGamma * 1;
+            // matConfig.material.ionizationYield
+            float ionizationIntensity = incomingGamma * 1000;
             resultColor += ionizationGlowColor * ionizationIntensity;
-         }
+        }
 
-         float uvValue = spectrum.GetUV();
-         if(uvValue != 0){
-            //UV
+        float xrayValue = spectrum.GetXrays();
+        if (xrayValue != 0.0f)
+        {
+            float attenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
+            float incomingXray = xrayValue * attenuation;
+
+            float xrayAbsorption = 0.8f;
+            temperature += incomingXray * xrayAbsorption;
+
+            float3 xrayGlowColor = float3(0.4f, 1.0f, 0.2f);
+            // TODO density * matConfig.material.density
+            float fluorIntensity = incomingXray * 1000;
+            resultColor += xrayGlowColor * fluorIntensity;
+        }
+
+        float uvValue = spectrum.GetUV();
+        if (uvValue != 0)
+        {
+            // UV
             float uvDiffuse = max(dot(normal, L), 0.0f);
-            float uvSpecular = pow(max(dot(normal, H), 0.0f), 32.0f);
+            //float uvSpecular = pow(max(dot(normal, H), 0.0f), 32.0f);
             float uvAttenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
-            float incomingUV = (uvDiffuse + uvSpecular) * uvValue * uvAttenuation;
+            //float incomingUV = (uvDiffuse + uvSpecular) * uvValue * uvAttenuation;
+            float incomingUV = uvDiffuse * uvValue * uvAttenuation;
 
-            //  float fakeFactor = 0.05f; 
-            //  float3 scatteredLight = matConfig.material.fluorescenceColor.rgb * (incomingUV * fakeFactor);
-            //  resultColor += scatteredLight;
-            
-            //float3 fluoColor = matConfig.material.fluorescenceColor; 
-            //float fluoYield = matConfig.material.fluorescenceYield; 
-            //float3 visibleFluorescence = fluoColor * (incoming_UV_energy * fluoYield);
-         }
+            float3 emissive = emissionMap.Sample(emissionSampler, input.texcoord).g * incomingUV;
+            resultColor.rgb += emissive;
+        }
     }
 
-    //float temperature = thermalMap.Sample(thermalMapSampler, float3(input.texcoord, layerId)).r;
-   
-    //float texCoordZ = ((float)layerId + 0.5f) / 256; 
-    //float3 thermalUV = float3(input.texcoord, texCoordZ);
-    //float temperature = thermalMap.Sample(thermalMapSampler, thermalUV).r;
-    if ((sceneConfig.flags & SceneFlagIsUseTemp) && temperature > 50.0f) 
+    //TODO 
+    //float phosphorGlow = matConfig.material.phosphorCharge;
+    //resultColor.rgb += emissionMap.Sample(sampler, texcoord).b * phosphorGlow;
+
+    // float temperature = thermalMap.Sample(thermalMapSampler, float3(input.texcoord, layerId)).r;
+
+    // float texCoordZ = ((float)layerId + 0.5f) / 256;
+    // float3 thermalUV = float3(input.texcoord, texCoordZ);
+    // float temperature = thermalMap.Sample(thermalMapSampler, thermalUV).r;
+    if ((sceneConfig.flags & SceneFlagIsUseTemp) && temperature > 50.0f)
     {
-        //result.color = float4(1, 0, 0, 1);
-        //return result;
+        // result.color = float4(1, 0, 0, 1);
+        // return result;
         float maxTempRange = 10000.0f - 100.0f;
         float factor = clamp(sqrt((temperature - 100.0f) / maxTempRange), 0.0f, 1.0f);
-        float3 lowHeatColor  = float3(0.5f, 0.01f, 0.0f); // red
-        float3 midHeatColor  = float3(1.0f, 0.35f, 0.0f); // orange
+        float3 lowHeatColor = float3(0.5f, 0.01f, 0.0f);  // red
+        float3 midHeatColor = float3(1.0f, 0.35f, 0.0f);  // orange
         float3 highHeatColor = float3(1.0f, 0.85f, 0.3f); // yellow
-        
+
         float3 glowColor;
-        if (factor < 0.5f) {
+        if (factor < 0.5f)
+        {
             glowColor = lerp(lowHeatColor, midHeatColor, factor * 2.0f);
-        } else {
+        }
+        else
+        {
             glowColor = lerp(midHeatColor, highHeatColor, (factor - 0.5f) * 2.0f);
         }
-        
-        //float3 charredAlbedo = matConfig.material.albedo.rgb * (1.0f - factor * 0.85f);
-        //float3 finalColor = charredAlbedo + glowColor;
+
+        // float3 charredAlbedo = matConfig.material.albedo.rgb * (1.0f - factor * 0.85f);
+        // float3 finalColor = charredAlbedo + glowColor;
         resultColor += matConfig.material.albedo.rgb * glowColor;
-        //return result;
+        // return result;
     }
 
-    //resultColor = clamp(resultColor, 0.0, 1.0);
+    // resultColor = clamp(resultColor, 0.0, 1.0);
 
     result.color = float4(resultColor, fullDiffuseColor.a);
-    //output.a = max(texColor.a, luminance(specular));
-    // result.color = float4(config.albedo.rgb * color, 1.0);
-    //or if (texColor.a < 0.1) discard;
+    // output.a = max(texColor.a, luminance(specular));
+    //  result.color = float4(config.albedo.rgb * color, 1.0);
+    // or if (texColor.a < 0.1) discard;
     return result;
 }
-
-
-
-
-

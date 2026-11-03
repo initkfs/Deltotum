@@ -2,7 +2,7 @@ module api.dm.sim3d.lightings.lights.base_light;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.sim3d.materials.material_sprite3d : MaterialSprite3d;
-import api.dm.sim3d.materials.material_data: SpectrumLight;
+import api.dm.sim3d.materials.material_data : SpectrumLight;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.math.geom3.vec3 : Vec3f;
@@ -31,7 +31,8 @@ class BaseLight : Sprite3d
     float linearCoeff = 0.09;
     float quadraticCoeff = 0;
 
-    protected {
+    protected
+    {
         SpectrumLight _spectrum;
         uint[2] _spectrumData;
     }
@@ -84,6 +85,12 @@ class BaseLight : Sprite3d
         {
             direction = (target.pos3 - pos3).normalize;
         }
+    }
+
+    void spectrum(SpectrumLight sp)
+    {
+        _spectrum = sp;
+        _spectrumData = _spectrum.pack;
     }
 
     SpectrumLight spectrum() => _spectrum;
