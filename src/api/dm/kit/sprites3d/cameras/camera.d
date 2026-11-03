@@ -2,12 +2,12 @@ module api.dm.kit.sprites3d.cameras.camera;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : Scene3d;
-import api.dm.kit.sprites3d.cameras.frustums.base_frustum3: BaseFrustum3f;
+import api.dm.kit.sprites3d.cameras.frustums.base_frustum3 : BaseFrustum3f;
 
 import Math = api.math;
 import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4;
-import api.math.geom3.quat3: Quaternion;
+import api.math.geom3.quat3 : Quaternion;
 import api.math.matrices.affine3;
 
 /**
@@ -32,6 +32,8 @@ class Camera : Sprite2d
     Vec3f cameraUp;
     Vec3f cameraRight;
 
+    float cameraSpeed = 0.1f;
+
     Vec3f cameraTarget;
 
     float targetDistance = 0;
@@ -47,11 +49,6 @@ class Camera : Sprite2d
     float angleY = 0;
 
     bool isRecalcPos;
-
-    float mouseSensitivity = 0.1f;
-    bool mouseCaptured = false;
-    float lastMouseX = 0, lastMouseY = 0;
-    bool firstMouse = true;
 
     bool isAutoRecalcFrustum = true;
 
@@ -81,19 +78,6 @@ class Camera : Sprite2d
     override void create()
     {
         super.create;
-
-        import api.dm.com.inputs.com_keyboard : ComKeyName;
-
-        targetScene.onPointerMove ~= (ref e) {
-
-            if (!input.keyboard.keyModifier.isCtrl)
-            {
-                handlePointerMove(e.x, e.y, false);
-                return;
-            }
-
-            handlePointerMove(e.x, e.y, true);
-        };
     }
 
     void recalcView()
@@ -157,8 +141,7 @@ class Camera : Sprite2d
         import api.dm.com.inputs.com_keyboard : ComKeyName;
 
         //* dt
-        float cameraSpeed = 0.05f;
-
+        float cameraSpeed = this.cameraSpeed * dt;
         if (input.isPressedKey(ComKeyName.key_a))
         {
             moveLeft(cameraSpeed);
@@ -226,58 +209,6 @@ class Camera : Sprite2d
             angleY = Math.wrapAngle360(angleY - rotateSpeedDeg);
             isRecalcPos = true;
         }
-    }
-
-    void handlePointerMove(float mouseX, float mouseY, bool ctrlPressed)
-    {
-        if (ctrlPressed)
-        {
-            if (!mouseCaptured)
-            {
-                mouseCaptured = true;
-                firstMouse = true;
-            }
-
-            if (firstMouse)
-            {
-                lastMouseX = mouseX;
-                lastMouseY = mouseY;
-                firstMouse = false;
-                return;
-            }
-
-            float deltaX = mouseX - lastMouseX;
-            float deltaY = mouseY - lastMouseY;
-            lastMouseX = mouseX;
-            lastMouseY = mouseY;
-
-            processMouseMovement(deltaX, deltaY);
-        }
-        else
-        {
-            if (mouseCaptured)
-            {
-                mouseCaptured = false;
-                firstMouse = true;
-            }
-        }
-    }
-
-    void processMouseMovement(float deltaX, float deltaY)
-    {
-        deltaX *= mouseSensitivity;
-        deltaY *= mouseSensitivity;
-
-        angleY += deltaX;
-        angleX -= deltaY;
-
-        const float MAX_PITCH = 89.0f;
-        if (angleX > MAX_PITCH)
-            angleX = MAX_PITCH;
-        if (angleX < -MAX_PITCH)
-            angleX = -MAX_PITCH;
-
-        isRecalcPos = true;
     }
 
     void moveRight(float speed)
