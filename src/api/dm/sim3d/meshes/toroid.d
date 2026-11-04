@@ -12,14 +12,19 @@ import Math = api.math;
 
 class Toroid : Mesh3dHigh
 {
-    float radius = 0.2f; 
+    float radius; 
     float tubeRadius = 0.01f;
     int sectors = 16;
     int rings = 48;
 
-    this()
+    this(float radius = 0.05, float tubeRadius = 0.01, int sectors = 16, int rings = 48, string id = "Toroid3d")
     {
+        this.radius = radius;
+        this.tubeRadius = tubeRadius;
+        this.sectors = sectors;
+        this.rings = rings;
 
+        this.id = id;
     }
 
     override void createMesh()

@@ -10,10 +10,10 @@ import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
 class Quad2d : Mesh3dLow
 {
-    this(float width = 0.5, float height = 0.5)
+    this(float width = 0.5, float height = 0.5, string id = "Quad3d")
     {
         this.initSize(width, height);
-        id = "Quad2d";
+        this.id = id;
     }
 
     override void createMesh()

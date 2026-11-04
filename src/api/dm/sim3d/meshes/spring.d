@@ -17,12 +17,14 @@ class Spring : Mesh3dHigh
     float height = 0;
     int turns;
 
-    this(float height = 1, float springRadius = 0.1, float tubeRadius = 0.01, int turns = 10)
+    this(float height = 0.2, float springRadius = 0.01, float tubeRadius = 0.005, int turns = 10, string id = "Spring3d")
     {
         this.springRadius = springRadius;
         this.tubeRadius = tubeRadius;
         this.height = height;
         this.turns = turns;
+
+        this.id = id;
     }
 
     override void createMesh()
