@@ -41,7 +41,7 @@ class BaseLight : Sprite3d
     {
         id = "BaseLight";
         albedo = RGBA.white;
-        _spectrum = SpectrumLight.sun;
+        _spectrum = SpectrumLight.light;
         _spectrumData = _spectrum.pack;
     }
 

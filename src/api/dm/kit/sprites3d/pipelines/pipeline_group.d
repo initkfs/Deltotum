@@ -82,6 +82,30 @@ class PipelineGroup : Sprite3d
         // }
     }
 
+    override void uploadStart()
+    {
+        super.uploadStart;
+        foreach (k, ref m; sharedMaterials)
+        {
+            if (!m.material.isUploadStart)
+            {
+                m.material.uploadStart;
+            }
+        }
+    }
+
+    override void uploadEnd()
+    {
+        super.uploadEnd;
+        foreach (k, ref m; sharedMaterials)
+        {
+            if (!m.material.isUploadEnd)
+            {
+                m.material.uploadEnd;
+            }
+        }
+    }
+
     override bool isNeedDraw(Sprite2d sprite)
     {
         if (!super.isNeedDraw(sprite))
@@ -366,7 +390,7 @@ class PipelineGroup : Sprite3d
         return dataBuffer;
     }
 
-    Material newSharedMaterial(string id = "Material", bool isThrowIfExists = false)
+    Material newSharedMaterial(string id = "Material", scope void delegate(Material) onMat = null, bool isThrowIfExists = false)
     {
         foreach (ref sm; sharedMaterials)
         {
@@ -388,8 +412,14 @@ class PipelineGroup : Sprite3d
         m.id = id;
         build(m);
         m.isSharedMaterial = true;
-
         sharedMaterials[id] = SharedMaterials(m);
+
+        if (onMat)
+        {
+            onMat(m);
+            m.create;
+        }
+
         return m;
     }
 

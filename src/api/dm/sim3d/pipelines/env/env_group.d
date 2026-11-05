@@ -273,13 +273,17 @@ class EnvGroup : PipelineGroup
         config.lightCount = lightCount;
         config.flags = packSceneFlags;
 
+        size_t nextIndex;
         foreach (li; 0 .. lightCount)
         {
             auto lamp = lights[li];
 
-            if (!lamp.isVisible && config.lightCount >= 0)
+            if (!lamp.isVisible)
             {
-                config.lightCount--;
+                if (config.lightCount > 0)
+                {
+                    config.lightCount--;
+                }
                 continue;
             }
 
@@ -327,7 +331,8 @@ class EnvGroup : PipelineGroup
 
             lightData.lightType = type;
 
-            config.lights[li] = lightData;
+            config.lights[nextIndex] = lightData;
+            nextIndex++;
         }
 
         gpu.dev.pushUniformFragmentData(0, &config, config.sizeof);
@@ -386,7 +391,7 @@ class EnvGroup : PipelineGroup
         }
 
         if (isUseTemp)
-                flags |= SceneConfigFlag.IsUseTemp;
+            flags |= SceneConfigFlag.IsUseTemp;
 
         return flags;
     }

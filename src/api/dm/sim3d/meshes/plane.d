@@ -19,10 +19,10 @@ class Plane : Mesh3dLow
     override void createMesh()
     {
         vertices = [
-            ComVertex(-0.5f, 0.0f, 0.5f, [0.0f, 1.0f, 0.0f], 0.0f, 1.0f),
-            ComVertex(0.5f, 0.0f, 0.5f, [0.0f, 1.0f, 0.0f], 1.0f, 1.0f),
-            ComVertex(0.5f, 0.0f, -0.5f, [0.0f, 1.0f, 0.0f], 1.0f, 0.0f),
-            ComVertex(-0.5f, 0.0f, -0.5f, [0.0f, 1.0f, 0.0f], 0.0f, 0.0f)
+            ComVertex(-0.5f, 0.0f, 0.5f, [0.0f, 1.0f, 0.0f], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f),
+            ComVertex(0.5f, 0.0f, 0.5f, [0.0f, 1.0f, 0.0f], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f),
+            ComVertex(0.5f, 0.0f, -0.5f, [0.0f, 1.0f, 0.0f], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f),
+            ComVertex(-0.5f, 0.0f, -0.5f, [0.0f, 1.0f, 0.0f], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f)
         ];
 
         indices = [

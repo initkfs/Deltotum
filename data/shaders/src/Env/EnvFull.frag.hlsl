@@ -70,6 +70,8 @@ struct Light
     float outerCutoff;
     uint spectrum1;
     uint spectrum2;
+    uint reserve11;
+    uint reserve22;
 };
 
 struct Spectrum
@@ -177,10 +179,6 @@ float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float
 
     float gloss = specularColor.a * material.gloss;
 
-    // float frequency = 500; //10.0 - 1000.0 for goldnoise
-    // float noise = goldNoise(input.texcoord * frequency, 12.9898);
-    // gloss = gloss * (0.8 + noise * 0.4); //20% variation
-
     // float shininess = pow(2.0, gloss * 8.0);  //0..1, 2..256
     // float shininess = exp2(10.0 * gloss + 1.0);
     float shininess = clamp(pow(2.0, gloss * 8.0), 1.0, 512.0);
@@ -205,30 +203,11 @@ float3 calcPoint(float3 diffuseColor, float4 specularColor, float3 normal, float
     // or damping = 1.0 - pow(alpha, 4);
     attenuation = clamp(attenuation * damping, 0, 1);
 
-    // float factor = distance / radius;
-
-    // float smoothFactor = clamp(1.0 - factor * factor, 0.0, 1.0); //(1 - alpha^2)^2
-    // float damping = smoothFactor * smoothFactor;
-    // attenuation *= damping;
-    // attenuation = clamp(attenuation, 0, 1);
-
-    // float factor2 = factor * factor;
-    // float factor4 = factor2 * factor2;
-    // float windowing = clamp(1.0 - factor4, 0.0, 1.0);
-
-    // attenuation = attenuation * (windowing * windowing);
-
     float3 ambient = light.ambient * diffuseColor * material.albedo.rgb * ao;
-    // float3 diffuse = light.diffuse  * diff * diffuseColor * material.albedo.rgb;
 
     float3 specular = light.specular * spec * specularColor.rgb;
-    // float3 specular = light.specular * spec * specularColor;
 
     float3 diffuse = light.diffuse * diff * diffuseColor * material.albedo.rgb;
-
-    // float noise = goldNoise(input.texcoord * 800.0, 1.0);
-    // 0.97, 1.03
-    // diffuse.rgb *= (1.03 + noise * 0.06);
 
     // return ambient + (diffuse * attenuation) + (specular * attenuation);
     return (ambient + diffuse + specular) * attenuation;
@@ -390,7 +369,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     float3 bitangent = cross(normalV, tangentV);
     float3x3 TBN = float3x3(tangentV, bitangent, normalV);
     float3 mapNormal = normalMap.Sample(normalSampler, input.texcoord).rgb;
-    mapNormal = mapNormal * 2.0f - 1.0f; // <--- КРИТИЧЕСКИЙ ФИКС ДЛЯ КАРТ НОРМАЛЕЙ
+    mapNormal = mapNormal * 2.0f - 1.0f;
     // DirectX
     // mapNormal.y = -mapNormal.y;
     float3 normal = normalize(mul(mapNormal, TBN));
@@ -405,7 +384,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     // Disp map
     float3 viewDirTS = mul(viewDir, TBN);
     float height = dispMap.Sample(dispMapSampler, input.texcoord).r;
-    float scale = 0.03;
+    float scale = 0.02;
     float2 texUV = input.texcoord - (viewDirTS.xy / viewDirTS.z) * (height * scale);
     // if(texUV.x > 1.0 || texUV.y > 1.0 || texUV.x < 0.0 || texUV.y < 0.0){
     //     discard;
@@ -437,33 +416,36 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
     float ao = aoMap.Sample(aoSampler, input.texcoord).r;
 
     float4 fullDiffuseColor = diffuseMap.Sample(diffuseSampler, texUV);
-    fullDiffuseColor.rgb = pow(fullDiffuseColor.rgb, 2.2);
+    // fullDiffuseColor.rgb = pow(fullDiffuseColor.rgb, 2.2);
 
     float3 diffuseColor = fullDiffuseColor.rgb;
     float4 specularColor = specularMap.Sample(specularSampler, texUV) * matConfig.material.specular;
 
-    //float3 emissionChans = emissionMap.Sample(sampler, input.texcoord).rgba;
+    // float3 emissionChans = emissionMap.Sample(sampler, input.texcoord).rgba;
 
     for (int li = 0; li < sceneConfig.lightCount; li++)
     {
         Light light = sceneConfig.lights[li];
 
-        if (light.lightType == LightType::Directional)
+        Spectrum spectrum = UnpackSpectrum(light.spectrum1, light.spectrum2);
+        if (spectrum.GetVisible() != 0)
         {
-            resultColor += calcDir(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
-        }
-        else if (light.lightType == LightType::Point)
-        {
-            resultColor += calcPoint(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
-        }
-        else if (light.lightType == LightType::Spot)
-        {
-            resultColor += calcSpot(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
+
+            if (light.lightType == LightType::Directional)
+            {
+                resultColor += calcDir(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
+            }
+            else if (light.lightType == LightType::Point)
+            {
+                resultColor += calcPoint(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
+            }
+            else if (light.lightType == LightType::Spot)
+            {
+                resultColor += calcSpot(diffuseColor, specularColor, normal, ao, light, input, matConfig.material, viewDir);
+            }
         }
 
         float lightDistance = length(light.position - input.worldPos);
-
-        Spectrum spectrum = UnpackSpectrum(light.spectrum1, light.spectrum2);
 
         float3 lightDir = normalize(-light.direction);
         float3 L = normalize(lightDir);
@@ -476,7 +458,7 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
             float irDiffuse = max(dot(normal, L), 0.0f);
             float irSpecular = pow(max(dot(normal, H), 0.0f), 16.0f);
             float incomingIR = (irDiffuse + irSpecular) * irValue;
-            float absorptionIR = 0.5;
+            float absorptionIR = 20;
             float tempFromIR = incomingIR * absorptionIR;
             temperature += tempFromIR;
         }
@@ -518,9 +500,9 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
         {
             // UV
             float uvDiffuse = max(dot(normal, L), 0.0f);
-            //float uvSpecular = pow(max(dot(normal, H), 0.0f), 32.0f);
+            // float uvSpecular = pow(max(dot(normal, H), 0.0f), 32.0f);
             float uvAttenuation = 1.0f / (lightDistance * lightDistance + 1.0f);
-            //float incomingUV = (uvDiffuse + uvSpecular) * uvValue * uvAttenuation;
+            // float incomingUV = (uvDiffuse + uvSpecular) * uvValue * uvAttenuation;
             float incomingUV = uvDiffuse * uvValue * uvAttenuation;
 
             float3 emissive = emissionMap.Sample(emissionSampler, input.texcoord).g * incomingUV;
@@ -528,9 +510,9 @@ FragOutputColor main(FragInput input, bool isFrontFace : SV_IsFrontFace)
         }
     }
 
-    //TODO 
-    //float phosphorGlow = matConfig.material.phosphorCharge;
-    //resultColor.rgb += emissionMap.Sample(sampler, texcoord).b * phosphorGlow;
+    // TODO
+    // float phosphorGlow = matConfig.material.phosphorCharge;
+    // resultColor.rgb += emissionMap.Sample(sampler, texcoord).b * phosphorGlow;
 
     // float temperature = thermalMap.Sample(thermalMapSampler, float3(input.texcoord, layerId)).r;
 

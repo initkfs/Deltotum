@@ -29,7 +29,8 @@ class Gear : Mesh3dHigh
     override void createMesh()
     {
         int sectors = toothCount * 4;
-        int totalVertices = (sectors + 1) * 2;
+
+        int totalVertices = ((sectors + 1) * 2) + ((sectors + 1) * 2) + 2;
 
         int totalIndices = (sectors * 6) + (sectors * 3) * 2;
 
@@ -37,8 +38,9 @@ class Gear : Mesh3dHigh
         indices = new uint[totalIndices];
 
         float halfH = thickness / 2;
-        size_t vertexIndex;
+        size_t vertexIndex = 0;
 
+        // teeth
         foreach (layer; 0 .. 2)
         {
             float y = (layer == 0) ? -halfH : halfH;
@@ -51,11 +53,8 @@ class Gear : Mesh3dHigh
 
                 int step = j % 4;
                 float r = (step == 1 || step == 2) ? outerRadius : innerRadius;
-
                 if (j == sectors)
-                {
                     r = innerRadius;
-                }
 
                 float x = r * Math.cos(angle);
                 float z = r * Math.sin(angle);
@@ -72,15 +71,72 @@ class Gear : Mesh3dHigh
             }
         }
 
+        uint lowerCapStartIdx = cast(uint) vertexIndex;
+
+        // bottom cap
+        for (int j = 0; j <= sectors; j++)
+        {
+            float u = j / cast(float) sectors;
+            float angle = u * 2 * Math.PI;
+            int step = j % 4;
+            float r = (step == 1 || step == 2) ? outerRadius : innerRadius;
+            if (j == sectors)
+                r = innerRadius;
+
+            float x = r * Math.cos(angle);
+            float z = r * Math.sin(angle);
+
+            vertices[vertexIndex++] = ComVertex(
+                x, -halfH, z,
+                [0.0f, -1.0f, 0.0f],
+                u, 1.0f,
+                1.0f, 0.0f, 0.0f
+            );
+        }
+
+        uint centerBottomIdx = cast(uint) vertexIndex;
+        vertices[vertexIndex++] = ComVertex(0.0f, -halfH, 0.0f, [
+                0.0f, -1.0f, 0.0f
+            ], 0.5f, 0.5f, 1.0f, 0.0f, 0.0f);
+
+        uint upperCapStartIdx = cast(uint) vertexIndex;
+
+        // upper cap
+        for (int j = 0; j <= sectors; j++)
+        {
+            float u = j / cast(float) sectors;
+            float angle = u * 2 * Math.PI;
+            int step = j % 4;
+            float r = (step == 1 || step == 2) ? outerRadius : innerRadius;
+            if (j == sectors)
+                r = innerRadius;
+
+            float x = r * Math.cos(angle);
+            float z = r * Math.sin(angle);
+
+            vertices[vertexIndex++] = ComVertex(
+                x, halfH, z,
+                [0.0f, 1.0f, 0.0f],
+                u, 0.0f,
+                1.0f, 0.0f, 0.0f
+            );
+        }
+
+        uint centerTopIdx = cast(uint) vertexIndex;
+        vertices[vertexIndex++] = ComVertex(0.0f, halfH, 0.0f, [
+                0.0f, 1.0f, 0.0f
+            ], 0.5f, 0.5f, 1.0f, 0.0f, 0.0f);
+
         size_t idx;
+
+        // teeth
         foreach (uint j; 0 .. sectors)
         {
-            uint k1 = j; // low ring
+            uint k1 = j;
             uint k2 = k1 + 1;
-            uint k3 = (sectors + 1) + j; // upper ring
+            uint k3 = (sectors + 1) + j;
             uint k4 = k3 + 1;
 
-            // COUNTER_CLOCKWISE
             indices[idx++] = k1;
             indices[idx++] = k3;
             indices[idx++] = k2;
@@ -90,23 +146,18 @@ class Gear : Mesh3dHigh
             indices[idx++] = k4;
         }
 
-        vertices ~= ComVertex(0.0f, -halfH, 0.0f, [0.0f, -1.0f, 0.0f], 0.5f, 0.5f); // center bottom
-        uint centerBottomIdx = cast(uint)(vertices.length - 1);
-
-        vertices ~= ComVertex(0.0f, halfH, 0.0f, [0.0f, 1.0f, 0.0f], 0.5f, 0.5f); //center upper
-        uint centerTopIdx = cast(uint)(vertices.length - 1);
-
+        // caps
         foreach (uint j; 0 .. sectors)
         {
-            // normal [0, -1, 0]
-            // CCW
-            uint b1 = j;
-            uint b2 = j + 1;
+            // bottom
+            uint b1 = lowerCapStartIdx + j;
+            uint b2 = b1 + 1;
             indices[idx++] = centerBottomIdx;
             indices[idx++] = b1;
             indices[idx++] = b2;
 
-            uint t1 = (sectors + 1) + j;
+            // upper
+            uint t1 = upperCapStartIdx + j;
             uint t2 = t1 + 1;
             indices[idx++] = centerTopIdx;
             indices[idx++] = t2;

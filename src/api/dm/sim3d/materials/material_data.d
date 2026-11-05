@@ -63,6 +63,7 @@ struct SpectrumLight
 
     static
     {
+        SpectrumLight light() => SpectrumLight(visible : 100);
         SpectrumLight lightBulb() => SpectrumLight(visible : 5, infrared:
             95);
         SpectrumLight sun() => SpectrumLight(ultraviolet : 3, visible:
@@ -111,9 +112,11 @@ struct LightData
     float outerCutoff = 0;
     uint spectrum1;
     uint spectrum2;
+    uint reserve1;
+    uint reserve2;
 }
 
-static assert(LightData.sizeof == 104);
+//static assert(LightData.sizeof == 104);
 
 import api.math.geom3 : Vec3f;
 

@@ -39,6 +39,8 @@ class Material : Sprite3d
     bool isMipMaps = true;
 
     bool isSharedMaterial;
+    bool isUploadStart;
+    bool isUploadEnd;
 
     this(string diffuseMapPath = null, string specularMapPath = null, string normalMapPath = null, string dispMapPath = null, string aoMapPath = null)
     {
@@ -134,5 +136,17 @@ class Material : Sprite3d
         {
             addCreate(aoMap);
         }
+    }
+
+    override void uploadStart()
+    {
+        super.uploadStart;
+        isUploadStart = true;
+    }
+
+    override void uploadEnd()
+    {
+        super.uploadEnd;
+        isUploadEnd = true;
     }
 }
