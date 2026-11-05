@@ -138,6 +138,58 @@ class Material : Sprite3d
         }
     }
 
+    size_t fillFromDir(string path, string diffuseExt = "jpg", string specExt = "jpg", string normalExt = "png", string dispExt = "png", string aoExt = "png")
+    {
+        import std.path : buildPath, isAbsolute;
+        import std.file : isDir, exists, isFile;
+
+        if (!path.exists || !path.isDir)
+        {
+            throw new Exception("Directory not found: " ~ path);
+        }
+
+        bool checkFile(string file) => file.exists && file.isFile;
+
+        size_t cnt;
+
+        const diffuseFile = buildPath(path, "diff." ~ diffuseExt);
+        if (checkFile(diffuseFile))
+        {
+            diffuseMapPath = diffuseFile;
+            cnt++;
+        }
+
+        const specFile = buildPath(path, "spec." ~ specExt);
+        if (checkFile(specFile))
+        {
+            specularMapPath = specFile;
+            cnt++;
+        }
+
+        const normalFile = buildPath(path, "norm." ~ normalExt);
+        if (checkFile(normalFile))
+        {
+            normalMapPath = normalFile;
+            cnt++;
+        }
+
+        const dispFile = buildPath(path, "disp." ~ dispExt);
+        if (checkFile(dispFile))
+        {
+            dispMapPath = dispFile;
+            cnt++;
+        }
+
+        const aoFile = buildPath(path, "ao." ~ aoExt);
+        if (checkFile(aoFile))
+        {
+            aoMapPath = aoFile;
+            cnt++;
+        }
+
+        return cnt;
+    }
+
     override void uploadStart()
     {
         super.uploadStart;
