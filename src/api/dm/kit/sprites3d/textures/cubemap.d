@@ -12,7 +12,9 @@ class CubeMap : Tex3d
 {
     alias create = Tex3d.create;
 
-    string[6] faces;
+    enum facesCount = 6;
+
+    string[facesCount] faces;
     string basePath;
 
     this(string basePath, string ext = "jpg")
@@ -35,9 +37,57 @@ class CubeMap : Tex3d
         createSampler;
     }
 
+    void createEmpty(uint size = 1)
+    {
+        if (_texture)
+        {
+            throw new Exception("Texture exists");
+        }
+
+        if(!_sampler){
+            createSampler;
+        }
+
+        initSize(size, size);
+
+        SDL_GPUTextureCreateInfo info;
+        info.type = SDL_GPU_TEXTURETYPE_CUBE;
+        info.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+        info.width = widthu;
+        info.height = heightu;
+        info.layer_count_or_depth = facesCount;
+        info.num_levels = size;
+        info.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
+
+        _texture = SDL_CreateGPUTexture(gpu.dev.ptr, &info);
+        if (!texture)
+        {
+            throw new Exception("Cubemap placeholder error");
+        }
+    }
+
     override void uploadStart()
     {
         // assert w == 0, not super.uploadStart;
+
+        if (basePath.length == 0 && _texture)
+        {
+            const texSize = widthu;
+            if (!_transferBuffer)
+            {
+                _transferBuffer = gpu.dev.newTransferUploadBuffer(texSize);
+            }
+
+            auto transBuffMap = gpu.dev.mapTransferBuffer(_transferBuffer, cycle:
+                true);
+            *(cast(ubyte*) transBuffMap) = 0;
+            foreach (fi; 0 .. facesCount)
+            {
+                gpu.dev.uploadTexture(_transferBuffer, _texture, widthu, heightu, 0, false, fi);
+            }
+
+            return;
+        }
 
         import api.dm.com.graphics.com_surface : ComSurface;
 

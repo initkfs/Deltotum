@@ -55,8 +55,8 @@ class Scene3d : Scene2d
     bool isMixCurrentPass;
 
     bool isNeedCubeMap = true;
-    Tex3d cubeMap;
-    Tex3d cubeMapPlaceholder;
+    CubeMap cubeMap;
+    CubeMap cubeMapPlaceholder;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
@@ -175,11 +175,11 @@ class Scene3d : Scene2d
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        cubeMapPlaceholder = new Tex3d;
+        cubeMapPlaceholder = new CubeMap(null);
         cubeMapPlaceholder.isNeedCamera = false;
         cubeMapPlaceholder.isNeedDispose = false;
         buildInit(cubeMapPlaceholder);
-        cubeMapPlaceholder.create(1, 1, RGBA.white);
+        cubeMapPlaceholder.createEmpty;
     }
 
     protected SDL_GPUColorTargetInfo createTargetInfo()
