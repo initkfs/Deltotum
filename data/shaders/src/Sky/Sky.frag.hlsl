@@ -8,6 +8,10 @@ struct VOutput
     float2 uv  : TEXCOORD0;
 };
 
+
+Texture2D<float2> OpticalDepthLUT : register(t0, space2);
+SamplerState LinearSampler        : register(s0, space2);
+
 /*
 Mercury, Moon:
 rayleighScat = Vec3f(0.0f, 0.0f, 0.0f);
@@ -93,6 +97,13 @@ float3 reconstructViewDir(float2 uv) {
     return normalize(camForward + (camRight * ndc.x * fovTan) + (camUp * ndc.y * fovTan));
 }
 
+float2 GetLutUV(float height, float cosZenith, float atmHeight)
+{
+    float u = height / atmHeight;
+    float v = cosZenith * 0.5 + 0.5;
+    return clamp(float2(u, v), 0.0, 1.0);
+}
+
 float4 main(VOutput input) : SV_Target0
 {
     float3 viewDir = reconstructViewDir(input.uv);
@@ -110,7 +121,7 @@ float4 main(VOutput input) : SV_Target0
         return float4(0.0, 0.0, 0.0, 1.0);
     }
 
-    const int SCATTER_SAMPLES = 12;
+    const int SCATTER_SAMPLES = 8;
     float stepSize = tEnd / float(SCATTER_SAMPLES);
     
     float3 accumRayleigh = float3(0.0, 0.0, 0.0);
@@ -125,6 +136,8 @@ float4 main(VOutput input) : SV_Target0
     for (int i = SCATTER_SAMPLES - 1; i >= 0; i--) {
         float3 samplePoint = rayOrigin + viewDir * (stepSize * (float(i) + 0.5));
         float height = length(samplePoint) - Rplanet;
+
+        float3 upDir = samplePoint / (Rplanet + height);
         
         float dR = densityAtHeight(height, H_R) * stepSize;
         float dM = densityAtHeight(height, H_M) * stepSize;
@@ -134,7 +147,11 @@ float4 main(VOutput input) : SV_Target0
         
         float tSun = raySphereIntersect(samplePoint, sunDir, Ratmos);
         float3 sunEnd = samplePoint + sunDir * tSun;
-        float2 optDepthSun = integrateOpticalDepth(samplePoint, sunEnd, Rplanet, Ratmos, H_R, H_M);
+        //float2 optDepthSun = integrateOpticalDepth(samplePoint, sunEnd, Rplanet, Ratmos, H_R, H_M);
+        
+        float cosZenithSun = dot(upDir, sunDir);
+        float2 uvSun = GetLutUV(height, cosZenithSun, atmHeight);
+        float2 optDepthSun = OpticalDepthLUT.SampleLevel(LinearSampler, uvSun, 0).xy;
         
         float3 optDepthSunTotalRayleigh = optDepthSun.x * rayleighScat;
         float3 optDepthSunTotalMie = optDepthSun.y * mieScat;

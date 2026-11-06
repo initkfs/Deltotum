@@ -53,6 +53,9 @@ class DiffusionPass : Sprite3d
         buffs.numRTextures = 1;
         buffs.numRWTextures = 1;
         buffs.numUniforms = 1;
+        buffs.threadcount_x = 16;
+        buffs.threadcount_y = 16;
+        buffs.threadcount_z = 1;
 
         import std.path : buildPath;
     

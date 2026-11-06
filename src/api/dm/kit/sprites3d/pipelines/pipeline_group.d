@@ -480,7 +480,10 @@ class PipelineGroup : Sprite3d
         {
             foreach (mdata; sharedMaterials)
             {
-                mdata.material.dispose;
+                if (!mdata.material.isNone)
+                {
+                    mdata.material.dispose;
+                }
             }
 
             sharedMaterials = null;

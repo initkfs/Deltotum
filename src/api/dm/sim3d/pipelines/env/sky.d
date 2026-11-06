@@ -12,9 +12,14 @@ import api.dm.com.graphics.gpu.com_3d_types;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.math.geom3.vec3 : Vec3f;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.kit.sprites3d.textures.compute_tex : ComputeTex;
 import api.dm.back.sdl3.externs.csdl3;
+import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
 
 import Math = api.math;
+
+//TODO remove native api
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
@@ -58,6 +63,10 @@ class Sky : PipelineGroup
 {
     SkyConfig skyConfig;
 
+    SDL_GPUComputePipeline* optPipeline;
+
+    ComputeTex optTexture;
+
     this()
     {
         isPushUniformVertexMatrix = false;
@@ -77,14 +86,15 @@ class Sky : PipelineGroup
         auto buff = pipeBuffers;
         //buff.numVertexUniformBuffers = 1;
         buff.numFragUniformBuffers = 1;
+        buff.numFragSamples = 1;
         createPipeline(buff);
 
         skyConfig.planetRadius = 6371000.0;
         skyConfig.atmHeight = 80000;
-        
+
         //(1/lambda^4)
         skyConfig.rayleighScat = Vec3f(0.0000058, 0.000010, 0.000033); //less yellow
-        
+
         skyConfig.sunIntensity = Vec3f(20.0, 20.0, 19.0);
         skyConfig.camHeight = 1;
         skyConfig.aspectRatio = 1;
@@ -94,6 +104,26 @@ class Sky : PipelineGroup
         skyConfig.mieScat = Vec3f(2e-6, 2e-6, 2e-6); //fog 4e-4
         skyConfig.mieHeight = 1200;
         skyConfig.mieG = 0.8; // 0.76 - 0.85
+
+        optTexture = new ComputeTex();
+        buildInit(optTexture);
+        //256×128 or 512×256
+        optTexture.createCompute(256, 128);
+        optTexture.createSampler;
+
+        import api.dm.com.graphics.gpu.com_pipeline : ComComputeBuffers;
+
+        ComComputeBuffers buffs;
+        buffs.numRWTextures = 1;
+        buffs.numUniforms = 1;
+        buffs.threadcount_x = 16;
+        buffs.threadcount_y = 16;
+        buffs.threadcount_z = 1;
+
+        import std.path : buildPath;
+
+        auto compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "Sky.comp.spv");
+        optPipeline = gpu.dev.createComputePipelineSPIRV(compShaderPath, buffs);
     }
 
     override bool bindPipeline()
@@ -107,12 +137,42 @@ class Sky : PipelineGroup
         skyConfig.aspectRatio = window.width / window.height;
 
         gpu.dev.pushUniformFragmentData(0, &skyConfig, skyConfig.sizeof);
+
+        optTexture.bindAll;
+
         return true;
+    }
+
+    void calcAtm()
+    {
+        SDL_GPUStorageTextureReadWriteBinding rwBinding;
+        rwBinding.texture = optTexture.texture;
+        rwBinding.mip_level = 0;
+        rwBinding.layer = 0;
+        rwBinding.cycle = true;
+
+        gpu.dev.startComputePass(&rwBinding, null, 1, 0);
+        gpu.dev.bindComputePipeline(optPipeline);
+
+        gpu.dev.pushComputeUniform(&skyConfig, skyConfig.sizeof, 0);
+
+        assert(optTexture.w > 0);
+        assert(optTexture.h > 0);
+
+        uint groupx = (optTexture.widthu) / 16;
+        uint groupy = (optTexture.heightu + 15) / 16;
+
+        // auto outTex = optTexture.texture;
+        // gpu.dev.bindComputeStorageTextures(&outTex);
+
+        gpu.dev.dispatchCompute(groupx, groupy, 1);
+        gpu.dev.endComputePass;
     }
 
     override bool draw(float a)
     {
         super.draw(a);
+
         gpu.dev.drawQuad;
         return true;
     }

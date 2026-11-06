@@ -1425,15 +1425,14 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         info.num_uniform_buffers = buffers.numUniforms;
 
         //This should match the value in the shader.
-        uint threadCount = 16;
-
-        info.threadcount_x = threadCount;
-        info.threadcount_y = threadCount;
-        info.threadcount_z = 1;
+        info.threadcount_x = buffers.threadcount_x;
+        info.threadcount_y = buffers.threadcount_y;
+        info.threadcount_z = buffers.threadcount_z;
 
         return createComputePipeline(&info);
     }
 
+    //Read-only textures
     void bindComputeStorageTextures(SDL_GPUTexture** storage, uint slot = 0, uint numBindings = 1)
     {
         if (!lastComputePass)

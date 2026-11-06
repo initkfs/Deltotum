@@ -30,4 +30,7 @@ struct ComComputeBuffers
     uint numRWTextures = 0;
     uint numRWBuffers = 0;
     uint numUniforms = 0;
+    uint threadcount_x;
+    uint threadcount_y;
+    uint threadcount_z;
 }
