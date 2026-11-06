@@ -17,7 +17,7 @@ import api.math.matrices.affine3;
  */
 class ActionCamera : PerspCamera
 {
-    float mouseSensitivity = 0.05f;
+    float mouseSensitivity = 0.07f;
     bool mouseCaptured = false;
     float lastMouseX = 0, lastMouseY = 0;
     bool firstMouse = true;

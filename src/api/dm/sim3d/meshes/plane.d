@@ -18,11 +18,14 @@ class Plane : Mesh3dLow
 
     override void createMesh()
     {
+        const halfWidth = width / 2.0;
+        const halfHeight = height / 2.0;
+
         vertices = [
-            ComVertex(-0.5f, 0.0f, 0.5f, [0.0f, 1.0f, 0.0f], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f),
-            ComVertex(0.5f, 0.0f, 0.5f, [0.0f, 1.0f, 0.0f], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f),
-            ComVertex(0.5f, 0.0f, -0.5f, [0.0f, 1.0f, 0.0f], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f),
-            ComVertex(-0.5f, 0.0f, -0.5f, [0.0f, 1.0f, 0.0f], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f)
+            ComVertex(-halfWidth, 0.0f, halfHeight, [0.0f, 1.0f, 0.0f], 0.0f, 1.0f, 1.0f, 0.0f, 0.0f),
+            ComVertex(halfWidth, 0.0f, halfHeight, [0.0f, 1.0f, 0.0f], 1.0f, 1.0f, 1.0f, 0.0f, 0.0f),
+            ComVertex(halfWidth, 0.0f, -halfHeight, [0.0f, 1.0f, 0.0f], 1.0f, 0.0f, 1.0f, 0.0f, 0.0f),
+            ComVertex(-halfWidth, 0.0f, -halfHeight, [0.0f, 1.0f, 0.0f], 0.0f, 0.0f, 1.0f, 0.0f, 0.0f)
         ];
 
         indices = [

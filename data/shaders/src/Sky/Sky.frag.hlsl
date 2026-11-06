@@ -24,7 +24,7 @@ cbuffer SceneUBO : register(b0, space3)
    float reserve1;
    float3 sunDir; //normalized
    float  planetRadius;     // 6371000.0
-   float3 rayleighScat;    // R, G, B, float3(5.8e-6, 1.35e-5, 3.31e-5)), sun day Vec3f(1e-6, 1e-6, 1e-6), fog  4e-4
+   float3 rayleighScat;    // R, G, B, //(1/lambda^4), 0.0000058, 0.000010, 0.000033
    float  atmHeight;       // 80000.0km
    float3 sunIntensity;    // float3(20.0, 20.0, 19.0))
    float  camHeight;       // 1meter
@@ -59,7 +59,7 @@ float2 integrateOpticalDepth(float3 start, float3 end, float Rplanet, float Ratm
     float dist = length(stepVec);
     float3 dir = stepVec / dist; //normalized direction
     
-    const int SAMPLE_COUNT = 5; //4..8
+    const int SAMPLE_COUNT = 4; //4..8
     float stepSize = dist / float(SAMPLE_COUNT);
     float totalRayleigh = 0.0;
     float totalMie = 0.0;
@@ -110,7 +110,7 @@ float4 main(VOutput input) : SV_Target0
         return float4(0.0, 0.0, 0.0, 1.0);
     }
 
-    const int SCATTER_SAMPLES = 8;
+    const int SCATTER_SAMPLES = 12;
     float stepSize = tEnd / float(SCATTER_SAMPLES);
     
     float3 accumRayleigh = float3(0.0, 0.0, 0.0);
@@ -122,7 +122,7 @@ float4 main(VOutput input) : SV_Target0
     const float H_R = 8000.0;
     float H_M = mieHeight;
     
-    for (int i = 0; i < SCATTER_SAMPLES; i++) {
+    for (int i = SCATTER_SAMPLES - 1; i >= 0; i--) {
         float3 samplePoint = rayOrigin + viewDir * (stepSize * (float(i) + 0.5));
         float height = length(samplePoint) - Rplanet;
         

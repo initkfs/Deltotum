@@ -81,8 +81,10 @@ class Sky : PipelineGroup
 
         skyConfig.planetRadius = 6371000.0;
         skyConfig.atmHeight = 80000;
-        //skyConfig.rayleighScat = Vec3f(5.8e-6, 1.35e-5, 3.31e-5); yellow
-        skyConfig.rayleighScat = Vec3f(5.8e-6f, 1.05e-5f, 3.31e-5f); //less yellow
+        
+        //(1/lambda^4)
+        skyConfig.rayleighScat = Vec3f(0.0000058, 0.000010, 0.000033); //less yellow
+        
         skyConfig.sunIntensity = Vec3f(20.0, 20.0, 19.0);
         skyConfig.camHeight = 1;
         skyConfig.aspectRatio = 1;
