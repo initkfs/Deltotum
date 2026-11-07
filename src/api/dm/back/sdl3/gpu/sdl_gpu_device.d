@@ -381,6 +381,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         pipe.setNullPtr;
     }
 
+    void deletePipeline(SDL_GPUGraphicsPipeline* pipeline)
+    {
+        SDL_ReleaseGPUGraphicsPipeline(ptr, pipeline);
+    }
+
     void deleteShader(SdlGPUShader shader)
     {
         shader.dispose;
@@ -1144,6 +1149,12 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return newSampler(&info);
     }
 
+    SDL_GPUSampler* newSamplerLinear()
+    {
+        SDL_GPUSamplerCreateInfo info = linearRepeat;
+        return newSampler(&info);
+    }
+
     SDL_GPUSamplerCreateInfo mipMapSamplerInfo()
     {
         SDL_GPUSamplerCreateInfo samplerInfo;
@@ -1494,7 +1505,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_BindGPUComputePipeline(lastComputePass, pipeline);
     }
 
-    void deleteComputePipeline(SDL_GPUComputePipeline* pipeline)
+    void deletePipeline(SDL_GPUComputePipeline* pipeline)
     {
         SDL_ReleaseGPUComputePipeline(ptr, pipeline);
     }

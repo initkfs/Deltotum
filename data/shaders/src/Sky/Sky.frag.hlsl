@@ -9,8 +9,10 @@ struct VOutput
 };
 
 
-Texture2D<float2> OpticalDepthLUT : register(t0, space2);
-SamplerState LinearSampler        : register(s0, space2);
+// Texture2D<float2> OpticalDepthLUT : register(t0, space2);
+// SamplerState LinearSampler        : register(s0, space2);
+Texture2D<float4> SkyViewLUT : register(t0, space2);
+SamplerState LinearSampler   : register(s0, space2);
 
 /*
 Mercury, Moon:
@@ -106,82 +108,84 @@ float2 GetLutUV(float height, float cosZenith, float atmHeight)
 
 float4 main(VOutput input) : SV_Target0
 {
-    float3 viewDir = reconstructViewDir(input.uv);
-    
-    float Rplanet = planetRadius;
-    float Ratmos = Rplanet + atmHeight;
-    
-    float3 rayOrigin = float3(0.0, Rplanet + camHeight, 0.0);
-    
-    float tEarth = raySphereIntersect(rayOrigin, viewDir, Rplanet);
-    float tAtmos = raySphereIntersect(rayOrigin, viewDir, Ratmos);
-    float tEnd = (tEarth > 0.0) ? tEarth : tAtmos;
-    
-    if (tEarth > 0.0) {
-        return float4(0.0, 0.0, 0.0, 1.0);
-    }
+    return SkyViewLUT.Sample(LinearSampler, input.uv);
 
-    const int SCATTER_SAMPLES = 8;
-    float stepSize = tEnd / float(SCATTER_SAMPLES);
+    // float3 viewDir = reconstructViewDir(input.uv);
     
-    float3 accumRayleigh = float3(0.0, 0.0, 0.0);
-    float3 accumMie = float3(0.0, 0.0, 0.0);
+    // float Rplanet = planetRadius;
+    // float Ratmos = Rplanet + atmHeight;
     
-    float3 optDepthCamRayleigh = float3(0.0, 0.0, 0.0);
-    float3 optDepthCamMie = float3(0.0, 0.0, 0.0);
+    // float3 rayOrigin = float3(0.0, Rplanet + camHeight, 0.0);
     
-    const float H_R = 8000.0;
-    float H_M = mieHeight;
+    // float tEarth = raySphereIntersect(rayOrigin, viewDir, Rplanet);
+    // float tAtmos = raySphereIntersect(rayOrigin, viewDir, Ratmos);
+    // float tEnd = (tEarth > 0.0) ? tEarth : tAtmos;
     
-    for (int i = SCATTER_SAMPLES - 1; i >= 0; i--) {
-        float3 samplePoint = rayOrigin + viewDir * (stepSize * (float(i) + 0.5));
-        float height = length(samplePoint) - Rplanet;
+    // if (tEarth > 0.0) {
+    //     return float4(0.0, 0.0, 0.0, 1.0);
+    // }
 
-        float3 upDir = samplePoint / (Rplanet + height);
-        
-        float dR = densityAtHeight(height, H_R) * stepSize;
-        float dM = densityAtHeight(height, H_M) * stepSize;
-        
-        optDepthCamRayleigh += dR * rayleighScat;
-        optDepthCamMie += dM * mieScat;
-        
-        float tSun = raySphereIntersect(samplePoint, sunDir, Ratmos);
-        float3 sunEnd = samplePoint + sunDir * tSun;
-        //float2 optDepthSun = integrateOpticalDepth(samplePoint, sunEnd, Rplanet, Ratmos, H_R, H_M);
-        
-        float cosZenithSun = dot(upDir, sunDir);
-        float2 uvSun = GetLutUV(height, cosZenithSun, atmHeight);
-        float2 optDepthSun = OpticalDepthLUT.SampleLevel(LinearSampler, uvSun, 0).xy;
-        
-        float3 optDepthSunTotalRayleigh = optDepthSun.x * rayleighScat;
-        float3 optDepthSunTotalMie = optDepthSun.y * mieScat;
-        
-        float3 attenuation = exp(-(optDepthCamRayleigh + optDepthSunTotalRayleigh + optDepthCamMie + optDepthSunTotalMie));
-        
-        accumRayleigh += dR * attenuation;
-        accumMie += dM * attenuation;
-    }
+    // const int SCATTER_SAMPLES = 8;
+    // float stepSize = tEnd / float(SCATTER_SAMPLES);
     
-    float cosAngle = dot(viewDir, sunDir);
+    // float3 accumRayleigh = float3(0.0, 0.0, 0.0);
+    // float3 accumMie = float3(0.0, 0.0, 0.0);
     
-    float phaseRayleigh = 3.0 / (16.0 * 3.14159265) * (1.0 + cosAngle * cosAngle);
+    // float3 optDepthCamRayleigh = float3(0.0, 0.0, 0.0);
+    // float3 optDepthCamMie = float3(0.0, 0.0, 0.0);
     
-    float g = mieG;
-    float g2 = g * g;
-    float phaseMie = 1.0 / (4.0 * 3.14159265) * ((1.0 - g2) / pow(1.0 + g2 - 2.0 * g * cosAngle, 1.5));
+    // const float H_R = 8000.0;
+    // float H_M = mieHeight;
     
-    float3 finalColor = (accumRayleigh * rayleighScat * phaseRayleigh + accumMie * mieScat * phaseMie) * sunIntensity;
+    // for (int i = SCATTER_SAMPLES - 1; i >= 0; i--) {
+    //     float3 samplePoint = rayOrigin + viewDir * (stepSize * (float(i) + 0.5));
+    //     float height = length(samplePoint) - Rplanet;
+
+    //     float3 upDir = samplePoint / (Rplanet + height);
+        
+    //     float dR = densityAtHeight(height, H_R) * stepSize;
+    //     float dM = densityAtHeight(height, H_M) * stepSize;
+        
+    //     optDepthCamRayleigh += dR * rayleighScat;
+    //     optDepthCamMie += dM * mieScat;
+        
+    //     float tSun = raySphereIntersect(samplePoint, sunDir, Ratmos);
+    //     float3 sunEnd = samplePoint + sunDir * tSun;
+    //     //float2 optDepthSun = integrateOpticalDepth(samplePoint, sunEnd, Rplanet, Ratmos, H_R, H_M);
+        
+    //     float cosZenithSun = dot(upDir, sunDir);
+    //     float2 uvSun = GetLutUV(height, cosZenithSun, atmHeight);
+    //     float2 optDepthSun = OpticalDepthLUT.SampleLevel(LinearSampler, uvSun, 0).xy;
+        
+    //     float3 optDepthSunTotalRayleigh = optDepthSun.x * rayleighScat;
+    //     float3 optDepthSunTotalMie = optDepthSun.y * mieScat;
+        
+    //     float3 attenuation = exp(-(optDepthCamRayleigh + optDepthSunTotalRayleigh + optDepthCamMie + optDepthSunTotalMie));
+        
+    //     accumRayleigh += dR * attenuation;
+    //     accumMie += dM * attenuation;
+    // }
     
-    if (tEarth > 0.0) {
-        float3 groundColor = float3(0.2, 0.15, 0.1); 
-        finalColor += groundColor * exp(-(optDepthCamRayleigh + optDepthCamMie));
-    }
+    // float cosAngle = dot(viewDir, sunDir);
+    
+    // float phaseRayleigh = 3.0 / (16.0 * 3.14159265) * (1.0 + cosAngle * cosAngle);
+    
+    // float g = mieG;
+    // float g2 = g * g;
+    // float phaseMie = 1.0 / (4.0 * 3.14159265) * ((1.0 - g2) / pow(1.0 + g2 - 2.0 * g * cosAngle, 1.5));
+    
+    // float3 finalColor = (accumRayleigh * rayleighScat * phaseRayleigh + accumMie * mieScat * phaseMie) * sunIntensity;
+    
+    // if (tEarth > 0.0) {
+    //     float3 groundColor = float3(0.2, 0.15, 0.1); 
+    //     finalColor += groundColor * exp(-(optDepthCamRayleigh + optDepthCamMie));
+    // }
     
     // Tone mapping
     //finalColor = 1.0 - exp(-finalColor * 0.05); 
-    finalColor = finalColor / (finalColor + float3(1.0, 1.0, 1.0));
+    //finalColor = finalColor / (finalColor + float3(1.0, 1.0, 1.0));
     
-    return float4(finalColor, 1.0);
+    //return float4(finalColor, 1.0);
     
 //     const int SCATTER_SAMPLES = 6;
 //     float stepSize = tEnd / float(SCATTER_SAMPLES);

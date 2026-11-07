@@ -64,8 +64,11 @@ class Sky : PipelineGroup
     SkyConfig skyConfig;
 
     SDL_GPUComputePipeline* optPipeline;
+    SDL_GPUComputePipeline* skyPipeline;
 
     ComputeTex optTexture;
+    ComputeTex skyTexture;
+    Tex3d test;
 
     this()
     {
@@ -111,6 +114,19 @@ class Sky : PipelineGroup
         optTexture.createCompute(256, 128);
         optTexture.createSampler;
 
+        skyTexture = new ComputeTex();
+        buildInit(skyTexture);
+        skyTexture.createCompute(256, 256);
+        skyTexture.createSampler;
+
+        test = new Tex3d;
+        buildInit(test);
+        test.create("/home/user/Account/Data/Wrk/IT/repo/dlang/Deltotum/data/userdata/bricks2.jpg");
+        test.createSampler;
+        gpu.dev.startCopyPass;
+        test.uploadStart;
+        gpu.dev.endCopyPass;
+
         import api.dm.com.graphics.gpu.com_pipeline : ComComputeBuffers;
 
         ComComputeBuffers buffs;
@@ -124,6 +140,23 @@ class Sky : PipelineGroup
 
         auto compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "Sky.comp.spv");
         optPipeline = gpu.dev.createComputePipelineSPIRV(compShaderPath, buffs);
+
+        ComComputeBuffers skyBuffs;
+        skyBuffs.numRWTextures = 1;
+        skyBuffs.numRTextures = 1;
+        skyBuffs.numUniforms = 1;
+        skyBuffs.threadcount_x = 16;
+        skyBuffs.threadcount_y = 16;
+        skyBuffs.threadcount_z = 1;
+
+        import std.path : buildPath;
+
+        compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "SkyAtm.comp.spv");
+        skyPipeline = gpu.dev.createComputePipelineSPIRV(compShaderPath, skyBuffs);
+    }
+
+    override void bindAll(){
+        super.bindAll;
     }
 
     override bool bindPipeline()
@@ -138,7 +171,9 @@ class Sky : PipelineGroup
 
         gpu.dev.pushUniformFragmentData(0, &skyConfig, skyConfig.sizeof);
 
-        optTexture.bindAll;
+        //skyTexture.bindAll;
+        test.bindAll;
+        gpu.dev.bindFragmentSamplers(skyTexture);
 
         return true;
     }
@@ -159,12 +194,30 @@ class Sky : PipelineGroup
         assert(optTexture.w > 0);
         assert(optTexture.h > 0);
 
-        uint groupx = (optTexture.widthu) / 16;
+        uint groupx = (optTexture.widthu + 15) / 16;
         uint groupy = (optTexture.heightu + 15) / 16;
 
-        // auto outTex = optTexture.texture;
-        // gpu.dev.bindComputeStorageTextures(&outTex);
+        gpu.dev.dispatchCompute(groupx, groupy, 1);
+        gpu.dev.endComputePass;
 
+        SDL_GPUStorageTextureReadWriteBinding skyBinding;
+        skyBinding.texture = skyTexture.texture;
+        skyBinding.mip_level = 0;
+        skyBinding.layer = 0;
+        skyBinding.cycle = true;
+
+        gpu.dev.startComputePass(&skyBinding, null, 1, 0);
+        gpu.dev.bindComputePipeline(skyPipeline);
+
+        auto outTex = optTexture.texture;
+        gpu.dev.bindComputeStorageTextures(&outTex);
+
+        gpu.dev.pushComputeUniform(&skyConfig, skyConfig.sizeof, 0);
+
+        assert(skyTexture.w > 0);
+        assert(skyTexture.h > 0);
+        groupx = (skyTexture.widthu + 15) / 16;
+        groupy = (skyTexture.heightu + 15) / 16;
         gpu.dev.dispatchCompute(groupx, groupy, 1);
         gpu.dev.endComputePass;
     }
@@ -173,7 +226,42 @@ class Sky : PipelineGroup
     {
         super.draw(a);
 
+        bindPipeline;
+        
+        skyConfig.camForward = camera.cameraFront;
+        skyConfig.camRight = camera.cameraRight;
+        skyConfig.camUp = camera.cameraUp;
+        skyConfig.fovTan = Math.tanDeg(camera.fov);
+        skyConfig.aspectRatio = window.width / window.height;
+
+        gpu.dev.pushUniformFragmentData(0, &skyConfig, skyConfig.sizeof);
+        test.bindAll;
+
         gpu.dev.drawQuad;
         return true;
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+        if (optTexture)
+        {
+            optTexture.dispose;
+        }
+
+        if (skyTexture)
+        {
+            skyTexture.dispose;
+        }
+
+        if (optPipeline)
+        {
+            gpu.dev.deletePipeline(optPipeline);
+        }
+
+        if (skyPipeline)
+        {
+            gpu.dev.deletePipeline(skyPipeline);
+        }
     }
 }

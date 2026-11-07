@@ -119,7 +119,7 @@ class DiffusionPass : Sprite3d
         uint threadsCount = diffusionMaps1.widthu / numThreads;
         uint groupCountX = threadsCount;
         uint groupCountY = threadsCount;
-        uint groupCountZ = 3;
+        uint groupCountZ = 1;
         gpu.dev.dispatchCompute(groupCountX, groupCountY, groupCountZ);
         gpu.dev.endComputePass;
 
@@ -142,7 +142,7 @@ class DiffusionPass : Sprite3d
 
         if (diffusionPipeline)
         {
-            gpu.dev.deleteComputePipeline(diffusionPipeline);
+            gpu.dev.deletePipeline(diffusionPipeline);
         }
     }
 }
