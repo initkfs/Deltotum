@@ -42,56 +42,6 @@ cbuffer SceneUBO : register(b0, space3)
    float  reserve33;
 };
 
-float raySphereIntersect(float3 rayOrigin, float3 rayDir, float sphereRadius) {
-    float b = dot(rayOrigin, rayDir);
-    float c = dot(rayOrigin, rayOrigin) - sphereRadius * sphereRadius;
-    float discriminant = b * b - c;
-    if (discriminant < 0.0) return -1.0;
-    float t = -b + sqrt(discriminant);
-    return t > 0.0 ? t : -1.0;
-}
-
-// float densityAtHeight(float height) {
-//     const float H_R = 8000.0;  //meters
-//     return exp(-height / H_R);
-// }
-
-float densityAtHeight(float height, float scaleHeight) {
-    return exp(-height / scaleHeight);
-}
-
-float2 integrateOpticalDepth(float3 start, float3 end, float Rplanet, float Ratmos, float H_R, float H_M) {
-    float3 stepVec = end - start;
-    float dist = length(stepVec);
-    float3 dir = stepVec / dist; //normalized direction
-    
-    const int SAMPLE_COUNT = 4; //4..8
-    float stepSize = dist / float(SAMPLE_COUNT);
-    float totalRayleigh = 0.0;
-    float totalMie = 0.0;
-
-    for (int i = 0; i < SAMPLE_COUNT; i++) {
-        float3 samplePoint = start + dir * (stepSize * (float(i) + 0.5));
-        float height = length(samplePoint) - Rplanet;
-        
-        totalRayleigh += densityAtHeight(height, H_R) * stepSize;
-        totalMie += densityAtHeight(height, H_M) * stepSize;
-    }
-    
-    return float2(totalRayleigh, totalMie);
-   
-   
-    // float stepSize = dist / float(SAMPLE_COUNT);
-    // float totalDensity = 0.0;
-    // for (int i = 0; i < SAMPLE_COUNT; i++) {
-    //     float3 samplePoint = start + dir * (stepSize * (float(i) + 0.5));
-    //     float height = length(samplePoint) - Rplanet;
-    //     totalDensity += densityAtHeight(height) * stepSize;
-    // }
-    
-    //return totalDensity;
-}
-
 float3 reconstructViewDir(float2 uv) {
     float2 ndc = uv * 2.0 - 1.0;
     ndc.x *= aspectRatio;
@@ -106,122 +56,106 @@ float2 GetLutUV(float height, float cosZenith, float atmHeight)
     return clamp(float2(u, v), 0.0, 1.0);
 }
 
+float PhaseRayleigh(float cosTheta)
+{
+    return (3.0 / (16.0 * 3.14159265)) * (1.0 + cosTheta * cosTheta);
+}
+
+float PhaseMie(float cosTheta, float g)
+{
+    float g2 = g * g;
+    float denom = 1.0 + g2 - 2.0 * g * cosTheta;
+    return (3.0 / (8.0 * 3.14159265)) * ((1.0 - g2) * (1.0 + cosTheta * cosTheta)) / ((2.0 + g2) * pow(denom, 1.5));
+}
+
 float4 main(VOutput input) : SV_Target0
 {
-    return SkyViewLUT.Sample(LinearSampler, input.uv);
+    // UV (0..1) to NDC (Normalized Device Coordinates) -1.. 1
+    float2 ndc = input.uv * 2.0 - 1.0;
+    ndc.y = -ndc.y; 
 
-    // float3 viewDir = reconstructViewDir(input.uv);
+    float3 viewDir = camForward + (ndc.x * aspectRatio * fovTan * camRight) + (ndc.y * fovTan * camUp);
+    viewDir = normalize(viewDir);
+
+    float3 skyAtmosphereColor = SkyViewLUT.Sample(LinearSampler, input.uv).rgb;
+
+    float cosTheta = dot(viewDir, sunDir);
+
+    //cos(20grad) ≈ 0.94.
+    const float SUN_INFLUENCE_THRESHOLD = 0.94; 
+    if (cosTheta < SUN_INFLUENCE_THRESHOLD)
+    {
+        return float4(skyAtmosphereColor, 1.0);
+    }
+
+    float phaseM = PhaseMie(cosTheta, mieG);
     
-    // float Rplanet = planetRadius;
-    // float Ratmos = Rplanet + atmHeight;
+    float sunZenith = sunDir.y;
+    float horizonGlowMask = smoothstep(-0.1, 0.1, sunZenith);
     
-    // float3 rayOrigin = float3(0.0, Rplanet + camHeight, 0.0);
+    float3 sunHalo = mieScat * phaseM * sunIntensity * horizonGlowMask * 0.05;
+
+    float sunRadiusCos = 0.99999;
+    float sunDiskMask = smoothstep(sunRadiusCos, sunRadiusCos + 0.00002, cosTheta);
     
-    // float tEarth = raySphereIntersect(rayOrigin, viewDir, Rplanet);
-    // float tAtmos = raySphereIntersect(rayOrigin, viewDir, Ratmos);
-    // float tEnd = (tEarth > 0.0) ? tEarth : tAtmos;
+    float3 directSunDisk = sunDiskMask * sunIntensity * horizonGlowMask;
+
+    float3 finalColor = skyAtmosphereColor + sunHalo + directSunDisk;
+
+    //corona
+    // float angleToSun = acos(cosTheta);
+    // float ringPattern = sin(angleToSun * 150.0);
+    // float3 coronaColor = float3(
+    // smoothstep(-0.2, 0.2, sin(angleToSun * 120.0 - 0.5)), // Red
+    // smoothstep(-0.2, 0.2, sin(angleToSun * 135.0)),       // Green
+    // smoothstep(-0.2, 0.2, sin(angleToSun * 150.0 + 0.5))  // Blue
+    // );
+    // coronaColor *= exp(-angleToSun * 15.0) * sunIntensity * 0.01;
+    // finalColor += coronaColor;
+
+    // Halo
+    // float angleToSunHalo = acos(cosTheta);
     
-    // if (tEarth > 0.0) {
-    //     return float4(0.0, 0.0, 0.0, 1.0);
+    // // 18..26 grad = 0.31 .. 0.45 rad
+    // if (angleToSunHalo > 0.31 && angleToSunHalo < 0.45)
+    // {
+    // float rCenter = 0.375; 
+    // float gCenter = 0.384;
+    // float bCenter = 0.393;
+    
+    // float haloWidth = 0.015;
+    
+    // float rRing = saturate(1.0 - abs(angleToSunHalo - rCenter) / haloWidth);
+    // float gRing = saturate(1.0 - abs(angleToSunHalo - gCenter) / haloWidth);
+    // float bRing = saturate(1.0 - abs(angleToSunHalo - bCenter) / haloWidth);
+    
+    // float tail = smoothstep(0.45, 0.384, angleToSunHalo) * 0.3;
+    // float3 haloColor = float3(rRing, gRing, bRing) + float3(tail, tail, tail);
+    // haloColor *= sunIntensity * 0.002; 
+    // finalColor += haloColor;
     // }
 
-    // const int SCATTER_SAMPLES = 8;
-    // float stepSize = tEnd / float(SCATTER_SAMPLES);
-    
-    // float3 accumRayleigh = float3(0.0, 0.0, 0.0);
-    // float3 accumMie = float3(0.0, 0.0, 0.0);
-    
-    // float3 optDepthCamRayleigh = float3(0.0, 0.0, 0.0);
-    // float3 optDepthCamMie = float3(0.0, 0.0, 0.0);
-    
-    // const float H_R = 8000.0;
-    // float H_M = mieHeight;
-    
-    // for (int i = SCATTER_SAMPLES - 1; i >= 0; i--) {
-    //     float3 samplePoint = rayOrigin + viewDir * (stepSize * (float(i) + 0.5));
-    //     float height = length(samplePoint) - Rplanet;
+    return float4(finalColor, 1.0);
+}
 
-    //     float3 upDir = samplePoint / (Rplanet + height);
-        
-    //     float dR = densityAtHeight(height, H_R) * stepSize;
-    //     float dM = densityAtHeight(height, H_M) * stepSize;
-        
-    //     optDepthCamRayleigh += dR * rayleighScat;
-    //     optDepthCamMie += dM * mieScat;
-        
-    //     float tSun = raySphereIntersect(samplePoint, sunDir, Ratmos);
-    //     float3 sunEnd = samplePoint + sunDir * tSun;
-    //     //float2 optDepthSun = integrateOpticalDepth(samplePoint, sunEnd, Rplanet, Ratmos, H_R, H_M);
-        
-    //     float cosZenithSun = dot(upDir, sunDir);
-    //     float2 uvSun = GetLutUV(height, cosZenithSun, atmHeight);
-    //     float2 optDepthSun = OpticalDepthLUT.SampleLevel(LinearSampler, uvSun, 0).xy;
-        
-    //     float3 optDepthSunTotalRayleigh = optDepthSun.x * rayleighScat;
-    //     float3 optDepthSunTotalMie = optDepthSun.y * mieScat;
-        
-    //     float3 attenuation = exp(-(optDepthCamRayleigh + optDepthSunTotalRayleigh + optDepthCamMie + optDepthSunTotalMie));
-        
-    //     accumRayleigh += dR * attenuation;
-    //     accumMie += dM * attenuation;
-    // }
+float3 calcGlory(float3 viewDir, float3 sunDir, float3 color){
     
-    // float cosAngle = dot(viewDir, sunDir);
+    float cosGloriaTheta = dot(viewDir, -sunDir);
+    // cos(10 grad) ≈ 0.985.
+    if (cosGloriaTheta < 0.985)
+    {
+        return color;
+    }
+
+    float angleToAntisolar = acos(cosGloriaTheta);
+    float3 gloriaColor = float3(
+        smoothstep(-0.3, 0.3, sin(angleToAntisolar * 240.0 - 0.6)), // Red
+        smoothstep(-0.3, 0.3, sin(angleToAntisolar * 270.0)),       // Green
+        smoothstep(-0.3, 0.3, sin(angleToAntisolar * 300.0 + 0.6))  // Blue
+    );
     
-    // float phaseRayleigh = 3.0 / (16.0 * 3.14159265) * (1.0 + cosAngle * cosAngle);
-    
-    // float g = mieG;
-    // float g2 = g * g;
-    // float phaseMie = 1.0 / (4.0 * 3.14159265) * ((1.0 - g2) / pow(1.0 + g2 - 2.0 * g * cosAngle, 1.5));
-    
-    // float3 finalColor = (accumRayleigh * rayleighScat * phaseRayleigh + accumMie * mieScat * phaseMie) * sunIntensity;
-    
-    // if (tEarth > 0.0) {
-    //     float3 groundColor = float3(0.2, 0.15, 0.1); 
-    //     finalColor += groundColor * exp(-(optDepthCamRayleigh + optDepthCamMie));
-    // }
-    
-    // Tone mapping
-    //finalColor = 1.0 - exp(-finalColor * 0.05); 
-    //finalColor = finalColor / (finalColor + float3(1.0, 1.0, 1.0));
-    
-    //return float4(finalColor, 1.0);
-    
-//     const int SCATTER_SAMPLES = 6;
-//     float stepSize = tEnd / float(SCATTER_SAMPLES);
-    
-//     float3 totalRayleigh = float3(0.0, 0.0, 0.0);
-//     float3 opticalDepthToCam = float3(0.0, 0.0, 0.0);
-    
-//     for (int i = 0; i < SCATTER_SAMPLES; i++) {
-//         float3 samplePoint = rayOrigin + viewDir * (stepSize * (float(i) + 0.5));
-//         float height = length(samplePoint) - Rplanet;
-        
-//         float localDensity = densityAtHeight(height) * stepSize;
-        
-//         opticalDepthToCam += localDensity * rayleighScat;
-        
-//         float tSun = raySphereIntersect(samplePoint, sunDir, Ratmos);
-//         float3 sunEnd = samplePoint + sunDir * tSun;
-//         float opticalDepthToSun = integrateOpticalDepth(samplePoint, sunEnd, Rplanet, Ratmos);
-        
-//         float3 attenuation = exp(-(opticalDepthToCam + opticalDepthToSun * rayleighScat));
-        
-//         totalRayleigh += localDensity * attenuation;
-//     }
-    
-//     float cosAngle = dot(viewDir, sunDir);
-//     float phaseRayleigh = 3.0 / (16.0 * 3.14159265) * (1.0 + cosAngle * cosAngle);
-    
-//     float3 finalColor = totalRayleigh * rayleighScat * phaseRayleigh * sunIntensity;
-    
-//     if (tEarth > 0.0) {
-//         float3 groundColor = float3(0.2, 0.15, 0.1);
-//         finalColor += groundColor * exp(-opticalDepthToCam);
-//     }
-    
-//     //float sunDisk = smoothstep(0.998, 0.999, cosAngle);
-//    // finalColor += sunDisk * sunIntensity * exp(-opticalDepthToCam);
-    
-//     return float4(finalColor, 1.0);
+    float attenuation = exp(-angleToAntisolar * 12.0);
+    //TODO cloud\fog
+    gloriaColor *= attenuation * sunIntensity * 0.005; 
+    return color + gloriaColor;
 }

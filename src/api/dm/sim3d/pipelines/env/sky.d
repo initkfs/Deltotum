@@ -102,7 +102,7 @@ class Sky : PipelineGroup
         skyConfig.sunIntensity = Vec3f(20.0, 20.0, 19.0);
         skyConfig.camHeight = 1;
         skyConfig.aspectRatio = 1;
-        skyConfig.sunDir = Vec3f(0.5, 0.5, 0.0).normalize;
+        skyConfig.sunDir = Vec3f(0.01, 0.99, 0).normalize;
 
         //skyConfig.mieScat = Vec3f(4e-6, 4e-6, 4e-6);
         skyConfig.mieScat = Vec3f(2e-6, 2e-6, 2e-6); //fog 4e-4
