@@ -58,6 +58,8 @@ class Scene3d : Scene2d
     CubeMap cubeMap;
     CubeMap cubeMapPlaceholder;
 
+    void delegate()[] cmdBufferDgs;
+
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
         super(isInitUDAProcessor);
@@ -219,11 +221,19 @@ class Scene3d : Scene2d
         return colorTargetInfo;
     }
 
-    void onStartCmdBuffer(float alpha){
-
+    void onStartCmdBuffer(float alpha)
+    {
+        if (cmdBufferDgs.length != 0)
+        {
+            foreach (dg; cmdBufferDgs)
+            {
+                dg();
+            }
+        }
     }
 
-    void onStartRenderPass(float alpha){
+    void onStartRenderPass(float alpha)
+    {
 
     }
 
@@ -527,7 +537,8 @@ class Scene3d : Scene2d
             antiAliaser.dispose;
         }
 
-        if(cubeMapPlaceholder){
+        if (cubeMapPlaceholder)
+        {
             cubeMapPlaceholder.dispose;
         }
     }

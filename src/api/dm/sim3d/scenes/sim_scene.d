@@ -56,6 +56,8 @@ class SimScene : GuiScene
 
     override void onStartCmdBuffer(float alpha)
     {
+        super.onStartCmdBuffer(alpha);
+        
         if (_diffusionPass)
         {
             _diffusionPass.draw(alpha);

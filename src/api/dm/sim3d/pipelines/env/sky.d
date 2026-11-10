@@ -68,7 +68,6 @@ class Sky : PipelineGroup
 
     ComputeTex optTexture;
     ComputeTex skyTexture;
-    Tex3d test;
 
     this()
     {
@@ -85,6 +84,8 @@ class Sky : PipelineGroup
     override void create()
     {
         super.create;
+
+        scene3d.cmdBufferDgs ~= () => calcAtm;
 
         auto buff = pipeBuffers;
         //buff.numVertexUniformBuffers = 1;
@@ -118,14 +119,6 @@ class Sky : PipelineGroup
         buildInit(skyTexture);
         skyTexture.createCompute(256, 256);
         skyTexture.createSampler;
-
-        test = new Tex3d;
-        buildInit(test);
-        test.create("/home/user/Account/Data/Wrk/IT/repo/dlang/Deltotum/data/userdata/bricks2.jpg");
-        test.createSampler;
-        gpu.dev.startCopyPass;
-        test.uploadStart;
-        gpu.dev.endCopyPass;
 
         import api.dm.com.graphics.gpu.com_pipeline : ComComputeBuffers;
 
@@ -171,8 +164,6 @@ class Sky : PipelineGroup
 
         gpu.dev.pushUniformFragmentData(0, &skyConfig, skyConfig.sizeof);
 
-        //skyTexture.bindAll;
-        test.bindAll;
         gpu.dev.bindFragmentSamplers(skyTexture);
 
         return true;
@@ -225,18 +216,6 @@ class Sky : PipelineGroup
     override bool draw(float a)
     {
         super.draw(a);
-
-        bindPipeline;
-        
-        skyConfig.camForward = camera.cameraFront;
-        skyConfig.camRight = camera.cameraRight;
-        skyConfig.camUp = camera.cameraUp;
-        skyConfig.fovTan = Math.tanDeg(camera.fov);
-        skyConfig.aspectRatio = window.width / window.height;
-
-        gpu.dev.pushUniformFragmentData(0, &skyConfig, skyConfig.sizeof);
-        test.bindAll;
-
         gpu.dev.drawQuad;
         return true;
     }
