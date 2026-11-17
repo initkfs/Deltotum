@@ -1,7 +1,9 @@
 Deltotum is a work-in-progress graphics engine and GUI toolkit written in D.
 
-> [!Warning]
-> The API is highly unstable and subject to breaking changes. This repository is experimental only!
+> [!CAUTION]
+> In the era of AI, open source presents significantly more problems than benefits. This project has transitioned to a closed-source model. Active development continues in a private repository. Follow project updates on my tech blog.
+
+The API is highly unstable and subject to breaking changes. This repository is experimental only.
 
 ## GUI (SDL_Renderer, Cairo)
 
@@ -31,7 +33,5 @@ https://karsiori.itch.io/free-pixel-art-christmas-trees
 https://jitsukoan.itch.io/little-pingu
 
 ## 3D (SDL GPU, in progress)
-
-Some videos are available on YT: https://www.youtube.com/playlist?list=PL-kVIrOmkk0L3kfijf5JshQE5nNLJ0wt0
 
 ![Dlang, SDL GPU demo 3D](demo/dlang_sdl_gpu_demo1.jpg)
