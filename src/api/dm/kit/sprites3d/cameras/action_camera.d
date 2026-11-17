@@ -52,12 +52,13 @@ class ActionCamera : PerspCamera
 
         angleY += deltaX;
         angleX -= deltaY;
+        angle = 0;
 
-        const float MAX_PITCH = 89.0f;
-        if (angleX > MAX_PITCH)
-            angleX = MAX_PITCH;
-        if (angleX < -MAX_PITCH)
-            angleX = -MAX_PITCH;
+        // const float MAX_PITCH = 89.0f;
+        // if (angleX > MAX_PITCH)
+        //     angleX = MAX_PITCH;
+        // if (angleX < -MAX_PITCH)
+        //     angleX = -MAX_PITCH;
 
         // Vec3f front;
         // front.x = Math.cosDeg(angleY) * Math.cosDeg(angleX);

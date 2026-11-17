@@ -42,19 +42,56 @@ float densityAtHeight(float height, float scaleHeight) {
 
 float2 GetLutUV(float height, float cosZenith, float maxAtmHeight)
 {
-    float u = height / maxAtmHeight;
-    float v = cosZenith * 0.5 + 0.5;
-    return clamp(float2(u, v), 0.0, 1.0);
+    //float u = height / maxAtmHeight;
+    //float v = cosZenith * 0.5 + 0.5;
+    //return clamp(float2(u, v), 0.0, 1.0);
+
+    float u = sqrt(saturate(height / atmHeight));
+    float v = (1.0 - cosZenith) * 0.5;
+    
+    // if osZenith = v * 2.0 - 1.0:
+    //float v = (cosZenith + 1.0) * 0.5;
+
+    return float2(u, v);
+}
+
+void viewOpticalDepth(uint3 globalID, uint2 res){
+    //left x, u = 0, camera earth, right x, u = 1, atmHeight. Red to black, density to 0
+    float2 uvd = (float2(globalID.xy) + 0.5) / res;
+    
+    float2 opticalDepth = OpticalDensity.SampleLevel(LinearSampler, uvd, 0).rg;
+    //float3 debugColorLin = float3(opticalDepth.r / 40000.0, opticalDepth.g / 8000.0, 0.0);
+    float rayleighVis = 1.0 - exp(-opticalDepth.r / 8000.0);
+    float mieVis      = 1.0 - exp(-opticalDepth.g / 1200.0);
+    float3 debugColorExp = float3(rayleighVis, mieVis, 0.0);
+    Output[globalID.xy] = float4(debugColorExp, 1.0);
 }
 
 [numthreads(16, 16, 1)] 
 void main(uint3 globalID : SV_DispatchThreadID)
 {
+    //float3 rayleighScat = float3(0.0000058, 0.000013, 0.000033);
+    //float3 rayleighScat = float3(0.0000078, 0.000030, 0.000053);
+    //float3 rayleighScat = float3(0.0000068, 0.000023, 0.000053);
+    
+    // if(sunDir.y < -0.75){
+    //     float twilightFade = exp(sunDir.y * 25.0); 
+    //     float3 nightColor = float3(0, 0, 0);
+    //     nightColor *= twilightFade;
+    //     Output[globalID.xy] = float4(nightColor, 1.0);
+    //     return;
+    // }
+
+    //float3 sunDir = normalize(float3(0.001, -0.05, 0));
+    
     uint2 res;
     Output.GetDimensions(res.x, res.y);
 
     if (globalID.x >= res.x || globalID.y >= res.y)
         return;
+    
+    //viewOpticalDepth(globalID, res);
+    //return;
 
     float2 uv = (float2(globalID.xy) + 0.5) / float2(res);
 
@@ -69,7 +106,8 @@ void main(uint3 globalID : SV_DispatchThreadID)
 
     float Rplanet = planetRadius;
     float Ratmos = Rplanet + atmHeight;
-    
+
+    //float3 rayOrigin = worldCamPos; 
     float3 rayOrigin = float3(0.0, Rplanet + camHeight, 0.0);
     
     float tEarth = raySphereIntersect(rayOrigin, viewDir, Rplanet);
@@ -81,7 +119,7 @@ void main(uint3 globalID : SV_DispatchThreadID)
         return;
     }
 
-    const int SCATTER_SAMPLES = 8;
+    const int SCATTER_SAMPLES = 16;
     float stepSize = tEnd / float(SCATTER_SAMPLES);
     
     float3 accumRayleigh = float3(0.0, 0.0, 0.0);
@@ -93,7 +131,9 @@ void main(uint3 globalID : SV_DispatchThreadID)
     const float H_R = 8000.0;
     float H_M = mieHeight;
     
-    for (int i = SCATTER_SAMPLES - 1; i >= 0; i--) {
+    for (int i = 0; i < SCATTER_SAMPLES; i++) 
+    //for(int i = SCATTER_SAMPLES - 1; i >= 0; i--)
+    {
         float3 samplePoint = rayOrigin + viewDir * (stepSize * (float(i) + 0.5));
         float height = length(samplePoint) - Rplanet;
 
@@ -127,9 +167,18 @@ void main(uint3 globalID : SV_DispatchThreadID)
     float g2 = g * g;
     float phaseMie = 1.0 / (4.0 * 3.14159265) * ((1.0 - g2) / pow(1.0 + g2 - 2.0 * g * cosAngle, 1.5));
     
-    float3 finalColor = (accumRayleigh * rayleighScat * phaseRayleigh + accumMie * mieScat * phaseMie) * sunIntensity;
+    float3 accumRayTotal = accumRayleigh * rayleighScat * phaseRayleigh;
+    float3 finalColor = (accumRayTotal + accumMie * mieScat * phaseMie) * sunIntensity;
     
-    finalColor = finalColor / (finalColor + float3(1.0, 1.0, 1.0));
+    //finalColor = finalColor / (finalColor + float3(1.0, 1.0, 1.0));
+    // float exposure = 0.3; 
+    // finalColor = 1.0 - exp(-finalColor * exposure);
+    // finalColor = pow(finalColor, 1.0 / 2.2);
+
+    //if (sunDir.y < 0.0f)
+    //{
+        //finalColor = float3(1.0f, 0.0f, 0.0f);
+    //}
     
     Output[globalID.xy] = float4(finalColor, 1.0);
 }

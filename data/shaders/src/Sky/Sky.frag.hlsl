@@ -9,8 +9,6 @@ struct VOutput
 };
 
 
-// Texture2D<float2> OpticalDepthLUT : register(t0, space2);
-// SamplerState LinearSampler        : register(s0, space2);
 Texture2D<float4> SkyViewLUT : register(t0, space2);
 SamplerState LinearSampler   : register(s0, space2);
 
@@ -52,7 +50,8 @@ float3 reconstructViewDir(float2 uv) {
 float2 GetLutUV(float height, float cosZenith, float atmHeight)
 {
     float u = height / atmHeight;
-    float v = cosZenith * 0.5 + 0.5;
+    //float v = cosZenith * 0.5 + 0.5;
+    float v = (1.0 - cosZenith) * 0.5; 
     return clamp(float2(u, v), 0.0, 1.0);
 }
 
@@ -70,14 +69,28 @@ float PhaseMie(float cosTheta, float g)
 
 float4 main(VOutput input) : SV_Target0
 {
+    //float3 sunDir = normalize(float3(0.001, -0.001, 0));
+
+    // if(sunDir.y < -0.4){
+    //     float twilightFade = exp(sunDir.y * 25.0); 
+    //     float3 nightColor = float3(0, 0, 0);
+    //     nightColor *= twilightFade;
+    //     return float4(nightColor, 1.0);
+    // }
+
+    const float SUN_SIZE_DEGREES = 6.0; 
+    const float SUN_RADIUS_COS = cos(radians(SUN_SIZE_DEGREES * 0.5));
+    const float SUN_EDGE_SMOOTH = 0.001; 
+
     // UV (0..1) to NDC (Normalized Device Coordinates) -1.. 1
     float2 ndc = input.uv * 2.0 - 1.0;
     ndc.y = -ndc.y; 
-
+    
     float3 viewDir = camForward + (ndc.x * aspectRatio * fovTan * camRight) + (ndc.y * fovTan * camUp);
     viewDir = normalize(viewDir);
-
-    float3 skyAtmosphereColor = SkyViewLUT.Sample(LinearSampler, input.uv).rgb;
+    
+    float3 skyAtmColor = SkyViewLUT.Sample(LinearSampler, input.uv).rgb;
+    //return float4(skyAtmColor, 1.0);
 
     float cosTheta = dot(viewDir, sunDir);
 
@@ -85,22 +98,26 @@ float4 main(VOutput input) : SV_Target0
     const float SUN_INFLUENCE_THRESHOLD = 0.94; 
     if (cosTheta < SUN_INFLUENCE_THRESHOLD)
     {
-        return float4(skyAtmosphereColor, 1.0);
+        skyAtmColor = pow(skyAtmColor, 1.0 / 1.2); 
+        //skyAtmColor = skyAtmColor / (skyAtmColor + float3(1.0, 1.0, 1.0));
+        //skyAtmColor= pow(skyAtmColor, 1.0 / 2.2);
+        //skyAtmColor = pow(skyAtmColor, 1.0 / 1.5); 
+        return float4(skyAtmColor, 1.0);
     }
 
+    float pixelHorizonMask = smoothstep(0.0, 0.002, viewDir.y);
+    float sunDiskMask = smoothstep(SUN_RADIUS_COS, SUN_RADIUS_COS + SUN_EDGE_SMOOTH, cosTheta);
+    
+    float activeY = max(viewDir.y, 0.0);
+    float3 transmittance = exp(-float3(0.05, 0.15, 0.4) * (1.0 / (activeY + 0.04)));
+    
+    float3 directSunDisk = sunDiskMask * sunIntensity * transmittance * pixelHorizonMask;
+    
     float phaseM = PhaseMie(cosTheta, mieG);
+    float haloHorizonMask = smoothstep(-0.05, 0.05, viewDir.y);
+    float3 sunHalo = mieScat * phaseM * sunIntensity * transmittance * haloHorizonMask * 0.02;
     
-    float sunZenith = sunDir.y;
-    float horizonGlowMask = smoothstep(-0.1, 0.1, sunZenith);
-    
-    float3 sunHalo = mieScat * phaseM * sunIntensity * horizonGlowMask * 0.05;
-
-    float sunRadiusCos = 0.99999;
-    float sunDiskMask = smoothstep(sunRadiusCos, sunRadiusCos + 0.00002, cosTheta);
-    
-    float3 directSunDisk = sunDiskMask * sunIntensity * horizonGlowMask;
-
-    float3 finalColor = skyAtmosphereColor + sunHalo + directSunDisk;
+    float3 finalColor = skyAtmColor + sunHalo + directSunDisk;
 
     //corona
     // float angleToSun = acos(cosTheta);
@@ -110,7 +127,7 @@ float4 main(VOutput input) : SV_Target0
     // smoothstep(-0.2, 0.2, sin(angleToSun * 135.0)),       // Green
     // smoothstep(-0.2, 0.2, sin(angleToSun * 150.0 + 0.5))  // Blue
     // );
-    // coronaColor *= exp(-angleToSun * 15.0) * sunIntensity * 0.01;
+    // coronaColor *= exp(-angleToSun * 25.0) * sunIntensity * 0.15;
     // finalColor += coronaColor;
 
     // Halo
@@ -134,6 +151,10 @@ float4 main(VOutput input) : SV_Target0
     // haloColor *= sunIntensity * 0.002; 
     // finalColor += haloColor;
     // }
+
+    //finalColor = finalColor / (finalColor + float3(1.0, 1.0, 1.0));
+    //finalColor = pow(finalColor, 1.0 / 2.2);
+    finalColor = pow(finalColor, 1.0 / 1.2);
 
     return float4(finalColor, 1.0);
 }

@@ -15,6 +15,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites3d.textures.compute_tex : ComputeTex;
 import api.dm.back.sdl3.externs.csdl3;
 import api.dm.kit.sprites3d.textures.tex3d : Tex3d;
+import api.math.geom3.vec3: Vec3f;
 
 import Math = api.math;
 
@@ -69,6 +70,8 @@ class Sky : PipelineGroup
     ComputeTex optTexture;
     ComputeTex skyTexture;
 
+    Vec3f sunDir;
+
     this()
     {
         isPushUniformVertexMatrix = false;
@@ -94,20 +97,25 @@ class Sky : PipelineGroup
         createPipeline(buff);
 
         skyConfig.planetRadius = 6371000.0;
+        //skyConfig.atmHeight = 80000 / 3.0;
         skyConfig.atmHeight = 80000;
 
         //(1/lambda^4)
-        skyConfig.rayleighScat = Vec3f(0.0000058, 0.000010, 0.000033); //less yellow
+        //skyConfig.rayleighScat = Vec3f(0.0000058, 0.0000135, 0.0000331); //less yellow
+        //skyConfig.rayleighScat = Vec3f(0.0000078, 0.000030, 0.000053);
+        skyConfig.rayleighScat = Vec3f(0.0000058, 0.000013, 0.000033);
 
         skyConfig.sunIntensity = Vec3f(20.0, 20.0, 19.0);
         skyConfig.camHeight = 1;
-        skyConfig.aspectRatio = 1;
-        skyConfig.sunDir = Vec3f(0.01, 0.99, 0).normalize;
+        skyConfig.aspectRatio = window.width / window.height;
+        //skyConfig.sunDir = Vec3f(0.01, 0.99, 0).normalize;
+        skyConfig.sunDir = sunDir;
 
         //skyConfig.mieScat = Vec3f(4e-6, 4e-6, 4e-6);
-        skyConfig.mieScat = Vec3f(2e-6, 2e-6, 2e-6); //fog 4e-4
+        //skyConfig.mieScat = Vec3f(2e-6, 2e-6, 2e-6); //fog 4e-4
+        skyConfig.mieScat = Vec3f(2.0e-6, 2.0e-6, 2.0e-6);
         skyConfig.mieHeight = 1200;
-        skyConfig.mieG = 0.8; // 0.76 - 0.85
+        skyConfig.mieG = 0.7; // 0.76 - 0.85
 
         optTexture = new ComputeTex();
         buildInit(optTexture);
@@ -131,7 +139,7 @@ class Sky : PipelineGroup
 
         import std.path : buildPath;
 
-        auto compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "Sky.comp.spv");
+        auto compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "OpticalDepth.comp.spv");
         optPipeline = gpu.dev.createComputePipelineSPIRV(compShaderPath, buffs);
 
         ComComputeBuffers skyBuffs;
@@ -144,7 +152,7 @@ class Sky : PipelineGroup
 
         import std.path : buildPath;
 
-        compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "SkyAtm.comp.spv");
+        compShaderPath = buildPath(context.app.dataDir, "shaders", "out", "spirv", "SkyBaking.comp.spv");
         skyPipeline = gpu.dev.createComputePipelineSPIRV(compShaderPath, skyBuffs);
     }
 
@@ -159,7 +167,7 @@ class Sky : PipelineGroup
         skyConfig.camForward = camera.cameraFront;
         skyConfig.camRight = camera.cameraRight;
         skyConfig.camUp = camera.cameraUp;
-        skyConfig.fovTan = Math.tanDeg(camera.fov);
+        skyConfig.fovTan = Math.tanDeg(camera.fov / 2);
         skyConfig.aspectRatio = window.width / window.height;
 
         gpu.dev.pushUniformFragmentData(0, &skyConfig, skyConfig.sizeof);
@@ -171,6 +179,8 @@ class Sky : PipelineGroup
 
     void calcAtm()
     {
+        skyConfig.sunDir = sunDir;
+
         SDL_GPUStorageTextureReadWriteBinding rwBinding;
         rwBinding.texture = optTexture.texture;
         rwBinding.mip_level = 0;
@@ -185,8 +195,10 @@ class Sky : PipelineGroup
         assert(optTexture.w > 0);
         assert(optTexture.h > 0);
 
-        uint groupx = (optTexture.widthu + 15) / 16;
-        uint groupy = (optTexture.heightu + 15) / 16;
+        enum uint groups = 16;
+        assert(groups > 0);
+        uint groupx = (optTexture.widthu + (groups - 1)) / groups;
+        uint groupy = (optTexture.heightu + (groups - 1)) / groups;
 
         gpu.dev.dispatchCompute(groupx, groupy, 1);
         gpu.dev.endComputePass;
@@ -205,10 +217,11 @@ class Sky : PipelineGroup
 
         gpu.dev.pushComputeUniform(&skyConfig, skyConfig.sizeof, 0);
 
+        assert(groups > 0);
         assert(skyTexture.w > 0);
         assert(skyTexture.h > 0);
-        groupx = (skyTexture.widthu + 15) / 16;
-        groupy = (skyTexture.heightu + 15) / 16;
+        groupx = (skyTexture.widthu + (groups - 1)) / groups;
+        groupy = (skyTexture.heightu + (groups - 1)) / groups;
         gpu.dev.dispatchCompute(groupx, groupy, 1);
         gpu.dev.endComputePass;
     }
